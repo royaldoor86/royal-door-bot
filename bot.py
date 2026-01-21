@@ -18,7 +18,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandle
 # --- نصوص وأزرار مدمجة لضمان السرعة والظهور ---
 STRINGS = {
     'ar': {
-        'welcome': "🏰 *مرحباً بك في رويال دور الملكي* 🏰\n\nأهلاً بك يا *{}* في عالمك الخاص.\nأدر رصيدك واستلم هداياك من القائمة أدناه: 👇",
+        'welcome': "🏰 *أهلاً بك في رويال دور الملكي* 🏰\n\nأهلاً بك يا *{}* في عالمك الخاص.\nأدر رصيدك واستلم هداياك من القائمة أدناه: 👇",
     }
 }
 
@@ -34,16 +34,16 @@ def get_full_keyboard():
     ]
     return InlineKeyboardMarkup(keyboard)
 
-# --- محاولة استيراد المنطق من lib (مع عزل الأخطاء) ---
+# --- محاولة استيراد المنطق من lib ---
 try:
     from lib.royal_door_bot.db import db
     from lib.royal_door_bot.handlers.button_handler import handle_buttons
     from lib.royal_door_bot.handlers.message_handler import handle_message
-    logger.info("✅ Full logic modules loaded")
+    logger.info("✅ Full logic modules loaded successfully")
 except Exception as e:
     logger.error(f"⚠️ Logic import warning: {e}")
     db = None
-    async def handle_buttons(u, c): await u.callback_query.answer("⚠️ جاري تحديث بيانات السيرفر...")
+    async def handle_buttons(u, c): await u.callback_query.answer("⚠️ جاري تحديث السيرفر...")
     async def handle_message(u, c): pass
 
 # التوكن الجديد المحدث
@@ -52,8 +52,6 @@ TOKEN = "8351595801:AAHeGbikNatcTxfyWwuEpR-UqO61HTmHvCg"
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.effective_user: return
     user_name = update.effective_user.first_name
-    
-    # الرد الفوري لضمان عدم بقاء البوت فارغاً
     await update.message.reply_text(
         STRINGS['ar']['welcome'].format(user_name),
         reply_markup=get_full_keyboard(),
@@ -61,20 +59,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def post_init(application):
-    # مسح الويب هوك القديم تماماً لإنهاء الـ Conflict
-    await application.bot.delete_webhook(drop_pending_updates=True)
-    await application.bot.set_my_commands([BotCommand("start", "فتح القائمة الملكية 🏰")])
+    # إجراءات صارمة لإنهاء التعارض
+    bot = application.bot
+    await bot.delete_webhook(drop_pending_updates=True)
+    await bot.set_my_commands([BotCommand("start", "فتح القائمة الملكية 🏰")])
+    logger.info(f"🛡️ Security: Disconnected other instances for bot: {bot.username}")
 
 def main():
     if not TOKEN: return
+    # استخدام التوكن مباشرة لضمان عدم وجود خطأ في متغيرات البيئة
     application = ApplicationBuilder().token(TOKEN).post_init(post_init).build()
     
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(handle_buttons))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Royal Bot is FULLY OPERATIONAL...")
-    application.run_polling(drop_pending_updates=True)
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Royal Bot is LIVE on Railway...")
+    
+    # محاولة تنظيف الطابور قبل البدء
+    application.run_polling(drop_pending_updates=True, close_loop=True)
 
 if __name__ == "__main__":
     main()
