@@ -13,6 +13,8 @@ def main():
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     print("🤖 Bot is running...")
+    import asyncio
+    asyncio.run(app.bot.delete_webhook())
     app.run_polling()
 
 if __name__ == "__main__":
