@@ -1,0 +1,1 @@
+worker: python lib/royal_door_bot/bot.py

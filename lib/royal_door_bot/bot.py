@@ -1,7 +1,14 @@
-import logging
-import random
 import os
 import sys
+
+# ضمان التعرف على مجلد lib كحزمة
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, "../../"))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+import logging
+import random
 import asyncio
 try:
     import firebase_admin
@@ -13,12 +20,14 @@ except ImportError:
     firestore = None
     Increment = None
     Query = None
+
 from datetime import datetime, timedelta
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, ForceReply, BotCommand
 from telegram.ext import (
     ApplicationBuilder, CommandHandler, CallbackQueryHandler, 
     MessageHandler, filters, ContextTypes
 )
+
 # استيراد الميزات المتقدمة
 try:
     from lib.royal_door_bot.badges import get_user_badge
@@ -28,7 +37,14 @@ try:
     from lib.royal_door_bot.rewards_manager import set_reward, get_reward
     from lib.royal_door_bot.external_integration import send_email
 except ImportError:
-    pass
+    # في حال فشل الاستيراد رغم التعديلات
+    get_user_badge = None
+    submit_weekly_answer = None
+    send_image = None
+    send_video = None
+    create_ticket = None
+    set_reward = None
+    send_email = None
 
 # تعريف روابط التواصل الاجتماعي
 SOCIAL_LINKS = {
@@ -42,19 +58,16 @@ def log_print(msg):
     print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
     sys.stdout.flush()
 
-
 # --- الإعدادات (تعديل الأمان للرفع على Railway) ---
 TOKEN = os.getenv("BOT_TOKEN")
 
 if not TOKEN:
-    # للعمل المحلي إذا لم يجد متغير البيئة
     try:
         from lib.royal_door_bot.config import TOKEN as CONFIG_TOKEN
         TOKEN = CONFIG_TOKEN
     except ImportError:
         raise ValueError("❌ BOT_TOKEN is not set in environment variables or config.py")
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
 json_path = os.path.join(current_dir, "serviceAccountKey.json")
 
 # تهيئة قاعدة البيانات
@@ -68,7 +81,11 @@ except ImportError:
     else:
         db = firestore.client()
 
-from lib.royal_door_bot.core import STRINGS, get_main_keyboard
+try:
+    from lib.royal_door_bot.core import STRINGS, get_main_keyboard
+except ImportError:
+    STRINGS = {'ar': {'welcome': "مرحباً {}", 'not_linked': "غير مرتبط", 'profile': "الملف الشخصي", 'daily_wait': "انتظر", 'daily_ok': "تم"}}
+    get_main_keyboard = lambda x: None
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = str(update.effective_user.id) if update.effective_user else None
