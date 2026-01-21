@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "836724893984",
+    "firebase_url": "https://royaldoor86-e6489-default-rtdb.firebaseio.com",
+    "project_id": "royaldoor86-e6489",
+    "storage_bucket": "royaldoor86-e6489.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836724893984:android:102b64a39876193e990f45",
+        "android_client_info": {
+          "package_name": "com.royaldoor.live"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836724893984-c0lf2he3cksb5qkckre80an0lkdg8l2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.royaldoor.live",
+            "certificate_hash": "d462ad0d2b193150e13f0ff9b1687017459b3ad8"
+          }
+        },
+        {
+          "client_id": "836724893984-2f36ur8vnm80b16b5gio6no3rtc3p756.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG1zLTl2gjJBOVlRzRtOUcfHeshJzasnA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "836724893984-2f36ur8vnm80b16b5gio6no3rtc3p756.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "836724893984-dfr677n94tvq54s1v16ijmfjh84stees.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.royaldoor.live.iOS"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
