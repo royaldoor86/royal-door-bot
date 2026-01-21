@@ -7,7 +7,7 @@ from datetime import datetime
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ضبط المسارات
+# إضافة المسارات
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path: sys.path.insert(0, BASE_DIR)
 
@@ -25,7 +25,6 @@ try:
     logger.info("✅ Full Royal Logic Loaded")
 except Exception as e:
     logger.error(f"⚠️ Warning: Modules failed to load: {e}")
-    # أزرار طوارئ في حال فشل الاستيراد
     STRINGS = {'ar': {'welcome': "🏰 *أهلاً بك في رويال دور الملكي* 🏰\n\nأدر رصيدك من القائمة أدناه: 👇"}}
     def get_main_keyboard(is_linked=True):
         return InlineKeyboardMarkup([
@@ -36,8 +35,9 @@ except Exception as e:
     async def handle_buttons(u, c): await u.callback_query.answer("جاري التحميل...")
     async def handle_message(u, c): pass
 
-# التوكن (سيقرأ التوكن الجديد من Railway Variables)
-TOKEN = os.getenv("BOT_TOKEN") or (locals().get('CONFIG_TOKEN'))
+# التوكن الجديد المحدث
+NEW_TOKEN = "8351595801:AAHeGbikNatcTxfyWwuEpR-UqO61HTmHvCg"
+TOKEN = os.getenv("BOT_TOKEN") or NEW_TOKEN
 
 async def post_init(application):
     # مسح الويب هوك والطلبات القديمة تماماً لإنهاء الـ Conflict
@@ -55,10 +55,9 @@ def main():
     application.add_handler(CallbackQueryHandler(handle_buttons))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Royal Bot is LIVE and Protected...")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Royal Bot is LIVE with NEW TOKEN...")
     
-    # أهم أمر لإنهاء التعارض ومسح الرسائل العالقة
-    application.run_polling(drop_pending_updates=True, close_loop=True)
+    application.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":
     main()
