@@ -138,14 +138,29 @@ async def handle_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.message.edit_text(STRINGS['ar']['daily_ok'].format(reward), reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 عودة", callback_data="back_to_main")]]))
 
 async def post_init(application):
+    # حذف أي webhook سابق لمنع التعارض مع polling
+    await application.bot.delete_webhook(drop_pending_updates=True)
     await application.bot.set_my_commands([BotCommand("start", "فتح القائمة الرئيسية 🏰")])
+    # سجل للتأكيد
+    print("[INFO] Webhook deleted and commands set.")
 
 def main():
     app = ApplicationBuilder().token(TOKEN).post_init(post_init).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_buttons))
     log_print("🚀 Master Bot is Running...")
-    app.run_polling()
+    try:
+        # تفعيل polling مع تنظيف الطابور وتسجيل الأخطاء
+        app.run_polling(drop_pending_updates=True, close_loop=True)
+    except Exception as e:
+        import traceback
+        print("[ERROR] Telegram polling failed:", e)
+        traceback.print_exc()
+        # إعادة المحاولة بعد 5 ثواني
+        import time
+        time.sleep(5)
+        print("[INFO] Retrying polling...")
+        app.run_polling(drop_pending_updates=True, close_loop=True)
 
 if __name__ == "__main__":
     main()

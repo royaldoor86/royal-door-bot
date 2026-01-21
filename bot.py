@@ -59,25 +59,32 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def post_init(application):
-    # إجراءات صارمة لإنهاء التعارض
+    # حذف أي webhook سابق لمنع التعارض مع polling
     bot = application.bot
     await bot.delete_webhook(drop_pending_updates=True)
     await bot.set_my_commands([BotCommand("start", "فتح القائمة الملكية 🏰")])
-    logger.info(f"🛡️ Security: Disconnected other instances for bot: {bot.username}")
+    logger.info(f"[INFO] Webhook deleted and commands set for bot: {bot.username}")
 
 def main():
     if not TOKEN: return
     # استخدام التوكن مباشرة لضمان عدم وجود خطأ في متغيرات البيئة
     application = ApplicationBuilder().token(TOKEN).post_init(post_init).build()
-    
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(handle_buttons))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
     print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Royal Bot is LIVE on Railway...")
-    
-    # محاولة تنظيف الطابور قبل البدء
-    application.run_polling(drop_pending_updates=True, close_loop=True)
+    try:
+        # تفعيل polling مع تنظيف الطابور وتسجيل الأخطاء
+        application.run_polling(drop_pending_updates=True, close_loop=True)
+    except Exception as e:
+        import traceback
+        print("[ERROR] Telegram polling failed:", e)
+        traceback.print_exc()
+        # إعادة المحاولة بعد 5 ثواني
+        import time
+        time.sleep(5)
+        print("[INFO] Retrying polling...")
+        application.run_polling(drop_pending_updates=True, close_loop=True)
 
 if __name__ == "__main__":
     main()
