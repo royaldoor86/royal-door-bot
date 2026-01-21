@@ -1,5 +1,8 @@
 anyio==4.8.0
 firebase-admin==6.6.0
 google-cloud-firestore==2.19.0
-python-telegram-bot==21.10
+python-telegram-bot>=20.0
+firebase-admin
+google-cloud-firestore
+httpx==0.28.1
 httpx==0.28.1
