@@ -7,67 +7,120 @@ class TermsOfServicePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('شروط الاستخدام'),
+        title: const Text('شروط الخدمة'),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
-              'اتفاقية شروط الاستخدام',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+              'شروط الخدمة',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple),
             ),
             SizedBox(height: 12),
             Text(
-              'باستخدامك لتطبيق Global Social App، فإنك توافق على الالتزام بالشروط والقواعد الموضحة أدناه. يرجى قراءتها بعناية.',
+              'باستخدامك تطبيق Royal Door، فإنك توافق على الشروط التالية المتعلقة بالاستخدام، المحتوى، والأمان.',
               style: TextStyle(height: 1.6),
             ),
             SizedBox(height: 24),
             Text(
-              '1. قواعد السلوك',
+              '1. الاستخدام المقبول',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             Text(
-              'يمنع استخدام التطبيق لإرسال أي محتوى مسيء، غير قانوني، أو ينتهك خصوصية الآخرين. يلتزم المستخدم باحترام جميع الأعضاء في الغرف الصوتية والمحادثات.',
+              'التطبيق مخصص للاستخدام القانوني فقط. يُمنع نشر أو مشاركة أي محتوى مسيء، غير قانوني، أو ينتهك حقوق الآخرين.',
               style: TextStyle(height: 1.6),
             ),
             SizedBox(height: 24),
             Text(
-              '2. الحسابات والأمان',
+              '2. مسؤولية الحساب',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             Text(
-              'أنت مسؤول عن حماية بيانات حسابك وعن جميع الأنشطة التي تحدث من خلاله. يحق لنا تعليق أو حذف أي حساب ينتهك هذه الشروط.',
+              'أنت مسؤول عن حماية بيانات حسابك وأي نشاط يتم من خلاله. يجب عليك إخطارنا فورًا عند الاشتباه بأي استخدام غير مصرح به.',
               style: TextStyle(height: 1.6),
             ),
             SizedBox(height: 24),
             Text(
-              '3. المشتريات الرقمية',
+              '3. المشتريات الداخلية',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             Text(
-              'الجواهر والكوينز هي عملات رقمية داخل التطبيق ولا يمكن استبدالها بأموال حقيقية خارج النظام الرسمي للتطبيق.',
+              'العملات أو المزايا التي تُشترى داخل التطبيق هي رقمية ولا يمكن تحويلها إلى أموال نقدية خارج النظام.',
               style: TextStyle(height: 1.6),
             ),
             SizedBox(height: 24),
             Text(
-              '4. التعديلات',
+              '4. الإعلانات وخدمات الطرف الثالث',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             Text(
-              'نحتفظ بالحق في تحديث هذه الشروط في أي وقت. استمرارك في استخدام التطبيق يعني موافقتك على التعديلات الجديدة.',
+              'قد يعرض التطبيق إعلانات أو يستخدم خدمات طرف ثالث. تعتمد هذه الخدمات على سياسات مستقلة، ونستخدمها فقط لتحسين تجربة التطبيق.',
               style: TextStyle(height: 1.6),
+            ),
+            SizedBox(height: 24),
+            Text(
+              '5. الحسابات والحظر',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'نحتفظ بالحق في إيقاف أو حذف أي حساب ينتهك هذه الشروط دون تحذير سابق. كل محاولة للالتفاف حول الحظر قد تؤدي إلى منع دائم.',
+              style: TextStyle(height: 1.6),
+            ),
+            SizedBox(height: 24),
+            Text(
+              '6. التعديلات',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'نحتفظ بالحق في تعديل هذه الشروط في أي وقت. استمرارك في استخدام التطبيق بعد التحديث يعني قبولك للشروط الجديدة.',
+              style: TextStyle(height: 1.6),
+            ),
+            SizedBox(height: 24),
+            Text(
+              '7. التنصل من المسؤولية',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'التطبيق يُوفّر بحالته الحالية. نحن لا نضمن خلو التطبيق من العيوب أو التوقفات المؤقتة. لا نتحمل مسؤولية الخسائر غير المباشرة الناتجة عن استخدام التطبيق.',
+              style: TextStyle(height: 1.6),
+            ),
+            SizedBox(height: 24),
+            Text(
+              '8. القانون والاختصاص',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'تخضع هذه الشروط للقوانين السارية. أي نزاع يتم حله من خلال الطرق القانونية.',
+              style: TextStyle(height: 1.6),
+            ),
+            SizedBox(height: 24),
+            Text(
+              '9. الاتصال بنا',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'البريد الإلكتروني: support@royaldoor.live\nالموقع الإلكتروني: www.royaldoor.live\nللدعم الفني والمساعدة، يرجى زيارة موقعنا أو التواصل عبر البريد الإلكتروني.',
+              style: TextStyle(height: 1.6, color: Colors.blue),
             ),
             SizedBox(height: 32),
             Center(
               child: Text(
-                'فريق Royal Door - جميع الحقوق محفوظة',
+                'فريق Royal Door - جميع الحقوق محفوظة © 2026 | آخر تحديث: أبريل 2026',
                 style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ),

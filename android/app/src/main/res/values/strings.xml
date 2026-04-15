@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- استبدل YOUR_APP_ID بمعرف تطبيق الفيسبوك الحقيقي الخاص بك من Facebook Developer Console -->
+    <string name="facebook_app_id">1234567890</string>
+    <string name="fb_login_protocol_scheme">fb1234567890</string>
+    <string name="facebook_client_token">YOUR_CLIENT_TOKEN</string>
+</resources>
