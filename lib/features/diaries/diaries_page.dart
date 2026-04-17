@@ -1,12 +1,21 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
 import '../../services/firestore_service.dart';
+import '../../services/storage_service.dart';
+import '../../services/localization_service.dart';
 import '../../models/post_model.dart';
 import '../../models/story_model.dart';
 import '../../app_theme.dart';
 import 'create_post_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:video_player/video_player.dart'; // تأكد من وجود المكتبة في pubspec.yaml
+import 'story_viewer.dart';
+import 'widgets/post_card.dart';
+import 'widgets/story_card.dart';
+
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../../services/ad_manager.dart';
 
 class DiariesPage extends StatefulWidget {
   const DiariesPage({super.key});
@@ -15,262 +24,385 @@ class DiariesPage extends StatefulWidget {
   State<DiariesPage> createState() => _DiariesPageState();
 }
 
-class _DiariesPageState extends State<DiariesPage> {
+class _DiariesPageState extends State<DiariesPage>
+    with TickerProviderStateMixin {
   final FirestoreService _firestoreService = FirestoreService();
-  final Map<String, bool> _expandedPosts = {}; // لتتبع المنشورات المفتوحة
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppTheme.backgroundBlack,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: const Text('اليوميات الملكية', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
-          centerTitle: true,
-          actions: [
-            IconButton(icon: const Icon(Icons.history_edu_rounded, color: AppTheme.royalGold), onPressed: () {}),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CreatePostPage())),
-          backgroundColor: AppTheme.royalGold,
-          child: const Icon(Icons.add_photo_alternate_rounded, color: Colors.black),
-        ),
-        body: AppTheme.background(
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(child: _buildStoriesSection()),
-              const SliverToBoxAdapter(child: SizedBox(height: 10)),
-              StreamBuilder<List<PostModel>>(
-                stream: _firestoreService.streamPosts(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return const SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: AppTheme.royalGold)));
-                  final posts = snapshot.data!;
-                  if (posts.isEmpty) return const SliverFillRemaining(child: Center(child: Text('لا توجد منشورات ملكية بعد ✍️', style: TextStyle(color: Colors.white24))));
-
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => _buildPostCard(posts[index]),
-                      childCount: posts.length,
-                    ),
-                  );
-                },
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 100)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStoriesSection() {
-    return Container(
-      height: 110,
-      margin: const EdgeInsets.only(top: 10),
-      child: StreamBuilder<List<StoryModel>>(
-        stream: _firestoreService.streamStories(),
-        builder: (context, snapshot) {
-          final stories = snapshot.data ?? [];
-          return ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: stories.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) return _buildAddStoryBtn();
-              return _buildStoryItem(stories[index - 1]);
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildAddStoryBtn() {
-    return Column(
-      children: [
-        Container(
-          width: 65, height: 65,
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: AppTheme.royalGold.withValues(alpha: 0.5), width: 2)),
-          child: const Icon(Icons.add, color: AppTheme.royalGold, size: 30),
-        ),
-        const SizedBox(height: 5),
-        const Text('قصتي', style: TextStyle(color: Colors.white54, fontSize: 10)),
-      ],
-    );
-  }
-
-  Widget _buildStoryItem(StoryModel story) {
-    return GestureDetector(
-      onTap: () => _viewStory(story), // فتح الحالة
-      child: Column(
-        children: [
-          Container(
-            width: 65, height: 65,
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppTheme.royalGold, width: 2),
-              image: story.imageUrl != null 
-                  ? DecorationImage(image: NetworkImage(story.imageUrl!), fit: BoxFit.cover)
-                  : null,
-            ),
-            child: story.imageUrl == null ? const Icon(Icons.videocam, color: AppTheme.royalGold) : null,
-          ),
-          const SizedBox(height: 5),
-          Text(story.userName, style: const TextStyle(color: Colors.white70, fontSize: 10)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPostCard(PostModel post) {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    bool isLiked = post.likes.contains(currentUser?.uid);
-    bool isExpanded = _expandedPosts[post.id] ?? false;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: AppTheme.glassContainer(
-        padding: const EdgeInsets.all(0),
-        opacity: 0.03,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              leading: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.white10,
-                backgroundImage: post.authorPic.isNotEmpty ? NetworkImage(post.authorPic) : null,
-                child: post.authorPic.isEmpty ? const Icon(Icons.person, color: Colors.white24) : null,
-              ),
-              title: Text(post.authorName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-              subtitle: const Text('نشط الآن', style: TextStyle(color: Colors.white24, fontSize: 10)),
-              trailing: IconButton(icon: const Icon(Icons.more_vert, color: Colors.white24, size: 18), onPressed: () {}),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: _buildExpandableText(post.id, post.content, isExpanded),
-            ),
-            
-            // عرض الميديا المطور (فيديو أو صورة)
-            if (post.videoUrl != null && post.videoUrl!.isNotEmpty)
-              _VideoWidget(videoUrl: post.videoUrl!)
-            else if (post.imageUrl != null && post.imageUrl!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(post.imageUrl!, width: double.infinity, fit: BoxFit.cover),
-                ),
-              ),
-
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  _interactionBtn(isLiked ? Icons.favorite : Icons.favorite_border, isLiked ? Colors.redAccent : Colors.white54, '${post.likes.length}', () {
-                    if (currentUser != null) _firestoreService.toggleLike(post.id, currentUser.uid);
-                  }),
-                  const SizedBox(width: 20),
-                  _interactionBtn(Icons.chat_bubble_outline, Colors.white54, '${post.commentCount}', () {}),
-                  const Spacer(),
-                  if (post.isVip) const Icon(Icons.workspace_premium, color: AppTheme.royalGold, size: 18),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExpandableText(String postId, String text, bool isExpanded) {
-    bool isLong = text.length > 120;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          text,
-          maxLines: isExpanded ? 100 : 3,
-          overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
-          style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.5),
-        ),
-        if (isLong)
-          GestureDetector(
-            onTap: () => setState(() => _expandedPosts[postId] = !isExpanded),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Text(isExpanded ? 'عرض أقل' : 'عرض المزيد...', style: const TextStyle(color: AppTheme.royalGold, fontSize: 12, fontWeight: FontWeight.bold)),
-            ),
-          ),
-      ],
-    );
-  }
-
-  void _viewStory(StoryModel story) {
-    // كود فتح واجهة عرض القصة بالكامل (فيديو/صور)
-  }
-
-  Widget _interactionBtn(IconData icon, Color color, String count, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Row(children: [Icon(icon, color: color, size: 20), const SizedBox(width: 6), Text(count, style: const TextStyle(color: Colors.white38, fontSize: 12, fontWeight: FontWeight.bold))]),
-    );
-  }
-}
-
-// ويدجيت مخصص لتشغيل الفيديوهات داخل المنشورات
-class _VideoWidget extends StatefulWidget {
-  final String videoUrl;
-  const _VideoWidget({required this.videoUrl});
-
-  @override
-  State<_VideoWidget> createState() => _VideoWidgetState();
-}
-
-class _VideoWidgetState extends State<_VideoWidget> {
-  late VideoPlayerController _controller;
-  bool _isInitialized = false;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
-      ..initialize().then((_) {
-        setState(() => _isInitialized = true);
-      });
+    _tabController = TabController(length: 2, vsync: this);
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  Future<void> _onRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 250, width: double.infinity,
-      margin: const EdgeInsets.all(8),
-      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(15)),
-      child: _isInitialized
-          ? Stack(
-              alignment: Alignment.center,
-              children: [
-                ClipRRect(borderRadius: BorderRadius.circular(15), child: AspectRatio(aspectRatio: _controller.value.aspectRatio, child: VideoPlayer(_controller))),
-                IconButton(
-                  icon: Icon(_controller.value.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill, color: Colors.white70, size: 50),
-                  onPressed: () => setState(() => _controller.value.isPlaying ? _controller.pause() : _controller.play()),
+    final currentUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final trans = Translations.of(context);
+    final isEn = trans.locale.languageCode == 'en';
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      bottomNavigationBar: SizedBox(
+        height: 50,
+        child: AdWidget(ad: AdManager().getBannerAd()),
+      ),
+      body: AppTheme.background(
+        child: StreamBuilder<dynamic>(
+          stream: _firestoreService.streamUserData(currentUid),
+          builder: (ctx, userSnap) {
+            if (!userSnap.hasData) {
+              return const Center(
+                  child: CircularProgressIndicator(color: AppTheme.royalGold));
+            }
+            final me = userSnap.data as dynamic;
+            final following =
+                (me?.following as List<dynamic>?)?.cast<String>() ?? <String>[];
+            final friends =
+                (me?.friends as List<dynamic>?)?.cast<String>() ?? <String>[];
+
+            final feedAuthors = {currentUid, ...following, ...friends}.toList();
+
+            return NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [
+                  SliverAppBar(
+                    pinned: true,
+                    floating: true,
+                    snap: true,
+                    backgroundColor: const Color(0xFF121212).withValues(alpha: 0.9),
+                    elevation: 0,
+                    title: Text(trans.get('diaries'),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20)),
+                    centerTitle: true,
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.add_box_outlined,
+                            color: Colors.white, size: 26),
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const CreatePostPage())),
+                      )
+                    ],
+                    bottom: TabBar(
+                      controller: _tabController,
+                      tabs: [
+                        Tab(text: isEn ? 'Feed' : 'آخر الأخبار'),
+                        Tab(text: isEn ? 'My Posts' : 'يومياتي'),
+                      ],
+                      indicatorColor: AppTheme.royalGold,
+                      indicatorWeight: 3,
+                      labelStyle: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold),
+                      unselectedLabelColor: Colors.white38,
+                    ),
+                  ),
+                ];
+              },
+              body: TabBarView(
+                controller: _tabController,
+                children: [
+                  _PostsListTabView(
+                    key: const PageStorageKey('feed_posts'),
+                    currentUid: currentUid,
+                    authorIds: feedAuthors,
+                    onRefresh: _onRefresh,
+                    firestoreService: _firestoreService,
+                    isFeed: true,
+                  ),
+                  _PostsListTabView(
+                    key: const PageStorageKey('my_posts'),
+                    currentUid: currentUid,
+                    authorIds: [currentUid],
+                    onRefresh: _onRefresh,
+                    firestoreService: _firestoreService,
+                    isFeed: false,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _PostsListTabView extends StatefulWidget {
+  final String currentUid;
+  final List<String> authorIds;
+  final Future<void> Function() onRefresh;
+  final FirestoreService firestoreService;
+  final bool isFeed;
+
+  const _PostsListTabView({
+    super.key,
+    required this.currentUid,
+    required this.authorIds,
+    required this.onRefresh,
+    required this.firestoreService,
+    required this.isFeed,
+  });
+
+  @override
+  State<_PostsListTabView> createState() => _PostsListTabViewState();
+}
+
+class _PostsListTabViewState extends State<_PostsListTabView>
+    with AutomaticKeepAliveClientMixin {
+  final ImagePicker _picker = ImagePicker();
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    return StreamBuilder<List<PostModel>>(
+      stream: widget.firestoreService.streamPostsFromAuthors(widget.authorIds),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            !snapshot.hasData) {
+          return const Center(
+              child: CircularProgressIndicator(color: AppTheme.royalGold));
+        }
+        final posts = snapshot.data ?? [];
+
+        return RefreshIndicator(
+          onRefresh: widget.onRefresh,
+          color: AppTheme.royalGold,
+          backgroundColor: const Color(0xFF121212),
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics()),
+            slivers: [
+              if (widget.isFeed)
+                SliverToBoxAdapter(
+                  child: _StoriesSection(
+                    firestoreService: widget.firestoreService,
+                    onAddStory: () =>
+                        _showAddStoryOptions(context, Translations.of(context)),
+                  ),
                 ),
-              ],
-            )
-          : const Center(child: CircularProgressIndicator(color: AppTheme.royalGold)),
+              if (posts.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.auto_awesome_motion_outlined,
+                            size: 60, color: Colors.white10),
+                        const SizedBox(height: 16),
+                        Text(
+                          widget.isFeed
+                              ? 'لا توجد منشورات في آخر الأخبار'
+                              : 'لم تنشر أي يوميات بعد',
+                          style: const TextStyle(
+                              color: Colors.white24, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.only(bottom: 100),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final post = posts[index];
+                        return PostCard(
+                          post: post,
+                          currentUid: widget.currentUid,
+                          isFriend: true,
+                          isFollowing: true,
+                          onUpdate: (_) => setState(() {}),
+                        );
+                      },
+                      childCount: posts.length,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAddStoryOptions(BuildContext context, Translations trans) async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1A050E), // Match app theme
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2))),
+            const Padding(
+                padding: EdgeInsets.all(20),
+                child: Text('إضافة قصة جديدة',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold))),
+            ListTile(
+              leading: const Icon(Icons.image_outlined, color: Colors.green),
+              title: const Text('صورة من المعرض',
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _handleStoryAction(ImageSource.gallery, false);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.videocam_outlined, color: Colors.blue),
+              title: const Text('فيديو من المعرض',
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _handleStoryAction(ImageSource.gallery, true);
+              },
+            ),
+            ListTile(
+              leading:
+                  const Icon(Icons.camera_alt_outlined, color: Colors.orange),
+              title: const Text('التقاط بالكاميرا',
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _handleStoryAction(ImageSource.camera, false);
+              },
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleStoryAction(ImageSource source, bool isVideo) async {
+    try {
+      final XFile? file = isVideo
+          ? await _picker.pickVideo(source: source)
+          : await _picker.pickImage(source: source);
+      if (file == null) return;
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('جاري رفع القصة... ⏳'),
+          backgroundColor: AppTheme.royalGold));
+
+      final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      final userData = await widget.firestoreService.streamUserData(uid).first;
+
+      String? url;
+      if (isVideo) {
+        url = await StorageService.uploadStoryVideo(File(file.path));
+      } else {
+        url = await StorageService.uploadStoryImage(File(file.path));
+      }
+
+      await widget.firestoreService.addStory(
+        userId: uid,
+        userName: userData.name,
+        userPic: userData.profilePic,
+        imageUrl: isVideo ? null : url,
+        videoUrl: isVideo ? url : null,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('تم نشر القصة بنجاح! 🎉'),
+            backgroundColor: Colors.green));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('حدث خطأ: $e'), backgroundColor: Colors.redAccent));
+      }
+    }
+  }
+}
+
+class _StoriesSection extends StatelessWidget {
+  final FirestoreService firestoreService;
+  final VoidCallback onAddStory;
+
+  const _StoriesSection({
+    required this.firestoreService,
+    required this.onAddStory,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 110,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: StreamBuilder<List<StoryModel>>(
+        stream: firestoreService.streamStories(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const SizedBox(height: 110);
+          final stories = snapshot.data ?? [];
+          final Map<String, List<StoryModel>> grouped = {};
+          for (final s in stories) {
+            grouped.putIfAbsent(s.userId, () => []).add(s);
+          }
+          final groups = grouped.entries.map((e) => e.value).toList();
+
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            itemCount: groups.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return StoryCard(
+                  group: const [],
+                  isAddButton: true,
+                  onTap: onAddStory,
+                );
+              }
+              final group = groups[index - 1];
+
+              int flatStartIndex = 0;
+              for (int i = 0; i < index - 1; i++) {
+                flatStartIndex += groups[i].length;
+              }
+
+              return StoryCard(
+                group: group,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => StoryViewer(
+                      stories: stories,
+                      initialIndex: flatStartIndex,
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

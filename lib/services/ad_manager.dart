@@ -9,76 +9,99 @@ class AdManager {
 
   RewardedAd? _rewardedAd;
   bool _isLoading = false;
-  final String _adUnitId = 'ca-app-pub-3609643361862120/3056897690';
   
-  // Stream to notify UI about ad status changes
+  // معرفات الإعلانات
+  final String _rewardedAdUnitId = kDebugMode 
+      ? 'ca-app-pub-3940256099942544/5224354917' 
+      : 'ca-app-pub-3609643361862120/3056897690';
+
+  final String _bannerAdUnitId = kDebugMode
+      ? 'ca-app-pub-3940256099942544/6300978111'
+      : 'ca-app-pub-3609643361862120/4739033429';
+  
   final StreamController<bool> _adStatusController = StreamController<bool>.broadcast();
   Stream<bool> get adStatusStream => _adStatusController.stream;
 
-  RewardedAd? get rewardedAd => _rewardedAd;
-  bool get isLoading => _isLoading;
   bool get isLoaded => _rewardedAd != null;
+  bool get isLoading => _isLoading;
 
   Future<void> init() async {
     await MobileAds.instance.initialize();
     loadRewardedAd();
   }
 
+  // دالة لجلب إعلان بانر
+  BannerAd getBannerAd() {
+    return BannerAd(
+      adUnitId: _bannerAdUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint('BannerAd failed to load: $error');
+        },
+      ),
+    )..load();
+  }
+
   void loadRewardedAd() {
-    if (_isLoading || _rewardedAd != null) return;
+    if (_isLoading || _rewardedAd != null) {
+      _adStatusController.add(isLoaded);
+      return;
+    }
 
     _isLoading = true;
     _adStatusController.add(false);
 
+    debugPrint("AdManager: Starting to load ad...");
+
     RewardedAd.load(
-      adUnitId: _adUnitId,
+      adUnitId: _rewardedAdUnitId,
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
-          debugPrint("AdManager: Ad Loaded Successfully");
+          debugPrint("AdManager: Ad loaded successfully!");
           _rewardedAd = ad;
           _isLoading = false;
           _adStatusController.add(true);
-
+          
           _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
-              debugPrint("AdManager: Ad Dismissed");
+              debugPrint("AdManager: Ad dismissed");
               ad.dispose();
               _rewardedAd = null;
-              loadRewardedAd(); // Load the next one immediately in the background
+              _adStatusController.add(false);
+              loadRewardedAd(); // تحميل الإعلان التالي فوراً ليكون جاهزاً
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
-              debugPrint("AdManager: Ad Failed to Show: $error");
+              debugPrint("AdManager: Ad failed to show: ${error.message}");
               ad.dispose();
               _rewardedAd = null;
+              _adStatusController.add(false);
               loadRewardedAd();
             },
           );
         },
         onAdFailedToLoad: (error) {
-          debugPrint("AdManager: Ad Failed to Load: ${error.message}");
+          debugPrint("AdManager: Ad failed to load: ${error.message}");
           _isLoading = false;
           _rewardedAd = null;
           _adStatusController.add(false);
-          // Retry after 10 seconds
-          Future.delayed(const Duration(seconds: 10), () {
-            loadRewardedAd();
-          });
+          // محاولة ذكية: زيادة وقت الانتظار تدريجياً أو المحاولة بعد 15 ثانية
+          Future.delayed(const Duration(seconds: 15), () => loadRewardedAd());
         },
       ),
     );
   }
 
-  void showRewardedAd({
-    required Function(RewardItem) onUserEarnedReward,
-    VoidCallback? onAdClosed,
-    VoidCallback? onAdFailed,
-  }) {
+  void showRewardedAd({required Function(RewardItem) onUserEarnedReward, VoidCallback? onAdFailed}) {
     if (_rewardedAd != null) {
       _rewardedAd!.show(onUserEarnedReward: (ad, reward) {
         onUserEarnedReward(reward);
       });
     } else {
+      debugPrint("AdManager: No ad available to show");
       onAdFailed?.call();
       loadRewardedAd();
     }

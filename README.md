@@ -1,41 +1,25 @@
-# RoyalDoor Telegram Bot
+# Royal Door App 🚪👑
 
-بوت تيليجرام متكامل لإدارة التحديات، الشارات، الدعم الفني، الجوائز، والتكامل مع خدمات خارجية.
+Royal Door is a premium social application featuring voice rooms, royal diaries, and interactive games.
 
-## المتطلبات
-- python-telegram-bot >= 20.0
-- firebase-admin
-- google-cloud-firestore
+## 📄 Legal & Policies
+To ensure transparency and compliance with Google Play Store policies, please refer to our official documents:
 
-## التشغيل
-1. ضع متغير البيئة `BOT_TOKEN` في النظام أو ملف .env
-2. شغل البوت:
+- [Privacy Policy (Arabic)](docs/PRIVACY_POLICY.md)
+- [Privacy Policy (English)](docs/PRIVACY_POLICY_EN.md)
+- [Terms of Service](docs/TERMS_OF_SERVICE.md)
+- [User Agreement](docs/USER_AGREEMENT.md)
 
-```bash
-python royaldoor_bot.py
-```
+## 🛡️ Data Security
+- All transactions are encrypted.
+- OTP verification system for account security.
+- Full compliance with GDPR and Google Play Safety standards.
 
-## الملفات المضمنة
-- royaldoor_bot.py (نقطة التشغيل الرئيسية)
-- lib/royal_door_bot/* (جميع وظائف البوت)
-- requirements.txt (جميع المتطلبات)
+## 🚀 Features
+- **Voice Rooms:** Interactive real-time audio chat.
+- **Royal Diaries:** Share your moments with the community.
+- **Interactive Games:** Play and win virtual rewards.
+- **Daily Tasks:** Watch ads and earn daily rewards.
 
-## ملاحظات
-- تأكد من إعداد بيانات Firebase إذا كنت تستخدم الميزات المرتبطة بها.
-- يمكن تخصيص الأوامر والردود من خلال ملفات handlers و STRINGS.
-# flutter_application_1
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📧 Contact
+For support or privacy inquiries: support@royaldoor.live
