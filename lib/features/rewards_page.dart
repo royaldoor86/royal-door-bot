@@ -141,9 +141,9 @@ class _RewardsPageState extends State<RewardsPage>
                                       Color(0xFF2C5364)
                                     ]
                                   : const [
-                                      Color(0xFFE0F7FA),
-                                      Color(0xFFB2EBF2),
-                                      Color(0xFF80DEEA)
+                                      Color(0xFF4DD0E1),
+                                      Color(0xFF26C6DA),
+                                      Color(0xFF00BCD4)
                                     ],
                             ),
                           ),
