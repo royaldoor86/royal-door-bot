@@ -46,6 +46,12 @@ class _RewardsPageState extends State<RewardsPage>
   @override
   void initState() {
     super.initState();
+    _rotationController =
+        AnimationController(duration: const Duration(seconds: 20), vsync: this);
+    _pulseController =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    _waveController =
+        AnimationController(duration: const Duration(seconds: 3), vsync: this);
     _rotationController.repeat();
     _pulseController.repeat(reverse: true);
     _waveController.repeat();
