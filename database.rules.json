@@ -1,0 +1,26 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null",
+        "wallet": {
+          ".write": "false"
+        },
+        "profile": {
+          ".write": "$uid === auth.uid"
+        },
+        "$other": {
+          ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true"
+        }
+      }
+    },
+    "domino_rooms": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "admin_notifications": {
+      ".read": "root.child('users').child(auth.uid).child('isAdmin').val() === true",
+      ".write": "auth != null"
+    }
+  }
+}
