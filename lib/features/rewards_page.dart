@@ -2350,9 +2350,17 @@ class _RewardsPageState extends State<RewardsPage>
 
     double currentBalance = 0;
     if (currency == 'gems') {
-      currentBalance = (userData['harvestWallet'] ?? 0).toDouble();
+      currentBalance = (userData['harvestWallet'] ??
+              userData['rewards_wallet_gems'] ??
+              userData['harvest_wallet'] ??
+              0)
+          .toDouble();
     } else if (currency == 'stars') {
-      currentBalance = (userData['starsHarvestWallet'] ?? 0).toDouble();
+      currentBalance = (userData['starsHarvestWallet'] ??
+              userData['rewards_wallet_stars'] ??
+              userData['harvest_stars_wallet'] ??
+              0)
+          .toDouble();
     }
 
     if (currentBalance < amount) {
