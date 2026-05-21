@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
 import '../../theme/app_theme.dart';
 
 class UserProfilePage extends StatefulWidget {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
+import '../../theme/reusable_widgets.dart';
 
 class AdminLevelsPage extends StatefulWidget {
   const AdminLevelsPage({super.key});
@@ -17,70 +19,59 @@ class _AdminLevelsPageState extends State<AdminLevelsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1B0233),
-      appBar: AppBar(
-          title: const Text("إدارة مستويات المتجر"),
-          backgroundColor: Colors.transparent),
-      body: Column(
-        children: [
-          _buildAddForm(),
-          const Divider(color: Colors.white10),
-          Expanded(child: _buildLevelsList()),
-        ],
+    return AppTheme.background(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+            title: const HeadingText("إدارة مستويات المتجر",
+                fontSize: DesignTokens.fontSizeLg),
+            backgroundColor: Colors.transparent,
+            elevation: 0),
+        body: Column(
+          children: [
+            _buildAddForm(),
+            const RoyalDivider(),
+            Expanded(child: _buildLevelsList()),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAddForm() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(20)),
+    return RoyalCard(
       child: Column(
         children: [
-          const Text("صنع مستوى جديد للمتجر",
-              style:
-                  TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 15),
+          const HeadingText("صنع مستوى جديد للمتجر",
+              fontSize: DesignTokens.fontSizeBase,
+              color: DesignTokens.primaryGold),
+          const SizedBox(height: DesignTokens.spacingLg),
           Row(
             children: [
               Expanded(
-                  child: _adminInput(_levelController, "رقم المستوى",
-                      Icons.trending_up, TextInputType.number)),
-              const SizedBox(width: 10),
+                  child: RoyalTextField(
+                controller: _levelController,
+                hintText: "رقم المستوى",
+                prefixIcon: Icons.trending_up,
+                keyboardType: TextInputType.number,
+              )),
+              const SizedBox(width: DesignTokens.spacingMd),
               Expanded(
-                  child: _adminInput(_priceController, "السعر بالجواهر",
-                      Icons.diamond, TextInputType.number)),
+                  child: RoyalTextField(
+                controller: _priceController,
+                hintText: "السعر بالجواهر",
+                prefixIcon: Icons.diamond,
+                keyboardType: TextInputType.number,
+              )),
             ],
           ),
-          const SizedBox(height: 15),
-          AppTheme.gradientButton(
-            text: _isSaving ? "جاري الحفظ..." : "إضافة المستوى للمتجر 🚀",
-            onPressed: _isSaving ? null : _saveLevel,
+          const SizedBox(height: DesignTokens.spacingLg),
+          RoyalButton(
+            label: _isSaving ? "جاري الحفظ..." : "إضافة المستوى للمتجر 🚀",
+            onPressed: _isSaving ? () {} : () => _saveLevel(),
+            isLoading: _isSaving,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _adminInput(TextEditingController controller, String hint,
-      IconData icon, TextInputType type) {
-    return TextField(
-      controller: controller,
-      keyboardType: type,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white24, fontSize: 12),
-        prefixIcon: Icon(icon, color: Colors.amber, size: 18),
-        filled: true,
-        fillColor: Colors.black26,
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none),
       ),
     );
   }
@@ -109,13 +100,15 @@ class _AdminLevelsPageState extends State<AdminLevelsPage> {
 
       _levelController.clear();
       _priceController.clear();
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("تمت إضافة المستوى بنجاح ✅")));
+      }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("خطأ: $e")));
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -125,26 +118,37 @@ class _AdminLevelsPageState extends State<AdminLevelsPage> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('store_levels').orderBy('levelValue').snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData)
-          return const Center(child: CircularProgressIndicator());
+        if (!snap.hasData) {
+          return const RoyalLoadingIndicator();
+        }
         final docs = snap.data!.docs;
         return ListView.builder(
           itemCount: docs.length,
+          padding: const EdgeInsets.all(DesignTokens.spacingMd),
           itemBuilder: (context, i) {
             final data = docs[i].data() as Map<String, dynamic>;
-            return ListTile(
-              leading: CircleAvatar(
-                  backgroundColor: Colors.amber,
-                  child: Text("${data['levelValue']}",
-                      style: const TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold))),
-              title: Text(data['name'],
-                  style: const TextStyle(color: Colors.white)),
-              subtitle: Text("السعر: ${data['price']} جوهرة",
-                  style: const TextStyle(color: Colors.white54)),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.redAccent),
-                onPressed: () => docs[i].reference.delete(),
+            return RoyalCard(
+              margin: const EdgeInsets.only(bottom: DesignTokens.spacingMd),
+              padding: const EdgeInsets.symmetric(
+                  vertical: DesignTokens.spacingSm,
+                  horizontal: DesignTokens.spacingMd),
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: CircleAvatar(
+                    backgroundColor: DesignTokens.primaryGold,
+                    child: Text("${data['levelValue']}",
+                        style: const TextStyle(
+                            color: DesignTokens.neutralBlack,
+                            fontWeight: DesignTokens.fontWeightBold))),
+                title: BodyText(data['name'],
+                    fontWeight: DesignTokens.fontWeightBold),
+                subtitle: CaptionText("السعر: ${data['price']} جوهرة",
+                    textAlign: TextAlign.right),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete,
+                      color: DesignTokens.semanticError),
+                  onPressed: () => docs[i].reference.delete(),
+                ),
               ),
             );
           },

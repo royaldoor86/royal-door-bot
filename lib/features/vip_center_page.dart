@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../services/ad_manager.dart';
 import '../services/firestore_service.dart';
 import '../models/user_model.dart';
 
@@ -14,6 +16,31 @@ class VipCenterPage extends StatefulWidget {
 class _VipCenterPageState extends State<VipCenterPage> {
   final FirestoreService _firestoreService = FirestoreService();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  BannerAd? _bannerAd;
+  bool _isAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = AdManager().getBannerAd(
+      size: AdSize.banner,
+      onAdLoaded: () {
+        setState(() {
+          _isAdLoaded = true;
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
 
   Future<void> _toggleIncognito(bool currentStatus, String uid) async {
     await _db.collection('users').doc(uid).update({'isIncognito': !currentStatus});
@@ -41,6 +68,14 @@ class _VipCenterPageState extends State<VipCenterPage> {
 
           return Scaffold(
             backgroundColor: const Color(0xFF121212),
+            bottomNavigationBar: _isAdLoaded && _bannerAd != null
+                ? Container(
+                    color: const Color(0xFF121212),
+                    height: _bannerAd!.size.height.toDouble(),
+                    width: _bannerAd!.size.width.toDouble(),
+                    child: AdWidget(ad: _bannerAd!),
+                  )
+                : null,
             appBar: AppBar(
               title: const Text('مركز VIP الملكي', style: TextStyle(color: Color(0xFFE0C080), fontWeight: FontWeight.bold)),
               centerTitle: true,
@@ -63,9 +98,9 @@ class _VipCenterPageState extends State<VipCenterPage> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: const Color(0xFFE0C080).withOpacity(0.2)),
+                        border: Border.all(color: const Color(0xFFE0C080).withValues(alpha: 0.2)),
                       ),
                       child: Column(
                         children: [
@@ -105,15 +140,15 @@ class _VipCenterPageState extends State<VipCenterPage> {
             ? [const Color(0xFFD4AF37), const Color(0xFFB8860B), const Color(0xFF8A6E2F)] 
             : [const Color(0xFF3A3A3A), const Color(0xFF000000)],
         ),
-        border: Border.all(color: const Color(0xFFE0C080).withOpacity(0.5), width: 2),
-        boxShadow: [BoxShadow(color: (isActive ? Colors.amber : Colors.black).withOpacity(0.2), blurRadius: 20, spreadRadius: 5)],
+        border: Border.all(color: const Color(0xFFE0C080).withValues(alpha: 0.5), width: 2),
+        boxShadow: [BoxShadow(color: (isActive ? Colors.amber : Colors.black).withValues(alpha: 0.2), blurRadius: 20, spreadRadius: 5)],
       ),
       child: Stack(
         children: [
           Positioned(
             right: -20,
             top: -20,
-            child: Icon(Icons.workspace_premium, size: 150, color: Colors.white.withOpacity(0.1)),
+            child: Icon(Icons.workspace_premium, size: 150, color: Colors.white.withValues(alpha: 0.1)),
           ),
           Padding(
             padding: const EdgeInsets.all(25),
@@ -139,7 +174,7 @@ class _VipCenterPageState extends State<VipCenterPage> {
                     child: LinearProgressIndicator(
                       value: 0.4,
                       backgroundColor: Colors.black26,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white.withOpacity(0.8)),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white.withValues(alpha: 0.8)),
                       minHeight: 6,
                     ),
                   ),
@@ -188,9 +223,9 @@ class _VipCenterPageState extends State<VipCenterPage> {
           onTap: (isVip && hasTap) ? perks[index]['onTap'] : null,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(25),
-              border: Border.all(color: isVip ? perks[index]['color'].withOpacity(0.3) : Colors.white.withOpacity(0.1)),
+              border: Border.all(color: isVip ? perks[index]['color'].withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.1)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -199,7 +234,7 @@ class _VipCenterPageState extends State<VipCenterPage> {
                 const SizedBox(height: 8),
                 Text(perks[index]['title'], textAlign: TextAlign.center, style: TextStyle(color: isVip ? Colors.white : Colors.grey, fontSize: 11, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text(perks[index]['desc'], textAlign: TextAlign.center, style: TextStyle(color: isVip ? Colors.amber.withOpacity(0.7) : Colors.white24, fontSize: 9)),
+                Text(perks[index]['desc'], textAlign: TextAlign.center, style: TextStyle(color: isVip ? Colors.amber.withValues(alpha: 0.7) : Colors.white24, fontSize: 9)),
               ],
             ),
           ),

@@ -223,7 +223,7 @@ class _FamilyFullPageState extends State<FamilyFullPage> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -272,7 +272,7 @@ class _FamilyFullPageState extends State<FamilyFullPage> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.amber.withOpacity(0.08),
+              color: Colors.amber.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 2),
             ),
@@ -371,7 +371,7 @@ class _FamilyFullPageState extends State<FamilyFullPage> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.amber.withOpacity(0.3),
+                            color: Colors.amber.withValues(alpha: 0.3),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),
@@ -396,7 +396,7 @@ class _FamilyFullPageState extends State<FamilyFullPage> {
                   const SizedBox(height: 16),
                   // نوع العائلة (منسدلة)
                   DropdownButtonFormField<String>(
-                    value: _selectedType,
+                    initialValue: _selectedType,
                     items: _familyTypes
                         .map(
                           (type) =>

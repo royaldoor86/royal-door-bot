@@ -87,8 +87,8 @@ class _AdminAnnouncementPageState extends State<AdminAnnouncementPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // عنوان القسم داخل لوحة التحكم
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(Icons.campaign_rounded, color: Colors.amberAccent),
               SizedBox(width: 8),
               Text(

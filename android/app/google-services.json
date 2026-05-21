@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "836724893984-32doknne45414hlrrjhh540rjob9ve0j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.royaldoor.live",
+            "certificate_hash": "8ebee9df0b66c1e8b22a0fe5bb0c270ebd3c0cce"
+          }
+        },
+        {
+          "client_id": "836724893984-41fg82sms2oja68f9ljpj238trd0833o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.royaldoor.live",
+            "certificate_hash": "c1e71f39fbe959f47310c90e9b11b7d5b04347b1"
+          }
+        },
+        {
+          "client_id": "836724893984-8qt4uvmfa6stjebia73qiel6a71d6mv0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.royaldoor.live",
+            "certificate_hash": "e7c32e78d062564384af3583379b40f8110a7aa4"
+          }
+        },
+        {
           "client_id": "836724893984-c0lf2he3cksb5qkckre80an0lkdg8l2s.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -48,7 +72,8 @@
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-3609643361862120~8724157345"
     }
   ],
   "configuration_version": "1"

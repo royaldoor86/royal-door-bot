@@ -1,6 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../services/ad_manager.dart';
 import '../app_theme.dart';
 
 class SupportCenterPage extends StatefulWidget {
@@ -11,6 +13,32 @@ class SupportCenterPage extends StatefulWidget {
 }
 
 class _SupportCenterPageState extends State<SupportCenterPage> {
+  BannerAd? _bannerAd;
+  bool _isAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = AdManager().getBannerAd(
+      size: AdSize.banner,
+      onAdLoaded: () {
+        setState(() {
+          _isAdLoaded = true;
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
   // دالة موحدة لفتح الروابط
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
@@ -35,6 +63,14 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: AppTheme.backgroundBlack,
+        bottomNavigationBar: _isAdLoaded && _bannerAd != null
+            ? Container(
+                color: AppTheme.backgroundBlack,
+                height: _bannerAd!.size.height.toDouble(),
+                width: _bannerAd!.size.width.toDouble(),
+                child: AdWidget(ad: _bannerAd!),
+              )
+            : null,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -118,11 +154,11 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
           onTap: () => _launchURL("https://www.instagram.com/royaldoor86?igsh=MXhnbTVhcXFjdWViMw=="),
         ),
         _buildSocialItem(
-          icon: Icons.send_rounded,
-          title: 'بوت التلغرام الملكي',
-          subtitle: '@royaldoor_bot',
+          icon: FontAwesomeIcons.telegram,
+          title: 'قناة تلغرام رويال دور',
+          subtitle: 'انضم لمجتمعنا الرسمي',
           color: Colors.blueAccent,
-          onTap: () => _launchURL("https://t.me/royaldoor_bot"),
+          onTap: () => _launchURL("https://t.me/royaldur"),
         ),
         _buildSocialItem(
           icon: Icons.video_collection_rounded,
@@ -130,6 +166,13 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
           subtitle: 'مقاطع وتحديات حصرية',
           color: Colors.white,
           onTap: () => _launchURL("https://tiktok.com/@royaldoor86"),
+        ),
+        _buildSocialItem(
+          icon: FontAwesomeIcons.youtube,
+          title: 'قناة يوتيوب رويال دور',
+          subtitle: 'دروس وشروحات وبث مباشر',
+          color: Colors.red,
+          onTap: () => _launchURL("https://youtube.com/@royaldoor?si=lIaXbSUaNKE1Aily"),
         ),
       ],
     );

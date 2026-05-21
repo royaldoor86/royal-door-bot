@@ -10,7 +10,7 @@ class AdminPaymentsPage extends StatefulWidget {
 }
 
 class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
-  String _statusFilter = 'pending'; 
+  String _statusFilter = 'pending';
   final Color primaryEmerald = const Color(0xFF042F2C);
   final Color royalGold = const Color(0xFFC5A059);
 
@@ -23,13 +23,18 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
         appBar: AppBar(
           backgroundColor: primaryEmerald,
           elevation: 0,
-          title: Text('إدارة الحوالات والمدفوعات', style: TextStyle(color: royalGold, fontWeight: FontWeight.bold)),
+          title: Text('إدارة الحوالات والمدفوعات',
+              style: TextStyle(color: royalGold, fontWeight: FontWeight.bold)),
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(Icons.person_search_rounded, color: Colors.amber),
+              icon:
+                  const Icon(Icons.person_search_rounded, color: Colors.amber),
               tooltip: 'شحن مباشر للمستخدمين',
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const _ManualChargeUsersPage())),
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const _ManualChargeUsersPage())),
             ),
           ],
         ),
@@ -38,16 +43,27 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
             _buildStatusFilters(),
             Expanded(
               child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                stream: FirebaseFirestore.instance.collection('payments').orderBy('createdAt', descending: true).snapshots(),
+                stream: FirebaseFirestore.instance
+                    .collection('payments')
+                    .orderBy('createdAt', descending: true)
+                    .snapshots(),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator(color: Colors.amber));
-                  
-                  final docs = snapshot.data?.docs.where((d) {
-                    if (_statusFilter == 'all') return true;
-                    return d.data()['status'] == _statusFilter;
-                  }).toList() ?? [];
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                        child: CircularProgressIndicator(color: Colors.amber));
+                  }
 
-                  if (docs.isEmpty) return const Center(child: Text('لا توجد سجلات حالياً', style: TextStyle(color: Colors.white24)));
+                  final docs = snapshot.data?.docs.where((d) {
+                        if (_statusFilter == 'all') return true;
+                        return d.data()['status'] == _statusFilter;
+                      }).toList() ??
+                      [];
+
+                  if (docs.isEmpty) {
+                    return const Center(
+                        child: Text('لا توجد سجلات حالياً',
+                            style: TextStyle(color: Colors.white24)));
+                  }
 
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
@@ -70,7 +86,7 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
   Widget _buildStatusFilters() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      color: primaryEmerald.withOpacity(0.3),
+      color: primaryEmerald.withValues(alpha: 0.3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -94,7 +110,11 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
           color: isSelected ? royalGold : Colors.white10,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(label, style: TextStyle(color: isSelected ? Colors.black : Colors.white70, fontWeight: FontWeight.bold, fontSize: 12)),
+        child: Text(label,
+            style: TextStyle(
+                color: isSelected ? Colors.black : Colors.white70,
+                fontWeight: FontWeight.bold,
+                fontSize: 12)),
       ),
     );
   }
@@ -105,9 +125,9 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: royalGold.withOpacity(0.1)),
+        border: Border.all(color: royalGold.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,13 +138,29 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(data['userName'] ?? 'مستخدم ملكي', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text(status == 'approved' ? 'تم الشحن ✅' : (status == 'rejected' ? 'مرفوض ❌' : 'ينتظر المراجعة ⏳'), 
-                       style: TextStyle(color: status == 'approved' ? Colors.greenAccent : (status == 'rejected' ? Colors.redAccent : Colors.amber), fontSize: 11)),
+                  Text(data['userName'] ?? 'مستخدم ملكي',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16)),
+                  Text(
+                      status == 'approved'
+                          ? 'تم الشحن ✅'
+                          : (status == 'rejected'
+                              ? 'مرفوض ❌'
+                              : 'ينتظر المراجعة ⏳'),
+                      style: TextStyle(
+                          color: status == 'approved'
+                              ? Colors.greenAccent
+                              : (status == 'rejected'
+                                  ? Colors.redAccent
+                                  : Colors.amber),
+                          fontSize: 11)),
                 ],
               ),
               IconButton(
-                icon: const Icon(Icons.delete_forever_rounded, color: Colors.redAccent, size: 24),
+                icon: const Icon(Icons.delete_forever_rounded,
+                    color: Colors.redAccent, size: 24),
                 onPressed: () => _confirmDelete(docId),
               ),
             ],
@@ -132,9 +168,14 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(data['type'] == 'gem_bundle' ? Icons.diamond : Icons.monetization_on, color: royalGold, size: 20),
+              Icon(data['type'] == 'gem_bundle' ? Icons.diamond : Icons.stars,
+                  color: royalGold, size: 20),
               const SizedBox(width: 8),
-              Text('${data['amount']} - عبر ${data['method']}', style: TextStyle(color: royalGold, fontWeight: FontWeight.w900, fontSize: 15)),
+              Text('${data['amount']} - عبر ${data['method']}',
+                  style: TextStyle(
+                      color: royalGold,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 15)),
             ],
           ),
           const SizedBox(height: 15),
@@ -142,19 +183,26 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.cyanAccent.withOpacity(0.05),
+              color: Colors.cyanAccent.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.cyanAccent.withOpacity(0.2)),
+              border:
+                  Border.all(color: Colors.cyanAccent.withValues(alpha: 0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('بيانات التحقق المرسلة من المستخدم:', style: TextStyle(color: Colors.cyanAccent, fontSize: 11, fontWeight: FontWeight.bold)),
+                const Text('بيانات التحقق المرسلة من المستخدم:',
+                    style: TextStyle(
+                        color: Colors.cyanAccent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
-                SelectableText(
-                  data['paymentRef'] ?? 'لا توجد بيانات', 
-                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.5)
-                ),
+                SelectableText(data['paymentRef'] ?? 'لا توجد بيانات',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5)),
               ],
             ),
           ),
@@ -165,16 +213,28 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => _approvePayment(docId, data),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, padding: const EdgeInsets.symmetric(vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                    child: const Text('موافقة وشحن', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15))),
+                    child: const Text('موافقة وشحن',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => _rejectPayment(docId, data),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent.withOpacity(0.8), padding: const EdgeInsets.symmetric(vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                    child: const Text('رفض الطلب', style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.redAccent.withValues(alpha: 0.8),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15))),
+                    child: const Text('رفض الطلب',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ],
@@ -196,32 +256,43 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
         final userRef = db.collection('users').doc(userId);
         final payRef = db.collection('payments').doc(docId);
         final userSnap = await tx.get(userRef);
-        
+
         if (userSnap.exists) {
           int current = (userSnap.data()?[type] ?? 0);
           tx.update(userRef, {type: current + amount});
-          tx.update(payRef, {'status': 'approved', 'processedAt': FieldValue.serverTimestamp()});
-          
-          _sendNotification(userId, 'تم شحن حسابك 🎉', 'لقد تمت إضافة $amount من الـ ${type == 'gems' ? "جواهر" : "كوينز"} بنجاح. استمتع!');
+          tx.update(payRef, {
+            'status': 'approved',
+            'processedAt': FieldValue.serverTimestamp()
+          });
+
+          _sendNotification(userId, 'تم شحن حسابك 🎉',
+              'لقد تمت إضافة $amount من الـ ${type == 'gems' ? "جواهر" : "نجوم ⭐"} بنجاح. استمتع!');
         }
       });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تمت الموافقة وشحن المستخدم بنجاح ✅'), backgroundColor: Colors.green));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('تمت الموافقة وشحن المستخدم بنجاح ✅'),
+          backgroundColor: Colors.green));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red));
     }
   }
 
   Future<void> _rejectPayment(String docId, Map<String, dynamic> data) async {
-    await FirebaseFirestore.instance.collection('payments').doc(docId).update({
-      'status': 'rejected',
-      'processedAt': FieldValue.serverTimestamp()
-    });
-    _sendNotification(data['userId'], 'تنبيه بخصوص طلب الشحن ⚠️', 'عذراً، تم رفض طلب الشحن الخاص بك. يرجى التأكد من صحة بيانات التحويل.');
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم رفض الطلب وإبلاغ المستخدم ❌')));
+    await FirebaseFirestore.instance.collection('payments').doc(docId).update(
+        {'status': 'rejected', 'processedAt': FieldValue.serverTimestamp()});
+    _sendNotification(data['userId'], 'تنبيه بخصوص طلب الشحن ⚠️',
+        'عذراً، تم رفض طلب الشحن الخاص بك. يرجى التأكد من صحة بيانات التحويل.');
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم رفض الطلب وإبلاغ المستخدم ❌')));
   }
 
   void _sendNotification(String userId, String title, String body) {
-    FirebaseFirestore.instance.collection('notifications').doc(userId).collection('items').add({
+    FirebaseFirestore.instance
+        .collection('notifications')
+        .doc(userId)
+        .collection('items')
+        .add({
       'title': title,
       'body': body,
       'createdAt': FieldValue.serverTimestamp(),
@@ -231,7 +302,10 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
       'targetUid': userId,
       'title': title,
       'body': body,
-    }).catchError((e) => debugPrint("Push Error: $e"));
+    }).catchError((e) {
+      debugPrint("Push Error: $e");
+      return <String, dynamic>{};
+    });
   }
 
   Future<void> _confirmDelete(String docId) async {
@@ -239,16 +313,26 @@ class _AdminPaymentsPageState extends State<AdminPaymentsPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
-        title: const Text('حذف السجل نهائياً', style: TextStyle(color: Colors.white)),
-        content: const Text('هل أنت متأكد من حذف هذا الطلب من السجلات؟ لا يمكن التراجع عن هذا الإجراء.'),
+        title: const Text('حذف السجل نهائياً',
+            style: TextStyle(color: Colors.white)),
+        content: const Text(
+            'هل أنت متأكد من حذف هذا الطلب من السجلات؟ لا يمكن التراجع عن هذا الإجراء.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: const Text('حذف')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('إلغاء')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('حذف')),
         ],
       ),
     );
     if (confirm == true) {
-      await FirebaseFirestore.instance.collection('payments').doc(docId).delete();
+      await FirebaseFirestore.instance
+          .collection('payments')
+          .doc(docId)
+          .delete();
     }
   }
 }
@@ -264,23 +348,31 @@ class _ManualChargeUsersPageState extends State<_ManualChargeUsersPage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
 
-  Future<void> _manualCharge(String uid, String name, String type, int amount, bool isAdd) async {
+  Future<void> _manualCharge(
+      String uid, String name, String type, int amount, bool isAdd) async {
     try {
       int finalAmount = isAdd ? amount.abs() : -amount.abs();
-      await _db.collection('users').doc(uid).update({type: FieldValue.increment(finalAmount)});
-      
+      await _db
+          .collection('users')
+          .doc(uid)
+          .update({type: FieldValue.increment(finalAmount)});
+
       String action = isAdd ? "إضافة" : "خصم";
-      String currency = type == 'gems' ? "جوهرة 💎" : "كوينز 🪙";
-      
+      String currency = type == 'gems' ? "جوهرة 💎" : "نجمة ⭐";
+
       _db.collection('notifications').doc(uid).collection('items').add({
         'title': 'تحديث الرصيد الملكي',
-        'body': 'لقد تم $action ${amount.abs()} $currency لحسابك من قبل الإدارة.',
+        'body':
+            'لقد تم $action ${amount.abs()} $currency لحسابك من قبل الإدارة.',
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم التحديث وإرسال الإشعار بنجاح ✅'), backgroundColor: Colors.green));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('تم التحديث وإرسال الإشعار بنجاح ✅'),
+          backgroundColor: Colors.green));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red));
     }
   }
 
@@ -290,7 +382,9 @@ class _ManualChargeUsersPageState extends State<_ManualChargeUsersPage> {
       backgroundColor: const Color(0xFF0F1A24),
       appBar: AppBar(
         backgroundColor: const Color(0xFF042F2C),
-        title: const Text('شحن وخصم ملكي مباشر', style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        title: const Text('شحن وخصم ملكي مباشر',
+            style: TextStyle(
+                color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: Column(
@@ -305,8 +399,11 @@ class _ManualChargeUsersPageState extends State<_ManualChargeUsersPage> {
                 hintText: 'ابحث عن ملك (الاسم أو الآيدي)...',
                 hintStyle: const TextStyle(color: Colors.white24),
                 prefixIcon: const Icon(Icons.search, color: Colors.amber),
-                filled: true, fillColor: Colors.white.withOpacity(0.05),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+                filled: true,
+                fillColor: Colors.white.withValues(alpha: 0.05),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none),
               ),
             ),
           ),
@@ -314,7 +411,9 @@ class _ManualChargeUsersPageState extends State<_ManualChargeUsersPage> {
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: _db.collection('users').snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
                 final docs = snapshot.data!.docs.where((d) {
                   final data = d.data();
                   String n = (data['name'] ?? '').toString().toLowerCase();
@@ -331,25 +430,54 @@ class _ManualChargeUsersPageState extends State<_ManualChargeUsersPage> {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.03),
+                        color: Colors.white.withValues(alpha: 0.03),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.05)),
+                        border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.05)),
                       ),
                       child: ListTile(
                         leading: CircleAvatar(
                           radius: 25,
-                          backgroundColor: Colors.amber.withOpacity(0.1),
-                          backgroundImage: (data['profilePic'] ?? '').isNotEmpty ? NetworkImage(data['profilePic']) : null,
-                          child: (data['profilePic'] ?? '').isEmpty ? const Icon(Icons.person, color: Colors.amber) : null,
+                          backgroundColor: Colors.amber.withValues(alpha: 0.1),
+                          backgroundImage: (data['profilePic'] != null &&
+                                  (data['profilePic'] as String).isNotEmpty &&
+                                  Uri.tryParse(data['profilePic'] as String)
+                                          ?.hasAbsolutePath ==
+                                      true)
+                              ? NetworkImage(data['profilePic'] as String)
+                              : null,
+                          child: (data['profilePic'] == null ||
+                                  (data['profilePic'] as String).isEmpty ||
+                                  Uri.tryParse(data['profilePic'] as String)
+                                          ?.hasAbsolutePath !=
+                                      true)
+                              ? const Icon(Icons.person, color: Colors.amber)
+                              : null,
                         ),
-                        title: Text(data['name'] ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                        subtitle: Text('ID: ${data['royalId']} | 💎 ${data['gems']} | 🪙 ${data['coins']}', style: const TextStyle(color: Colors.white38, fontSize: 11)),
+                        title: Text(data['name']?.toString() ?? 'بدون اسم',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                        subtitle: Text(
+                            'ID: ${data['royalId'] ?? '---'} | 💎 ${data['gems'] ?? 0} | ⭐ ${data['coins'] ?? 0}',
+                            style: const TextStyle(
+                                color: Colors.white38, fontSize: 11)),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _buildCurrencyButton(uid, data['name'], 'gems', Icons.diamond, Colors.cyanAccent),
+                            _buildCurrencyButton(
+                                uid,
+                                data['name']?.toString() ?? 'مستخدم',
+                                'gems',
+                                Icons.diamond,
+                                Colors.cyanAccent),
                             const SizedBox(width: 12),
-                            _buildCurrencyButton(uid, data['name'], 'coins', Icons.monetization_on, Colors.amber),
+                            _buildCurrencyButton(
+                                uid,
+                                data['name']?.toString() ?? 'مستخدم',
+                                'coins',
+                                Icons.stars,
+                                Colors.amber),
                           ],
                         ),
                       ),
@@ -364,36 +492,43 @@ class _ManualChargeUsersPageState extends State<_ManualChargeUsersPage> {
     );
   }
 
-  Widget _buildCurrencyButton(String uid, String name, String type, IconData icon, Color color) {
+  Widget _buildCurrencyButton(
+      String uid, String name, String type, IconData icon, Color color) {
     return GestureDetector(
       onTap: () => _showManagementDialog(uid, name, type, icon, color),
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           shape: BoxShape.circle,
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Icon(icon, color: color, size: 24),
       ),
     );
   }
 
-  void _showManagementDialog(String uid, String name, String type, IconData icon, Color color) {
+  void _showManagementDialog(
+      String uid, String name, String type, IconData icon, Color color) {
     final ctrl = TextEditingController();
-    String currencyName = type == 'gems' ? "الجواهر" : "الكوينز";
-    
+    String currencyName = type == 'gems' ? "الجواهر" : "النجوم";
+
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setModalState) => AlertDialog(
           backgroundColor: const Color(0xFF1A1A2E),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: color.withOpacity(0.3))),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: color.withValues(alpha: 0.3))),
           title: Row(
             children: [
               Icon(icon, color: color),
               const SizedBox(width: 10),
-              Expanded(child: Text('إدارة $currencyName لـ $name', style: const TextStyle(color: Colors.white, fontSize: 16))),
+              Expanded(
+                  child: Text('إدارة $currencyName لـ $name',
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 16))),
             ],
           ),
           content: Column(
@@ -407,8 +542,10 @@ class _ManualChargeUsersPageState extends State<_ManualChargeUsersPage> {
                   hintText: 'أدخل الكمية هنا...',
                   hintStyle: const TextStyle(color: Colors.white24),
                   filled: true,
-                  fillColor: Colors.white.withOpacity(0.05),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  fillColor: Colors.white.withValues(alpha: 0.05),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none),
                 ),
               ),
               const SizedBox(height: 20),
@@ -425,7 +562,9 @@ class _ManualChargeUsersPageState extends State<_ManualChargeUsersPage> {
                       },
                       icon: const Icon(Icons.add_circle_outline, size: 18),
                       label: const Text('إضافة'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -440,7 +579,9 @@ class _ManualChargeUsersPageState extends State<_ManualChargeUsersPage> {
                       },
                       icon: const Icon(Icons.remove_circle_outline, size: 18),
                       label: const Text('خصم'),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white),
                     ),
                   ),
                 ],

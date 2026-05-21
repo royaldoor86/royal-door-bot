@@ -3,7 +3,7 @@ import '../../services/achievements_service.dart';
 
 /// صفحة سجل الإنجازات والإحصائيات الإدارية
 class AdminAchievementsStatsPage extends StatelessWidget {
-  const AdminAchievementsStatsPage({Key? key}) : super(key: key);
+  const AdminAchievementsStatsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -23,7 +23,8 @@ class BadgeService {
       transaction.update(userRef, {'activeBadge': badgeIcon});
 
       // 2. التحقق من وجود الشارة في المقتنيات
-      final invQuery = await inventoryRef.where('icon', isEqualTo: badgeIcon).get();
+      final invQuery =
+          await inventoryRef.where('icon', isEqualTo: badgeIcon).get();
 
       if (invQuery.docs.isEmpty) {
         // إذا لم تكن موجودة، نضيفها (مثل أعلام الدول المجانية)
@@ -42,12 +43,12 @@ class BadgeService {
   }
 
   /// التحقق من استحقاق شارات الإنجاز التلقائية (مثل ليفل معين أو عدد هدايا)
-  static Future<void> checkAndGrantAchievementBadges(Map<String, dynamic> userData) async {
+  static Future<void> checkAndGrantAchievementBadges(
+      Map<String, dynamic> userData) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
 
     final int userLevel = (userData['userLevel'] ?? 1).toInt();
-    final int royalXP = (userData['royalXP'] ?? 0).toInt();
     final String vipRank = userData['vipRank'] ?? '';
 
     // مثال: شارة "الملك الذهبي" لمن يصل لليفل 20 أو لديه اشتراك رويال
@@ -61,10 +62,11 @@ class BadgeService {
     }
   }
 
-  static Future<void> _grantBadgeIfMissing(String uid, String name, String icon, String category) async {
+  static Future<void> _grantBadgeIfMissing(
+      String uid, String name, String icon, String category) async {
     final invRef = _db.collection('users').doc(uid).collection('inventory');
     final query = await invRef.where('icon', isEqualTo: icon).get();
-    
+
     if (query.docs.isEmpty) {
       await invRef.add({
         'type': 'badge',

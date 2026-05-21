@@ -1,7 +1,0 @@
-# google_sign_in 7.2.0 API usage
-
-- The default constructor and .standard() are not available.
-- The correct way is to use GoogleSignInPlatform directly or use a factory/static method if provided.
-- The package may have moved the sign-in logic to a different class or method.
-
-Action: I will fetch the official documentation for google_sign_in 7.2.0 to get the correct usage and update your code accordingly.

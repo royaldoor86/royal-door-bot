@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/design_tokens.dart';
+import '../../theme/reusable_widgets.dart';
 import '../../services/admin_setup_service.dart';
 import 'admin_users_page.dart';
 import 'admin_rooms_page.dart';
-import 'admin_investments_page.dart';
+import '../../features/admin/admin_rewards_page.dart';
 import 'admin_announcement_page.dart';
 import 'admin_gifts_page.dart';
 import 'admin_reports_page.dart';
@@ -17,6 +19,7 @@ import 'admin_agencies_page.dart';
 import 'admin_families_page.dart';
 import 'admin_frames_page.dart';
 import 'admin_effects_page.dart';
+import 'admin_task_rewards_mgmt_page.dart';
 import 'admin_levels_page.dart'; // استيراد صفحة المستويات
 
 class AdminDashboardPage extends StatefulWidget {
@@ -43,7 +46,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     'إدارة الوكلاء 🛡️',
     'البلاغات والحظر 🚫',
     'الشريط الإعلاني 📢',
-    'إدارة الاستثمارات 🏦',
+    'إدارة المكافآت 🏦',
+    'مهام ومقالات 📄',
     'إعدادات اللوحة ⚙️',
   ];
 
@@ -58,8 +62,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
-            title: const Text('لوحة تحكم رويال دور الملكية 👑',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            title: const HeadingText('لوحة تحكم رويال دور الملكية 👑',
+                fontSize: DesignTokens.fontSizeLg),
           ),
           drawer: _buildDrawer(context),
           body: Padding(
@@ -73,7 +77,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
-      backgroundColor: const Color(0xFF14022A),
+      backgroundColor: DesignTokens.backgroundDarkDeep,
       child: SafeArea(
         child: Column(
           children: [
@@ -81,18 +85,21 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             Expanded(
               child: ListView.builder(
                 itemCount: _menuItems.length,
+                padding: const EdgeInsets.symmetric(vertical: DesignTokens.spacingMd),
                 itemBuilder: (context, index) {
                   final selected = index == _selectedMenuIndex;
                   return ListTile(
                     leading: Icon(_getIcon(index),
-                        color: selected ? Colors.amber : Colors.white70),
+                        color: selected ? DesignTokens.primaryGold : DesignTokens.neutralWhite.withValues(alpha: 0.7)),
                     title: Text(_menuItems[index],
                         style: TextStyle(
-                            color: selected ? Colors.amber : Colors.white,
+                            color: selected ? DesignTokens.primaryGold : DesignTokens.neutralWhite,
                             fontWeight: selected
-                                ? FontWeight.bold
-                                : FontWeight.normal)),
+                                ? DesignTokens.fontWeightBold
+                                : DesignTokens.fontWeightNormal,
+                            fontFamily: DesignTokens.primaryFont)),
                     selected: selected,
+                    selectedTileColor: DesignTokens.primaryGold.withValues(alpha: 0.1),
                     onTap: () {
                       setState(() => _selectedMenuIndex = index);
                       Navigator.pop(context);
@@ -110,24 +117,27 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   Widget _buildDrawerHeader() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(DesignTokens.spacingXl),
       decoration: const BoxDecoration(
-        gradient:
-            LinearGradient(colors: [Color(0xFF4B008F), Color(0xFF200040)]),
+        gradient: LinearGradient(
+          colors: [DesignTokens.backgroundDarkDeep, DesignTokens.backgroundDarkMedium],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
+        border: Border(
+          bottom: BorderSide(color: Colors.white10, width: 1),
+        ),
       ),
       child: const Column(
         children: [
           CircleAvatar(
               radius: 35,
-              backgroundColor: Colors.amber,
+              backgroundColor: DesignTokens.primaryGold,
               child: Icon(Icons.admin_panel_settings,
-                  size: 40, color: Colors.black)),
-          SizedBox(height: 10),
-          Text("المدير العام",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          Text("نظام رويال دور الموحد",
-              style: TextStyle(color: Colors.white54, fontSize: 10)),
+                  size: 40, color: DesignTokens.neutralBlack)),
+          SizedBox(height: DesignTokens.spacingMd),
+          HeadingText("المدير العام", fontSize: DesignTokens.fontSizeBase),
+          CaptionText("نظام رويال دور الموحد"),
         ],
       ),
     );
@@ -150,7 +160,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       case 6:
         return Icons.auto_awesome;
       case 7:
-        return Icons.monetization_on;
+        return Icons.stars_rounded;
       case 8:
         return Icons.card_giftcard;
       case 9:
@@ -197,14 +207,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       case 12:
         return const AdminAnnouncementPage();
       case 13:
-        return const AdminInvestmentsPage();
+        return const AdminRewardsPage();
+      case 14:
+        return const AdminTaskRewardsMgmtPage();
       default:
         return const _AdminSettingsSection();
     }
   }
 }
 
-// ... بقية الـ Widgets (_OverviewSection, AdminEconomyWrapper, _AdminSettingsSection) تبقى كما هي
 class AdminEconomyWrapper extends StatefulWidget {
   const AdminEconomyWrapper({super.key});
 
@@ -228,19 +239,15 @@ class _AdminEconomyWrapperState extends State<AdminEconomyWrapper> {
   Widget _buildEconomyMenu() {
     return Column(
       children: [
-        const Text("إدارة اقتصاد التطبيق 💰",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
+        const HeadingText("إدارة اقتصاد التطبيق 💰", fontSize: DesignTokens.fontSizeXl2),
+        const SizedBox(height: DesignTokens.spacingXl),
         _buildEconomyTile(
             "طلبات الشحن المعلقة 🧾",
             "تفعيل وشحن طلبات المستخدمين",
             Icons.receipt_long,
             () => setState(() => _innerIndex = 1)),
         _buildEconomyTile(
-            "باقات الجواهر والكوينز 💎",
+            "باقات الجواهر والنجوم 💎",
             "إدارة الأسعار والباقات المتوفرة",
             Icons.diamond,
             () => setState(() => _innerIndex = 2)),
@@ -257,23 +264,18 @@ class _AdminEconomyWrapperState extends State<AdminEconomyWrapper> {
 
   Widget _buildEconomyTile(
       String title, String sub, IconData icon, VoidCallback onTap) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(15)),
+    return RoyalCard(
+      margin: const EdgeInsets.only(bottom: DesignTokens.spacingMd),
+      onTap: onTap,
       child: ListTile(
+        contentPadding: EdgeInsets.zero,
         leading: CircleAvatar(
-            backgroundColor: Colors.amber.withOpacity(0.1),
-            child: Icon(icon, color: Colors.amber)),
-        title: Text(title,
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text(sub,
-            style: const TextStyle(color: Colors.white54, fontSize: 11)),
+            backgroundColor: DesignTokens.primaryGold.withValues(alpha: 0.1),
+            child: Icon(icon, color: DesignTokens.primaryGold)),
+        title: BodyText(title, fontWeight: DesignTokens.fontWeightBold),
+        subtitle: CaptionText(sub, textAlign: TextAlign.right),
         trailing: const Icon(Icons.arrow_forward_ios,
             color: Colors.white24, size: 14),
-        onTap: onTap,
       ),
     );
   }
@@ -286,38 +288,35 @@ class _OverviewSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("إحصائيات النظام العامة",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
+        const HeadingText("إحصائيات النظام العامة",
+            fontSize: DesignTokens.fontSizeXl2),
+        const SizedBox(height: DesignTokens.spacingXl),
         GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 15,
+          crossAxisSpacing: DesignTokens.spacingMd,
+          mainAxisSpacing: DesignTokens.spacingMd,
           children: const [
             _StatCard(
                 title: "المستخدمين",
                 collection: "users",
                 icon: Icons.group,
-                color: Colors.blue),
+                color: DesignTokens.primarySapphire),
             _StatCard(
                 title: "الغرف",
                 collection: "rooms",
                 icon: Icons.meeting_room,
-                color: Colors.green),
+                color: DesignTokens.primaryEmerald),
             _StatCard(
                 title: "العائلات",
                 collection: "families",
                 icon: Icons.castle,
-                color: Colors.purple),
+                color: DesignTokens.primaryAmethyst),
             _StatCard(
                 title: "البلاغات",
                 collection: "reports",
                 icon: Icons.warning,
-                color: Colors.red),
+                color: DesignTokens.semanticError),
           ],
         ),
       ],
@@ -337,8 +336,8 @@ class _StatCard extends StatelessWidget {
       required this.color});
   @override
   Widget build(BuildContext context) {
-    return AppTheme.glassContainer(
-      padding: const EdgeInsets.all(15),
+    return GlassCard(
+      padding: const EdgeInsets.all(DesignTokens.spacingMd),
       child: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection(collection).snapshots(),
         builder: (context, snap) {
@@ -346,15 +345,11 @@ class _StatCard extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: color, size: 30),
-              const SizedBox(height: 10),
-              Text(title,
-                  style: const TextStyle(color: Colors.white70, fontSize: 12)),
-              Text(count.toString(),
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold)),
+              Icon(icon, color: color, size: DesignTokens.iconSizeLg),
+              const SizedBox(height: DesignTokens.spacingSm),
+              CaptionText(title),
+              HeadingText(count.toString(),
+                  fontSize: DesignTokens.fontSizeXl2),
             ],
           );
         },
@@ -375,7 +370,7 @@ class _AdminSettingsSectionState extends State<_AdminSettingsSection> {
   bool _maintenanceMode = false;
   bool _storeMaintenance = false;
   bool _giftsMaintenance = false;
-  bool _investmentMaintenance = false;
+  bool _harvestMaintenance = false;
   bool _isLoading = true;
 
   @override
@@ -395,7 +390,9 @@ class _AdminSettingsSectionState extends State<_AdminSettingsSection> {
         _maintenanceMode = data['maintenanceMode'] ?? false;
         _storeMaintenance = data['storeMaintenance'] ?? false;
         _giftsMaintenance = data['giftsMaintenance'] ?? false;
-        _investmentMaintenance = data['investmentMaintenance'] ?? false;
+        _harvestMaintenance = data['harvestMaintenance'] ??
+            data['investmentMaintenance'] ??
+            false;
         _maintenanceMessageController.text = data['maintenanceMessage'] ??
             "نحن نقوم ببعض التحسينات، سنعود قريباً!";
         _isLoading = false;
@@ -414,7 +411,9 @@ class _AdminSettingsSectionState extends State<_AdminSettingsSection> {
       'maintenanceMode': _maintenanceMode,
       'storeMaintenance': _storeMaintenance,
       'giftsMaintenance': _giftsMaintenance,
-      'investmentMaintenance': _investmentMaintenance,
+      'harvestMaintenance': _harvestMaintenance,
+      'investmentMaintenance':
+          _harvestMaintenance, // Backwards compatibility for the maintenance flag
       'maintenanceMessage': _maintenanceMessageController.text,
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
@@ -453,13 +452,104 @@ class _AdminSettingsSectionState extends State<_AdminSettingsSection> {
       setState(() => _isLoading = true);
       try {
         await AdminSetupService.setupGlobalContent();
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("تم رفع المحتوى بنجاح! اذهب للمتجر لرؤيته ✨")));
+        }
       } catch (e) {
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("خطأ: $e"), backgroundColor: Colors.redAccent));
+        }
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _setupFamilyTasks() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A0A10),
+        title: const Text("تهيئة مهام العوائل 🏰",
+            style: TextStyle(color: Colors.amber)),
+        content: const Text(
+            "سيتم الآن رفع مهام العوائل الأساسية (تسجيل دخول، هدايا، تفاعل صوتي) إلى Firestore. هل تود الاستمرار؟",
+            style: TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text("تراجع")),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text("رفع المهام ⚡",
+                  style: TextStyle(color: Colors.amber))),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      setState(() => _isLoading = true);
+      try {
+        final tasksCollection =
+            FirebaseFirestore.instance.collection('family_tasks_config');
+        List<Map<String, dynamic>> defaultTasks = [
+          {
+            'id': 'daily_login',
+            'title': 'الولاء اليومي',
+            'description': 'سجل دخولك للتطبيق يومياً لدعم عائلتك.',
+            'xp': 100,
+            'coins': 50,
+            'gems': 0,
+            'icon': 'event_available',
+          },
+          {
+            'id': 'send_gift',
+            'title': 'الكرم الملكي',
+            'description': 'أرسل أي هدية داخل غرف الدردشة الصوتية.',
+            'xp': 500,
+            'coins': 200,
+            'gems': 1,
+            'icon': 'card_giftcard',
+          },
+          {
+            'id': 'voice_stay',
+            'title': 'صوت المملكة',
+            'description':
+                'ابقَ في الميكروفون لمدة 30 دقيقة داخل غرفة العائلة.',
+            'xp': 300,
+            'coins': 100,
+            'gems': 0,
+            'icon': 'mic',
+          },
+          {
+            'id': 'invite_member',
+            'title': 'توسيع الإمبراطورية',
+            'description': 'قم بدعوة عضو جديد للانضمام إلى العائلة.',
+            'xp': 1000,
+            'coins': 500,
+            'gems': 5,
+            'icon': 'person_add',
+          },
+        ];
+
+        for (var task in defaultTasks) {
+          await tasksCollection.doc(task['id']).set(task);
+        }
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text(
+                  "تم رفع جميع المهام بنجاح! سيتمكن الأعضاء من رؤيتها الآن ✅"),
+              backgroundColor: Colors.green));
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("خطأ في الرفع: $e"),
+              backgroundColor: Colors.redAccent));
+        }
       } finally {
         setState(() => _isLoading = false);
       }
@@ -468,68 +558,52 @@ class _AdminSettingsSectionState extends State<_AdminSettingsSection> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading)
-      return const Center(
-          child: CircularProgressIndicator(color: Colors.amber));
+    if (_isLoading) {
+      return const RoyalLoadingIndicator();
+    }
 
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("إعدادات الصيانة والتحكم 🛠️",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          AppTheme.gradientButton(
-            text: "تهيئة المحتوى الملكي (هدايا/إطارات) ⚡",
+          const HeadingText("إعدادات الصيانة والتحكم 🛠️",
+              fontSize: DesignTokens.fontSizeXl2),
+          const SizedBox(height: DesignTokens.spacingXl),
+          RoyalButton(
+            label: "تهيئة المحتوى الملكي (هدايا/إطارات) ⚡",
             onPressed: _runInitialSetup,
-            width: double.infinity,
           ),
-          const SizedBox(height: 30),
-          const Divider(color: Colors.white10),
-          const SizedBox(height: 10),
+          const SizedBox(height: DesignTokens.spacingMd),
+          RoyalButton(
+            label: "تهيئة مهام العوائل 🏰",
+            onPressed: _setupFamilyTasks,
+          ),
+          const SizedBox(height: DesignTokens.spacingXl2),
+          const RoyalDivider(indent: 0, endIndent: 0),
+          const SizedBox(height: DesignTokens.spacingMd),
           _buildOption("غلق التطبيق بالكامل للصيانة 🚫", _maintenanceMode,
               (v) => setState(() => _maintenanceMode = v)),
           _buildOption("غلق المتجر الملكي 🛒", _storeMaintenance,
               (v) => setState(() => _storeMaintenance = v)),
           _buildOption("غلق صندوق الهدايا 🎁", _giftsMaintenance,
               (v) => setState(() => _giftsMaintenance = v)),
-          _buildOption("غلق نظام الاستثمار 🏦", _investmentMaintenance,
-              (v) => setState(() => _investmentMaintenance = v)),
-          const SizedBox(height: 20),
-          const Text("رسالة الصيانة للمستخدمين:",
-              style: TextStyle(color: Colors.white70, fontSize: 14)),
-          const SizedBox(height: 10),
-          TextField(
+          _buildOption("غلق نظام المكافآت 🏦", _harvestMaintenance,
+              (v) => setState(() => _harvestMaintenance = v)),
+          const SizedBox(height: DesignTokens.spacingLg),
+          const BodyText("رسالة الصيانة للمستخدمين:",
+              fontSize: DesignTokens.fontSizeSm),
+          const SizedBox(height: DesignTokens.spacingSm),
+          RoyalTextField(
             controller: _maintenanceMessageController,
             maxLines: 3,
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white.withOpacity(0.05),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide.none),
-              hintText: "اكتب رسالة تظهر للمستخدم عند الغلق...",
-              hintStyle: const TextStyle(color: Colors.white24),
-            ),
+            hintText: "اكتب رسالة تظهر للمستخدم عند الغلق...",
           ),
-          const SizedBox(height: 30),
-          ElevatedButton(
+          const SizedBox(height: DesignTokens.spacingXl2),
+          RoyalButton(
+            label: "حفظ وتطبيق الإعدادات 💾",
             onPressed: _saveSettings,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber,
-              foregroundColor: Colors.black,
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-            ),
-            child: const Text("حفظ وتطبيق الإعدادات 💾",
-                style: TextStyle(fontWeight: FontWeight.bold)),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: DesignTokens.spacingXl4),
         ],
       ),
     );
@@ -537,11 +611,10 @@ class _AdminSettingsSectionState extends State<_AdminSettingsSection> {
 
   Widget _buildOption(String title, bool val, Function(bool) onChanged) {
     return SwitchListTile(
-      title: Text(title,
-          style: const TextStyle(color: Colors.white, fontSize: 14)),
+      title: BodyText(title, fontSize: DesignTokens.fontSizeSm),
       value: val,
       onChanged: onChanged,
-      activeColor: Colors.amber,
+      activeThumbColor: DesignTokens.primaryGold,
       contentPadding: EdgeInsets.zero,
     );
   }

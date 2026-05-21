@@ -20,8 +20,8 @@ class DominoResultPage extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: isWinner 
-              ? [const Color(0xFFD4AF37).withOpacity(0.3), Colors.black]
-              : [Colors.red.withOpacity(0.2), Colors.black],
+              ? [const Color(0xFFD4AF37).withValues(alpha: 0.3), Colors.black]
+              : [Colors.red.withValues(alpha: 0.2), Colors.black],
           ),
         ),
         child: Column(
@@ -43,11 +43,11 @@ class DominoResultPage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 40),
               padding: const EdgeInsets.all(25),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.5)),
+                border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.5)),
                 boxShadow: [
-                  BoxShadow(color: (isWinner ? Colors.amber : Colors.red).withOpacity(0.1), blurRadius: 20),
+                  BoxShadow(color: (isWinner ? Colors.amber : Colors.red).withValues(alpha: 0.1), blurRadius: 20),
                 ],
               ),
               child: Row(

@@ -6,7 +6,7 @@ import '../../../../models/family_model.dart';
 import '../../../../services/storage_service.dart';
 
 class AdminFamiliesPage extends StatefulWidget {
-  const AdminFamiliesPage({Key? key}) : super(key: key);
+  const AdminFamiliesPage({super.key});
 
   @override
   State<AdminFamiliesPage> createState() => _AdminFamiliesPageState();
@@ -74,9 +74,9 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF051211),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
+      decoration: const BoxDecoration(
+        color: Color(0xFF051211),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
       ),
       child: Column(
         children: [
@@ -94,7 +94,7 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
               hintText: 'ابحث عن عائلة...',
               hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
               prefixIcon: Icon(Icons.search, color: accentGold, size: 20),
-              filled: true, fillColor: Colors.white.withOpacity(0.05),
+              filled: true, fillColor: Colors.white.withValues(alpha: 0.05),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
             ),
             onChanged: (v) => setState(() => _searchText = v),
@@ -117,7 +117,7 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModalState) => AlertDialog(
           backgroundColor: const Color(0xFF1A1A2E),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25), side: BorderSide(color: accentGold.withOpacity(0.3))),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25), side: BorderSide(color: accentGold.withValues(alpha: 0.3))),
           title: Text('تأسيس عائلة جديدة', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: Column(
@@ -164,7 +164,14 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
                     'creatorId': 'ADMIN',
                     'level': 1,
                     'memberCount': 1,
+                    'totalExp': 0,
                     'totalPoints': 0,
+                    'dailyExp': 0,
+                    'dailyPoints': 0,
+                    'weeklyExp': 0,
+                    'weeklyPoints': 0,
+                    'monthlyExp': 0,
+                    'monthlyPoints': 0,
                     'isVerified': true,
                     'createdAt': FieldValue.serverTimestamp(),
                   });
@@ -192,7 +199,7 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
       decoration: InputDecoration(
         hintText: hint, hintStyle: const TextStyle(color: Colors.white24, fontSize: 12),
         prefixIcon: Icon(icon, color: accentGold, size: 18),
-        filled: true, fillColor: Colors.white.withOpacity(0.05),
+        filled: true, fillColor: Colors.white.withValues(alpha: 0.05),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
       ),
     );
@@ -202,9 +209,9 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: accentGold.withOpacity(0.1)),
+        border: Border.all(color: accentGold.withValues(alpha: 0.1)),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(15),
@@ -215,7 +222,7 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
           child: family.logoUrl.isEmpty ? Icon(Icons.castle, color: accentGold) : null,
         ),
         title: Text(family.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text(family.slogan, style: TextStyle(color: accentGold.withOpacity(0.5), fontSize: 11)),
+        subtitle: Text(family.slogan, style: TextStyle(color: accentGold.withValues(alpha: 0.5), fontSize: 11)),
         trailing: IconButton(
           icon: const Icon(Icons.delete_forever, color: Colors.redAccent),
           onPressed: () => _confirmDelete(family),
@@ -245,7 +252,7 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.castle_rounded, size: 80, color: accentGold.withOpacity(0.1)),
+          Icon(Icons.castle_rounded, size: 80, color: accentGold.withValues(alpha: 0.1)),
           const SizedBox(height: 16),
           const Text('لا توجد عائلات مسجلة حالياً', style: TextStyle(color: Colors.white24, fontSize: 16)),
           const SizedBox(height: 10),
@@ -265,6 +272,8 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
       'level': 10,
       'memberCount': 50,
       'isVerified': true,
+      'totalExp': 0,
+      'totalPoints': 0,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }

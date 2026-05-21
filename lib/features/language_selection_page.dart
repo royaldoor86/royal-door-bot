@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_theme.dart';
 
 class LanguageSelectionPage extends StatefulWidget {
   final Function(Locale) onLanguageChanged;
@@ -25,64 +26,86 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('اللغة / Language'),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          _buildLanguageOption(
-            title: 'العربية',
-            subTitle: 'Arabic',
-            locale: const Locale('ar'),
-          ),
-          const Divider(),
-          _buildLanguageOption(
-            title: 'English',
-            subTitle: 'الإنجليزية',
-            locale: const Locale('en'),
-          ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: ElevatedButton(
-              onPressed: () {
-                widget.onLanguageChanged(_selectedLocale);
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: const Text('اللغة / Language',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: AppTheme.background(
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              _buildLanguageCard(
+                title: 'العربية',
+                subTitle: 'Arabic',
+                locale: const Locale('ar'),
+                icon: '🇸🇦',
               ),
-              child: const Text('حفظ / Save'),
-            ),
+              const SizedBox(height: 12),
+              _buildLanguageCard(
+                title: 'English',
+                subTitle: 'الإنجليزية',
+                locale: const Locale('en'),
+                icon: '🇺🇸',
+              ),
+              const Spacer(),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+                child: AppTheme.gradientButton(
+                  text: _selectedLocale.languageCode == 'ar'
+                      ? 'حفظ التغييرات'
+                      : 'Save Changes',
+                  onPressed: () {
+                    widget.onLanguageChanged(_selectedLocale);
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildLanguageOption({
+  Widget _buildLanguageCard({
     required String title,
     required String subTitle,
     required Locale locale,
+    required String icon,
   }) {
     bool isSelected = _selectedLocale.languageCode == locale.languageCode;
-    return ListTile(
-      onTap: () {
-        setState(() {
-          _selectedLocale = locale;
-        });
-      },
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(subTitle),
-      trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Colors.deepPurple)
-          : const Icon(Icons.radio_button_off, color: Colors.grey),
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      child: AppTheme.glassContainer(
+        padding: const EdgeInsets.all(0),
+        opacity: isSelected ? 0.1 : 0.03,
+        borderGlow: isSelected,
+        child: ListTile(
+          onTap: () => setState(() => _selectedLocale = locale),
+          leading: Text(icon, style: const TextStyle(fontSize: 24)),
+          title: Text(title,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight:
+                      isSelected ? FontWeight.bold : FontWeight.normal)),
+          subtitle: Text(subTitle,
+              style: const TextStyle(color: Colors.white38, fontSize: 12)),
+          trailing: isSelected
+              ? const Icon(Icons.check_circle_rounded,
+                  color: AppTheme.royalGold, size: 26)
+              : const Icon(Icons.radio_button_off_rounded,
+                  color: Colors.white10, size: 26),
+        ),
+      ),
     );
   }
 }

@@ -44,9 +44,10 @@ export const claimDailyLogin = functions.region("us-central1").https.onCall(asyn
     streak,
   }, {merge: true});
 
-  // مكافأة الكوينز (مثال: 10 كوينز)
+  // مكافأة النجوم (مثال: 10 نجوم)
   await userRef.set({
-    coins: admin.firestore.FieldValue.increment(10),
+    stars: admin.firestore.FieldValue.increment(10),
+    coins: admin.firestore.FieldValue.increment(10), // مزامنة مع الكوينز للإصدارات القديمة
     dailyStreak: streak,
     lastDailyLogin: admin.firestore.Timestamp.fromDate(today),
   }, {merge: true});

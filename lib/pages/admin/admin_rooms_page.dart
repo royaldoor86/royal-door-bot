@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../theme/app_theme.dart';
 
 class AdminRoomsPage extends StatefulWidget {
   const AdminRoomsPage({super.key});
@@ -146,14 +145,16 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
         });
       }
       await batch.commit();
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("تم إنشاء 10 غرف ملكية بنجاح ✅"),
             backgroundColor: Colors.green));
+      }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("فشل الإنشاء: $e"), backgroundColor: Colors.red));
+      }
     } finally {
       if (mounted) setState(() => _isSeeding = false);
     }
@@ -181,9 +182,10 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
     );
     if (confirm == true) {
       await FirebaseFirestore.instance.collection('rooms').doc(roomId).delete();
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("تم حذف الغرفة")));
+      }
     }
   }
 
@@ -235,11 +237,12 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
             IconButton(
                 icon: const Icon(Icons.remove_circle, color: Colors.red),
                 onPressed: () {
-                  if (currentMics > 1)
+                  if (currentMics > 1) {
                     FirebaseFirestore.instance
                         .collection('rooms')
                         .doc(roomId)
                         .update({'micsCount': currentMics - 1});
+                  }
                   Navigator.pop(ctx);
                 }),
             Text("$currentMics مايك",
@@ -367,7 +370,7 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                     hintText: "بحث عن غرفة...",
                     prefixIcon: const Icon(Icons.search, color: Colors.amber),
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.05),
+                    fillColor: Colors.white.withValues(alpha: 0.05),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                         borderSide: BorderSide.none),
@@ -403,8 +406,9 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('rooms').snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData)
+              if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
+              }
               var docs = snapshot.data!.docs;
               if (_searchText.isNotEmpty) {
                 docs = docs
@@ -430,11 +434,11 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(15),
                       border: rank != null
                           ? Border.all(
-                              color: Colors.amber.withOpacity(0.3), width: 1)
+                              color: Colors.amber.withValues(alpha: 0.3), width: 1)
                           : null,
                     ),
                     child: Column(

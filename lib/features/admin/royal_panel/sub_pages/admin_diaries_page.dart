@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../models/post_model.dart';
 
 class AdminDiariesPage extends StatefulWidget {
-  const AdminDiariesPage({Key? key}) : super(key: key);
+  const AdminDiariesPage({super.key});
 
   @override
   State<AdminDiariesPage> createState() => _AdminDiariesPageState();
@@ -47,7 +47,7 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
                   }).toList();
 
                   if (filteredDocs.isEmpty) {
-                    return Center(child: Text('لا توجد منشورات تطابق بحثك', style: TextStyle(color: Colors.white24)));
+                    return const Center(child: Text('لا توجد منشورات تطابق بحثك', style: TextStyle(color: Colors.white24)));
                   }
 
                   return ListView.builder(
@@ -78,7 +78,7 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
           hintText: 'ابحث عن منشورات مستخدم...',
           hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
           prefixIcon: Icon(Icons.search, color: accentGold),
-          filled: true, fillColor: Colors.white.withOpacity(0.05),
+          filled: true, fillColor: Colors.white.withValues(alpha: 0.05),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
         ),
         onChanged: (v) => setState(() => _searchText = v),
@@ -90,9 +90,9 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: accentGold.withOpacity(0.1)),
+        border: Border.all(color: accentGold.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,6 +225,13 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
         ],
       ),
     );
-    if (confirm == true) await _db.collection('posts').doc(postId).delete();
+    if (confirm == true) {
+      await _db.collection('posts').doc(postId).delete();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم حذف المنشور بنجاح')),
+        );
+      }
+    }
   }
 }

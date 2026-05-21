@@ -1,6 +1,5 @@
 // lib/pages/auth/forgot_password_page.dart
 
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../app_theme.dart';
@@ -40,9 +39,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         Navigator.pop(context);
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("خطأ: $e"), backgroundColor: Colors.redAccent));
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -62,10 +62,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // تم حذف الإطار والظلال من هنا ليبقى الشعار فقط
+                    // تم تحديث مسار الصورة
                     ClipOval(
                       child: Image.asset(
-                        'assets/images/app_icon.png',
+                        'assets/app/app_icon.png',
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,

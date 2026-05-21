@@ -64,9 +64,9 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
   Widget _buildThemeCard(String id, Map<String, dynamic> data) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: accentGold.withOpacity(0.1)),
+        border: Border.all(color: accentGold.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -87,7 +87,7 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
               children: [
                 Text(data['name'] ?? 'بدون اسم', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 4),
-                Text('${data['price'] ?? 0} كوينز 🪙', style: TextStyle(color: accentGold, fontSize: 11, fontWeight: FontWeight.bold)),
+                Text('${data['price'] ?? 0} نجمة ⭐', style: TextStyle(color: accentGold, fontSize: 11, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 5),
                 IconButton(
                   icon: const Icon(Icons.delete_forever_rounded, color: Colors.redAccent, size: 20),
@@ -114,7 +114,7 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModalState) => AlertDialog(
           backgroundColor: const Color(0xFF1A1A2E),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25), side: BorderSide(color: accentGold.withOpacity(0.3))),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25), side: BorderSide(color: accentGold.withValues(alpha: 0.3))),
           title: Text('إصدار ثيم ملكي جديد', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: Column(
@@ -128,9 +128,9 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
                   child: Container(
                     height: 120, width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: accentGold.withOpacity(0.2)),
+                      border: Border.all(color: accentGold.withValues(alpha: 0.2)),
                       image: selectedImage != null ? DecorationImage(image: FileImage(selectedImage!), fit: BoxFit.cover) : null,
                     ),
                     child: selectedImage == null ? Column(
@@ -146,7 +146,7 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
                 const SizedBox(height: 20),
                 _buildField(nameCtrl, 'اسم الثيم', Icons.title),
                 const SizedBox(height: 12),
-                _buildField(priceCtrl, 'السعر بالكوينز', Icons.monetization_on, isNumber: true),
+                _buildField(priceCtrl, 'السعر بالنجوم', Icons.stars, isNumber: true),
               ],
             ),
           ),
@@ -188,7 +188,7 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
       decoration: InputDecoration(
         hintText: hint, hintStyle: const TextStyle(color: Colors.white24, fontSize: 12),
         prefixIcon: Icon(icon, color: accentGold, size: 18),
-        filled: true, fillColor: Colors.white.withOpacity(0.05),
+        filled: true, fillColor: Colors.white.withValues(alpha: 0.05),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
       ),
     );
@@ -215,7 +215,7 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.palette_outlined, size: 80, color: accentGold.withOpacity(0.1)),
+          Icon(Icons.palette_outlined, size: 80, color: accentGold.withValues(alpha: 0.1)),
           const SizedBox(height: 16),
           const Text('خزانة الثيمات فارغة حالياً', style: TextStyle(color: Colors.white24, fontSize: 16)),
         ],

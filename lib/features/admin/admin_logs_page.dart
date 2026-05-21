@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import '../../services/admin_logs_service.dart';
 
 class AdminLogsPage extends StatelessWidget {
-  const AdminLogsPage({Key? key}) : super(key: key);
+  const AdminLogsPage({super.key});
 
   final Color primaryDark = const Color(0xFF0A1F1C);
   final Color accentGold = const Color(0xFFC5A059);
@@ -52,9 +52,9 @@ class AdminLogsPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: RichText(
         text: TextSpan(

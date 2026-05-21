@@ -214,15 +214,15 @@ class _LeaderboardSheetState extends State<LeaderboardSheet>
     IconData rankIcon = Icons.shield;
 
     if (rank == 1) {
-      borderColor = Colors.amber.withOpacity(0.5);
+      borderColor = Colors.amber.withValues(alpha: 0.5);
       iconColor = Colors.amber;
       rankIcon = Icons.emoji_events;
     } else if (rank == 2) {
-      borderColor = Colors.grey.withOpacity(0.5);
+      borderColor = Colors.grey.withValues(alpha: 0.5);
       iconColor = Colors.grey[300]!;
       rankIcon = Icons.emoji_events;
     } else if (rank == 3) {
-      borderColor = const Color(0xFFCD7F32).withOpacity(0.5);
+      borderColor = const Color(0xFFCD7F32).withValues(alpha: 0.5);
       iconColor = const Color(0xFFCD7F32);
       rankIcon = Icons.emoji_events;
     }
@@ -231,7 +231,7 @@ class _LeaderboardSheetState extends State<LeaderboardSheet>
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: rank <= 3 ? iconColor.withOpacity(0.08) : Colors.white.withOpacity(0.03),
+        color: rank <= 3 ? iconColor.withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: borderColor),
       ),

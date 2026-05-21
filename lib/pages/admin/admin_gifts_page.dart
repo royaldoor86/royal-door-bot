@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 
 class AdminGiftsPage extends StatefulWidget {
   const AdminGiftsPage({super.key});
@@ -14,7 +14,9 @@ class AdminGiftsPage extends StatefulWidget {
   State<AdminGiftsPage> createState() => _AdminGiftsPageState();
 }
 
-class _AdminGiftsPageState extends State<AdminGiftsPage> {
+class _AdminGiftsPageState extends State<AdminGiftsPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   bool _isSaving = false;
   final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _categoryCtrl = TextEditingController();
@@ -29,7 +31,14 @@ class _AdminGiftsPageState extends State<AdminGiftsPage> {
   bool _onSale = false;
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
   void dispose() {
+    _tabController.dispose();
     _nameCtrl.dispose();
     _categoryCtrl.dispose();
     _priceCtrl.dispose();
@@ -46,9 +55,8 @@ class _AdminGiftsPageState extends State<AdminGiftsPage> {
     _priceCtrl.text = gift != null ? gift.price.toString() : '';
     _salePriceCtrl.text = gift != null ? gift.salePrice.toString() : '';
     _imageUrlCtrl.text = gift?.imageUrl ?? '';
-    _lottieUrlCtrl.text =
-        gift?.lottieUrl ?? ''; // Fixed: now defined in AdminGift
-    _showInStore = gift?.showInStore ?? true; // Fixed: now defined in AdminGift
+    _lottieUrlCtrl.text = gift?.lottieUrl ?? '';
+    _showInStore = gift?.showInStore ?? true;
     _isActive = gift?.isActive ?? true;
     _onSale = gift?.onSale ?? false;
 
@@ -84,36 +92,12 @@ class _AdminGiftsPageState extends State<AdminGiftsPage> {
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold)),
                         const SizedBox(height: 20),
-
-                        // Dynamic Image Preview
-                        Container(
-                          height: 120,
-                          width: 120,
-                          decoration: BoxDecoration(
-                              color: Colors.black26,
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(color: Colors.white10)),
-                          child: _imageUrlCtrl.text.isNotEmpty
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: Image.network(_imageUrlCtrl.text,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => const Icon(
-                                          Icons.broken_image,
-                                          color: Colors.red)))
-                              : const Icon(Icons.image_outlined,
-                                  color: Colors.white24, size: 50),
-                        ),
-                        const SizedBox(height: 15),
-
                         _buildTextField(
                             controller: _nameCtrl, label: "اسم الهدية"),
                         const SizedBox(height: 12),
                         _buildTextField(
-                            controller: _categoryCtrl,
-                            label: "الفئة (مثل: رومانسية، VIP)"),
+                            controller: _categoryCtrl, label: "الفئة"),
                         const SizedBox(height: 12),
-
                         Row(
                           children: [
                             Expanded(
@@ -130,15 +114,12 @@ class _AdminGiftsPageState extends State<AdminGiftsPage> {
                                     enabled: _onSale)),
                           ],
                         ),
-                        const SizedBox(height: 12),
-
                         SwitchListTile.adaptive(
                           value: _onSale,
                           onChanged: (v) => setModalState(() => _onSale = v),
                           title: const Text("عرض خصم",
                               style: TextStyle(color: Colors.white)),
                         ),
-
                         Row(
                           children: [
                             Expanded(
@@ -153,7 +134,6 @@ class _AdminGiftsPageState extends State<AdminGiftsPage> {
                           ],
                         ),
                         const SizedBox(height: 24),
-
                         Row(
                           children: [
                             Expanded(
@@ -197,25 +177,21 @@ class _AdminGiftsPageState extends State<AdminGiftsPage> {
       required String label,
       TextInputType keyboardType = TextInputType.text,
       bool enabled = true}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(color: Colors.white70, fontSize: 12)),
-        const SizedBox(height: 4),
-        TextField(
-            controller: controller,
-            keyboardType: keyboardType,
-            enabled: enabled,
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white10,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none))),
-      ],
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+      const SizedBox(height: 4),
+      TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          enabled: enabled,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white10,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none))),
+    ]);
   }
 
   Future<void> _pickAndUploadImage(Function setModalState) async {
@@ -256,33 +232,148 @@ class _AdminGiftsPageState extends State<AdminGiftsPage> {
     Navigator.pop(sheetContext);
   }
 
+  Widget _buildGiftLogs() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('gift_logs')
+          .orderBy('timestamp', descending: true)
+          .limit(50)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final logs = snapshot.data!.docs;
+        if (logs.isEmpty) {
+          return const Center(
+              child: Text("لا توجد عمليات إرسال هدايا مسجلة",
+                  style: TextStyle(color: Colors.white24)));
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: logs.length,
+          itemBuilder: (context, index) {
+            final log = logs[index].data() as Map<String, dynamic>;
+            final time =
+                (log['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now();
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: Colors.amber.withValues(alpha: 0.1))),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                      radius: 20,
+                      backgroundImage:
+                          (log['giftUrl'] != null && log['giftUrl'].isNotEmpty)
+                              ? NetworkImage(log['giftUrl'])
+                              : null,
+                      child: (log['giftUrl'] == null || log['giftUrl'].isEmpty)
+                          ? const Icon(Icons.card_giftcard,
+                              color: Colors.amber, size: 20)
+                          : null),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 13),
+                            children: [
+                              TextSpan(
+                                  text: log['senderName'] ?? 'مرسل',
+                                  style: const TextStyle(
+                                      color: Colors.amber,
+                                      fontWeight: FontWeight.bold)),
+                              const TextSpan(text: ' أهدى '),
+                              TextSpan(
+                                  text: log['giftName'] ?? 'هدية',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                              const TextSpan(text: ' إلى '),
+                              TextSpan(
+                                  text: log['receiverName'] ?? 'مستقبل',
+                                  style: const TextStyle(
+                                      color: Colors.cyanAccent)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(DateFormat('HH:mm | yyyy/MM/dd').format(time),
+                            style: const TextStyle(
+                                color: Colors.white24, fontSize: 10)),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      Text("${log['price'] ?? 0}",
+                          style: const TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.bold)),
+                      const Text("💎", style: TextStyle(fontSize: 10)),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0F0018),
       appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: const Text("إدارة الهدايا والثيمات 👑")),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text("إدارة الهدايا والرقابة المالية 👑"),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.amber,
+          tabs: const [
+            Tab(text: "إدارة الهدايا", icon: Icon(Icons.card_giftcard)),
+            Tab(text: "سجل العمليات", icon: Icon(Icons.history_edu)),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () => _openGiftForm(),
-          backgroundColor: Colors.amber,
-          child: const Icon(Icons.add, color: Colors.black)),
-      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: FirebaseFirestore.instance.collection('gifts').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return const Center(child: CircularProgressIndicator());
-          final gifts =
-              snapshot.data!.docs.map((d) => AdminGift.fromDoc(d)).toList();
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: gifts.length,
-            itemBuilder: (context, index) => _AdminGiftTile(
-                gift: gifts[index],
-                onEdit: () => _openGiftForm(gift: gifts[index])),
-          );
-        },
+        onPressed: () => _openGiftForm(),
+        backgroundColor: Colors.amber,
+        child: const Icon(Icons.add, color: Colors.black),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: FirebaseFirestore.instance.collection('gifts').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final gifts =
+                  snapshot.data!.docs.map((d) => AdminGift.fromDoc(d)).toList();
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: gifts.length,
+                itemBuilder: (context, index) => _AdminGiftTile(
+                    gift: gifts[index],
+                    onEdit: () => _openGiftForm(gift: gifts[index])),
+              );
+            },
+          ),
+          _buildGiftLogs(),
+        ],
       ),
     );
   }
@@ -334,7 +425,7 @@ class _AdminGiftTile extends StatelessWidget {
       child: ListTile(
         leading: ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: gift.imageUrl.isNotEmpty
+            child: (gift.imageUrl.isNotEmpty)
                 ? Image.network(gift.imageUrl,
                     width: 50, height: 50, fit: BoxFit.cover)
                 : const Icon(Icons.card_giftcard, color: Colors.amber)),

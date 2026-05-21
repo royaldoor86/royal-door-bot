@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import * as Twilio from "twilio";
+import twilio from "twilio";
 
 /**
  * Royal Door OTP System (Twilio Verify V2)
@@ -20,7 +20,7 @@ export const sendOTP = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError("invalid-argument", "رقم الهاتف غير صحيح");
     }
 
-    const client = Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+    const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
     const verification = await client.verify.v2
       .services(TWILIO_VERIFY_SERVICE_SID)
@@ -55,7 +55,7 @@ export const verifyOTP = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError("invalid-argument", "البيانات المطلوبة ناقصة");
     }
 
-    const client = Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+    const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
     const verificationCheck = await client.verify.v2
       .services(TWILIO_VERIFY_SERVICE_SID)

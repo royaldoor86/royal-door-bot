@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
 
 class AdminDailyPostsPage extends StatefulWidget {
   const AdminDailyPostsPage({super.key});
@@ -41,10 +40,11 @@ class _AdminDailyPostsPageState extends State<AdminDailyPostsPage> {
       await _db.collection('daily_posts').doc(postId).delete();
       // ملاحظة: التعليقات هي sub-collection، في فايرستور يجب حذفها يدوياً أو عبر Cloud Function
       // هنا سنحذف المنشور الأساسي فقط لتبسيط العملية
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("تم حذف المنشور بنجاح"),
             backgroundColor: Colors.green));
+      }
     }
   }
 
@@ -75,13 +75,15 @@ class _AdminDailyPostsPageState extends State<AdminDailyPostsPage> {
                     .orderBy('createdAt', descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData)
+                  if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
+                  }
                   final comments = snapshot.data!.docs;
-                  if (comments.isEmpty)
+                  if (comments.isEmpty) {
                     return const Center(
                         child: Text("لا توجد تعليقات",
                             style: TextStyle(color: Colors.white24)));
+                  }
 
                   return ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -90,7 +92,7 @@ class _AdminDailyPostsPageState extends State<AdminDailyPostsPage> {
                       final data =
                           comments[index].data() as Map<String, dynamic>;
                       return Card(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         child: ListTile(
                           title: Text(data['userName'] ?? "مستخدم",
                               style: const TextStyle(
@@ -142,7 +144,7 @@ class _AdminDailyPostsPageState extends State<AdminDailyPostsPage> {
               hintText: "بحث في اليوميات (اسم المستخدم، نص)...",
               prefixIcon: const Icon(Icons.search, color: Colors.amber),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.05),
+              fillColor: Colors.white.withValues(alpha: 0.05),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide.none),
@@ -157,8 +159,9 @@ class _AdminDailyPostsPageState extends State<AdminDailyPostsPage> {
                 .orderBy('createdAt', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData)
+              if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
+              }
               var docs = snapshot.data!.docs;
               if (_searchText.isNotEmpty) {
                 docs = docs.where((doc) {
@@ -182,7 +185,7 @@ class _AdminDailyPostsPageState extends State<AdminDailyPostsPage> {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(15)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,10 +203,33 @@ class _AdminDailyPostsPageState extends State<AdminDailyPostsPage> {
                           subtitle: Text(id,
                               style: const TextStyle(
                                   color: Colors.white24, fontSize: 10)),
-                          trailing: IconButton(
-                              icon: const Icon(Icons.delete_forever,
-                                  color: Colors.redAccent),
-                              onPressed: () => _deletePost(id)),
+                          trailing: PopupMenuButton<String>(
+                            icon: const Icon(Icons.more_vert,
+                                color: Colors.white),
+                            color: const Color(0xFF1B0233),
+                            tooltip: 'خيارات',
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            onSelected: (String value) {
+                              if (value == 'delete') _deletePost(id);
+                            },
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<String>>[
+                              const PopupMenuItem<String>(
+                                value: 'delete',
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.delete_forever,
+                                        color: Colors.redAccent, size: 20),
+                                    SizedBox(width: 8),
+                                    Text("حذف القصة",
+                                        style: TextStyle(color: Colors.white)),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         if (data['text'] != null && data['text'].isNotEmpty)
                           Padding(

@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../services/auth_service.dart';
+import 'package:flutter/material.dart';
 import '../../services/firestore_service.dart';
 import '../../models/user_model.dart';
-import 'profile_page.dart';
+import 'user_details_view_page.dart';
 
 class FriendsListsPage extends StatelessWidget {
   final int initialIndex;
@@ -12,11 +10,10 @@ class FriendsListsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
     final firestoreService = FirestoreService();
     final user = FirebaseAuth.instance.currentUser;
 
-    if (user == null) return const Scaffold(body: Center(child: Text('يرجى تسجيل الدخول')));
+    if (user == null) return const Scaffold(backgroundColor: Color(0xFF020617), body: Center(child: Text('يرجى تسجيل الدخول', style: TextStyle(color: Colors.white))));
 
     return StreamBuilder<UserModel>(
       stream: firestoreService.streamUserData(user.uid),
@@ -26,42 +23,41 @@ class FriendsListsPage extends StatelessWidget {
         return DefaultTabController(
           length: 3,
           initialIndex: initialIndex,
-          child: Scaffold(
-            appBar: AppBar(
-              title: const Text('قوائم التواصل'),
-              centerTitle: true,
-              bottom: const TabBar(
-                labelColor: Colors.deepPurple,
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: Colors.deepPurple,
-                tabs: [
-                  Tab(text: 'أصدقاء'),
-                  Tab(text: 'تمت المتابعة'),
-                  Tab(text: 'المعجبون'),
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(
+              backgroundColor: const Color(0xFF020617),
+              appBar: AppBar(
+                title: const Text('قوائم التواصل الملكي', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                centerTitle: true,
+                backgroundColor: const Color(0xFF1E293B),
+                bottom: const TabBar(
+                  labelColor: Colors.amber,
+                  unselectedLabelColor: Colors.white38,
+                  indicatorColor: Colors.amber,
+                  tabs: [
+                    Tab(text: 'أصدقاء'),
+                    Tab(text: 'متابعة'),
+                    Tab(text: 'معجبون'),
+                  ],
+                ),
+              ),
+              body: TabBarView(
+                children: [
+                  _UserListStream(
+                    stream: firestoreService.streamFriends(user.uid),
+                    emptyMessage: 'لا يوجد أصدقاء حالياً',
+                  ),
+                  _UserListStream(
+                    stream: firestoreService.streamUsersFromList(userData?.following ?? []),
+                    emptyMessage: 'لم تقم بمتابعة أحد بعد',
+                  ),
+                  _UserListStream(
+                    stream: firestoreService.streamUsersFromList(userData?.followers ?? []),
+                    emptyMessage: 'لا يوجد معجبون حالياً',
+                  ),
                 ],
               ),
-            ),
-            body: TabBarView(
-              children: [
-                _UserListStream(
-                  stream: firestoreService.streamFriends(user.uid),
-                  emptyMessage: 'لا يوجد أصدقاء حالياً',
-                  buttonText: 'مراسلة',
-                  buttonColor: Colors.blue,
-                ),
-                _UserListStream(
-                  stream: firestoreService.streamUsersFromList(userData?.following ?? []),
-                  emptyMessage: 'لم تقم بمتابعة أحد بعد',
-                  buttonText: 'إلغاء المتابعة',
-                  buttonColor: Colors.grey,
-                ),
-                _UserListStream(
-                  stream: firestoreService.streamUsersFromList(userData?.followers ?? []),
-                  emptyMessage: 'لا يوجد معجبون حالياً',
-                  buttonText: 'رد المتابعة',
-                  buttonColor: Colors.deepPurple,
-                ),
-              ],
             ),
           ),
         );
@@ -73,14 +69,10 @@ class FriendsListsPage extends StatelessWidget {
 class _UserListStream extends StatelessWidget {
   final Stream<List<UserModel>> stream;
   final String emptyMessage;
-  final String buttonText;
-  final Color buttonColor;
 
   const _UserListStream({
     required this.stream,
     required this.emptyMessage,
-    required this.buttonText,
-    required this.buttonColor,
   });
 
   @override
@@ -89,43 +81,40 @@ class _UserListStream extends StatelessWidget {
       stream: stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Colors.amber));
         }
         
         final users = snapshot.data ?? [];
 
         if (users.isEmpty) {
-          return Center(child: Text(emptyMessage, style: const TextStyle(color: Colors.grey)));
+          return Center(child: Text(emptyMessage, style: const TextStyle(color: Colors.white24)));
         }
 
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.all(16),
           itemCount: users.length,
-          separatorBuilder: (context, index) => const Divider(height: 1),
+          separatorBuilder: (context, index) => const Divider(color: Colors.white10, height: 20),
           itemBuilder: (context, index) {
             final user = users[index];
             return ListTile(
-              leading: CircleAvatar(
-                radius: 25,
-                backgroundColor: Colors.grey.shade200,
-                backgroundImage: user.profilePic.isNotEmpty ? NetworkImage(user.profilePic) : null,
-                child: user.profilePic.isEmpty ? const Icon(Icons.person, color: Colors.white) : null,
-              ),
-              title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text('ID: ${user.uid.substring(0, 8)}\n${user.bio}'),
-              isThreeLine: true,
-              trailing: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonColor,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              leading: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.amber.withValues(alpha: 0.3), width: 1.5),
                 ),
-                child: Text(buttonText, style: const TextStyle(fontSize: 12)),
+                child: CircleAvatar(
+                  radius: 28,
+                  backgroundColor: Colors.white10,
+                  backgroundImage: user.profilePic.isNotEmpty ? NetworkImage(user.profilePic) : null,
+                  child: user.profilePic.isEmpty ? const Icon(Icons.person, color: Colors.white38) : null,
+                ),
               ),
+              title: Text(user.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.white24),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfilePage()));
+                // فتح بروفايل المستخدم الحقيقي
+                Navigator.push(context, MaterialPageRoute(builder: (_) => UserDetailsViewPage(user: user)));
               },
             );
           },

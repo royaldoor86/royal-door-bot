@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lottie/lottie.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import '../theme/design_tokens.dart';
+import '../theme/reusable_widgets.dart';
 import '../services/firestore_service.dart';
 import '../models/user_model.dart';
 import '../models/frame_model.dart';
 import '../widgets/royal_frame_widget.dart';
 import '../widgets/animated_vehicle_preview.dart';
 import 'gems_coins_page.dart';
+import '../widgets/feature_lock_wrapper.dart';
 
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../services/ad_manager.dart';
@@ -26,15 +30,40 @@ class _StorePageState extends State<StorePage>
   late TabController _tabController;
   final FirestoreService _firestoreService = FirestoreService();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  BannerAd? _bannerAd;
+  bool _isAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 9, vsync: this);
+    // تم إزالة مستمع التنقل بين التبويبات بناءً على طلبك لتقليل الإزعاج
+    _initBannerAd();
+
+    // إظهار إعلان ملء الشاشة عند دخول المتجر (مرة واحدة)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AdManager().showInterstitialAd();
+    });
+  }
+
+  // تم إزالة دالة _onTabChanged لمنع ظهور الإعلانات عند كل تنقل
+
+  void _initBannerAd() {
+    _bannerAd = AdManager().getBannerAd(
+      size: AdSize.banner,
+      onAdLoaded: () {
+        if (mounted) {
+          setState(() {
+            _isAdLoaded = true;
+          });
+        }
+      },
+    );
   }
 
   @override
   void dispose() {
+    _bannerAd?.dispose();
     _tabController.dispose();
     super.dispose();
   }
@@ -42,118 +71,128 @@ class _StorePageState extends State<StorePage>
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    return StreamBuilder<DocumentSnapshot>(
-      stream: _db.collection('system_settings').doc('global').snapshots(),
-      builder: (context, systemSnap) {
-        bool isStoreLocked = false;
-        if (systemSnap.hasData && systemSnap.data!.exists) {
-          isStoreLocked = (systemSnap.data!.data()
-                  as Map<String, dynamic>)['isStoreLocked'] ??
-              false;
-        }
-
-        return Directionality(
-          textDirection: TextDirection.rtl,
+    return FeatureLockWrapper(
+      lockField: 'isStoreLocked',
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: PopScope(
+          canPop: true,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) {
+              // إظهار إعلان الخروج باحتمالية 50% للامتثال لسياسات جوجل ومنع إزعاج المستخدم
+              if (math.Random().nextBool()) {
+                AdManager().showInterstitialAd();
+              }
+            }
+          },
           child: Scaffold(
-            backgroundColor: const Color(0xFF0A0A12),
-            bottomNavigationBar: SizedBox(
-              height: 50,
-              child: AdWidget(ad: AdManager().getBannerAd()),
-            ),
-            body: isStoreLocked
-                ? _buildLockedStoreUI()
-                : StreamBuilder<UserModel>(
-                    stream: user != null
-                        ? _firestoreService.streamUserData(user.uid)
-                        : null,
-                    builder: (context, snapshot) {
-                      final userData = snapshot.data;
-                      return CustomScrollView(
-                        slivers: [
-                          _buildRoyalSliverAppBar(userData),
-                          SliverPersistentHeader(
-                            pinned: true,
-                            delegate: _SliverAppBarDelegate(
-                              TabBar(
-                                controller: _tabController,
-                                isScrollable: true,
-                                indicatorColor: Colors.amber,
-                                labelColor: Colors.amber,
-                                unselectedLabelColor: Colors.white38,
-                                tabs: const [
-                                  Tab(text: 'الإطارات'),
-                                  Tab(text: 'المركبات'),
-                                  Tab(text: 'المؤثرات'),
-                                  Tab(text: 'الشارات'),
-                                  Tab(text: 'الأغلفة'),
-                                  Tab(text: 'الفقاعات'),
-                                  Tab(text: 'الأرقام المميزة'),
-                                  Tab(text: 'التوثيق'),
-                                  Tab(text: 'الهدايا'),
-                                ],
-                              ),
-                            ),
+            backgroundColor: DesignTokens.backgroundDarkDeep,
+            bottomNavigationBar: _isAdLoaded && _bannerAd != null
+                ? Container(
+                    color: DesignTokens.backgroundDarkDeep,
+                    height: _bannerAd!.size.height.toDouble(),
+                    width: double.infinity,
+                    child: AdWidget(ad: _bannerAd!),
+                  )
+                : null,
+            body: StreamBuilder<UserModel>(
+              stream: user != null
+                  ? _firestoreService.streamUserData(user.uid)
+                  : null,
+              builder: (context, snapshot) {
+                final userData = snapshot.data;
+                return CustomScrollView(
+                  slivers: [
+                    _buildRoyalSliverAppBar(userData),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _SliverAppBarDelegate(
+                        TabBar(
+                          controller: _tabController,
+                          isScrollable: true,
+                          indicatorColor: DesignTokens.primaryGold,
+                          labelColor: DesignTokens.primaryGold,
+                          unselectedLabelColor: DesignTokens.neutralGray500,
+                          labelStyle: const TextStyle(
+                            fontFamily: DesignTokens.primaryFont,
+                            fontWeight: DesignTokens.fontWeightBold,
                           ),
-                          SliverFillRemaining(
-                            child: TabBarView(
-                              controller: _tabController,
-                              children: [
-                                _buildDynamicFramesGrid(userData),
-                                _buildDynamicVehiclesGrid(userData),
-                                _buildDynamicEntryEffectsGrid(userData),
-                                _buildBadgesSection(userData),
-                                _buildDynamicCoversGrid(userData),
-                                _buildDynamicBubblesGrid(userData),
-                                _buildDynamicSpecialIdGrid(userData),
-                                _buildDynamicVerificationGrid(userData),
-                                _buildDynamicGiftsGrid(userData),
-                              ],
-                            ),
+                          unselectedLabelStyle: const TextStyle(
+                            fontFamily: DesignTokens.primaryFont,
+                            fontWeight: DesignTokens.fontWeightNormal,
                           ),
+                          tabs: const [
+                            Tab(text: 'الإطارات'),
+                            Tab(text: 'المركبات'),
+                            Tab(text: 'الدومينو'),
+                            Tab(text: 'المؤثرات'),
+                            Tab(text: 'الشارات'),
+                            Tab(text: 'الأغلفة'),
+                            Tab(text: 'الفقاعات'),
+                            Tab(text: 'الأرقام المميزة'),
+                            Tab(text: 'التوثيق'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SliverFillRemaining(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildDynamicFramesGrid(userData),
+                          _buildDynamicVehiclesGrid(userData),
+                          _buildDominoStoreGrid(userData),
+                          _buildDynamicEntryEffectsGrid(userData),
+                          _buildBadgesSection(userData),
+                          _buildDynamicCoversGrid(userData),
+                          _buildDynamicBubblesGrid(userData),
+                          _buildDynamicSpecialIdGrid(userData),
+                          _buildDynamicVerificationGrid(userData),
                         ],
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildLockedStoreUI() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.store_mall_directory_outlined,
-                size: 80, color: Colors.pinkAccent),
-            const SizedBox(height: 20),
-            const Text(
-              'المتجر الملكي مغلق حالياً',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'نحن نقوم بتحديث المنتجات، نعود قريباً ✨',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
-              child: const Text('العودة للخلف',
-                  style: TextStyle(color: Colors.black)),
-            )
-          ],
         ),
       ),
     );
+  }
+
+  Widget _buildDominoStoreGrid(UserModel? userData) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: _db
+            .collection('domino_skins')
+            .where('isActive', isEqualTo: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const RoyalLoadingIndicator();
+          }
+          if (snapshot.hasError) {
+            return _buildErrorState();
+          }
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return _buildEmptyState('لا توجد قطع دومينو حالياً');
+          }
+          return GridView.builder(
+            padding: const EdgeInsets.all(DesignTokens.spacingMd),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.8,
+                crossAxisSpacing: DesignTokens.spacingMd,
+                mainAxisSpacing: DesignTokens.spacingMd),
+            itemCount: docs.length,
+            itemBuilder: (context, index) {
+              final data = docs[index].data() as Map<String, dynamic>;
+              return _buildStoreItemCard(
+                  docs[index].id, data, 'domino_skin', userData);
+            },
+          );
+        });
   }
 
   Widget _buildDynamicCoversGrid(UserModel? userData) {
@@ -163,18 +202,23 @@ class _StorePageState extends State<StorePage>
             .where('isActive', isEqualTo: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-                child: CircularProgressIndicator(color: Colors.amber));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const RoyalLoadingIndicator();
           }
-          final docs = snapshot.data!.docs;
+          if (snapshot.hasError) {
+            return _buildErrorState();
+          }
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return _buildEmptyState('لا توجد أغلفة بروفايل حالياً');
+          }
           return GridView.builder(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(DesignTokens.spacingMd),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.8,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12),
+                crossAxisSpacing: DesignTokens.spacingMd,
+                mainAxisSpacing: DesignTokens.spacingMd),
             itemCount: docs.length,
             itemBuilder: (context, index) {
               final data = docs[index].data() as Map<String, dynamic>;
@@ -192,18 +236,23 @@ class _StorePageState extends State<StorePage>
             .where('isActive', isEqualTo: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-                child: CircularProgressIndicator(color: Colors.amber));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const RoyalLoadingIndicator();
           }
-          final docs = snapshot.data!.docs;
+          if (snapshot.hasError) {
+            return _buildErrorState();
+          }
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return _buildEmptyState('لا توجد فقاعات دردشة حالياً');
+          }
           return GridView.builder(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(DesignTokens.spacingMd),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.8,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12),
+                crossAxisSpacing: DesignTokens.spacingMd,
+                mainAxisSpacing: DesignTokens.spacingMd),
             itemCount: docs.length,
             itemBuilder: (context, index) {
               final data = docs[index].data() as Map<String, dynamic>;
@@ -217,7 +266,7 @@ class _StorePageState extends State<StorePage>
   Widget _buildStoreItemCard(
       String id, Map<String, dynamic> data, String type, UserModel? userData) {
     int price = (data['price'] ?? 0).toInt();
-    String url = data['url'] ?? '';
+    String url = data['url'] ?? data['imageUrl'] ?? '';
 
     return StreamBuilder<QuerySnapshot>(
         stream: userData != null
@@ -232,50 +281,96 @@ class _StorePageState extends State<StorePage>
           bool isOwned = snapshot.hasData && snapshot.data!.docs.isNotEmpty;
 
           return Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(DesignTokens.spacingMd),
             decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                    color: isOwned
-                        ? Colors.green.withValues(alpha: 0.3)
-                        : Colors.white.withValues(alpha: 0.05))),
+              color: Colors.white.withValues(alpha: 0.03),
+              borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl2),
+              border: Border.all(
+                color: isOwned
+                    ? DesignTokens.primaryGold.withValues(alpha: 0.3)
+                    : DesignTokens.neutralWhite.withValues(alpha: 0.05),
+              ),
+              boxShadow: const [
+                BoxShadow(
+                    color: Colors.black26, blurRadius: 10, offset: Offset(0, 4))
+              ],
+            ),
             child: Column(
               children: [
                 Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: CachedNetworkImage(
-                      imageUrl: url,
-                      fit: BoxFit.cover,
-                      placeholder: (c, u) => const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2)),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      borderRadius:
+                          BorderRadius.circular(DesignTokens.borderRadiusLg),
                     ),
+                    padding: const EdgeInsets.all(8),
+                    child: type == 'frame'
+                        ? RoyalFrameWidget(
+                            frameUrl: url,
+                            size: 80,
+                            child: const CircleAvatar(
+                              radius: 35,
+                              backgroundColor: Colors.white10,
+                              child: Icon(Icons.person,
+                                  color: Colors.white12, size: 40),
+                            ),
+                          )
+                        : url.isNotEmpty &&
+                                Uri.tryParse(url)?.host.isNotEmpty == true
+                            ? CachedNetworkImage(
+                                imageUrl: url,
+                                fit: BoxFit.contain,
+                                placeholder: (c, u) => const Center(
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: DesignTokens.primaryGold)),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.broken_image,
+                                        color: DesignTokens.neutralGray700),
+                              )
+                            : const Center(
+                                child: Icon(Icons.image_not_supported,
+                                    color: DesignTokens.neutralGray700)),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(data['name'] ?? 'عنصر ملكي',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold)),
-                Text('$price ⭐',
-                    style: const TextStyle(color: Colors.amber, fontSize: 11)),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: isOwned
-                      ? null
-                      : () => _purchaseStoreItem(id, data, type, userData),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isOwned
-                        ? Colors.grey.withValues(alpha: 0.2)
-                        : Colors.amber.withValues(alpha: 0.1),
-                    minimumSize: const Size(double.infinity, 32),
+                const SizedBox(height: DesignTokens.spacingSm),
+                BodyText(data['name'] ?? 'عنصر ملكي',
+                    fontSize: DesignTokens.fontSizeSm,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    fontWeight: DesignTokens.fontWeightBold),
+                const SizedBox(height: 2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.stars_rounded,
+                        color: DesignTokens.primaryGold, size: 14),
+                    const SizedBox(width: 4),
+                    CaptionText('$price',
+                        color: DesignTokens.primaryGold,
+                        fontWeight: FontWeight.bold),
+                  ],
+                ),
+                const SizedBox(height: DesignTokens.spacingMd),
+                SizedBox(
+                  width: double.infinity,
+                  child: RoyalButton(
+                    height: 34,
+                    onPressed: isOwned
+                        ? null
+                        : () => _purchaseStoreItem(id, data, type, userData),
+                    label: isOwned ? 'مملوك' : 'اقتناء',
+                    gradient: isOwned
+                        ? [
+                            DesignTokens.neutralGray700,
+                            DesignTokens.neutralGray800
+                          ]
+                        : [
+                            DesignTokens.primaryGold,
+                            DesignTokens.primarySapphireLight
+                          ],
                   ),
-                  child: Text(isOwned ? 'تملكه ✅' : 'اقتناء',
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: isOwned ? Colors.white38 : Colors.amber)),
                 ),
               ],
             ),
@@ -295,19 +390,12 @@ class _StorePageState extends State<StorePage>
 
     bool? confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A2E),
-        title: Text('اقتناء ${type == 'cover' ? 'غلاف' : 'فقاعة'}',
-            style: const TextStyle(color: Colors.white)),
-        content: Text('هل تريد الشراء مقابل $price نجمة؟'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('شراء', style: TextStyle(color: Colors.amber))),
-        ],
+      builder: (ctx) => RoyalConfirmDialog(
+        title: 'اقتناء ${type == 'cover' ? 'غلاف' : 'فقاعة'}',
+        message: 'هل تريد الشراء مقابل $price نجمة؟',
+        confirmLabel: 'شراء',
+        icon: type == 'cover' ? Icons.style : Icons.chat_bubble_outline,
+        onConfirm: () => Navigator.pop(ctx, true),
       ),
     );
 
@@ -325,7 +413,7 @@ class _StorePageState extends State<StorePage>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('تمت الإضافة لمقتنياتك بنجاح ✨'),
-            backgroundColor: Colors.amber));
+            backgroundColor: DesignTokens.primaryGold));
       }
     }
   }
@@ -337,18 +425,23 @@ class _StorePageState extends State<StorePage>
             .where('isActive', isEqualTo: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-                child: CircularProgressIndicator(color: Colors.cyanAccent));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const RoyalLoadingIndicator();
           }
-          final docs = snapshot.data!.docs;
+          if (snapshot.hasError) {
+            return _buildErrorState();
+          }
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return _buildEmptyState('لا توجد مركبات متاحة حالياً');
+          }
           return GridView.builder(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(DesignTokens.spacingMd),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.7,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12),
+                crossAxisSpacing: DesignTokens.spacingMd,
+                mainAxisSpacing: DesignTokens.spacingMd),
             itemCount: docs.length,
             itemBuilder: (context, index) {
               final data = docs[index].data() as Map<String, dynamic>;
@@ -377,49 +470,80 @@ class _StorePageState extends State<StorePage>
           bool isOwned = snapshot.hasData && snapshot.data!.docs.isNotEmpty;
 
           return Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(DesignTokens.spacingMd),
             decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                    color: isOwned
-                        ? Colors.cyanAccent.withValues(alpha: 0.3)
-                        : Colors.white.withValues(alpha: 0.05))),
+              color: Colors.white.withValues(alpha: 0.03),
+              borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl2),
+              border: Border.all(
+                color: isOwned
+                    ? DesignTokens.primarySapphireLight.withValues(alpha: 0.3)
+                    : DesignTokens.neutralWhite.withValues(alpha: 0.05),
+              ),
+              boxShadow: const [
+                BoxShadow(
+                    color: Colors.black38, blurRadius: 15, offset: Offset(0, 5))
+              ],
+            ),
             child: Column(
               children: [
                 Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: AnimatedVehiclePreview(
-                      type: type,
-                      url: url,
-                      fit: BoxFit.cover,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(colors: [
+                        DesignTokens.primarySapphire.withValues(alpha: 0.1),
+                        Colors.transparent
+                      ]),
+                      borderRadius:
+                          BorderRadius.circular(DesignTokens.borderRadiusLg),
+                    ),
+                    child: ClipRRect(
+                      borderRadius:
+                          BorderRadius.circular(DesignTokens.borderRadiusLg),
+                      child: AnimatedVehiclePreview(
+                        type: type,
+                        url: url,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(data['name'] ?? 'مركبة ملكية',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold)),
-                Text('$price ⭐',
-                    style: const TextStyle(color: Colors.amber, fontSize: 11)),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: isOwned
-                      ? null
-                      : () => _purchaseVehicle(id, data, userData),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isOwned
-                        ? Colors.grey.withValues(alpha: 0.2)
-                        : Colors.cyanAccent.withValues(alpha: 0.1),
-                    minimumSize: const Size(double.infinity, 32),
+                const SizedBox(height: DesignTokens.spacingSm),
+                BodyText(data['name'] ?? 'مركبة ملكية',
+                    fontSize: DesignTokens.fontSizeSm,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    fontWeight: DesignTokens.fontWeightBold),
+                const SizedBox(height: 2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.stars_rounded,
+                        color: DesignTokens.primaryGold, size: 14),
+                    const SizedBox(width: 4),
+                    CaptionText('$price',
+                        color: DesignTokens.primaryGold,
+                        fontWeight: FontWeight.bold),
+                  ],
+                ),
+                const SizedBox(height: DesignTokens.spacingMd),
+                SizedBox(
+                  width: double.infinity,
+                  child: RoyalButton(
+                    height: 36,
+                    onPressed: isOwned
+                        ? null
+                        : () => _purchaseVehicle(id, data, userData),
+                    label: isOwned ? 'مملوكة' : 'اقتناء',
+                    gradient: isOwned
+                        ? [
+                            DesignTokens.neutralGray700,
+                            DesignTokens.neutralGray800
+                          ]
+                        : [
+                            DesignTokens.primarySapphireLight,
+                            DesignTokens.primarySapphire
+                          ],
                   ),
-                  child: Text(isOwned ? 'تملكها ✅' : 'اقتناء',
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: isOwned ? Colors.white38 : Colors.cyanAccent)),
                 ),
               ],
             ),
@@ -439,21 +563,12 @@ class _StorePageState extends State<StorePage>
 
     bool? confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A2E),
-        title:
-            const Text('اقتناء مركبة', style: TextStyle(color: Colors.white)),
-        content:
-            Text('هل تريد شراء مركبة (${data['name']}) مقابل $price نجمة؟'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('إلغاء')),
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('شراء',
-                  style: TextStyle(color: Colors.cyanAccent))),
-        ],
+      builder: (ctx) => RoyalConfirmDialog(
+        title: 'اقتناء مركبة',
+        message: 'هل تريد شراء مركبة (${data['name']}) مقابل $price نجمة؟',
+        confirmLabel: 'شراء',
+        icon: Icons.directions_car,
+        onConfirm: () => Navigator.pop(ctx, true),
       ),
     );
 
@@ -470,10 +585,9 @@ class _StorePageState extends State<StorePage>
         });
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content:
-                Text('مبروك! تم إضافة ${data['name']} إلى مرآبك الخاص 🏎️'),
-            backgroundColor: Colors.cyanAccent));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('مبروك! تم إضافة العنصر إلى مرآبك الخاص 🏎️'),
+            backgroundColor: DesignTokens.primarySapphireLight));
       }
     }
   }
@@ -485,18 +599,23 @@ class _StorePageState extends State<StorePage>
             .where('isActive', isEqualTo: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-                child: CircularProgressIndicator(color: Colors.amber));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const RoyalLoadingIndicator();
           }
-          final docs = snapshot.data!.docs;
+          if (snapshot.hasError) {
+            return _buildErrorState();
+          }
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return _buildEmptyState('لا توجد إطارات متاحة حالياً');
+          }
           return GridView.builder(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(DesignTokens.spacingMd),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.7,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12),
+                crossAxisSpacing: DesignTokens.spacingMd,
+                mainAxisSpacing: DesignTokens.spacingMd),
             itemCount: docs.length,
             itemBuilder: (context, index) {
               final frame = FrameModel.fromFirestore(
@@ -520,15 +639,12 @@ class _StorePageState extends State<StorePage>
         builder: (context, snapshot) {
           bool isOwned = (snapshot.hasData && snapshot.data!.docs.isNotEmpty) ||
               userData?.currentFrame == frame.imageUrl;
-          return Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                    color: isOwned
-                        ? Colors.green.withValues(alpha: 0.3)
-                        : Colors.amber.withValues(alpha: 0.1))),
+          return RoyalCard(
+            padding: const EdgeInsets.all(DesignTokens.spacingMd),
+            margin: EdgeInsets.zero,
+            backgroundColor:
+                DesignTokens.backgroundDarkMedium.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl2),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -536,36 +652,32 @@ class _StorePageState extends State<StorePage>
                     child: RoyalFrameWidget(
                         frameUrl: frame.imageUrl,
                         size: 110,
-                        child: const CircleAvatar(
+                        child: CircleAvatar(
                             radius: 35,
-                            backgroundColor: Colors.white10,
-                            child: Icon(Icons.person, color: Colors.white24)))),
-                const SizedBox(height: 8),
-                Text(frame.name,
+                            backgroundColor: DesignTokens.neutralWhite
+                                .withValues(alpha: 0.05),
+                            child: const Icon(Icons.person,
+                                color: DesignTokens.neutralGray700)))),
+                const SizedBox(height: DesignTokens.spacingSm),
+                BodyText(frame.name,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold)),
-                Text('${frame.price} ⭐',
-                    style: const TextStyle(
-                        color: Colors.amber,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold)),
-                const SizedBox(height: 10),
-                ElevatedButton(
+                    fontSize: DesignTokens.fontSizeSm,
+                    fontWeight: DesignTokens.fontWeightBold),
+                CaptionText('${frame.price} ⭐',
+                    color: DesignTokens.primaryGold),
+                const SizedBox(height: DesignTokens.spacingMd),
+                RoyalButton(
+                  height: 32,
                   onPressed: isOwned
-                      ? null
+                      ? () {}
                       : () => _purchaseFrameDirect(frame, userData),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: isOwned
-                          ? Colors.grey.withValues(alpha: 0.2)
-                          : Colors.amber.withValues(alpha: 0.1),
-                      minimumSize: const Size(double.infinity, 32)),
-                  child: Text(isOwned ? 'تملكه ✅' : 'اقتناء',
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: isOwned ? Colors.white38 : Colors.amber)),
+                  label: isOwned ? 'تملكه ✅' : 'اقتناء',
+                  gradient: isOwned
+                      ? [
+                          DesignTokens.semanticDisabled,
+                          DesignTokens.semanticDisabled.withValues(alpha: 0.6)
+                        ]
+                      : null,
                 ),
               ],
             ),
@@ -582,21 +694,13 @@ class _StorePageState extends State<StorePage>
     }
     bool? confirm = await showDialog<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
-              backgroundColor: const Color(0xFF1A1A2E),
-              title: const Text('اقتناء إطار ملكي',
-                  style: TextStyle(color: Colors.white)),
-              content: Text(
-                  'هل تريد شراء إطار (${frame.name}) مقابل ${frame.price} نجمة؟'),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: const Text('إلغاء')),
-                TextButton(
-                    onPressed: () => Navigator.pop(ctx, true),
-                    child: const Text('شراء',
-                        style: TextStyle(color: Colors.amber))),
-              ],
+        builder: (ctx) => RoyalConfirmDialog(
+              title: 'اقتناء إطار ملكي',
+              message:
+                  'هل تريد شراء إطار (${frame.name}) مقابل ${frame.price} نجمة؟',
+              confirmLabel: 'شراء',
+              icon: Icons.portrait,
+              onConfirm: () => Navigator.pop(ctx, true),
             ));
     if (confirm == true) {
       await _db.runTransaction((tx) async {
@@ -619,13 +723,19 @@ class _StorePageState extends State<StorePage>
             .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
                 child: CircularProgressIndicator(color: Colors.amber));
           }
-          final dynamicBadges = snapshot.data!.docs
-              .map((d) => d.data() as Map<String, dynamic>)
-              .toList();
+          if (snapshot.hasError) {
+            return _buildErrorState();
+          }
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return _buildEmptyState('لا توجد أوسمة متاحة حالياً');
+          }
+          final dynamicBadges =
+              docs.map((d) => d.data() as Map<String, dynamic>).toList();
           return GridView.builder(
             padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -671,15 +781,20 @@ class _StorePageState extends State<StorePage>
               Expanded(
                 child: Center(
                   child: isImage
-                      ? CachedNetworkImage(
-                          imageUrl: iconData,
-                          width: 40,
-                          height: 40,
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(strokeWidth: 2),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error, color: Colors.red),
-                        )
+                      ? (iconData.isNotEmpty &&
+                              Uri.tryParse(iconData)?.host.isNotEmpty == true
+                          ? CachedNetworkImage(
+                              imageUrl: iconData,
+                              width: 40,
+                              height: 40,
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(
+                                      strokeWidth: 2),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error, color: Colors.red),
+                            )
+                          : const Icon(Icons.broken_image,
+                              color: Colors.white24))
                       : Text(iconData,
                           style: const TextStyle(fontSize: 30),
                           overflow: TextOverflow.ellipsis),
@@ -769,11 +884,17 @@ class _StorePageState extends State<StorePage>
             .where('isActive', isEqualTo: true)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
                 child: CircularProgressIndicator(color: Colors.amber));
           }
-          final docs = snapshot.data!.docs;
+          if (snapshot.hasError) {
+            return _buildErrorState();
+          }
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return _buildEmptyState('لا توجد تأثيرات دخول حالياً');
+          }
           return GridView.builder(
             padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -797,48 +918,69 @@ class _StorePageState extends State<StorePage>
     final bool isLottie = url.contains('.json');
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(DesignTokens.spacingMd),
       decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.03),
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: Colors.purpleAccent.withValues(alpha: 0.1))),
+        color: Colors.white.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl2),
+        border: Border.all(color: Colors.purpleAccent.withValues(alpha: 0.2)),
+        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 10)],
+      ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.2),
+                borderRadius:
+                    BorderRadius.circular(DesignTokens.borderRadiusLg),
+              ),
+              padding: const EdgeInsets.all(8),
               child: url.isNotEmpty
                   ? (isLottie
                       ? Lottie.network(url, fit: BoxFit.contain)
-                      : CachedNetworkImage(
-                          imageUrl: url,
-                          fit: BoxFit.contain,
-                          placeholder: (c, u) => const Center(
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.amber))))
+                      : (Uri.tryParse(url)?.host.isNotEmpty == true
+                          ? CachedNetworkImage(
+                              imageUrl: url,
+                              fit: BoxFit.contain,
+                              placeholder: (c, u) => const Center(
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.amber)),
+                              errorWidget: (context, url, error) => const Icon(
+                                  Icons.broken_image,
+                                  color: Colors.white24),
+                            )
+                          : const Icon(Icons.broken_image,
+                              color: Colors.white24)))
                   : const Icon(Icons.rocket_launch_rounded,
                       color: Colors.purpleAccent, size: 45),
             ),
           ),
           const SizedBox(height: 12),
-          Text(data['name'] ?? 'تأثير دخول',
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold)),
-          Text('$price نجمة ⭐',
-              style: const TextStyle(
-                  color: Colors.amber,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(height: 15),
-          ElevatedButton(
+          BodyText(data['name'] ?? 'تأثير دخول',
+              fontSize: DesignTokens.fontSizeSm,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              fontWeight: DesignTokens.fontWeightBold),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.stars_rounded, color: Colors.amber, size: 14),
+              const SizedBox(width: 4),
+              CaptionText('$price',
+                  color: Colors.amber, fontWeight: FontWeight.bold),
+            ],
+          ),
+          const SizedBox(height: DesignTokens.spacingMd),
+          SizedBox(
+            width: double.infinity,
+            child: RoyalButton(
+              height: 34,
               onPressed: () => _purchaseEntryEffect(docId, data, userData),
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withValues(alpha: 0.05),
-                  minimumSize: const Size(double.infinity, 35)),
-              child: const Text('اقتناء الآن', style: TextStyle(fontSize: 11))),
+              label: 'اقتناء الآن',
+              gradient: const [Colors.purple, Colors.deepPurpleAccent],
+            ),
+          ),
         ],
       ),
     );
@@ -865,105 +1007,21 @@ class _StorePageState extends State<StorePage>
     });
   }
 
-  Widget _buildDynamicGiftsGrid(UserModel? userData) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: _db
-            .collection('gifts')
-            .where('showInStore', isEqualTo: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-                child: CircularProgressIndicator(color: Colors.amber));
-          }
-          final docs = snapshot.data!.docs;
-          return GridView.builder(
-            padding: const EdgeInsets.all(12),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12),
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              final data = docs[index].data() as Map<String, dynamic>;
-              return _buildGiftStoreCard(docs[index].id, data, userData);
-            },
-          );
-        });
-  }
-
-  Widget _buildGiftStoreCard(
-      String docId, Map<String, dynamic> data, UserModel? userData) {
-    int price = data['price'] ?? 0;
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.03),
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: Colors.pinkAccent.withValues(alpha: 0.1))),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-              child: data['imageUrl'].toString().isNotEmpty
-                  ? Image.network(data['imageUrl'], fit: BoxFit.contain)
-                  : const Icon(Icons.card_giftcard,
-                      color: Colors.pinkAccent, size: 40)),
-          const SizedBox(height: 8),
-          Text(data['name'] ?? 'هدية ملكية',
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold)),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text('$price ',
-                style: const TextStyle(
-                    color: Colors.amber, fontWeight: FontWeight.bold)),
-            const Icon(Icons.diamond, size: 12, color: Colors.cyanAccent)
-          ]),
-          const SizedBox(height: 10),
-          ElevatedButton(
-              onPressed: () => _purchaseGift(docId, data, userData),
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withValues(alpha: 0.05),
-                  minimumSize: const Size(double.infinity, 32)),
-              child: const Text('شراء', style: TextStyle(fontSize: 11))),
-        ],
-      ),
-    );
-  }
-
-  void _purchaseGift(
-      String docId, Map<String, dynamic> data, UserModel? user) async {
-    if (user == null) return;
-    int price = (data['price'] ?? 0).toInt();
-    if (user.gems < price) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('رصيد الألماس غير كافٍ 💎')));
-      return;
-    }
-    await _db.runTransaction((tx) async {
-      final userRef = _db.collection('users').doc(user.uid);
-      tx.update(userRef, {'gems': user.gems - price});
-      tx.set(userRef.collection('inventory').doc(docId), {
-        'type': 'gift',
-        'name': data['name'],
-        'imageUrl': data['imageUrl'],
-        'boughtAt': FieldValue.serverTimestamp()
-      });
-    });
-  }
-
   Widget _buildDynamicVerificationGrid(UserModel? userData) {
     return StreamBuilder<QuerySnapshot>(
         stream: _db.collection('verifications').snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
                 child: CircularProgressIndicator(color: Colors.amber));
           }
-          final docs = snapshot.data!.docs;
+          if (snapshot.hasError) {
+            return _buildErrorState();
+          }
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return _buildEmptyState('لا توجد عروض توثيق حالياً');
+          }
           return GridView.builder(
             padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1057,10 +1115,16 @@ class _StorePageState extends State<StorePage>
             .where('isSold', isEqualTo: false)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          final docs = snapshot.data!.docs;
+          if (snapshot.hasError) {
+            return _buildErrorState();
+          }
+          final docs = snapshot.data?.docs ?? [];
+          if (docs.isEmpty) {
+            return _buildEmptyState('لا توجد أرقام مميزة متاحة');
+          }
           return GridView.builder(
             padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1122,8 +1186,10 @@ class _StorePageState extends State<StorePage>
     if (user == null) return;
     final bal = currency == 'gems' ? user.gems : user.stars;
     if (bal < price) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('الرصيد غير كافٍ ⭐')));
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('الرصيد غير كافٍ ⭐')));
+      }
       return;
     }
 
@@ -1135,20 +1201,28 @@ class _StorePageState extends State<StorePage>
       });
 
       if (result.data['success'] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('تم شراء المعرف بنجاح ✅'),
-            backgroundColor: Colors.green));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('تم شراء المعرف بنجاح ✅'),
+              backgroundColor: Colors.green));
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(result.data['message']?.toString() ??
-                'حدث خطأ أثناء شراء المعرف')));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(result.data['message']?.toString() ??
+                  'حدث خطأ أثناء شراء المعرف')));
+        }
       }
     } on FirebaseFunctionsException catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message ?? 'خطأ في الخادم')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.message ?? 'خطأ في الخادم')));
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('خطأ غير متوقع: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ غير متوقع: $e')));
+      }
     }
   }
 
@@ -1156,35 +1230,36 @@ class _StorePageState extends State<StorePage>
     return SliverAppBar(
       expandedHeight: 180.0,
       pinned: true,
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: DesignTokens.backgroundDarkMedium,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: const BoxDecoration(
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Color(0xFF1A1A2E), Color(0xFF0A0A12)])),
+                  colors: [
+                DesignTokens.backgroundDarkMedium,
+                DesignTokens.backgroundDarkDeep
+              ])),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             const SizedBox(height: 40),
-            const Icon(Icons.shopping_bag, color: Colors.pinkAccent, size: 35),
-            const Text('المتجر الملكي المطور',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
+            const Icon(Icons.shopping_bag,
+                color: DesignTokens.primaryRuby, size: 35),
+            const HeadingText('المتجر الملكي المطور',
+                fontSize: DesignTokens.fontSizeXl2),
+            const SizedBox(height: DesignTokens.spacingMd),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               GestureDetector(
                   onTap: () => Navigator.push(context,
                       MaterialPageRoute(builder: (_) => const GemsCoinsPage())),
                   child: _buildGlassBalance(user?.gems.toString() ?? '0',
-                      Icons.diamond, Colors.cyanAccent)),
-              const SizedBox(width: 10),
+                      Icons.diamond, DesignTokens.primarySapphireLight)),
+              const SizedBox(width: DesignTokens.spacingSm),
               GestureDetector(
                   onTap: () => Navigator.push(context,
                       MaterialPageRoute(builder: (_) => const GemsCoinsPage())),
                   child: _buildGlassBalance(user?.stars.toString() ?? '0',
-                      Icons.stars, Colors.amber)),
+                      Icons.stars, DesignTokens.primaryGold)),
             ]),
           ]),
         ),
@@ -1194,20 +1269,53 @@ class _StorePageState extends State<StorePage>
 
   Widget _buildGlassBalance(String amount, IconData icon, Color color) {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+            horizontal: DesignTokens.spacingMd,
+            vertical: DesignTokens.spacingXs),
         decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(20),
+            color: DesignTokens.neutralWhite.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(DesignTokens.borderRadiusFull),
             border: Border.all(color: color.withValues(alpha: 0.3))),
         child: Row(children: [
-          Icon(icon, color: color, size: 16),
-          const SizedBox(width: 6),
-          Text(amount,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13))
+          Icon(icon, color: color, size: DesignTokens.iconSizeXs),
+          const SizedBox(width: DesignTokens.spacingSm),
+          BodyText(amount,
+              fontWeight: DesignTokens.fontWeightBold,
+              fontSize: DesignTokens.fontSizeSm,
+              color: DesignTokens.neutralWhite),
         ]));
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline,
+              color: DesignTokens.primaryRuby, size: 40),
+          const SizedBox(height: 10),
+          const BodyText('حدث خطأ في تحميل البيانات',
+              color: DesignTokens.neutralGray500),
+          TextButton(
+              onPressed: () => setState(() {}),
+              child: const Text('إعادة المحاولة')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.inventory_2_outlined,
+              color: DesignTokens.neutralGray700, size: 40),
+          const SizedBox(height: 10),
+          BodyText(message, color: DesignTokens.neutralGray500),
+        ],
+      ),
+    );
   }
 }
 
@@ -1220,7 +1328,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
   @override
   Widget build(context, shrink, overlaps) =>
-      Container(color: const Color(0xFF0A0A12), child: _tabBar);
+      Container(color: DesignTokens.backgroundDarkDeep, child: _tabBar);
   @override
   bool shouldRebuild(_SliverAppBarDelegate old) => false;
 }

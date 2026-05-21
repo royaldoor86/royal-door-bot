@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/family_model.dart';
+import '../models/family_store_item_model.dart';
 import '../services/family_service.dart';
 import '../app_theme.dart';
 
@@ -14,51 +15,36 @@ class FamilyStorePage extends StatefulWidget {
 
 class _FamilyStorePageState extends State<FamilyStorePage> {
   final FamilyService _familyService = FamilyService();
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  final List<Map<String, dynamic>> _perks = [
-    {
-      'id': 'entrance_effect_1',
-      'name': 'تأثير دخول ملكي',
-      'desc': 'تأثير حركي مميز عند دخول أي عضو للغرف الصوتية',
-      'cost': 5000,
-      'currency': 'coins',
-      'icon': Icons.auto_awesome,
-    },
-    {
-      'id': 'extra_members_10',
-      'name': 'توسيع العائلة (+10)',
-      'desc': 'زيادة الحد الأقصى للأعضاء بـ 10 مقاعد إضافية',
-      'cost': 200,
-      'currency': 'gems',
-      'icon': Icons.group_add,
-    },
-    {
-      'id': 'family_badge_gold',
-      'name': 'شارة العائلة الذهبية',
-      'desc': 'تظهر شارة ذهبية بجانب اسم العائلة في القوائم',
-      'cost': 1000,
-      'currency': 'gems',
-      'icon': Icons.verified,
-    },
-  ];
-
-  void _buyPerk(Map<String, dynamic> perk) async {
+  Future<void> _purchaseItem(FamilyStoreItemModel item) async {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A050E),
-        title: const Text('تأكيد الشراء', style: TextStyle(color: Colors.white)),
-        content: Text('هل تريد شراء "${perk['name']}" مقابل ${perk['cost']} ${perk['currency'] == 'gems' ? 'جوهرة' : 'عملة'} من خزينة العائلة؟', style: const TextStyle(color: Colors.white70)),
+        title:
+            const Text('تأكيد الشراء', style: TextStyle(color: Colors.white)),
+        content: Text(
+            'هل تريد شراء "${item.name}" مقابل ${item.cost} ${item.currency == 'family_gems' ? 'جوهرة' : 'نجمة ⭐'} من خزينة العائلة؟',
+            style: const TextStyle(color: Colors.white70)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(ctx);
               try {
-                await _familyService.buyFamilyPerk(widget.family.id, perk['id'], perk['cost'], perk['currency']);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم الشراء بنجاح! 🎉'), backgroundColor: Colors.green));
+                await _familyService.purchaseFamilyStoreItem(
+                    widget.family.id, item.id);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('تم الشراء بنجاح! 🎉')));
+                }
               } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.redAccent));
+                if (mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(e.toString())));
+                }
               }
             },
             child: const Text('شراء'),
@@ -74,66 +60,177 @@ class _FamilyStorePageState extends State<FamilyStorePage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('متجر العائلة الملكي'),
-          backgroundColor: const Color(0xFF1A050E),
+          title: const Text('متجر العائلة الملكي',
+              style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.transparent,
           elevation: 0,
         ),
         body: Container(
-          decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF3D0B16), Color(0xFF1A050E)])),
-          child: StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance.collection('families').doc(widget.family.id).snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-              final family = FamilyModel.fromFirestore(snapshot.data! as DocumentSnapshot<Map<String, dynamic>>);
-              
-              return Column(
-                children: [
-                  _buildWealthHeader(family),
-                  Expanded(
-                    child: ListView.builder(
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFF3D0B16), Color(0xFF1A050E)])),
+          child: Column(
+            children: [
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('families')
+                    .doc(widget.family.id)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData)
+                    return const Center(child: CircularProgressIndicator());
+                  final family = FamilyModel.fromFirestore(
+                      snapshot.data! as DocumentSnapshot<Map<String, dynamic>>);
+                  return _buildWealthHeader(family);
+                },
+              ),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _db
+                      .collection('family_store_items')
+                      .where('isActive', isEqualTo: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData)
+                      return const Center(child: CircularProgressIndicator());
+                    final items = snapshot.data!.docs
+                        .map((doc) => FamilyStoreItemModel.fromFirestore(doc))
+                        .toList();
+
+                    if (items.isEmpty) {
+                      return const Center(
+                          child: Text('لا توجد عناصر حالياً',
+                              style: TextStyle(color: Colors.white38)));
+                    }
+
+                    return GridView.builder(
                       padding: const EdgeInsets.all(20),
-                      itemCount: _perks.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.75,
+                        crossAxisSpacing: 15,
+                        mainAxisSpacing: 15,
+                      ),
+                      itemCount: items.length,
                       itemBuilder: (context, index) {
-                        final perk = _perks[index];
-                        final bool isUnlocked = family.perks.containsKey(perk['id']);
-                        
-                        return AppTheme.glassContainer(
-                          margin: const EdgeInsets.only(bottom: 15),
-                          padding: const EdgeInsets.all(15),
-                          opacity: 0.05,
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.white10,
-                              child: Icon(perk['icon'], color: Colors.amber),
-                            ),
-                            title: Text(perk['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                            subtitle: Text(perk['desc'], style: const TextStyle(color: Colors.white54, fontSize: 12)),
-                            trailing: isUnlocked 
-                              ? const Text('مفعل ✅', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))
-                              : ElevatedButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
-                                  onPressed: () => _buyPerk(perk),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text('${perk['cost']}', style: const TextStyle(color: Colors.black)),
-                                      const SizedBox(width: 4),
-                                      Icon(perk['currency'] == 'gems' ? Icons.diamond : Icons.monetization_on, size: 14, color: Colors.black),
-                                    ],
-                                  ),
-                                ),
-                          ),
-                        );
+                        final item = items[index];
+                        return _buildStoreItemCard(item);
                       },
-                    ),
-                  ),
-                ],
-              );
-            }
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildStoreItemCard(FamilyStoreItemModel item) {
+    return AppTheme.glassContainer(
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundImage:
+                item.imageUrl.isNotEmpty ? NetworkImage(item.imageUrl) : null,
+            backgroundColor: Colors.white.withValues(alpha: 0.1),
+            child: item.imageUrl.isEmpty
+                ? const Icon(Icons.shopping_bag, color: Colors.amber)
+                : null,
+          ),
+          const SizedBox(height: 10),
+          Text(item.name,
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
+          Text(item.description,
+              style: const TextStyle(color: Colors.white38, fontSize: 11),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 10),
+          _getTypeBadge(item.type),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Text('${item.cost}',
+                  style: const TextStyle(
+                      color: Colors.amber, fontWeight: FontWeight.bold)),
+              const SizedBox(width: 5),
+              Icon(
+                  item.currency == 'family_gems'
+                      ? Icons.diamond
+                      : Icons.stars_rounded,
+                  size: 16,
+                  color: item.currency == 'family_gems'
+                      ? Colors.cyan
+                      : Colors.amber),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: () => _purchaseItem(item),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                child: const Text('شراء',
+                    style: TextStyle(color: Colors.black, fontSize: 12)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getTypeBadge(String type) {
+    switch (type) {
+      case 'perk':
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+              color: Colors.blue.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8)),
+          child: const Text('ميزة',
+              style: TextStyle(color: Colors.blue, fontSize: 10)),
+        );
+      case 'hand_effect':
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+              color: Colors.purple.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8)),
+          child: const Text('إيدات',
+              style: TextStyle(color: Colors.purple, fontSize: 10)),
+        );
+      case 'entertainment':
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+              color: Colors.orange.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8)),
+          child: const Text('ترفيه',
+              style: TextStyle(color: Colors.orange, fontSize: 10)),
+        );
+      case 'badge':
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+              color: Colors.green.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8)),
+          child: const Text('شارة',
+              style: TextStyle(color: Colors.green, fontSize: 10)),
+        );
+      default:
+        return const SizedBox();
+    }
   }
 
   Widget _buildWealthHeader(FamilyModel family) {
@@ -142,8 +239,10 @@ class _FamilyStorePageState extends State<FamilyStorePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _wealthItem(family.familyGems, Icons.diamond, Colors.cyanAccent, 'جواهر الخزينة'),
-          _wealthItem(family.familyCoins, Icons.monetization_on, Colors.amber, 'عملات الخزينة'),
+          _wealthItem(family.familyGems, Icons.diamond, Colors.cyanAccent,
+              'جواهر الخزينة'),
+          _wealthItem(family.familyCoins, Icons.stars_rounded, Colors.amber,
+              'نجوم ⭐ الخزينة'),
         ],
       ),
     );
@@ -156,10 +255,15 @@ class _FamilyStorePageState extends State<FamilyStorePage> {
           children: [
             Icon(icon, color: color, size: 20),
             const SizedBox(width: 8),
-            Text(value.toString(), style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(value.toString(),
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold)),
           ],
         ),
-        Text(label, style: const TextStyle(color: Colors.white38, fontSize: 10)),
+        Text(label,
+            style: const TextStyle(color: Colors.white38, fontSize: 10)),
       ],
     );
   }

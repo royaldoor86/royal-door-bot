@@ -2,103 +2,167 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Default security: Deny all reads and writes by default.
-    match /{document=**} {
-      allow read, write: if false;
+    // --- الدوال المساعدة ---
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+
+    // دالة الأدمن المتطورة (تتحقق من الرتبة في مستند المستخدم)
+    function isAdmin() {
+      return isSignedIn() &&
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             (
+               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('isAdmin', false) == true ||
+               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'user') in ['admin', 'owner', 'developer', 'manager']
+             );
     }
 
-    // 1. Users Collection
-    // READ: Anyone can read public profile data.
-    // WRITE: A user can only update their own data.
+    // --- 1. الإعدادات والبيانات العامة (لضمان استقرار الإقلاع) ---
+    match /system_settings/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /settings/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /app_texts/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /announcements/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /global_announcements/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /meta/{id} { allow read: if true; }
+
+    // --- 2. المتاجر والسلع والتأثيرات (يجب أن يراها الجميع) ---
+    match /gifts/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /frames/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /bubbles/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /covers/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /entry_effects/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /mic_styles/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /recharge_plans/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /store_items/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /store_packages/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /gem_bundles/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /themes/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /room_themes/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /vehicles/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /badges_templates/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /levels/{id} { allow read: if true; }
+    match /store_levels/{id} { allow read: if true; }
+
+    // --- 3. المستخدمون (الحماية والبيانات الشخصية) ---
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == userId;
-    }
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isOwner(userId) || isAdmin();
 
-    // 2. Chat Rooms Collection
-    // READ/WRITE: Only participants of the chat room can access it.
-    match /chatRooms/{roomId} {
-      allow read, write: if request.auth.uid in resource.data.participants;
-
-      // Messages Subcollection
-      // READ: Only participants can read messages.
-      // CREATE: Sender must be the authenticated user and a participant.
-      // UPDATE/DELETE: Only sender can edit/delete their own message (handled by logic).
-      match /messages/{messageId} {
-        allow read: if request.auth.uid in get(/databases/$(database)/documents/chatRooms/$(roomId)).data.participants;
-        allow create: if request.auth.uid == request.resource.data.senderId &&
-                       request.auth.uid in get(/databases/$(database)/documents/chatRooms/$(roomId)).data.participants;
-        allow update, delete: if request.auth.uid == resource.data.senderId; 
+      match /{allSub=**} {
+        allow read: if isOwner(userId) || isAdmin() || isSignedIn();
+        allow write: if isOwner(userId) || isAdmin();
       }
     }
 
-    // 3. Voice Rooms Collection
-    // READ: Any authenticated user can see the rooms.
-    // UPDATE: Only the owner or a moderator can change room settings.
-    match /rooms/{roomId} {
-      allow read: if request.auth != null;
-      allow update: if request.auth.uid == resource.data.ownerId || request.auth.uid in resource.data.moderators;
-
-      // Subcollections (chat, online_users, mic_seats, etc.)
-      // Allow users who are present in the room to interact.
-      match /online_users/{userId} {
-        allow read: if request.auth != null;
-        allow write: if request.auth.uid == userId; // Users can add/remove themselves
-      }
-
-      match /chat/{messageId} {
-        allow read: if request.auth != null; 
-        allow create: if request.auth.uid == request.resource.data.senderId;
-      }
-
-      match /mic_seats/{seatId} {
-          allow read: if request.auth != null;
-          // Allow users to take a seat, or for admins to manage seats.
-          allow write: if request.auth.uid == request.resource.data.userId || 
-                         request.auth.uid == get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId;
-          allow delete: if request.auth.uid == resource.data.userId || 
-                         request.auth.uid == get(/databases/$(database)/documents/rooms/$(roomId)).data.ownerId;
-      }
-
-      match /mic_invites/{inviteId} {
-          allow create: if request.auth.uid == request.resource.data.fromUserId;
-          allow read, delete: if request.auth.uid == resource.data.toUserId || request.auth.uid == resource.data.fromUserId;
-      }
-    }
-
-    // 4. Notifications Collection
-    // READ: Only the recipient can read their notification.
-    // WRITE: Denied from client. Should only be written by Cloud Functions.
-    match /notifications/{notificationId} {
-      allow read: if request.auth.uid == resource.data.to;
-      allow write: if false;
-    }
-
-    // 5. Stories
-    match /stories/{storyId} {
-        allow read: if request.auth != null;
-        allow create: if request.auth.uid == request.resource.data.userId;
-        allow update: if request.auth.uid == resource.data.userId; // e.g., adding viewers
-        allow delete: if request.auth.uid == resource.data.userId;
-    }
-
-    // 6. Posts
+    // --- 4. التواصل الاجتماعي (المنشورات، اليوميات، اللحظات) ---
     match /posts/{postId} {
-        allow read: if request.auth != null;
-        allow create: if request.auth.uid == request.resource.data.authorId;
-        allow update, delete: if request.auth.uid == resource.data.authorId;
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (resource.data.authorId == request.auth.uid || isAdmin() || request.resource.data.diff(resource.data).affectedKeys().hasAny(['likes', 'commentCount', 'sharesCount']));
+      allow delete: if (isSignedIn() && resource.data.authorId == request.auth.uid) || isAdmin();
 
-        match /comments/{commentId} {
-            allow read: if request.auth != null;
-            allow create: if request.auth.uid == request.resource.data.userId;
-            allow delete: if request.auth.uid == resource.data.userId || request.auth.uid == get(/databases/$(database)/documents/posts/$(postId)).data.authorId;
-        }
+      match /comments/{id} { allow read, write: if isSignedIn(); }
     }
 
-    // System settings - read-only for clients
-    match /system_settings/global {
-        allow read: if request.auth != null;
-        allow write: if false; // Only admins from backend
+    match /stories/{storyId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      match /replies/{id} { allow read, write: if isSignedIn(); }
+    }
+
+    match /moments/{id} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    match /daily_posts/{id} { allow read, write: if isSignedIn(); }
+
+    // --- 5. الرسائل والمحادثات والغرف (حل مشكلة الاختفاء) ---
+    match /chatRooms/{id} {
+      allow read, write: if isSignedIn();
+      match /{all=**} { allow read, write: if isSignedIn(); }
+    }
+    match /chats/{id} {
+      allow read, write: if isSignedIn();
+      match /{all=**} { allow read, write: if isSignedIn(); }
+    }
+    match /messages/{id} {
+      allow read, write: if isSignedIn();
+      match /{all=**} { allow read, write: if isSignedIn(); }
+    }
+    match /conversations/{id} { allow read, write: if isSignedIn(); }
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+      
+      // قواعد خاصة بالمايكات (mic_seats) - توفير التكلفة
+      match /mic_seats/{seatId} {
+        allow read: if true;
+        // السماح بالإنشاء والتحديث والحذف للمستخدمين المسجلين
+        allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+        allow update: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+        allow delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      }
+      
+      // قواعد خاصة بالمستخدمين المتصلين (online_users)
+      match /online_users/{userId} {
+        allow read: if true;
+        allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+        allow update: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+        allow delete: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      }
+      
+      // قواعد خاصة بالدردشة في الغرفة
+      match /chat/{messageId} {
+        allow read: if true;
+        allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+        allow update, delete: if isAdmin();
+      }
+      
+      match /{all=**} { allow read, write: if isSignedIn(); }
+    }
+
+    // --- 6. الاقتصاد والعملات والمحفظة ---
+    match /payments/{id} { allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin()); allow create: if isSignedIn(); }
+    match /purchases/{id} { allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin()); allow create: if isSignedIn(); }
+    match /investments/{id} { allow read, write: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin()); }
+    match /reward_transactions/{id} { allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin()); }
+    match /harvest_transactions/{id} { allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin()); }
+    match /agent_transactions/{id} { allow read: if isSignedIn(); }
+
+    // --- 7. الألعاب والفعاليات والـ PK ---
+    match /games/{id} { allow read: if true; allow write: if isSignedIn(); }
+    match /pk_battles/{id} { allow read, write: if isSignedIn(); }
+    match /pk_random_matches/{id} { allow read, write: if isSignedIn(); }
+    match /room_battles/{id} { allow read, write: if isSignedIn(); }
+    match /ludo_online/{id} { allow read, write: if isSignedIn(); }
+    match /tournaments/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    // --- 8. العائلات والعلاقات ---
+    match /families/{id} {
+      allow read: if true;
+      allow write: if isSignedIn();
+      match /{all=**} { allow read, write: if isSignedIn(); }
+    }
+    match /friends/{id} { allow read, write: if isSignedIn(); }
+    match /follows/{id} { allow read, write: if isSignedIn(); }
+    match /followers/{id} { allow read, write: if isSignedIn(); }
+    match /friendships/{id} { allow read, write: if isSignedIn(); }
+    match /friend_requests/{id} { allow read, write: if isSignedIn(); }
+
+    // --- 9. الإدارة والرقابة ---
+    match /admin_config/{id} { allow read, write: if isAdmin(); }
+    match /admin_logs/{id} { allow read, write: if isAdmin(); }
+    match /audit_logs/{id} { allow read, write: if isAdmin(); }
+    match /reports/{id} { allow read: if isAdmin(); allow create: if isSignedIn(); }
+    match /banned_users/{id} { allow read: if isSignedIn(); allow write: if isAdmin(); }
+    match /agencies/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    // --- 10. قاعدة عامة نهائية ---
+    match /{document=**} {
+      allow read, write: if isSignedIn();
     }
   }
 }

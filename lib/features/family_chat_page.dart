@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -169,7 +170,22 @@ class _FamilyChatPageState extends State<FamilyChatPage> {
           mainAxisAlignment: isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (!isMe) CircleAvatar(radius: 15, backgroundImage: (data['senderPic'] != null && data['senderPic'] != '') ? NetworkImage(data['senderPic']) : null, child: (data['senderPic'] == null || data['senderPic'] == '') ? const Icon(Icons.person, size: 15) : null),
+            if (!isMe)
+              CircleAvatar(
+                radius: 15,
+                backgroundImage: (data['senderPic'] != null &&
+                        data['senderPic'].toString().isNotEmpty &&
+                        Uri.tryParse(data['senderPic'].toString())?.host.isNotEmpty ==
+                            true)
+                    ? CachedNetworkImageProvider(data['senderPic'])
+                    : null,
+                child: (data['senderPic'] == null ||
+                        data['senderPic'].toString().isEmpty ||
+                        Uri.tryParse(data['senderPic'].toString())?.host.isEmpty ==
+                            true)
+                    ? const Icon(Icons.person, size: 15)
+                    : null,
+              ),
             const SizedBox(width: 8),
             Flexible(
               child: Column(
@@ -179,9 +195,9 @@ class _FamilyChatPageState extends State<FamilyChatPage> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: isMe ? Colors.amber.withOpacity(0.1) : Colors.white.withOpacity(0.05),
+                      color: isMe ? Colors.amber.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: isMe ? Colors.amber.withOpacity(0.3) : Colors.white.withOpacity(0.1)),
+                      border: Border.all(color: isMe ? Colors.amber.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.1)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

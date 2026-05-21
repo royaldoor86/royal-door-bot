@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +8,9 @@ import 'dart:math' as math;
 import 'package:intl/intl.dart';
 import '../models/user_model.dart';
 import '../models/rewards_models.dart';
+import '../models/vip_model.dart';
 import '../services/rewards_service.dart';
+import '../services/vip_service.dart';
 import '../features/rewards_stats_page.dart';
 import 'package:lottie/lottie.dart';
 import '../constants/rewards_constants.dart';
@@ -37,7 +38,6 @@ class _RewardsPageState extends State<RewardsPage>
   late AnimationController _waveController;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final RewardsService _rewardsService = RewardsService();
-  Timer? _timer;
   bool _isProcessing = false;
   bool _isDarkMode = true;
   late AudioPlayer _audioPlayer;
@@ -196,8 +196,9 @@ class _RewardsPageState extends State<RewardsPage>
                                     if (lastActivation != null) {
                                       final diff = DateTime.now()
                                           .difference(lastActivation.toDate());
-                                      if (diff.inSeconds < 24 * 3600)
+                                      if (diff.inSeconds < 24 * 3600) {
                                         isActiveStatus = true;
+                                      }
                                     }
                                   }
 
@@ -283,14 +284,45 @@ class _RewardsPageState extends State<RewardsPage>
                                                   userData.uid),
                                               const SizedBox(height: 20),
 
-                                              // 10. DETAILED STATISTICS
+                                              // 10. COMPREHENSIVE STATISTICS DASHBOARD
+                                              _buildComprehensiveStatsCard(
+                                                  userData.uid),
+                                              const SizedBox(height: 20),
+
+                                              // 11. DETAILED STATISTICS
                                               _buildStatisticsCard(
                                                   userData.uid),
                                               const SizedBox(height: 20),
 
-                                              // 11. SMART NOTIFICATIONS
+                                              // 12. ACHIEVEMENTS CARD
+                                              _buildAchievementsCard(
+                                                  userData.uid),
+                                              const SizedBox(height: 20),
+
+                                              // 13. VIP STATUS CARD
+                                              _buildVIPStatusCard(userData.uid),
+                                              const SizedBox(height: 20),
+
+                                              // 14. HARVEST COUNTDOWN TIMER
+                                              _buildHarvestCountdownTimer(
+                                                  userData.uid),
+                                              const SizedBox(height: 20),
+
+                                              // 15. SMART NOTIFICATIONS
                                               _buildSmartNotificationsCard(
                                                   userData.uid),
+                                              const SizedBox(height: 20),
+
+                                              // 16. LEADERBOARD CARD
+                                              _buildLeaderboardCard(),
+                                              const SizedBox(height: 20),
+
+                                              // 17. TIPS AND HINTS CARD
+                                              _buildTipsAndHintsCard(),
+                                              const SizedBox(height: 20),
+
+                                              // 18. TUTORIAL CARD
+                                              _buildTutorialCard(),
                                               const SizedBox(height: 20),
 
                                               // MISSED REWARD ALERT
@@ -813,7 +845,7 @@ class _RewardsPageState extends State<RewardsPage>
                 _isDarkMode = value;
               });
             },
-            activeColor: Colors.purpleAccent,
+            activeThumbColor: Colors.purpleAccent,
             activeTrackColor: Colors.purpleAccent.withValues(alpha: 0.3),
           ),
         ],
@@ -1132,7 +1164,7 @@ class _RewardsPageState extends State<RewardsPage>
 
   Widget _buildWalletSection(UserModel userData) {
     // حساب النجوم بناءً على سعر الجواهر (1 جوهرة = 2.6 نجمة)
-    final gemsToStarsRate = 2.6;
+    const gemsToStarsRate = 2.6;
     final calculatedStars = (userData.harvestWallet * gemsToStarsRate).toInt();
 
     return Padding(
@@ -2136,8 +2168,9 @@ class _RewardsPageState extends State<RewardsPage>
           .where('isRead', isEqualTo: false)
           .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty)
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const SizedBox();
+        }
         final docId = snapshot.data!.docs.first.id;
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -2394,6 +2427,7 @@ class _RewardsPageState extends State<RewardsPage>
   }
 
   void _showSuccessAnimation(double reward) {
+    _triggerHeavyImpact();
     _playSound();
     _confettiController.play();
     showDialog(
@@ -2414,10 +2448,1405 @@ class _RewardsPageState extends State<RewardsPage>
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    _triggerSelectionFeedback();
+                    Navigator.pop(context);
+                  },
                   child: const Text('استمرار'))
             ])));
   }
+
+  Widget _buildComprehensiveStatsCard(String userId) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db
+          .collection('users')
+          .doc(userId)
+          .collection('active_rewards')
+          .snapshots(),
+      builder: (context, activeSnapshot) {
+        final activeRewards = activeSnapshot.data?.docs ?? [];
+        final activeCount = activeRewards.length;
+
+        return StreamBuilder<QuerySnapshot>(
+          stream: _db
+              .collection('users')
+              .doc(userId)
+              .collection('completed_rewards')
+              .snapshots(),
+          builder: (context, completedSnapshot) {
+            final completedRewards = completedSnapshot.data?.docs ?? [];
+            final completedCount = completedRewards.length;
+
+            return StreamBuilder<DocumentSnapshot>(
+              stream: _db.collection('users').doc(userId).snapshots(),
+              builder: (context, userSnapshot) {
+                if (!userSnapshot.hasData) return const SizedBox();
+
+                final userData =
+                    userSnapshot.data!.data() as Map<String, dynamic>?;
+                final totalGems = (userData?['harvestWallet'] ?? 0).toDouble();
+                final totalStars =
+                    (userData?['starsHarvestWallet'] ?? 0).toDouble();
+
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: _isDarkMode
+                          ? [const Color(0xFF1A237E), const Color(0xFF311B92)]
+                          : [const Color(0xFFE8EAF6), const Color(0xFFC5CAE9)],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: Colors.purpleAccent.withValues(alpha: 0.3),
+                        width: 1),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.analytics_outlined,
+                                color: Colors.purpleAccent, size: 28),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'لوحة الإحصائيات الشاملة',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatItem(
+                                '💎 الجواهر',
+                                _formatNumber(totalGems),
+                                Colors.amber,
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildStatItem(
+                                '⭐ النجوم',
+                                _formatNumber(totalStars),
+                                Colors.purpleAccent,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatItem(
+                                '📦 باقات نشطة',
+                                '$activeCount',
+                                Colors.greenAccent,
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildStatItem(
+                                '✅ باقات مكتملة',
+                                '$completedCount',
+                                Colors.blueAccent,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildStatItem(String label, String value, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAchievementsCard(String userId) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: _isDarkMode
+              ? [const Color(0xFF1A237E), const Color(0xFF311B92)]
+              : [const Color(0xFFE8EAF6), const Color(0xFFC5CAE9)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+            color: Colors.purpleAccent.withValues(alpha: 0.3), width: 1),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.emoji_events_outlined,
+                    color: Colors.amber, size: 28),
+                const SizedBox(width: 12),
+                const Text(
+                  'الإنجازات',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            StreamBuilder<QuerySnapshot>(
+              stream: _db
+                  .collection('users')
+                  .doc(userId)
+                  .collection('user_achievements')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child:
+                        CircularProgressIndicator(color: Colors.purpleAccent),
+                  );
+                }
+
+                final achievements = snapshot.data!.docs;
+                if (achievements.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'لا توجد إنجازات بعد',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  );
+                }
+
+                return Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: achievements.map((doc) {
+                    final achievement = doc.data() as Map<String, dynamic>;
+                    final title = achievement['title'] ?? '';
+                    final icon = achievement['icon'] ?? '🏆';
+                    final status = achievement['status'] ?? 'locked';
+                    final isUnlocked =
+                        status == 'unlocked' || status == 'claimed';
+
+                    return AnimatedCard(
+                      onTap: () {
+                        _triggerSelectionFeedback();
+                        _showAchievementDetails(achievement);
+                      },
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: isUnlocked
+                                ? [
+                                    Colors.amber.withValues(alpha: 0.3),
+                                    Colors.orange.withValues(alpha: 0.1)
+                                  ]
+                                : [
+                                    Colors.grey.withValues(alpha: 0.2),
+                                    Colors.grey.withValues(alpha: 0.1)
+                                  ],
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: isUnlocked
+                                ? Colors.amber.withValues(alpha: 0.5)
+                                : Colors.grey.withValues(alpha: 0.3),
+                            width: 2,
+                          ),
+                          boxShadow: isUnlocked
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.amber.withValues(alpha: 0.3),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ]
+                              : [],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              icon,
+                              style: TextStyle(
+                                fontSize: 32,
+                                color: isUnlocked
+                                    ? null
+                                    : Colors.grey.withValues(alpha: 0.5),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              title.length > 8
+                                  ? '${title.substring(0, 8)}...'
+                                  : title,
+                              style: TextStyle(
+                                color: isUnlocked
+                                    ? Colors.white
+                                    : Colors.grey.withValues(alpha: 0.7),
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAchievementDetails(Map<String, dynamic> achievement) {
+    final title = achievement['title'] ?? '';
+    final description = achievement['description'] ?? '';
+    final icon = achievement['icon'] ?? '🏆';
+    final rewardGems = achievement['rewardGems'] ?? 0;
+    final rewardStars = achievement['rewardStars'] ?? 0;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF0F2027),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(icon, style: const TextStyle(fontSize: 64)),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              description,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            if (rewardGems > 0 || rewardStars > 0)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (rewardGems > 0)
+                      Text(
+                        '+$rewardGems 💎',
+                        style: const TextStyle(
+                          color: Colors.amber,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    if (rewardGems > 0 && rewardStars > 0)
+                      const SizedBox(width: 16),
+                    if (rewardStars > 0)
+                      Text(
+                        '+$rewardStars ⭐',
+                        style: const TextStyle(
+                          color: Colors.purpleAccent,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                _triggerSelectionFeedback();
+                Navigator.pop(context);
+              },
+              child: const Text('إغلاق'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVIPStatusCard(String userId) {
+    return FutureBuilder<VIPStatus>(
+      future: VIPService.getUserVIPStatus(userId),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.purpleAccent),
+          );
+        }
+
+        final vipStatus = snapshot.data!;
+        final isVIP = vipStatus.isActive && !vipStatus.isExpired;
+
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isVIP
+                  ? [
+                      vipStatus.levelColor.withValues(alpha: 0.3),
+                      vipStatus.levelColor.withValues(alpha: 0.1)
+                    ]
+                  : (_isDarkMode
+                      ? [const Color(0xFF1A237E), const Color(0xFF311B92)]
+                      : [const Color(0xFFE8EAF6), const Color(0xFFC5CAE9)]),
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isVIP
+                  ? vipStatus.levelColor
+                  : Colors.purpleAccent.withValues(alpha: 0.3),
+              width: 2,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      vipStatus.levelIcon,
+                      style: const TextStyle(fontSize: 32),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isVIP
+                                ? 'حالة VIP: ${vipStatus.levelName}'
+                                : 'حالة VIP: غير VIP',
+                            style: TextStyle(
+                              color:
+                                  isVIP ? vipStatus.levelColor : Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (isVIP && vipStatus.expiresAt != null)
+                            Text(
+                              'ينتهي خلال ${vipStatus.daysUntilExpiry} يوم',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (!isVIP)
+                      ElevatedButton(
+                        onPressed: () {
+                          // Show VIP packages dialog
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                        ),
+                        child: const Text(
+                          'ترقية',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
+                  ],
+                ),
+                if (isVIP)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'المزايا الحالية:',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        _buildVIPBenefit('مكافأة الحصاد',
+                            '${(vipStatus.harvestBonus * 100).toInt()}%'),
+                        _buildVIPBenefit('مكافأة التحويل',
+                            '${(vipStatus.conversionBonus * 100).toInt()}%'),
+                        _buildVIPBenefit('الحد الأقصى للباقات',
+                            '${vipStatus.maxActivePackages}'),
+                        _buildVIPBenefit(
+                            'نقاط النشاط', '${vipStatus.activityPoints}'),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildVIPBenefit(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 12,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHarvestCountdownTimer(String userId) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db
+          .collection('users')
+          .doc(userId)
+          .collection('active_rewards')
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox();
+        }
+
+        final rewards = snapshot.data!.docs;
+        if (rewards.isEmpty) {
+          return const SizedBox();
+        }
+
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: _isDarkMode
+                  ? [const Color(0xFF1A237E), const Color(0xFF311B92)]
+                  : [const Color(0xFFE8EAF6), const Color(0xFFC5CAE9)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: Colors.greenAccent.withValues(alpha: 0.3), width: 1),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.timer_outlined,
+                        color: Colors.greenAccent, size: 28),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'مؤقت الحصاد',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: rewards.length,
+                  itemBuilder: (context, index) {
+                    final reward =
+                        rewards[index].data() as Map<String, dynamic>;
+                    final packageName = reward['packageName'] ?? 'Unknown';
+                    final lastRewardDate =
+                        (reward['lastRewardDate'] as Timestamp?)?.toDate();
+                    final dailyReward = reward['dailyReward'] ?? 0;
+
+                    if (lastRewardDate == null) {
+                      return _buildCountdownItem(
+                          packageName, dailyReward, 'متاح الآن', true);
+                    }
+
+                    final nextAvailable =
+                        lastRewardDate.add(const Duration(hours: 24));
+                    final now = DateTime.now();
+                    final isAvailable = now.isAfter(nextAvailable);
+
+                    if (isAvailable) {
+                      return _buildCountdownItem(
+                          packageName, dailyReward, 'متاح الآن', true);
+                    }
+
+                    final remaining = nextAvailable.difference(now);
+                    return _buildCountdownItem(packageName, dailyReward,
+                        _formatDuration(remaining), false);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCountdownItem(
+      String packageName, double reward, String timeText, bool isAvailable) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: isAvailable
+            ? Colors.greenAccent.withValues(alpha: 0.2)
+            : Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: isAvailable
+              ? Colors.greenAccent.withValues(alpha: 0.5)
+              : Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  packageName,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '+${_formatNumber(reward)} 💎',
+                  style: const TextStyle(
+                    color: Colors.amber,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            timeText,
+            style: TextStyle(
+              color: isAvailable ? Colors.greenAccent : Colors.white70,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Widget _buildLeaderboardCard() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: _isDarkMode
+              ? [const Color(0xFF1A237E), const Color(0xFF311B92)]
+              : [const Color(0xFFE8EAF6), const Color(0xFFC5CAE9)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+            color: Colors.orangeAccent.withValues(alpha: 0.3), width: 1),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.leaderboard_outlined,
+                    color: Colors.orangeAccent, size: 28),
+                const SizedBox(width: 12),
+                const Text(
+                  'المتصدرون',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            StreamBuilder<QuerySnapshot>(
+              stream: _db
+                  .collection('users')
+                  .orderBy('totalHarvested', descending: true)
+                  .limit(10)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child:
+                        CircularProgressIndicator(color: Colors.orangeAccent),
+                  );
+                }
+
+                final users = snapshot.data!.docs;
+                if (users.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'لا توجد بيانات بعد',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    final userData =
+                        users[index].data() as Map<String, dynamic>;
+                    final username =
+                        userData['username'] ?? 'مستخدم ${index + 1}';
+                    final totalHarvested = userData['totalHarvested'] ?? 0;
+                    final rank = index + 1;
+
+                    Color rankColor;
+                    IconData rankIcon;
+                    if (rank == 1) {
+                      rankColor = Colors.amber;
+                      rankIcon = Icons.emoji_events;
+                    } else if (rank == 2) {
+                      rankColor = Colors.grey;
+                      rankIcon = Icons.emoji_events;
+                    } else if (rank == 3) {
+                      rankColor = Colors.brown;
+                      rankIcon = Icons.emoji_events;
+                    } else {
+                      rankColor = Colors.white70;
+                      rankIcon = Icons.person;
+                    }
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: rankColor.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                rankIcon,
+                                color: rankColor,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  username,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  'المرتبة #$rank',
+                                  style: TextStyle(
+                                    color: rankColor,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            '${_formatNumber(totalHarvested)} 💎',
+                            style: const TextStyle(
+                              color: Colors.amber,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTipsAndHintsCard() {
+    final tips = [
+      {
+        'icon': '💎',
+        'title': 'الحصاد اليومي',
+        'description': 'احصد مكافآتك اليومية كل 24 ساعة لزيادة أرباحك',
+      },
+      {
+        'icon': '📦',
+        'title': 'شراء الباقات',
+        'description': 'استثمر في الباقات للحصول على أرباح يومية لمدة 31 يوماً',
+      },
+      {
+        'icon': '⭐',
+        'title': 'تحويل النجوم',
+        'description': 'بعد 31 يوماً، يتم تحويل الباقة تلقائياً إلى نجوم',
+      },
+      {
+        'icon': '🏆',
+        'title': 'الإنجازات',
+        'description': 'أكمل المهام واحصل على مكافآت إضافية',
+      },
+      {
+        'icon': '👑',
+        'title': 'نظام VIP',
+        'description': 'احصل على عضوية VIP لمكافآت إضافية ومزايا خاصة',
+      },
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: _isDarkMode
+              ? [const Color(0xFF1A237E), const Color(0xFF311B92)]
+              : [const Color(0xFFE8EAF6), const Color(0xFFC5CAE9)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+            color: Colors.cyanAccent.withValues(alpha: 0.3), width: 1),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.lightbulb_outline,
+                    color: Colors.cyanAccent, size: 28),
+                const SizedBox(width: 12),
+                const Text(
+                  'نصائح وإرشادات',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: tips.length,
+              itemBuilder: (context, index) {
+                final tip = tips[index];
+                return AnimatedCard(
+                  onTap: () {
+                    _triggerSelectionFeedback();
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          tip['icon'] ?? '💡',
+                          style: const TextStyle(fontSize: 28),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                tip['title'] ?? '',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                tip['description'] ?? '',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTutorialCard() {
+    return AnimatedCard(
+      onTap: () {
+        _triggerMediumImpact();
+        _showTutorialDialog();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: _isDarkMode
+                ? [const Color(0xFF1A237E), const Color(0xFF311B92)]
+                : [const Color(0xFFE8EAF6), const Color(0xFFC5CAE9)],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+              color: Colors.pinkAccent.withValues(alpha: 0.3), width: 1),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Icon(Icons.school_outlined, color: Colors.pinkAccent, size: 32),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'دليل المستخدم',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'تعلم كيفية استخدام التطبيق',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, color: Colors.pinkAccent, size: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showTutorialDialog() {
+    final tutorialSteps = [
+      {
+        'title': 'مرحباً بك في نظام المكافآت الملكي',
+        'description':
+            'اكتشف كيفية كسب الجواهر والنجوم من خلال نظام المكافآت المتطور',
+        'icon': '👋',
+      },
+      {
+        'title': 'شراء الباقات',
+        'description':
+            'اختر من بين مجموعة متنوعة من الباقات وابدأ في كسب الأرباح اليومية',
+        'icon': '📦',
+      },
+      {
+        'title': 'الحصاد اليومي',
+        'description': 'احصد مكافآتك كل 24 ساعة بعد مشاهدة الإعلان',
+        'icon': '💎',
+      },
+      {
+        'title': 'تحويل النجوم',
+        'description': 'بعد 31 يوماً، يتم تحويل الباقة تلقائياً إلى نجوم',
+        'icon': '⭐',
+      },
+      {
+        'title': 'الإنجازات',
+        'description': 'أكمل المهام واحصل على مكافآت إضافية',
+        'icon': '🏆',
+      },
+      {
+        'title': 'نظام VIP',
+        'description': 'احصل على عضوية VIP لمكافآت إضافية ومزايا خاصة',
+        'icon': '👑',
+      },
+    ];
+
+    int currentStep = 0;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            backgroundColor: const Color(0xFF0F2027),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  tutorialSteps[currentStep]['icon'] ?? '',
+                  style: const TextStyle(fontSize: 64),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  tutorialSteps[currentStep]['title'] ?? '',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  tutorialSteps[currentStep]['description'] ?? '',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (currentStep > 0)
+                      TextButton(
+                        onPressed: () {
+                          _triggerSelectionFeedback();
+                          setState(() => currentStep--);
+                        },
+                        child: const Text('السابق'),
+                      ),
+                    Row(
+                      children: List.generate(
+                        tutorialSteps.length,
+                        (index) => Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: index == currentStep
+                                ? Colors.pinkAccent
+                                : Colors.grey.withValues(alpha: 0.5),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (currentStep < tutorialSteps.length - 1)
+                      ElevatedButton(
+                        onPressed: () {
+                          _triggerSelectionFeedback();
+                          setState(() => currentStep++);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pinkAccent,
+                        ),
+                        child: const Text('التالي'),
+                      )
+                    else
+                      ElevatedButton(
+                        onPressed: () {
+                          _triggerSelectionFeedback();
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.greenAccent,
+                        ),
+                        child: const Text('بدء'),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _triggerMediumImpact() {
+    try {
+      HapticFeedback.mediumImpact();
+    } catch (e) {
+      debugPrint('Haptic feedback error: $e');
+    }
+  }
+
+  void _triggerHeavyImpact() {
+    try {
+      HapticFeedback.heavyImpact();
+    } catch (e) {
+      debugPrint('Haptic feedback error: $e');
+    }
+  }
+
+  void _triggerSelectionFeedback() {
+    try {
+      HapticFeedback.selectionClick();
+    } catch (e) {
+      debugPrint('Haptic feedback error: $e');
+    }
+  }
+}
+
+enum NotificationType {
+  success,
+  error,
+  warning,
+  info,
+}
+
+class PageTransition {
+  static Widget slideTransition(Widget child) {
+    return AnimatedBuilder(
+      animation: const AlwaysStoppedAnimation(0.0),
+      builder: (context, child) {
+        return child!;
+      },
+      child: child,
+    );
+  }
+
+  static Widget fadeTransition(Widget child) {
+    return AnimatedOpacity(
+      opacity: 1.0,
+      duration: const Duration(milliseconds: 300),
+      child: child,
+    );
+  }
+
+  static Widget scaleTransition(Widget child) {
+    return AnimatedScale(
+      scale: 1.0,
+      duration: const Duration(milliseconds: 300),
+      child: child,
+    );
+  }
+}
+
+class AnimatedCard extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  final Duration duration;
+
+  const AnimatedCard({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.duration = const Duration(milliseconds: 200),
+  });
+
+  @override
+  State<AnimatedCard> createState() => _AnimatedCardState();
+}
+
+class _AnimatedCardState extends State<AnimatedCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) => _controller.reverse(),
+      onTapCancel: () => _controller.reverse(),
+      onTap: widget.onTap,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+class FadeInWidget extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+  final Duration delay;
+
+  const FadeInWidget({
+    super.key,
+    required this.child,
+    this.duration = const Duration(milliseconds: 500),
+    this.delay = Duration.zero,
+  });
+
+  @override
+  State<FadeInWidget> createState() => _FadeInWidgetState();
+}
+
+class _FadeInWidgetState extends State<FadeInWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+
+    Future.delayed(widget.delay, () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: widget.child,
+    );
+  }
+}
+
+class SlideInWidget extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+  final Duration delay;
+  final SlideDirection direction;
+
+  const SlideInWidget({
+    super.key,
+    required this.child,
+    this.duration = const Duration(milliseconds: 500),
+    this.delay = Duration.zero,
+    this.direction = SlideDirection.up,
+  });
+
+  @override
+  State<SlideInWidget> createState() => _SlideInWidgetState();
+}
+
+class _SlideInWidgetState extends State<SlideInWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+
+    Offset beginOffset;
+    switch (widget.direction) {
+      case SlideDirection.up:
+        beginOffset = const Offset(0, 0.3);
+        break;
+      case SlideDirection.down:
+        beginOffset = const Offset(0, -0.3);
+        break;
+      case SlideDirection.left:
+        beginOffset = const Offset(0.3, 0);
+        break;
+      case SlideDirection.right:
+        beginOffset = const Offset(-0.3, 0);
+        break;
+    }
+
+    _slideAnimation =
+        Tween<Offset>(begin: beginOffset, end: Offset.zero).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+
+    Future.delayed(widget.delay, () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideTransition(
+      position: _slideAnimation,
+      child: widget.child,
+    );
+  }
+}
+
+enum SlideDirection {
+  up,
+  down,
+  left,
+  right,
 }
 
 class WavePainter extends CustomPainter {

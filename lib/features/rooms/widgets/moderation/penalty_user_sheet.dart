@@ -20,9 +20,9 @@ class PenaltyUserSheet extends StatelessWidget {
           const SizedBox(height: 20),
           Text("تطبيق عقوبة على $userName", style: const TextStyle(color: Colors.purpleAccent, fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
-          _penaltyOption(context, "خصم 100 كوينز 🪙", 100, "coins"),
-          _penaltyOption(context, "خصم 500 كوينز 🪙", 500, "coins"),
-          _penaltyOption(context, "خصم 10 ألماس 💎", 10, "gems"),
+          _penaltyOption(context, "خصم 100 نجمة ⭐", 100, "coins"),
+          _penaltyOption(context, "خصم 500 نجمة ⭐", 500, "coins"),
+          _penaltyOption(context, "خصم 100 ألماس 💎", 10, "gems"),
         ],
       ),
     );
@@ -30,7 +30,7 @@ class PenaltyUserSheet extends StatelessWidget {
 
   Widget _penaltyOption(BuildContext context, String title, int amount, String field) {
     return ListTile(
-      leading: Icon(Icons.money_off, color: Colors.redAccent),
+      leading: const Icon(Icons.money_off, color: Colors.redAccent),
       title: Text(title, style: const TextStyle(color: Colors.white)),
       onTap: () async {
         await FirebaseFirestore.instance.collection('users').doc(userId).update({

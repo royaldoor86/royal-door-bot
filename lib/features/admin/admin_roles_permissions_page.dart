@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// صفحة إدارة صلاحيات المشرفين الملكية
 class AdminRolesPermissionsPage extends StatelessWidget {
-  const AdminRolesPermissionsPage({Key? key}) : super(key: key);
+  const AdminRolesPermissionsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +34,8 @@ class AdminRolesPermissionsPage extends StatelessWidget {
                     children: [
                       Text('الوصف: ${r['description'] ?? ''}',
                           style: const TextStyle(color: Colors.blue)),
-                      Text('الصلاحيات:',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      const Text('الصلاحيات:',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       Wrap(
                         spacing: 8,
                         children: (r['permissions'] as List<dynamic>? ?? [])
@@ -62,8 +62,8 @@ class AdminRolesPermissionsPage extends StatelessWidget {
         onPressed: () {
           _showEditRoleDialog(context, null, null);
         },
-        child: const Icon(Icons.add),
         tooltip: 'إضافة صلاحية جديدة',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -108,7 +108,7 @@ class AdminRolesPermissionsPage extends StatelessWidget {
                   ],
                   if (success) ...[
                     const SizedBox(height: 8),
-                    Text('تم الحفظ بنجاح 🎉',
+                    const Text('تم الحفظ بنجاح 🎉',
                         style: TextStyle(
                             color: Colors.green, fontWeight: FontWeight.bold)),
                   ],
@@ -167,15 +167,21 @@ class AdminRolesPermissionsPage extends StatelessWidget {
                             success = true;
                           });
                           await Future.delayed(const Duration(seconds: 1));
-                          Navigator.pop(ctx);
+                          if (ctx.mounted) {
+                            Navigator.pop(ctx);
+                          }
                         } catch (e) {
-                          setState(() {
-                            errorMsg = 'خطأ: $e';
-                          });
+                          if (context.mounted) {
+                            setState(() {
+                              errorMsg = 'خطأ: $e';
+                            });
+                          }
                         } finally {
-                          setState(() {
-                            loading = false;
-                          });
+                          if (context.mounted) {
+                            setState(() {
+                              loading = false;
+                            });
+                          }
                         }
                       },
                 style:

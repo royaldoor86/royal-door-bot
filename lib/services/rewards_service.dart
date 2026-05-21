@@ -223,6 +223,15 @@ class RewardsService {
         throw RewardsException(RewardsConstants.errorRateLimitExceeded);
       }
 
+      // 3. فحص الطلبات المتكررة بسرعة (Anti-spam)
+      if (recentRequests.length >= 2) {
+        final lastRequest = recentRequests[recentRequests.length - 2];
+        final timeSinceLast = now.difference(lastRequest).inSeconds;
+        if (timeSinceLast < 2) {
+          throw RewardsException('يرجى الانتظار قبل إجراء طلب آخر.');
+        }
+      }
+
       // تحديث القائمة
       dates.add(now);
       await limitDoc.reference.set({
@@ -238,6 +247,73 @@ class RewardsService {
         'lastUpdate': FieldValue.serverTimestamp(),
       });
     }
+  }
+
+  /// التحقق من السلوك المشبوه (Anti-Cheat Detection)
+  Future<void> _checkSuspiciousActivity(String userId, String action) async {
+    final now = DateTime.now();
+
+    // جلب سجل الأنشطة المشبوهة
+    final suspiciousDoc =
+        await _firestore.collection('anti_cheat_logs').doc(userId).get();
+
+    if (suspiciousDoc.exists) {
+      final data = suspiciousDoc.data()!;
+      final int flagCount = data['flagCount'] ?? 0;
+      final DateTime? lastFlagTime =
+          (data['lastFlagTime'] as Timestamp?)?.toDate();
+
+      // إذا كان المستخدم لديه الكثير من الأعلام، حظره مؤقتاً
+      if (flagCount >= 10) {
+        throw RewardsException(
+            'تم تعليق حسابك مؤقتاً بسبب نشاط مشبوه. يرجى التواصل مع الدعم.');
+      }
+
+      // فحص التكرار السريع للأنشطة
+      if (lastFlagTime != null) {
+        final timeSinceLastFlag = now.difference(lastFlagTime).inMinutes;
+        if (timeSinceLastFlag < 5) {
+          // زيادة عدد الأعلام
+          await suspiciousDoc.reference.update({
+            'flagCount': flagCount + 1,
+            'lastFlagTime': FieldValue.serverTimestamp(),
+            'flags': FieldValue.arrayUnion([
+              {
+                'action': action,
+                'timestamp': FieldValue.serverTimestamp(),
+                'reason': 'rapid_activity',
+              }
+            ]),
+          });
+
+          if (flagCount + 1 >= 5) {
+            throw RewardsException(
+                'تم رصد نشاط غير طبيعي. يرجى الانتظار قليلاً.');
+          }
+        }
+      }
+    } else {
+      // إنشاء سجل جديد
+      await _firestore.collection('anti_cheat_logs').doc(userId).set({
+        'flagCount': 0,
+        'lastFlagTime': null,
+        'flags': [],
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    }
+  }
+
+  /// تسجيل النشاط للأغراض الأمنية
+  Future<void> _logSecurityEvent(
+      String userId, String action, Map<String, dynamic> details) async {
+    await _firestore.collection('security_logs').add({
+      'userId': userId,
+      'action': action,
+      'details': details,
+      'timestamp': FieldValue.serverTimestamp(),
+      'ipAddress': details['ipAddress'] ?? 'unknown',
+      'userAgent': details['userAgent'] ?? 'unknown',
+    });
   }
 
   /// التحقق من حالة الصيانة (Maintenance Mode)
@@ -626,9 +702,23 @@ class RewardsService {
     // تفعيل نظام الرقابة لمنع استغلال تكرار النداء البرمجي
     await _checkRateLimit(userId, 'activate_daily_reward');
 
+    // فحص النشاط المشبوه
+    await _checkSuspiciousActivity(userId, 'activate_daily_reward');
+
     if (!adWatched) {
       throw RewardsException('يجب مشاهدة الإعلان أولاً لتفعيل المكافأة');
     }
+
+    // تسجيل الحدث الأمني
+    await _logSecurityEvent(userId, 'activate_daily_reward', {
+      'rewardId': rewardId,
+      'adWatched': adWatched,
+    });
+
+    // تخزين بيانات المكافأة لاستخدامها بعد المعاملة
+    String packageName = '';
+    double dailyReward = 0;
+    int remainingDays = 0;
 
     await _firestore.runTransaction((transaction) async {
       final rewardRef = _firestore
@@ -685,9 +775,29 @@ class RewardsService {
         'type': 'daily_claim'
       });
 
+      // تخزين البيانات للاستخدام بعد المعاملة
+      packageName = reward.packageName;
+      dailyReward = reward.dailyReward;
+      remainingDays = reward.remainingDays;
+
       // التحقق من الإنجازات بعد الحصاد
       checkAndUnlockAchievements(userId);
     });
+
+    // تسجيل في audit log بعد اكتمال المعاملة
+    await _auditService.logEvent(
+      action: 'daily_harvest',
+      eventType: AuditEventType.rewardClaimed,
+      severity: AuditSeverity.low,
+      details: {
+        'rewardId': rewardId,
+        'packageName': packageName,
+        'amount': dailyReward,
+        'currency': RewardsConstants.currencyGems,
+        'adWatched': adWatched,
+        'remainingDays': remainingDays,
+      },
+    );
   }
 
   /// معالجة جميع المكافآت المستحقة للمستخدم (بما في ذلك تحويل الـ 31 يوماً)

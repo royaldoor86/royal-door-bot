@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 
 class BattleResultDialog extends StatefulWidget {
   final int redPoints;
@@ -12,20 +13,22 @@ class BattleResultDialog extends StatefulWidget {
 class _BattleResultDialogState extends State<BattleResultDialog> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _rotateAnimation;
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
     _scaleAnimation = CurvedAnimation(parent: _controller, curve: Curves.elasticOut);
-    _rotateAnimation = Tween<double>(begin: 0.0, end: 2 * 3.14159).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutBack));
+    _confettiController = ConfettiController(duration: const Duration(seconds: 5));
     _controller.forward();
+    _confettiController.play();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _confettiController.dispose();
     super.dispose();
   }
 
@@ -39,76 +42,87 @@ class _BattleResultDialogState extends State<BattleResultDialog> with SingleTick
     return Dialog(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Stack(
-          alignment: Alignment.center,
-          clipBehavior: Clip.none,
-          children: [
-            // الخلفية المتوهجة
-            Container(
-              width: 280,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A1F26),
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: winnerColor.withOpacity(0.5), width: 2),
-                boxShadow: [
-                  BoxShadow(color: winnerColor.withOpacity(0.3), blurRadius: 20, spreadRadius: 5),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 50),
-                  Text(
-                    winnerText,
-                    style: TextStyle(color: winnerColor, fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildScoreItem("الأزرق", widget.bluePoints, Colors.blue),
-                      const Text("VS", style: TextStyle(color: Colors.white24, fontWeight: FontWeight.bold)),
-                      _buildScoreItem("الأحمر", widget.redPoints, Colors.red),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: [winnerColor, Colors.white, Colors.amber],
+          ),
+          ScaleTransition(
+            scale: _scaleAnimation,
+            child: Stack(
+              alignment: Alignment.center,
+              clipBehavior: Clip.none,
+              children: [
+                // الخلفية المتوهجة
+                Container(
+                  width: 280,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A1F26),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: winnerColor.withValues(alpha: 0.5), width: 2),
+                    boxShadow: [
+                      BoxShadow(color: winnerColor.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 5),
                     ],
                   ),
-                  const SizedBox(height: 30),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: winnerColor,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                    ),
-                    child: const Text("استمرار", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-            ),
-            // التاج أو الكأس المتحرك
-            Positioned(
-              top: -60,
-              child: RotationTransition(
-                turns: _controller.drive(CurveTween(curve: Curves.elasticOut)),
-                child: Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: winnerColor,
-                    boxShadow: [BoxShadow(color: winnerColor.withOpacity(0.5), blurRadius: 15)],
-                  ),
-                  child: Icon(
-                    isDraw ? Icons.star : Icons.emoji_events,
-                    color: Colors.white,
-                    size: 60,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 50),
+                      Text(
+                        winnerText,
+                        style: TextStyle(color: winnerColor, fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildScoreItem("الأزرق", widget.bluePoints, Colors.blue),
+                          const Text("VS", style: TextStyle(color: Colors.white24, fontWeight: FontWeight.bold)),
+                          _buildScoreItem("الأحمر", widget.redPoints, Colors.red),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: winnerColor,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                        ),
+                        child: const Text("استمرار", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
                   ),
                 ),
-              ),
+                // التاج أو الكأس المتحرك
+                Positioned(
+                  top: -60,
+                  child: RotationTransition(
+                    turns: _controller.drive(CurveTween(curve: Curves.elasticOut)),
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: winnerColor,
+                        boxShadow: [BoxShadow(color: winnerColor.withValues(alpha: 0.5), blurRadius: 15)],
+                      ),
+                      child: Icon(
+                        isDraw ? Icons.star : Icons.emoji_events,
+                        color: Colors.white,
+                        size: 60,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,5 +1,1 @@
-package com.royaldoor.live
-
-import io.flutter.embedding.android.FlutterActivity
-
-class MainActivity : FlutterActivity()
+package com.royaldoor.live// This file is moved to the kotlin folder.

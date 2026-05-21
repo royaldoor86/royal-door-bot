@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../theme/app_theme.dart';
+import '../../app_theme.dart';
 import '../../models/agency_model.dart';
 import '../../services/agency_service.dart';
 import '../../services/storage_service.dart';
@@ -19,7 +19,7 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
   final AgencyService _agencyService = AgencyService();
 
   void _showCreateAgencyDialog({AgencyModel? agency}) {
-    final targetIdCtrl = TextEditingController(); // لا يتم استخدامه في التعديل
+    final targetIdCtrl = TextEditingController(); 
     final nameCtrl = TextEditingController(text: agency?.name);
     File? selectedLogo;
     AgencyType selectedType = agency?.type ?? AgencyType.reseller;
@@ -33,7 +33,7 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
           child: AlertDialog(
             backgroundColor: const Color(0xFF1A0A10),
             title: Text(
-                agency == null ? "تأسيس وكالة جديدة" : "تعديل بيانات الوكالة",
+                agency == null ? "تأسيس بيت دعم جديد" : "تعديل بيانات بيت الدعم",
                 style: const TextStyle(color: Colors.white)),
             content: SingleChildScrollView(
               child: Column(
@@ -55,7 +55,7 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
                         color: Colors.white10,
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: Colors.amber.withValues(alpha: (0.5 * 255))),
+                            color: Colors.amber.withValues(alpha: 0.5)),
                         image: selectedLogo != null
                             ? DecorationImage(
                                 image: FileImage(selectedLogo!),
@@ -72,7 +72,7 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                   Icon(Icons.camera_alt, color: Colors.amber),
-                                  Text("شعار الوكالة",
+                                  Text("شعار بيت الدعم",
                                       style: TextStyle(
                                           color: Colors.white24, fontSize: 10))
                                 ])
@@ -84,10 +84,10 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
                   ),
                   const SizedBox(height: 20),
                   if (agency == null) ...[
-                    _inputField(targetIdCtrl, "ID المستخدم (الصغير)"),
+                    _inputField(targetIdCtrl, "ID العضو الملكي"),
                     const SizedBox(height: 10),
                   ],
-                  _inputField(nameCtrl, "اسم الوكالة"),
+                  _inputField(nameCtrl, "اسم بيت الدعم"),
                   const SizedBox(height: 15),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -102,12 +102,12 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
                       items: const [
                         DropdownMenuItem(
                             value: AgencyType.reseller,
-                            child: Text("وكالة شحن",
+                            child: Text("بيت دعم رسمي",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 14))),
                         DropdownMenuItem(
                             value: AgencyType.hosting,
-                            child: Text("وكالة استضافة",
+                            child: Text("بيت دعم مجتمعي",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 14))),
                       ],
@@ -187,9 +187,9 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A0A10),
-        title: const Text("حذف الوكالة", style: TextStyle(color: Colors.red)),
+        title: const Text("حذف بيت الدعم", style: TextStyle(color: Colors.red)),
         content: Text(
-            "هل أنت متأكد من حذف وكالة '${agency.name}'؟ سيتم سحب صلاحية الوكيل من صاحبها نهائياً."),
+            "هل أنت متأكد من حذف بيت الدعم '${agency.name}'؟ سيتم سحب صلاحية القيادة من صاحبها نهائياً."),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx), child: const Text("إلغاء")),
@@ -199,7 +199,7 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
               if (mounted) {
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("تم حذف الوكالة بنجاح")));
+                    const SnackBar(content: Text("تم حذف بيت الدعم بنجاح")));
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -217,14 +217,15 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateAgencyDialog(),
         icon: const Icon(Icons.add),
-        label: const Text("تعيين وكيل جديد"),
+        label: const Text("تعيين قائد دعم جديد"),
         backgroundColor: Colors.amber,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('agencies').snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
+          }
           final agencies = snapshot.data!.docs
               .map((d) => AgencyModel.fromFirestore(
                   d as DocumentSnapshot<Map<String, dynamic>>))
@@ -306,7 +307,7 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
                         backgroundColor: Colors.orange,
                         minimumSize: const Size(50, 25),
                         padding: EdgeInsets.zero),
-                    child: const Text("كوينز", style: TextStyle(fontSize: 9)),
+                    child: const Text("نجوم ⭐", style: TextStyle(fontSize: 9)),
                   ),
                 ],
               ),
@@ -323,7 +324,7 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A0A10),
-        title: Text("شحن ${isGems ? 'جواهر' : 'كوينز'} لـ ${agency.name}"),
+        title: Text("شحن ${isGems ? 'جواهر' : 'نجوم ⭐'} لـ ${agency.name}"),
         content: _inputField(chargeCtrl, "الكمية", isNumber: true),
         actions: [
           TextButton(
@@ -334,7 +335,7 @@ class _AdminAgenciesPageState extends State<AdminAgenciesPage> {
               if (isGems) {
                 await _agencyService.chargeAgentBalance(agency.id, amount);
               } else {
-                await _agencyService.chargeAgentCoins(agency.id, amount);
+                await _agencyService.chargeAgentStars(agency.id, amount);
               }
               if (mounted) {
                 Navigator.pop(ctx);

@@ -14,6 +14,9 @@ import 'story_viewer.dart';
 import 'widgets/post_card.dart';
 import 'widgets/story_card.dart';
 
+import '../../theme/design_tokens.dart';
+import '../../theme/reusable_widgets.dart';
+
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../services/ad_manager.dart';
 
@@ -28,11 +31,34 @@ class _DiariesPageState extends State<DiariesPage>
     with TickerProviderStateMixin {
   final FirestoreService _firestoreService = FirestoreService();
   late TabController _tabController;
+  BannerAd? _bannerAd;
+  bool _isAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _initBannerAd();
+  }
+
+  void _initBannerAd() {
+    _bannerAd = AdManager().getBannerAd(
+      size: AdSize.banner,
+      onAdLoaded: () {
+        if (mounted) {
+          setState(() {
+            _isAdLoaded = true;
+          });
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _onRefresh() async {
@@ -48,17 +74,23 @@ class _DiariesPageState extends State<DiariesPage>
 
     return Scaffold(
       backgroundColor: Colors.black,
-      bottomNavigationBar: SizedBox(
-        height: 50,
-        child: AdWidget(ad: AdManager().getBannerAd()),
-      ),
+      bottomNavigationBar: _isAdLoaded && _bannerAd != null
+          ? Container(
+              color: Colors.black,
+              height: _bannerAd!.size.height.toDouble(),
+              width: _bannerAd!.size.width.toDouble(),
+              child: AdWidget(
+                key: ObjectKey(_bannerAd),
+                ad: _bannerAd!,
+              ),
+            )
+          : null,
       body: AppTheme.background(
         child: StreamBuilder<dynamic>(
           stream: _firestoreService.streamUserData(currentUid),
           builder: (ctx, userSnap) {
             if (!userSnap.hasData) {
-              return const Center(
-                  child: CircularProgressIndicator(color: AppTheme.royalGold));
+              return const RoyalLoadingIndicator();
             }
             final me = userSnap.data as dynamic;
             final following =
@@ -99,7 +131,7 @@ class _DiariesPageState extends State<DiariesPage>
                         Tab(text: isEn ? 'Feed' : 'آخر الأخبار'),
                         Tab(text: isEn ? 'My Posts' : 'يومياتي'),
                       ],
-                      indicatorColor: AppTheme.royalGold,
+                      indicatorColor: DesignTokens.primaryGold,
                       indicatorWeight: 3,
                       labelStyle: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.bold),
@@ -173,14 +205,13 @@ class _PostsListTabViewState extends State<_PostsListTabView>
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting &&
             !snapshot.hasData) {
-          return const Center(
-              child: CircularProgressIndicator(color: AppTheme.royalGold));
+          return const RoyalShimmerList(itemCount: 3, itemHeight: 350);
         }
         final posts = snapshot.data ?? [];
 
         return RefreshIndicator(
           onRefresh: widget.onRefresh,
-          color: AppTheme.royalGold,
+          color: DesignTokens.primaryGold,
           backgroundColor: const Color(0xFF121212),
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(
@@ -310,7 +341,7 @@ class _PostsListTabViewState extends State<_PostsListTabView>
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('جاري رفع القصة... ⏳'),
-          backgroundColor: AppTheme.royalGold));
+          backgroundColor: DesignTokens.primaryGold));
 
       final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
       final userData = await widget.firestoreService.streamUserData(uid).first;
@@ -360,7 +391,23 @@ class _StoriesSection extends StatelessWidget {
       child: StreamBuilder<List<StoryModel>>(
         stream: firestoreService.streamStories(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return const SizedBox(height: 110);
+          if (!snapshot.hasData) {
+            return ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
+              itemBuilder: (context, index) => RoyalShimmer(
+                child: Container(
+                  width: 80,
+                  height: 100,
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+            );
+          }
           final stories = snapshot.data ?? [];
           final Map<String, List<StoryModel>> grouped = {};
           for (final s in stories) {

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -15,96 +16,115 @@ class PreloadService {
 
   /// بدء عملية التحميل المسبق الشاملة
   Future<void> init(BuildContext context) async {
-    debugPrint('🚀 PreloadService: Starting background assets loading...');
+    debugPrint('🚀 PreloadService: Starting phased assets loading...');
     
-    // تشغيل العمليات بالتوازي لضمان السرعة
-    Future.wait([
-      _preloadGifts(context),
-      _preloadStoreItems(context),
-      _preloadDiaries(context),
-      _preloadStories(context),
-    ]);
+    // ننتظر حتى استقرار حالة المستخدم، ونحاول التحميل بصمت
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (!context.mounted) return;
+
+    try {
+      await _preloadGifts(context);
+      if (!context.mounted) return;
+      await _preloadStoreItems(context);
+      if (!context.mounted) return;
+      await _preloadDiaries(context);
+      if (!context.mounted) return;
+      await _preloadStories(context);
+    } catch (e) {
+      // تجاهل الأخطاء العامة لضمان عدم توقف التطبيق
+    }
   }
 
   /// تحميل هدايا الغرف الصوتية
   Future<void> _preloadGifts(BuildContext context) async {
     try {
-      final snap = await _db.collection('gifts').where('isActive', isEqualTo: true).limit(50).get();
+      final snap = await _db.collection('gifts').where('isActive', isEqualTo: true).limit(30).get();
+      if (!context.mounted) return;
+      
       for (var doc in snap.docs) {
         final url = doc.data()['imageUrl'] as String?;
         if (url != null) _cacheImage(context, url);
         
-        // إذا كانت الهدية تحتوي على تأثير Lottie أو فيديو
         final effectUrl = doc.data()['effectUrl'] as String?;
         if (effectUrl != null && effectUrl.contains('.mp4')) {
           _cacheVideo(effectUrl);
         }
       }
-    } catch (e) {
-      debugPrint('Preload Error (Gifts): $e');
-    }
+    } catch (_) {}
   }
 
   /// تحميل منتجات المتجر الملكي (إطارات، مركبات، الخ)
   Future<void> _preloadStoreItems(BuildContext context) async {
-    final collections = ['frames', 'vehicles', 'entry_effects', 'covers', 'bubbles'];
+    final collections = ['frames', 'vehicles', 'entry_effects'];
     for (var col in collections) {
       try {
-        final snap = await _db.collection(col).where('isActive', isEqualTo: true).limit(20).get();
+        final snap = await _db.collection(col).where('isActive', isEqualTo: true).limit(10).get();
+        if (!context.mounted) return;
+        
         for (var doc in snap.docs) {
           final url = doc.data()['imageUrl'] as String?;
           if (url != null) _cacheImage(context, url);
-          
-          final previewUrl = doc.data()['previewUrl'] as String?;
-          if (previewUrl != null) _cacheImage(context, previewUrl);
         }
-      } catch (e) {
-        debugPrint('Preload Error ($col): $e');
-      }
+      } catch (_) {}
     }
   }
 
   /// تحميل صور اليوميات (المنشورات)
   Future<void> _preloadDiaries(BuildContext context) async {
     try {
-      final snap = await _db.collection('posts').orderBy('createdAt', descending: true).limit(15).get();
+      // فقط إذا كان هناك مستخدم مسجل
+      if (FirebaseAuth.instance.currentUser == null) return;
+      
+      final snap = await _db.collection('posts').orderBy('createdAt', descending: true).limit(10).get();
+      if (!context.mounted) return;
+      
       for (var doc in snap.docs) {
         final url = doc.data()['imageUrl'] as String?;
         if (url != null) _cacheImage(context, url);
       }
-    } catch (e) {
-      debugPrint('Preload Error (Posts): $e');
-    }
+    } catch (_) {}
   }
 
   /// تحميل صور وفيديوهات القصص (Stories)
   Future<void> _preloadStories(BuildContext context) async {
     try {
+      if (FirebaseAuth.instance.currentUser == null) return;
+
       final now = DateTime.now();
       final snap = await _db.collection('stories')
           .where('createdAt', isGreaterThan: now.subtract(const Duration(hours: 24)))
-          .limit(20)
+          .limit(10)
           .get();
+      if (!context.mounted) return;
           
       for (var doc in snap.docs) {
         final imgUrl = doc.data()['imageUrl'] as String?;
         if (imgUrl != null) _cacheImage(context, imgUrl);
-        
-        final vidUrl = doc.data()['videoUrl'] as String?;
-        if (vidUrl != null) _cacheVideo(vidUrl);
       }
-    } catch (e) {
-      debugPrint('Preload Error (Stories): $e');
-    }
+    } catch (_) {}
   }
 
   void _cacheImage(BuildContext context, String url) {
-    if (url.isEmpty || _cachedUrls.contains(url)) return;
+    if (url.isEmpty || !url.startsWith('http') || _cachedUrls.contains(url)) return;
+    if (!context.mounted) return;
     
-    // استخدام precacheImage من Flutter لضمان وجود الصورة في ذاكرة الـ GPU
-    precacheImage(CachedNetworkImageProvider(url), context).then((_) {
-      _cachedUrls.add(url);
-    }).catchError((_) {});
+    // فلتر لحماية الـ Decoder من الروابط المشبوهة
+    if (url.length < 15 || url.contains(' ')) return;
+
+    try {
+      precacheImage(
+        CachedNetworkImageProvider(url),
+        context,
+        onError: (exception, stackTrace) {
+          debugPrint('❌ PreloadService: Failed to precache image: $url');
+        },
+      ).then((_) {
+        _cachedUrls.add(url);
+      }).catchError((e) {
+        // تجاهل أخطاء التكويد بصمت
+      });
+    } catch (_) {}
   }
 
   void _cacheVideo(String url) async {

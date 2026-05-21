@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../models/story_model.dart';
 import '../../../app_theme.dart';
 
@@ -17,35 +18,51 @@ class StoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    
     if (isAddButton) {
       return GestureDetector(
         onTap: onTap,
         child: Container(
-          width: 110,
-          margin: const EdgeInsets.only(right: 10),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E1E1E),
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: Colors.white10),
-          ),
+          width: 75,
+          margin: const EdgeInsets.symmetric(horizontal: 6),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                flex: 2,
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white05,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+              Stack(
+                children: [
+                  Container(
+                    width: 68,
+                    height: 68,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white24, width: 1.5),
+                    ),
+                    child: const Center(
+                      child: Icon(Icons.person, color: Colors.white24, size: 35),
+                    ),
                   ),
-                  child: const Icon(Icons.add_rounded, color: AppTheme.royalGold, size: 40),
-                ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(color: AppTheme.royalGold, shape: BoxShape.circle),
+                        child: const Icon(Icons.add, color: Colors.black, size: 16),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const Expanded(
-                child: Center(
-                  child: Text('إضافة قصة',
-                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-                ),
+              const SizedBox(height: 6),
+              const Text(
+                'قصتي',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -54,54 +71,67 @@ class StoryCard extends StatelessWidget {
     }
 
     final first = group.first;
+    // التحقق مما إذا كانت جميع القصص في المجموعة قد شوهدت
+    final bool allViewed = group.every((s) => s.viewers.contains(currentUid));
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 110,
-        margin: const EdgeInsets.only(right: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          image: DecorationImage(
-            image: CachedNetworkImageProvider(first.imageUrl ?? first.userPic),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Stack(
+        width: 80,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
+              width: 70,
+              height: 70,
+              padding: const EdgeInsets.all(2.5),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black.withOpacity(0.1), Colors.black.withOpacity(0.7)],
-                ),
+                shape: BoxShape.circle,
+                gradient: allViewed
+                    ? null
+                    : const LinearGradient(
+                        colors: [Color(0xFF833AB4), Color(0xFFE1306C), Color(0xFFF77737)],
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                      ),
+                border: allViewed ? Border.all(color: Colors.white24, width: 1.5) : null,
               ),
-            ),
-            Positioned(
-              top: 8,
-              left: 8,
               child: Container(
-                padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppTheme.royalGold, width: 2),
+                  color: Colors.black,
+                  border: Border.all(color: Colors.black, width: 2),
                 ),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundImage: CachedNetworkImageProvider(first.userPic),
+                child: ClipOval(
+                  child: (first.userPic.isNotEmpty && Uri.tryParse(first.userPic)?.host.isNotEmpty == true)
+                    ? CachedNetworkImage(
+                        imageUrl: first.userPic,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(color: Colors.white10),
+                        errorWidget: (context, url, error) => const Icon(Icons.person, color: Colors.white24),
+                      )
+                    : (first.imageUrl != null && first.imageUrl!.isNotEmpty && Uri.tryParse(first.imageUrl!)?.host.isNotEmpty == true)
+                      ? CachedNetworkImage(
+                          imageUrl: first.imageUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(color: Colors.white10),
+                          errorWidget: (context, url, error) => const Icon(Icons.person, color: Colors.white24),
+                        )
+                      : const Icon(Icons.person, color: Colors.white24),
                 ),
               ),
             ),
-            Positioned(
-              bottom: 8,
-              left: 8,
-              right: 8,
-              child: Text(
-                first.userName,
-                style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 6),
+            Text(
+              first.userName,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: allViewed ? Colors.white38 : Colors.white,
+                fontSize: 11,
+                fontWeight: allViewed ? FontWeight.normal : FontWeight.w600,
               ),
             ),
           ],

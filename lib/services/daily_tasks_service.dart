@@ -61,7 +61,7 @@ class DailyTasksService {
         updates['gems'] = (userData['gems'] ?? 0) + rewardAmount;
       } else if (rewardType == 'xp') {
         // زيادة مستوى الخبرة XP الملكي
-        updates['xp'] = (userData['xp'] ?? 0) + rewardAmount;
+        updates['royalXP'] = (userData['royalXP'] ?? 0) + rewardAmount;
       }
 
       // تحديث بيانات المستخدم
@@ -89,8 +89,17 @@ class DailyTasksService {
       final data = doc.data();
       if (data == null || data['lastUpdate'] == null) return;
 
-      // الحصول على تاريخ آخر تحديث
-      DateTime lastUpdate = (data['lastUpdate'] as Timestamp).toDate();
+      // الحصول على تاريخ آخر تحديث بشكل آمن
+      final lastUpdateVal = data['lastUpdate'];
+      if (lastUpdateVal == null || lastUpdateVal is! Timestamp) {
+        // إذا كان الحقل غير موجود أو ليس Timestamp، نقوم بتصفير المهام لضمان السلامة
+        await _firestore.collection('daily_tasks').doc(uid).set({
+          'lastUpdate': FieldValue.serverTimestamp(),
+        });
+        return;
+      }
+
+      DateTime lastUpdate = lastUpdateVal.toDate();
       DateTime now = DateTime.now();
 
       // إذا كان اليوم مختلفاً (سنة أو شهر أو يوم)
@@ -116,11 +125,22 @@ class DailyTasksService {
 
   /// جلب قوالب المهام المتاحة
   static Future<List<Map<String, dynamic>>> fetchTasksTemplate({String lang = 'ar'}) async {
-    final doc = await _firestore.collection('daily_tasks_templates').doc(lang).get();
-    if (!doc.exists) return [];
-    final data = doc.data();
-    if (data == null || data['tasks'] == null) return [];
-    return List<Map<String, dynamic>>.from(data['tasks']);
+    try {
+      final doc = await _firestore.collection('daily_tasks_templates').doc(lang).get();
+      if (!doc.exists) {
+        // إذا لم يكن القالب موجوداً، نقوم بإنشائه فوراً لضمان عمل الصفحة
+        await setupAdTasks();
+        final newDoc = await _firestore.collection('daily_tasks_templates').doc(lang).get();
+        final data = newDoc.data();
+        return data != null && data['tasks'] != null ? List<Map<String, dynamic>>.from(data['tasks']) : [];
+      }
+      final data = doc.data();
+      if (data == null || data['tasks'] == null) return [];
+      return List<Map<String, dynamic>>.from(data['tasks']);
+    } catch (e) {
+      print("Error fetching tasks template: $e");
+      return []; // إرجاع قائمة فارغة بدلاً من تعليق التطبيق
+    }
   }
 
   /// إعداد أولي للمهمات (10 مهمات لزيادة الأرباح)

@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/android/flutter_application_1_android.iml" filepath="$PROJECT_DIR$/android/flutter_application_1_android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/royaldur.iml" filepath="$PROJECT_DIR$/royaldur.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/royaldoor.iml" filepath="$PROJECT_DIR$/.idea/royaldoor.iml" />
     </modules>
   </component>
 </project>

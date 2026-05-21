@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
 // Scheduled Function: Reset daily tasks for all users every day at 3 AM UTC
-export const resetDailyTasks = functions.pubsub.schedule("0 3 * * *").timeZone("UTC").onRun(async (context) => {
+export const resetDailyTasks = functions.pubsub.schedule("0 3 * * *").timeZone("UTC").onRun(async () => {
   const dailyTasksRef = admin.firestore().collection("daily_tasks");
   const snapshot = await dailyTasksRef.get();
   const batch = admin.firestore().batch();
@@ -10,7 +10,7 @@ export const resetDailyTasks = functions.pubsub.schedule("0 3 * * *").timeZone("
   snapshot.forEach((doc) => {
     // إعادة تعيين جميع المهام إلى false
     const data = doc.data();
-    const resetData: any = {};
+    const resetData: Record<string, boolean> = {};
     for (const key in data) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
         resetData[key] = false;

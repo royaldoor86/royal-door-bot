@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminRechargePackagesPage extends StatefulWidget {
   final String initialType; // 'coins' or 'gems'
-  const AdminRechargePackagesPage({Key? key, required this.initialType}) : super(key: key);
+  const AdminRechargePackagesPage({super.key, required this.initialType});
 
   @override
   State<AdminRechargePackagesPage> createState() => _AdminRechargePackagesPageState();
@@ -44,7 +44,7 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
             labelColor: accentGold,
             unselectedLabelColor: Colors.white38,
             tabs: const [
-              Tab(text: 'باقات الكوينز 🪙'),
+              Tab(text: 'باقات النجوم ⭐'),
               Tab(text: 'باقات الجواهر 💎'),
             ],
           ),
@@ -73,7 +73,7 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
         final docs = snapshot.data!.docs;
         
         if (docs.isEmpty) {
-          return Center(child: Text('لا توجد باقات مضافة حالياً', style: TextStyle(color: Colors.white.withOpacity(0.3))));
+          return Center(child: Text('لا توجد باقات مضافة حالياً', style: TextStyle(color: Colors.white.withValues(alpha: 0.3))));
         }
 
         return ListView.builder(
@@ -94,14 +94,14 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: ListTile(
-        leading: Icon(type == 'coins' ? Icons.monetization_on : Icons.diamond, color: color, size: 30),
-        title: Text('${data['amount']} ${type == 'coins' ? 'كوينز' : 'جوهرة'}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text('السعر: ${data['price']} \$', style: const TextStyle(color: Colors.greenAccent)),
+        leading: Icon(type == 'coins' ? Icons.stars_rounded : Icons.diamond, color: color, size: 30),
+        title: Text('${data['amount']} ${type == 'coins' ? 'نجمة ⭐' : 'جوهرة'}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        subtitle: Text('السعر: ${data['price']} نجوم رويال', style: const TextStyle(color: Colors.greenAccent)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -129,13 +129,13 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
               controller: amountCtrl,
               keyboardType: TextInputType.number,
               style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(labelText: 'الكمية (${type == 'coins' ? 'كوينز' : 'جواهر'})', labelStyle: const TextStyle(color: Colors.white54)),
+              decoration: InputDecoration(labelText: 'الكمية (${type == 'coins' ? 'نجمة' : 'جواهر'})', labelStyle: const TextStyle(color: Colors.white54)),
             ),
             TextField(
               controller: priceCtrl,
               keyboardType: TextInputType.number,
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(labelText: 'السعر بالدولار (\$)', labelStyle: TextStyle(color: Colors.white54)),
+              decoration: const InputDecoration(labelText: 'السعر (بالنجوم الملكية)', labelStyle: TextStyle(color: Colors.white54)),
             ),
           ],
         ),
@@ -147,7 +147,7 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
                 final data = {
                   'amount': int.parse(amountCtrl.text),
                   'price': double.parse(priceCtrl.text),
-                  'type': type,
+                  'type': type.endsWith('s') ? type : '${type}s', // توحيد النوع إلى الجمع (coins/gems)
                   'updatedAt': FieldValue.serverTimestamp(),
                 };
                 if (packageId == null) {

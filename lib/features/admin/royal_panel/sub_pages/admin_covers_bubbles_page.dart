@@ -38,7 +38,7 @@ class _AdminCoversBubblesPageState extends State<AdminCoversBubblesPage> {
             children: [
               TextField(controller: _nameController, decoration: const InputDecoration(labelText: 'الاسم', labelStyle: TextStyle(color: Colors.white70)), style: const TextStyle(color: Colors.white)),
               TextField(controller: _urlController, decoration: const InputDecoration(labelText: 'رابط الصورة', labelStyle: TextStyle(color: Colors.white70)), style: const TextStyle(color: Colors.white)),
-              TextField(controller: _priceController, decoration: const InputDecoration(labelText: 'السعر (كوينز)', labelStyle: TextStyle(color: Colors.white70)), keyboardType: TextInputType.number, style: const TextStyle(color: Colors.white)),
+              TextField(controller: _priceController, decoration: const InputDecoration(labelText: 'السعر (نجوم ⭐)', labelStyle: TextStyle(color: Colors.white70)), keyboardType: TextInputType.number, style: const TextStyle(color: Colors.white)),
             ],
           ),
         ),
@@ -94,7 +94,7 @@ class _AdminCoversBubblesPageState extends State<AdminCoversBubblesPage> {
                 final data = docs[index].data() as Map<String, dynamic>;
                 final id = docs[index].id;
                 return Container(
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.white10)),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.white10)),
                   child: Column(
                     children: [
                       Expanded(
@@ -108,7 +108,7 @@ class _AdminCoversBubblesPageState extends State<AdminCoversBubblesPage> {
                         child: Column(
                           children: [
                             Text(data['name'] ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-                            Text('${data['price']} 🪙', style: const TextStyle(color: Colors.amber, fontSize: 10)),
+                            Text('${data['price']} ⭐', style: const TextStyle(color: Colors.amber, fontSize: 10)),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

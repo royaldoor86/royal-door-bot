@@ -8,12 +8,12 @@ class AdminTaskRewardsMgmtPage extends StatefulWidget {
   const AdminTaskRewardsMgmtPage({super.key});
 
   @override
-  State<AdminTaskRewardsMgmtPage> createState() => _AdminTaskRewardsMgmtPageState();
+  State<AdminTaskRewardsMgmtPage> createState() =>
+      _AdminTaskRewardsMgmtPageState();
 }
 
 class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,10 @@ class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
         ),
         Expanded(
           child: StreamBuilder<QuerySnapshot>(
-            stream: _db.collection('royal_articles').orderBy('createdAt', descending: true).snapshots(),
+            stream: _db
+                .collection('royal_articles')
+                .orderBy('createdAt', descending: true)
+                .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -70,16 +73,27 @@ class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
                   final doc = snapshot.data!.docs[index];
                   final data = doc.data() as Map<String, dynamic>;
                   return RoyalCard(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: ListTile(
-                      leading: Image.network(data['image'] ?? '', width: 50, height: 50, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(Icons.image)),
-                      title: BodyText(data['title'] ?? '', fontWeight: FontWeight.bold),
+                      leading: Image.network(data['image'] ?? '',
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) =>
+                              const Icon(Icons.image)),
+                      title: BodyText(data['title'] ?? '',
+                          fontWeight: FontWeight.bold),
                       subtitle: CaptionText(data['content'] ?? '', maxLines: 1),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () => _showArticleDialog(doc: doc)),
-                          IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => _deleteArticle(doc.id)),
+                          IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () => _showArticleDialog(doc: doc)),
+                          IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deleteArticle(doc.id)),
                         ],
                       ),
                     ),
@@ -97,25 +111,36 @@ class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
     return StreamBuilder<DocumentSnapshot>(
       stream: _db.collection('admin_settings').doc('task_rewards').snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
-        
-        final data = snapshot.data?.data() as Map<String, dynamic>? ?? {
-          'article_read_reward': 50,
-          'daily_checkin_base': 50,
-          'daily_checkin_bonus': 150,
-          'watch_reward_15m': 735,
-          'ad_video_reward': 100,
-        };
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final data = snapshot.data?.data() as Map<String, dynamic>? ??
+            {
+              'article_read_reward': 50,
+              'daily_checkin_base': 50,
+              'daily_checkin_bonus': 150,
+              'watch_reward_15m': 735,
+              'stay_reward_per_15m': 100,
+              'ad_video_reward': 100,
+            };
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              _buildSettingTile('مكافأة قراءة المقال (30 ثانية)', 'article_read_reward', data['article_read_reward']),
-              _buildSettingTile('مكافأة الدخول اليومي (أساسي)', 'daily_checkin_base', data['daily_checkin_base']),
-              _buildSettingTile('مكافأة الدخول اليومي (يوم 5+)', 'daily_checkin_bonus', data['daily_checkin_bonus']),
-              _buildSettingTile('مكافأة البقاء 15 دقيقة', 'watch_reward_15m', data['watch_reward_15m']),
-              _buildSettingTile('مكافأة مشاهدة إعلان فيديو', 'ad_video_reward', data['ad_video_reward']),
+              _buildSettingTile('مكافأة قراءة المقال (30 ثانية)',
+                  'article_read_reward', data['article_read_reward']),
+              _buildSettingTile('مكافأة الدخول اليومي (أساسي)',
+                  'daily_checkin_base', data['daily_checkin_base']),
+              _buildSettingTile('مكافأة الدخول اليومي (يوم 5+)',
+                  'daily_checkin_bonus', data['daily_checkin_bonus']),
+              _buildSettingTile('مكافأة إكمال 15 دقيقة مشاهدة',
+                  'watch_reward_15m', data['watch_reward_15m']),
+              _buildSettingTile('مكافأة البقاء في التطبيق (لكل 15 دقيقة)',
+                  'stay_reward_per_15m', data['stay_reward_per_15m']),
+              _buildSettingTile('مكافأة مشاهدة إعلان فيديو', 'ad_video_reward',
+                  data['ad_video_reward']),
             ],
           ),
         );
@@ -143,7 +168,8 @@ class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
             const SizedBox(width: 10),
             IconButton(
               icon: const Icon(Icons.save, color: DesignTokens.primaryGold),
-              onPressed: () => _updateSetting(key, int.tryParse(controller.text) ?? 0),
+              onPressed: () =>
+                  _updateSetting(key, int.tryParse(controller.text) ?? 0),
             ),
           ],
         ),
@@ -156,13 +182,16 @@ class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
       key: value,
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
-    if (mounted) AppTheme.showSuccessSnackbar(context, 'تم تحديث القيمة بنجاح ✅');
+    if (mounted) {
+      AppTheme.showSuccessSnackbar(context, 'تم تحديث القيمة بنجاح ✅');
+    }
   }
 
   void _showArticleDialog({DocumentSnapshot? doc}) {
     final data = doc?.data() as Map<String, dynamic>?;
     final titleController = TextEditingController(text: data?['title'] ?? '');
-    final contentController = TextEditingController(text: data?['content'] ?? '');
+    final contentController =
+        TextEditingController(text: data?['content'] ?? '');
     final imageController = TextEditingController(text: data?['image'] ?? '');
 
     showDialog(
@@ -176,16 +205,23 @@ class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                RoyalTextField(controller: titleController, hintText: 'العنوان'),
+                RoyalTextField(
+                    controller: titleController, hintText: 'العنوان'),
                 const SizedBox(height: 10),
-                RoyalTextField(controller: contentController, hintText: 'المحتوى', maxLines: 5),
+                RoyalTextField(
+                    controller: contentController,
+                    hintText: 'المحتوى',
+                    maxLines: 5),
                 const SizedBox(height: 10),
-                RoyalTextField(controller: imageController, hintText: 'رابط الصورة'),
+                RoyalTextField(
+                    controller: imageController, hintText: 'رابط الصورة'),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('إلغاء')),
             RoyalButton(
               label: 'حفظ',
               width: 100,
@@ -194,7 +230,8 @@ class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
                   'title': titleController.text,
                   'content': contentController.text,
                   'image': imageController.text,
-                  'createdAt': data?['createdAt'] ?? FieldValue.serverTimestamp(),
+                  'createdAt':
+                      data?['createdAt'] ?? FieldValue.serverTimestamp(),
                   'updatedAt': FieldValue.serverTimestamp(),
                 };
                 if (doc == null) {
@@ -202,7 +239,9 @@ class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
                 } else {
                   await doc.reference.update(articleData);
                 }
-                if (mounted) Navigator.pop(ctx);
+                if (mounted) {
+                  Navigator.pop(ctx);
+                }
               },
             ),
           ],
@@ -218,8 +257,12 @@ class _AdminTaskRewardsMgmtPageState extends State<AdminTaskRewardsMgmtPage> {
         title: const Text('حذف المقال'),
         content: const Text('هل أنت متأكد من حذف هذا المقال؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('حذف', style: TextStyle(color: Colors.red))),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('حذف', style: TextStyle(color: Colors.red))),
         ],
       ),
     );

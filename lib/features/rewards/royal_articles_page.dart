@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/reusable_widgets.dart';
 import '../../theme/app_theme.dart';
+import '../../services/ad_manager.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../services/task_tracking_service.dart';
+import '../../services/global_news_service.dart';
 
 class RoyalArticlesPage extends StatefulWidget {
   const RoyalArticlesPage({super.key});
@@ -13,23 +16,45 @@ class RoyalArticlesPage extends StatefulWidget {
 }
 
 class _RoyalArticlesPageState extends State<RoyalArticlesPage> {
-  final List<Map<String, String>> _articles = [
-    {
-      'title': 'أسرار النجاح في عالم التجارة الإلكترونية',
-      'content': 'التجارة الإلكترونية ليست مجرد بيع وشراء، بل هي فن بناء العلاقات مع العملاء...',
-      'image': 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?q=80&w=500',
-    },
-    {
-      'title': 'كيف تحافظ على تركيزك في عصر المشتتات',
-      'content': 'في عالم مليء بالتنبيهات ووسائل التواصل الاجتماعي، أصبح التركيز عملة نادرة...',
-      'image': 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?q=80&w=500',
-    },
-    {
-      'title': 'مستقبل الذكاء الاصطناعي في حياتنا اليومية',
-      'content': 'لم يعد الذكاء الاصطناعي مجرد خيال علمي، بل أصبح جزءاً لا يتجزأ من هواتفنا...',
-      'image': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=500',
-    },
-  ];
+  final GlobalNewsService _newsService = GlobalNewsService();
+  List<dynamic> _items = []; // قائمة مختلطة (مقالات + إعلانات)
+  bool _isLoading = true;
+  NativeAd? _nativeAd;
+  bool _isNativeAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGlobalNews();
+    _loadNativeAd();
+  }
+
+  void _loadNativeAd() {
+    _nativeAd = AdManager().getNativeAd(
+      onAdLoaded: () => setState(() => _isNativeAdLoaded = true),
+      onAdFailed: (error) => debugPrint('Native Ad Failed: $error'),
+    );
+  }
+
+  Future<void> _loadGlobalNews() async {
+    final news = await _newsService.fetchGlobalArticles();
+    if (mounted) {
+      setState(() {
+        _items = List.from(news);
+        // حقن الإعلان المدمج في المركز الثالث
+        if (news.length >= 3) {
+          _items.insert(2, 'native_ad');
+        }
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _nativeAd?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,21 +69,39 @@ class _RoyalArticlesPageState extends State<RoyalArticlesPage> {
             icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
-          title: const HeadingText('المقالات الملكية', color: Colors.white),
+          title: const HeadingText('المقالات العالمية 🌍', color: Colors.white),
+          actions: [
+            IconButton(icon: const Icon(Icons.refresh, color: Colors.amber), onPressed: _loadGlobalNews),
+          ],
         ),
-        body: ListView.builder(
-          padding: const EdgeInsets.all(15),
-          itemCount: _articles.length,
-          itemBuilder: (context, index) {
-            final article = _articles[index];
-            return _buildArticleCard(article);
-          },
-        ),
+        body: _isLoading 
+          ? const Center(child: CircularProgressIndicator(color: Colors.amber))
+          : ListView.builder(
+              padding: const EdgeInsets.all(15),
+              itemCount: _items.length,
+              itemBuilder: (context, index) {
+                final item = _items[index];
+                if (item is String && item == 'native_ad') {
+                  return _isNativeAdLoaded 
+                    ? Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        height: 300,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: AdWidget(ad: _nativeAd!),
+                      )
+                    : const SizedBox.shrink();
+                }
+                return _buildArticleCard(item as Map<String, dynamic>);
+              },
+            ),
       ),
     );
   }
 
-  Widget _buildArticleCard(Map<String, String> article) {
+  Widget _buildArticleCard(Map<String, dynamic> article) {
     return GlassCard(
       margin: const EdgeInsets.only(bottom: 15),
       child: InkWell(
@@ -87,7 +130,7 @@ class _RoyalArticlesPageState extends State<RoyalArticlesPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const BodyText('مكافأة القراءة: 50 ذهبية', color: DesignTokens.primaryGold, fontSize: 12),
+                      const BodyText('مكافأة القراءة: 2 نجمة ⭐', color: DesignTokens.primaryGold, fontSize: 12),
                       RoyalButton(
                         label: 'اقرأ الآن',
                         onPressed: () => _openArticleDetail(article),
@@ -106,7 +149,7 @@ class _RoyalArticlesPageState extends State<RoyalArticlesPage> {
     );
   }
 
-  void _openArticleDetail(Map<String, String> article) {
+  void _openArticleDetail(Map<String, dynamic> article) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -117,7 +160,7 @@ class _RoyalArticlesPageState extends State<RoyalArticlesPage> {
 }
 
 class ArticleDetailPage extends StatefulWidget {
-  final Map<String, String> article;
+  final Map<String, dynamic> article;
   const ArticleDetailPage({super.key, required this.article});
 
   @override
@@ -150,7 +193,10 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     if (!_rewarded) {
       TaskTrackingService().completeArticleRead();
       setState(() => _rewarded = true);
-      AppTheme.showSuccessSnackbar(context, 'تمت القراءة بنجاح! حصلت على 50 عملة ذهبية 🎉');
+      AppTheme.showSuccessSnackbar(context, 'تمت القراءة بنجاح! حصلت على 2 نجمة ملكية ⭐');
+      
+      // إظهار إعلان بيني (Interstitial) بعد إنهاء المقال لزيادة الربح
+      AdManager().showInterstitialAd();
     }
   }
 
@@ -209,7 +255,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: _rewarded ? Colors.green.withOpacity(0.2) : Colors.amber.withOpacity(0.2),
+        color: _rewarded ? Colors.green.withValues(alpha: 0.2) : Colors.amber.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: _rewarded ? Colors.green : Colors.amber),
       ),

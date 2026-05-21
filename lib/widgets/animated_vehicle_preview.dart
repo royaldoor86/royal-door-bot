@@ -16,8 +16,8 @@ class AnimatedVehiclePreview extends StatefulWidget {
     this.width,
     this.height,
     this.fit = BoxFit.cover,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<AnimatedVehiclePreview> createState() => _AnimatedVehiclePreviewState();
@@ -26,22 +26,49 @@ class AnimatedVehiclePreview extends StatefulWidget {
 class _AnimatedVehiclePreviewState extends State<AnimatedVehiclePreview> {
   VideoPlayerController? _controller;
   bool _isInitialized = false;
+  bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
+    _initPlayer();
+  }
+
+  void _initPlayer() {
     if (widget.type == "video") {
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
-        ..initialize().then((_) {
-          if (mounted) {
-            setState(() {
-              _isInitialized = true;
-              _controller!.setLooping(true);
-              _controller!.setVolume(0);
-              _controller!.play();
-            });
-          }
-        });
+      if (widget.url.isEmpty) {
+        setState(() => _hasError = true);
+        return;
+      }
+      try {
+        _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
+          ..initialize().then((_) {
+            if (mounted) {
+              setState(() {
+                _isInitialized = true;
+                _controller!.setLooping(true);
+                _controller!.setVolume(0);
+                _controller!.play();
+              });
+            }
+          }).catchError((e) {
+            if (mounted) setState(() => _hasError = true);
+          });
+      } catch (e) {
+        if (mounted) setState(() => _hasError = true);
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(AnimatedVehiclePreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url != widget.url || oldWidget.type != widget.type) {
+      _controller?.dispose();
+      _controller = null;
+      _isInitialized = false;
+      _hasError = false;
+      _initPlayer();
     }
   }
 
@@ -61,6 +88,8 @@ class _AnimatedVehiclePreviewState extends State<AnimatedVehiclePreview> {
   }
 
   Widget _buildContent() {
+    if (_hasError) return const Center(child: Icon(Icons.broken_image, color: Colors.white10, size: 40));
+
     switch (widget.type) {
       case "lottie":
         return Lottie.network(
@@ -72,23 +101,25 @@ class _AnimatedVehiclePreviewState extends State<AnimatedVehiclePreview> {
         return CachedNetworkImage(
           imageUrl: widget.url,
           fit: widget.fit,
-          placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          placeholder: (context, url) => const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
           errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.white10),
         );
       case "video":
         if (_isInitialized && _controller != null) {
-          return FittedBox(
-            fit: widget.fit,
-            child: SizedBox(
-              width: _controller!.value.size.width,
-              height: _controller!.value.size.height,
-              child: VideoPlayer(_controller!),
+          return SizedBox.expand(
+            child: FittedBox(
+              fit: widget.fit,
+              child: SizedBox(
+                width: _controller!.value.size.width,
+                height: _controller!.value.size.height,
+                child: VideoPlayer(_controller!),
+              ),
             ),
           );
         }
-        return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+        return const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)));
       default:
-        return const Icon(Icons.directions_car, color: Colors.white24, size: 50);
+        return const Center(child: Icon(Icons.directions_car, color: Colors.white24, size: 50));
     }
   }
 }

@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../../../models/entry_effect_model.dart';
-import '../../../../services/storage_service.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:lottie/lottie.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AdminEntryEffectsPage extends StatefulWidget {
-  const AdminEntryEffectsPage({Key? key}) : super(key: key);
+  const AdminEntryEffectsPage({super.key});
 
   @override
   State<AdminEntryEffectsPage> createState() => _AdminEntryEffectsPageState();
@@ -26,7 +27,7 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
         appBar: AppBar(
           backgroundColor: const Color(0xFF042F2C),
           elevation: 0,
-          title: Text('إدارة تأثيرات الدخول', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
+          title: Text('إدارة مؤثرات الشاشة الكاملة', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
           centerTitle: true,
         ),
         body: Column(
@@ -34,7 +35,7 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
             _buildAddHeader(),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _db.collection('entry_effects').orderBy('price', descending: false).snapshots(),
+                stream: _db.collection('entry_effects').orderBy('createdAt', descending: true).snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator(color: Colors.amber));
@@ -46,14 +47,14 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
                     padding: const EdgeInsets.all(16),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.85,
+                      childAspectRatio: 0.8,
                       crossAxisSpacing: 15,
                       mainAxisSpacing: 15,
                     ),
                     itemCount: docs.length,
                     itemBuilder: (context, index) {
-                      final effect = EntryEffectModel.fromFirestore(docs[index] as DocumentSnapshot<Map<String, dynamic>>);
-                      return _buildEffectCard(effect);
+                      final data = docs[index].data() as Map<String, dynamic>;
+                      return _buildEffectCard(docs[index].id, data);
                     },
                   );
                 },
@@ -76,7 +77,7 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
       child: ElevatedButton.icon(
         onPressed: () => _showAddEffectDialog(),
         icon: const Icon(Icons.auto_fix_high_rounded, color: Colors.black),
-        label: const Text('إضافة تأثير دخول جديد', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        label: const Text('إضافة مؤثر دخول جديد', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         style: ElevatedButton.styleFrom(
           backgroundColor: accentGold,
           padding: const EdgeInsets.symmetric(vertical: 15),
@@ -86,12 +87,15 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
     );
   }
 
-  Widget _buildEffectCard(EntryEffectModel effect) {
+  Widget _buildEffectCard(String id, Map<String, dynamic> data) {
+    final String url = data['lottieUrl'] ?? '';
+    final bool isLottie = url.contains('.json');
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: accentGold.withOpacity(0.1)),
+        border: Border.all(color: accentGold.withValues(alpha: 0.1)),
       ),
       child: Stack(
         children: [
@@ -100,10 +104,17 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.rocket_launch_rounded, color: accentGold, size: 40),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: isLottie 
+                      ? Lottie.network(url, fit: BoxFit.contain)
+                      : CachedNetworkImage(imageUrl: url, fit: BoxFit.contain, placeholder: (c,u) => const Icon(Icons.movie, color: Colors.white10)),
+                  ),
+                ),
                 const SizedBox(height: 10),
-                Text(effect.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                Text('${effect.price} كوينز 🪙', style: TextStyle(color: accentGold, fontSize: 12, fontWeight: FontWeight.bold)),
+                Text(data['name'] ?? 'بدون اسم', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                Text('${data['price'] ?? 0} نجمة ⭐', style: TextStyle(color: accentGold, fontSize: 11, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -111,7 +122,7 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
             top: 5, right: 5,
             child: IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-              onPressed: () => _db.collection('entry_effects').doc(effect.id).delete(),
+              onPressed: () => _db.collection('entry_effects').doc(id).delete(),
             ),
           ),
         ],
@@ -122,58 +133,112 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
   void _showAddEffectDialog() {
     final nameCtrl = TextEditingController();
     final priceCtrl = TextEditingController();
-    final linkCtrl = TextEditingController();
+    File? pickedFile;
+    bool isLottie = false;
     bool isLoading = false;
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1A1A2E),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setModalState) => AlertDialog(
-          backgroundColor: const Color(0xFF1A1A2E),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25), side: BorderSide(color: accentGold.withOpacity(0.3))),
-          title: Text('تخصيص تأثير دخول', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
-          content: SingleChildScrollView(
+        builder: (ctx, setModalState) => Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 20, right: 20, top: 20),
+          child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildLabel('اسم التأثير'),
-                _buildInput(nameCtrl, 'مثال: دخول البرق الملكي', Icons.title),
+                Text('تخصيص مؤثر شاشة كاملة', style: TextStyle(color: accentGold, fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                
+                GestureDetector(
+                  onTap: () async {
+                    // اختيار ملف (GIF من الاستوديو أو JSON من الملفات)
+                    final result = await FilePicker.platform.pickFiles(
+                      type: FileType.custom,
+                      allowedExtensions: ['json', 'gif'],
+                    );
+                    if (result != null) {
+                      setModalState(() {
+                        pickedFile = File(result.files.single.path!);
+                        isLottie = result.files.single.extension == 'json';
+                      });
+                    }
+                  },
+                  child: Container(
+                    height: 150, width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: accentGold.withValues(alpha: 0.3), style: BorderStyle.solid),
+                    ),
+                    child: pickedFile != null 
+                      ? (isLottie 
+                          ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [const Icon(Icons.data_object, color: Colors.amber, size: 40), Text(pickedFile!.path.split('/').last, style: const TextStyle(color: Colors.white70, fontSize: 10))]))
+                          : ClipRRect(borderRadius: BorderRadius.circular(20), child: Image.file(pickedFile!, fit: BoxFit.contain)))
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.cloud_upload_outlined, color: accentGold, size: 50),
+                            const Text('انقر لرفع ملف (GIF أو Lottie JSON)', style: TextStyle(color: Colors.white38, fontSize: 12)),
+                          ],
+                        ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                _buildInput(nameCtrl, 'اسم المؤثر (مثلاً: دخول التنين)', Icons.title),
                 const SizedBox(height: 15),
-                _buildLabel('السعر بالكوينز'),
-                _buildInput(priceCtrl, '0', Icons.monetization_on, isNum: true),
-                const SizedBox(height: 15),
-                _buildLabel('رابط ملف التأثير (Lottie/GIF)'),
-                _buildInput(linkCtrl, 'https://...', Icons.link),
+                _buildInput(priceCtrl, 'السعر بالنجوم ⭐', Icons.stars, isNum: true),
+                const SizedBox(height: 25),
+                
+                if (isLoading)
+                  const CircularProgressIndicator(color: Colors.amber)
+                else
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (nameCtrl.text.isEmpty || pickedFile == null || priceCtrl.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('الرجاء إكمال جميع البيانات')));
+                        return;
+                      }
+                      
+                      setModalState(() => isLoading = true);
+                      try {
+                        final ext = isLottie ? 'json' : 'gif';
+                        final ref = FirebaseStorage.instance.ref().child('entry_effects/${DateTime.now().millisecondsSinceEpoch}.$ext');
+                        await ref.putFile(pickedFile!, SettableMetadata(contentType: isLottie ? 'application/json' : 'image/gif'));
+                        final downloadUrl = await ref.getDownloadURL();
+
+                        await _db.collection('entry_effects').add({
+                          'name': nameCtrl.text.trim(),
+                          'lottieUrl': downloadUrl,
+                          'price': int.parse(priceCtrl.text),
+                          'isActive': true,
+                          'createdAt': FieldValue.serverTimestamp(),
+                        });
+                        if (mounted) Navigator.pop(ctx);
+                      } catch (e) {
+                        setModalState(() => isLoading = false);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('فشل الرفع: $e')));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: accentGold, 
+                      foregroundColor: Colors.black,
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    ),
+                    child: const Text('نشر المؤثر في المتجر ✨', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                const SizedBox(height: 30),
               ],
             ),
           ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء', style: TextStyle(color: Colors.white38))),
-            if (isLoading) const CircularProgressIndicator()
-            else ElevatedButton(
-              onPressed: () async {
-                if (nameCtrl.text.isEmpty || linkCtrl.text.isEmpty) return;
-                setModalState(() => isLoading = true);
-                await _db.collection('entry_effects').add({
-                  'name': nameCtrl.text.trim(),
-                  'lottieUrl': linkCtrl.text.trim(),
-                  'price': int.parse(priceCtrl.text),
-                  'isActive': true,
-                  'createdAt': FieldValue.serverTimestamp(),
-                });
-                Navigator.pop(ctx);
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: accentGold, foregroundColor: Colors.black),
-              child: const Text('نشر في المتجر'),
-            ),
-          ],
         ),
       ),
     );
   }
-
-  Widget _buildLabel(String text) => Padding(padding: const EdgeInsets.only(bottom: 8, right: 5), child: Text(text, style: TextStyle(color: accentGold.withOpacity(0.7), fontSize: 12)));
 
   Widget _buildInput(TextEditingController ctrl, String hint, IconData icon, {bool isNum = false}) {
     return TextField(
@@ -183,7 +248,7 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
       decoration: InputDecoration(
         hintText: hint, hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
         prefixIcon: Icon(icon, color: accentGold, size: 20),
-        filled: true, fillColor: Colors.white.withOpacity(0.05),
+        filled: true, fillColor: Colors.white.withValues(alpha: 0.05),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
       ),
     );
@@ -194,7 +259,7 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.auto_fix_high_rounded, size: 80, color: accentGold.withOpacity(0.1)),
+          Icon(Icons.auto_fix_high_rounded, size: 80, color: accentGold.withValues(alpha: 0.1)),
           const SizedBox(height: 16),
           const Text('لا توجد تأثيرات دخول حالياً', style: TextStyle(color: Colors.white24, fontSize: 16)),
         ],

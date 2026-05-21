@@ -34,5 +34,16 @@
 	<string>1:836724893984:ios:e59efec61a86f8d9990f45</string>
 	<key>DATABASE_URL</key>
 	<string>https://royaldoor86-e6489-default-rtdb.firebaseio.com</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>نحتاج الوصول إلى الميكروفون لتسجيل وإرسال الرسائل الصوتية.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>نحتاج الوصول إلى مكتبة الصور لاختيار وإرسال الصور.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>نحتاج الوصول إلى الكاميرا لإجراء مكالمات الفيديو.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>

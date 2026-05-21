@@ -35,10 +35,11 @@ class _AdminDailyTasksPageState extends State<AdminDailyTasksPage> {
     setState(() {
       _isAdminOrOwner = isAdmin || isOwner || isRoyalEmail;
     });
-    if (_isAdminOrOwner)
+    if (_isAdminOrOwner) {
       _loadTasks();
-    else
+    } else {
       setState(() => _loading = false);
+    }
   }
 
   Future<void> _loadTasks() async {
@@ -51,13 +52,22 @@ class _AdminDailyTasksPageState extends State<AdminDailyTasksPage> {
   }
 
   Future<void> _saveTasks() async {
-    await _firestore
-        .collection('daily_tasks_templates')
-        .doc('ar')
-        .set({'tasks': categories});
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('تم الحفظ بنجاح')));
-    _loadTasks();
+    try {
+      await _firestore
+          .collection('daily_tasks_templates')
+          .doc('ar')
+          .set({'tasks': categories});
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('تم الحفظ بنجاح')));
+        _loadTasks();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('خطأ في الحفظ: $e')));
+      }
+    }
   }
 
   void _addTask(int catIdx) {
@@ -160,7 +170,7 @@ class _AdminDailyTasksPageState extends State<AdminDailyTasksPage> {
                               value: task['type'],
                               items: const [
                                 DropdownMenuItem(
-                                    value: 'coin', child: Text('كوينز')),
+                                    value: 'coin', child: Text('نجوم ⭐')),
                                 DropdownMenuItem(
                                     value: 'gem', child: Text('جواهر')),
                                 DropdownMenuItem(

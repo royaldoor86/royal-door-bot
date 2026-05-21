@@ -6,7 +6,8 @@ class CloudFunctionsService {
   /// استلام مكافأة تسجيل الدخول اليومي
   Future<Map<String, dynamic>> claimDailyReward() async {
     try {
-      final HttpsCallable callable = _functions.httpsCallable('claimDailyReward');
+      final HttpsCallable callable =
+          _functions.httpsCallable('claimDailyReward');
       final response = await callable.call();
       return Map<String, dynamic>.from(response.data);
     } on FirebaseFunctionsException catch (e) {
@@ -16,29 +17,39 @@ class CloudFunctionsService {
     }
   }
 
-  /// دالة لإضافة كوينز للمستخدم عبر السيرفر (أكثر أماناً)
-  Future<bool> addCoins(String uid, int amount) async {
+  /// دالة لإضافة نجوم ⭐ للمستخدم عبر السيرفر (أكثر أماناً)
+  Future<bool> addStars(String uid, int amount) async {
     try {
-      final HttpsCallable callable = _functions.httpsCallable('updateUserCoins');
+      final HttpsCallable callable =
+          _functions.httpsCallable('updateUserStars');
       final response = await callable.call({
         'uid': uid,
         'amount': amount,
       });
       return response.data['success'] ?? false;
     } catch (e) {
-      print('خطأ في استدعاء الفنكشن (addCoins): $e');
+      print('خطأ في استدعاء الفنكشن (addStars): $e');
       return false;
     }
   }
 
   /// دالة لإرسال إشعار لمستخدم معين عبر السيرفر
-  Future<void> sendNotification(String targetUid, String title, String body) async {
+  Future<void> sendNotification({
+    required String targetUid,
+    required String title,
+    required String body,
+    String type = 'general',
+    Map<String, String>? additionalData,
+  }) async {
     try {
-      final HttpsCallable callable = _functions.httpsCallable('sendPushNotification');
+      final HttpsCallable callable =
+          _functions.httpsCallable('sendPushNotification');
       await callable.call({
         'targetUid': targetUid,
         'title': title,
         'body': body,
+        'type': type,
+        'additionalData': additionalData,
       });
     } catch (e) {
       print('خطأ في إرسال الإشعار: $e');
@@ -48,7 +59,8 @@ class CloudFunctionsService {
   /// دالة للتحقق من عمليات الشراء (In-App Purchases)
   Future<bool> verifyPurchase(String purchaseToken) async {
     try {
-      final HttpsCallable callable = _functions.httpsCallable('verifySubscription');
+      final HttpsCallable callable =
+          _functions.httpsCallable('verifySubscription');
       final response = await callable.call({'token': purchaseToken});
       return response.data['valid'] ?? false;
     } catch (e) {

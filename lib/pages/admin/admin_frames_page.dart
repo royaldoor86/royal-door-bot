@@ -1,10 +1,8 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../theme/app_theme.dart';
 import '../../models/frame_model.dart';
 import '../../services/storage_service.dart';
 
@@ -33,8 +31,7 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
           .orderBy('level', descending: true)
           .get();
       setState(() {
-        _vipRanks =
-            snap.docs.map((d) => {'id': d.id, ...d.data() ?? {}}).toList();
+        _vipRanks = snap.docs.map((d) => {'id': d.id, ...d.data()}).toList();
       });
     } catch (_) {}
   }
@@ -95,13 +92,15 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
           'createdAt': FieldValue.serverTimestamp(),
         });
       }
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("تم تحديث الإطارات الملكية بنجاح! ✅")));
+      }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("خطأ أثناء التحديث: $e")));
+      }
     } finally {
       if (mounted) setState(() => _isSeeding = false);
     }
@@ -115,10 +114,9 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
     bool isFamily = false;
     bool isUploading = false;
     bool isAnimated = (frame?.isAnimated ?? false);
-    String sourceType = frame != null
-        ? (frame.sourceType ?? 'upload')
-        : 'upload'; // 'upload' or 'link'
-    String? visibleForVip = frame?.visibleForVip ?? null;
+    String sourceType =
+        frame != null ? frame.sourceType : 'upload'; // 'upload' or 'link'
+    String? visibleForVip = frame?.visibleForVip;
     bool isProfileFrame = frame?.isProfileFrame ?? false;
     String mediaKind = 'image'; // 'image' or 'video' when uploading
 
@@ -140,14 +138,16 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                       // allow picking image or video depending on mediaKind
                       final picker = ImagePicker();
                       XFile? picked;
-                      if (mediaKind == 'image')
+                      if (mediaKind == 'image') {
                         picked =
                             await picker.pickImage(source: ImageSource.gallery);
-                      else
+                      } else {
                         picked =
                             await picker.pickVideo(source: ImageSource.gallery);
-                      if (picked != null)
+                      }
+                      if (picked != null) {
                         setST(() => selectedFile = File(picked!.path));
+                      }
                     },
                     child: Container(
                       width: 120,
@@ -155,8 +155,8 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                       decoration: BoxDecoration(
                           color: Colors.white10,
                           borderRadius: BorderRadius.circular(15),
-                          border:
-                              Border.all(color: Colors.amber.withOpacity(0.5))),
+                          border: Border.all(
+                              color: Colors.amber.withValues(alpha: 0.5))),
                       child: selectedFile != null
                           ? (mediaKind == 'image'
                               ? Image.file(selectedFile!, fit: BoxFit.contain)
@@ -183,19 +183,19 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                     Expanded(
                       child: RadioListTile<String>(
                           value: 'upload',
-                          groupValue: sourceType,
                           title: const Text('رفع ملف',
                               style: TextStyle(color: Colors.white70)),
                           activeColor: Colors.amber,
+                          selected: sourceType == 'upload',
                           onChanged: (v) => setST(() => sourceType = v!)),
                     ),
                     Expanded(
                       child: RadioListTile<String>(
                           value: 'link',
-                          groupValue: sourceType,
                           title: const Text('رابط مباشر',
                               style: TextStyle(color: Colors.white70)),
                           activeColor: Colors.amber,
+                          selected: sourceType == 'link',
                           onChanged: (v) => setST(() => sourceType = v!)),
                     ),
                   ]),
@@ -233,12 +233,12 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                   const SizedBox(height: 8),
                   // VIP visibility selector
                   DropdownButtonFormField<String>(
-                    value: visibleForVip,
+                    initialValue: visibleForVip,
                     decoration: InputDecoration(
                         labelText: 'مرئي للـ VIP (اختياري)',
                         labelStyle: const TextStyle(color: Colors.white54),
                         filled: true,
-                        fillColor: Colors.white.withOpacity(0.04),
+                        fillColor: Colors.white.withValues(alpha: 0.04),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide.none)),
@@ -284,7 +284,9 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                     if (nameCtrl.text.isEmpty ||
                         (frame == null &&
                             selectedFile == null &&
-                            sourceType == 'upload')) return;
+                            sourceType == 'upload')) {
+                      return;
+                    }
                     if (sourceType == 'link' && urlCtrl.text.isEmpty) return;
 
                     setST(() => isUploading = true);
@@ -320,9 +322,10 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                       }
                       if (mounted) Navigator.pop(ctx);
                     } catch (e) {
-                      if (mounted)
+                      if (mounted) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text("خطأ: $e")));
+                      }
                     } finally {
                       setST(() => isUploading = false);
                     }
@@ -384,8 +387,9 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
           child: StreamBuilder<QuerySnapshot>(
             stream: _db.collection('avatar_frames').snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData)
+              if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
+              }
               final docs = snapshot.data!.docs;
 
               if (docs.isEmpty) {
@@ -433,11 +437,12 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
   Widget _adminFrameCard(FrameModel frame, bool isFamily) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
-              color:
-                  isFamily ? Colors.amber.withOpacity(0.3) : Colors.white10)),
+              color: isFamily
+                  ? Colors.amber.withValues(alpha: 0.3)
+                  : Colors.white10)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -476,9 +481,9 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                         decoration: BoxDecoration(
                             color: Colors.black45,
                             borderRadius: BorderRadius.circular(6)),
-                        child: Text('بروفايل',
-                            style: const TextStyle(
-                                color: Colors.cyan, fontSize: 10)))),
+                        child: const Text('بروفايل',
+                            style:
+                                TextStyle(color: Colors.cyan, fontSize: 10)))),
               if (isFamily)
                 const Positioned(
                     top: 0,
@@ -524,7 +529,7 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
         labelStyle: const TextStyle(color: Colors.white54),
         prefixIcon: Icon(icon, color: Colors.amber, size: 18),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
+        fillColor: Colors.white.withValues(alpha: 0.05),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none),

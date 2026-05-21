@@ -21,17 +21,19 @@ class UserBootstrapService {
     ]);
   }
 
-  static Future<void> _createUserIfNotExists(String uid, String? name, String? email) async {
+  static Future<void> _createUserIfNotExists(
+      String uid, String? name, String? email) async {
     final ref = _firestore.collection('users').doc(uid);
     final doc = await ref.get();
 
     if (!doc.exists) {
-      // تم التعديل: لا نقوم بتصفير البيانات إذا كان التسجيل قد أنشأ المستند بالفعل
+      // إنشاء مستخدم جديد كلياً
       final randomRoyalId = (10000000 + Random().nextInt(90000000)).toString();
-      
+
       await ref.set({
         'uid': uid,
         'royalId': randomRoyalId,
+        'shortId': randomRoyalId, // مزامنة الحقلين منذ البداية
         'name': name ?? 'مستخدم ملكي جديد',
         'email': email ?? '',
         'createdAt': FieldValue.serverTimestamp(),
@@ -40,6 +42,7 @@ class UserBootstrapService {
         'coins': 0,
         'userLevel': 1,
         'accountLevel': 1,
+        'royalXP': 0,
         'friends': [],
         'following': [],
         'followers': [],
@@ -48,21 +51,26 @@ class UserBootstrapService {
           'invitedCount': 0,
           'referralEarnings': 0,
         }
-      }, SetOptions(merge: true)); // استخدام merge لضمان عدم مسح البيانات الموجودة
+      }, SetOptions(merge: true));
     } else {
-      // تحديث البيانات المفقودة فقط للمستخدمين القدامى
+      // تحديث البيانات المفقودة فقط للمستخدمين الحاليين لضمان عدم تغير الـ ID
+      final data = doc.data() ?? {};
       Map<String, dynamic> updates = {};
-      if (doc.data()?['royalId'] == null) {
-        updates['royalId'] = (10000000 + Random().nextInt(90000000)).toString();
-      }
-      if (doc.data()?['agentData'] == null) {
+
+      // لا نقوم بتحديث royalId أو shortId إذا كان المستخدم موجوداً بالفعل
+      // الآيدي يجب أن يتغير فقط عبر: منح يدوي، شراء، أو موافقة طلب
+
+      if (data['agentData'] == null) {
         updates['agentData'] = {
           'friendlyPoints': 0,
           'invitedCount': 0,
           'referralEarnings': 0,
         };
       }
-      if (updates.isNotEmpty) await ref.update(updates);
+
+      if (updates.isNotEmpty) {
+        await ref.update(updates);
+      }
     }
   }
 

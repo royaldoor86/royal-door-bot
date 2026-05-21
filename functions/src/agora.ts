@@ -1,20 +1,17 @@
+ import * as crypto from "crypto";
 import * as functions from "firebase-functions";
-import {RtcTokenBuilder, RtcRole} from "agora-token";
+import { RtcTokenBuilder, RtcRole } from "agora-token";
+
+function deriveAgoraUid(firebaseUid: string): number {
+  const hash = crypto.createHash("sha256").update(firebaseUid, "utf8").digest();
+  const uid = ((hash.readUInt32BE(0) >>> 0) & 0x7fffffff) + 1;
+  return uid;
+}
 
 export const generateAgoraToken = functions.https.onCall((data, context) => {
-  // التحقق من تسجيل الدخول
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      "unauthenticated",
-      "يجب تسجيل الدخول لتوليد التوكن"
-    );
-  }
+  const appId = "2042a5996de7444e9a72babc8527b25e";
+  const appCertificate = "4b1952e689234f4fb5eb83a290b37581";
 
-  const appId = "daed7a59dcbd4de2969b7504ae0843dc";
-  // ملاحظة: يجب وضع App Certificate الخاص بك هنا ليعمل الأمان
-  // يمكنك الحصول عليه من لوحة تحكم Agora
-  const appCertificate = "ضع_هنا_APP_CERTIFICATE_الخاص_بك"; 
-  
   const channelName = data.channelName;
   if (!channelName) {
     throw new functions.https.HttpsError(
@@ -23,23 +20,31 @@ export const generateAgoraToken = functions.https.onCall((data, context) => {
     );
   }
 
-  const uid = 0; // استخدام 0 يعني أن أغورا ستخصص UID تلقائياً
-  const role = RtcRole.PUBLISHER;
-  const expirationTimeInSeconds = 3600; // ساعة واحدة
+  const firebaseUid = context.auth?.uid;
+  if (!firebaseUid) {
+    throw new functions.https.HttpsError(
+      "unauthenticated",
+      "يجب أن يكون المستخدم مسجلاً للمصادقة"
+    );
+  }
+
+  const uid = deriveAgoraUid(firebaseUid);
+  const expirationTimeInSeconds = 3600; // صلاحية التوكن ساعة واحدة
   const currentTimestamp = Math.floor(Date.now() / 1000);
   const privilegeExpiredTimestamp = currentTimestamp + expirationTimeInSeconds;
 
-  const token = RtcTokenBuilder.buildTokenWithUid(
+  const tokenString = RtcTokenBuilder.buildTokenWithUid(
     appId,
     appCertificate,
     channelName,
     uid,
-    role,
+    RtcRole.PUBLISHER,
     privilegeExpiredTimestamp,
     privilegeExpiredTimestamp
   );
 
   return {
-    token: token,
+    token: tokenString,
+    uid,
   };
 });

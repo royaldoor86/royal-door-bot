@@ -34,16 +34,16 @@ class GameDetailsPage extends StatelessWidget {
               'وصف اللعبة: هذه لعبة ملكية ممتعة يمكنك فيها التنافس مع لاعبين آخرين للفوز بالجوائز. يمكنك اللعب منفردًا أو مع أصدقائك، وتتوفر غرف خاصة وعامة.',
             ),
             const SizedBox(height: 16),
-            Row(
-              children: const [
+            const Row(
+              children: [
                 Icon(Icons.people, color: Colors.deepPurple),
                 SizedBox(width: 8),
                 Text('عدد اللاعبين: 2-8'),
               ],
             ),
             const SizedBox(height: 12),
-            Row(
-              children: const [
+            const Row(
+              children: [
                 Icon(Icons.emoji_events, color: Colors.amber),
                 SizedBox(width: 8),
                 Text('جوائز للفائزين'),
@@ -88,12 +88,12 @@ class GameDetailsPage extends StatelessWidget {
                     onPressed: () {
                       // TODO: الانضمام للغرفة
                     },
-                    child: const Text('انضمام'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(80, 36),
                     ),
+                    child: const Text('انضمام'),
                   ),
                   onTap: () {
                     // TODO: فتح تفاصيل الغرفة

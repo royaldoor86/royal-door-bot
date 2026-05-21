@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../services/auth_service.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../app_theme.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -23,8 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _referralController = TextEditingController(); // خانة كود الدعوة
 
   bool _isLoading = false;
-  bool _obscurePass = true;
-  bool _obscureConfirm = true;
+  final bool _obscurePass = true;
 
   @override
   void dispose() {
@@ -61,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'email': email,
         'createdAt': FieldValue.serverTimestamp(),
         'gems': 0,
-        'coins': 0,
+        'stars': 0,
         'userLevel': 1,
         'royalId': user.uid.substring(0, 8),
         'role': 'user',
@@ -78,9 +74,9 @@ class _RegisterPageState extends State<RegisterPage> {
           final ambassadorRef = ambassadorDoc.reference;
 
           await FirebaseFirestore.instance.runTransaction((tx) async {
-            // أ- منح السفير مكافأة (مثلاً 500 كوينز)
+            // أ- منح السفير مكافأة (مثلاً 500 نجمة ⭐)
             tx.update(ambassadorRef, {
-              'coins': FieldValue.increment(500),
+              'stars': FieldValue.increment(500),
               'agentData.invitedCount': FieldValue.increment(1),
               'agentData.referralEarnings': FieldValue.increment(500),
             });
@@ -144,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 12),
                     _inputField(controller: _passController, hint: 'كلمة المرور', icon: Icons.lock_outline, obscure: _obscurePass),
                     const SizedBox(height: 12),
-                    _inputField(controller: _referralController, hint: 'كود الدعوة الملكي (اختياري)', icon: Icons.stars, color: Colors.amber.withOpacity(0.5)),
+                    _inputField(controller: _referralController, hint: 'كود الدعوة الملكي (اختياري)', icon: Icons.stars, color: Colors.amber.withValues(alpha: 0.5)),
                     const SizedBox(height: 30),
                     _isLoading
                         ? const CircularProgressIndicator(color: Colors.amber)

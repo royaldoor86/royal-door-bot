@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 class AnimatedBalanceIcon extends StatefulWidget {
   final IconData icon;
@@ -59,7 +58,7 @@ class _AnimatedBalanceIconState extends State<AnimatedBalanceIcon>
             size: widget.size,
             shadows: [
               Shadow(
-                color: widget.color.withOpacity(0.3),
+                color: widget.color.withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),

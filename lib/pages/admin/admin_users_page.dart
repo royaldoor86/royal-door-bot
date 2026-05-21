@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../admin/user_profile_page.dart';
 
 class AdminUsersPage extends StatefulWidget {
   const AdminUsersPage({super.key});
@@ -42,14 +40,16 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
         await FirebaseFunctions.instance
             .httpsCallable('adminDeleteUser')
             .call({'targetUid': uid, 'hard': true});
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("تم حذف المستخدم بنجاح"),
               backgroundColor: Colors.green));
+        }
       } catch (e) {
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("خطأ: $e"), backgroundColor: Colors.red));
+        }
       }
     }
   }
@@ -92,14 +92,16 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
           'isClosed': false,
           'createdAt': FieldValue.serverTimestamp(),
         });
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("تم إنشاء الغرفة للمستخدم"),
               backgroundColor: Colors.green));
+        }
       } catch (e) {
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text("خطأ: $e"), backgroundColor: Colors.red));
+        }
       }
     }
   }
@@ -118,7 +120,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
               hintStyle: const TextStyle(color: Colors.white24),
               prefixIcon: const Icon(Icons.search, color: Colors.amber),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.05),
+              fillColor: Colors.white.withValues(alpha: 0.05),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide.none),
@@ -130,9 +132,10 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('users').snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData)
+              if (!snapshot.hasData) {
                 return const Center(
                     child: CircularProgressIndicator(color: Colors.amber));
+              }
 
               var docs = snapshot.data!.docs;
               if (_searchText.isNotEmpty) {
@@ -164,7 +167,7 @@ class _AdminUsersPageState extends State<AdminUsersPage> {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(15)),
                     child: ListTile(
                       leading: CircleAvatar(

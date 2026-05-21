@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// صفحة إدارة الإشعارات الملكية (إرسال إشعار + سجل)
 class AdminNotificationsPage extends StatefulWidget {
-  const AdminNotificationsPage({Key? key}) : super(key: key);
+  const AdminNotificationsPage({super.key});
 
   @override
   State<AdminNotificationsPage> createState() => _AdminNotificationsPageState();
@@ -79,7 +79,7 @@ class _AdminNotificationsPageState extends State<AdminNotificationsPage> {
                     validator: (v) => v == null || v.isEmpty ? 'مطلوب' : null,
                   ),
                   DropdownButtonFormField<String>(
-                    value: _type,
+                    initialValue: _type,
                     items: const [
                       DropdownMenuItem(value: 'general', child: Text('عام')),
                       DropdownMenuItem(value: 'system', child: Text('نظام')),
@@ -97,7 +97,7 @@ class _AdminNotificationsPageState extends State<AdminNotificationsPage> {
                   ),
                   if (_resultMsg != null) ...[
                     const SizedBox(height: 8),
-                    Text(_resultMsg!, style: TextStyle(color: Colors.green)),
+                    Text(_resultMsg!, style: const TextStyle(color: Colors.green)),
                   ]
                 ],
               ),

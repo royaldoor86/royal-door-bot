@@ -73,6 +73,15 @@ class StorageService {
     return await uploadTask.ref.getDownloadURL();
   }
 
+  /// 🏅 رفع شارة العائلة
+  static Future<String> uploadFamilyBadge(
+      String badgeId, File imageFile) async {
+    final ref = _storage.ref().child('family_badges').child('$badgeId.jpg');
+    final uploadTask = await ref.putFile(
+        imageFile, SettableMetadata(contentType: 'image/jpeg'));
+    return await uploadTask.ref.getDownloadURL();
+  }
+
   /// 📸 رفع صور اليوميات
   static Future<String> uploadDailyPostImage(File imageFile) async {
     final uid = _currentUid();
@@ -93,6 +102,54 @@ class StorageService {
       SettableMetadata(contentType: 'video/mp4'),
     );
     return await uploadTask.ref.getDownloadURL();
+  }
+
+  /// 🏷️ رفع صورة لقصة (Stories) — تحفظ تحت مسار `stories/<uid>/...`
+  static Future<String> uploadStoryImage(File imageFile) async {
+    final uid = _currentUid();
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final ref = _storage.ref().child('stories').child(uid).child(fileName);
+    final uploadTask = await ref.putFile(
+        imageFile, SettableMetadata(contentType: 'image/jpeg'));
+    return await uploadTask.ref.getDownloadURL();
+  }
+
+  /// 🎬 رفع فيديو لقصة (Stories)
+  static Future<String> uploadStoryVideo(File videoFile) async {
+    final uid = _currentUid();
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.mp4';
+    final ref = _storage.ref().child('stories').child(uid).child(fileName);
+    final uploadTask = await ref.putFile(
+      videoFile,
+      SettableMetadata(contentType: 'video/mp4'),
+    );
+    return await uploadTask.ref.getDownloadURL();
+  }
+
+  /// مثل uploadStoryImage لكن يرجع خريطة تحتوي downloadUrl و storagePath (fullPath)
+  static Future<Map<String, String>> uploadStoryImageWithPath(
+      File imageFile) async {
+    final uid = _currentUid();
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final ref = _storage.ref().child('stories').child(uid).child(fileName);
+    final task = await ref.putFile(
+        imageFile, SettableMetadata(contentType: 'image/jpeg'));
+    final url = await task.ref.getDownloadURL();
+    final path = task.ref.fullPath; // e.g. stories/<uid>/<fileName>
+    return {'url': url, 'path': path};
+  }
+
+  /// مثل uploadStoryVideo لكن يرجع downloadUrl و storagePath
+  static Future<Map<String, String>> uploadStoryVideoWithPath(
+      File videoFile) async {
+    final uid = _currentUid();
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.mp4';
+    final ref = _storage.ref().child('stories').child(uid).child(fileName);
+    final task = await ref.putFile(
+        videoFile, SettableMetadata(contentType: 'video/mp4'));
+    final url = await task.ref.getDownloadURL();
+    final path = task.ref.fullPath;
+    return {'url': url, 'path': path};
   }
 
   /// 💬 رفع ملف دردشة (صورة/فيديو/ملف) لمسار الدردشة

@@ -9,17 +9,20 @@ export const sendPushNotification = functions.region("us-central1").https.onCall
   if (!adminDoc.exists || (adminDoc.data()?.role !== "admin" && adminDoc.data()?.role !== "owner")) {
     throw new functions.https.HttpsError("permission-denied", "غير مصرح");
   }
-  const {targetUid, title, body, type} = data;
+  const {targetUid, title, body, type, additionalData} = data;
   if (!targetUid || !title || !body) throw new functions.https.HttpsError("invalid-argument", "بيانات ناقصة");
 
   // إرسال إشعار عبر FCM (إذا كان هناك توكن)
   const userDoc = await admin.firestore().collection("users").doc(targetUid).get();
   const fcmToken = userDoc.data()?.fcmToken;
+  
+  const fcmData = {type: type || "general", ...additionalData};
+
   if (fcmToken) {
     await admin.messaging().send({
       token: fcmToken,
       notification: {title, body},
-      data: {type: type || "general"},
+      data: fcmData,
     });
   }
   // تسجيل الإشعار في Firestore

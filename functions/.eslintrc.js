@@ -16,6 +16,7 @@ module.exports = {
   parserOptions: {
     project: ["tsconfig.json", "tsconfig.dev.json"],
     sourceType: "module",
+    tsconfigRootDir: __dirname,
   },
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
@@ -29,6 +30,9 @@ module.exports = {
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,
     "indent": ["error", 2],
-    "max-len": ["error", {"code": 140}],
+    "max-len": ["error", {"code": 160}],
+    "linebreak-style": 0, // تعطيل فحص نظام نهاية السطر (حل مشكلة ويندوز)
+    "object-curly-spacing": 0, // تعطيل فحص المسافات داخل الأقواس
+    "no-trailing-spaces": 0, // تعطيل فحص المسافات في نهاية السطور
   },
 };

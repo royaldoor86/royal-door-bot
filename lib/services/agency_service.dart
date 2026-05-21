@@ -6,39 +6,39 @@ class AgencyService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  /// 🏢 Agent: Get monthly report (total sales)
+  /// 🏢 Support Leader: Get activity report
   Future<Map<String, dynamic>> getMonthlyReport(String agencyId) async {
     final now = DateTime.now();
     final firstDayOfMonth = DateTime(now.year, now.month, 1);
 
-    final salesQuery = await _db.collection('agent_sales')
-        .where('agencyId', isEqualTo: agencyId)
+    final supportQuery = await _db.collection('guild_support_logs')
+        .where('guildId', isEqualTo: agencyId)
         .where('createdAt', isGreaterThanOrEqualTo: firstDayOfMonth)
         .get();
 
     int totalGems = 0;
-    int totalCoins = 0;
-    int transactionCount = salesQuery.docs.length;
+    int totalStars = 0;
+    int supportCount = supportQuery.docs.length;
 
-    for (var doc in salesQuery.docs) {
+    for (var doc in supportQuery.docs) {
       final data = doc.data();
       if (data['currency'] == 'gems') {
         totalGems += (data['amount'] ?? 0) as int;
-      } else if (data['currency'] == 'coins') {
-        totalCoins += (data['amount'] ?? 0) as int;
+      } else if (data['currency'] == 'stars' || data['currency'] == 'coins') {
+        totalStars += (data['amount'] ?? 0) as int;
       }
     }
 
     return {
       'totalGems': totalGems,
-      'totalCoins': totalCoins,
-      'count': transactionCount,
+      'totalStars': totalStars,
+      'count': supportCount,
       'month': now.month,
       'year': now.year,
     };
   }
 
-  /// 👑 Admin: Create a new agency by User ShortId
+  /// 👑 Royal Council: Establish a new Royal Support Guild
   Future<void> createAgencyByShortId({
     required String targetShortId,
     required String agencyName,
@@ -50,98 +50,105 @@ class AgencyService {
         .limit(1)
         .get();
 
-    if (userQuery.docs.isEmpty) throw 'لم يتم العثور على مستخدم بهذا الـ ID';
+    if (userQuery.docs.isEmpty) throw 'لم يتم العثور على عضو بهذا الـ ID';
     
     final userDoc = userQuery.docs.first;
     final targetUid = userDoc.id;
     final userData = userDoc.data();
 
-    if (userData['isAgent'] == true) throw 'هذا المستخدم وكيل بالفعل';
+    if (userData['isAgent'] == true) throw 'هذا العضو هو قائد بيت دعم بالفعل';
 
-    final agencyRef = _db.collection('agencies').doc();
+    final guildRef = _db.collection('agencies').doc();
 
     await _db.runTransaction((tx) async {
-      tx.set(agencyRef, {
+      tx.set(guildRef, {
         'ownerId': targetUid,
-        'ownerName': userData['displayName'] ?? 'وكيل ملكي',
+        'ownerName': userData['displayName'] ?? 'قائد ملكي',
         'name': agencyName,
         'logoUrl': logoUrl,
-        'type': type == AgencyType.reseller ? 'reseller' : 'hosting',
+        'type': type == AgencyType.reseller ? 'official_support' : 'community_hosting',
         'balance': 0,
-        'coinBalance': 0,
+        'agencyStars': 0,
         'memberCount': 0,
-        'commissionRate': 0.1,
         'isActive': true,
+        'isCompliant': true, // وسم الامتثال لسياسات المتجر
         'createdAt': FieldValue.serverTimestamp(),
       });
 
       tx.update(userDoc.reference, {
         'isAgent': true,
-        'agencyId': agencyRef.id,
-        'agencyType': type == AgencyType.reseller ? 'reseller' : 'hosting',
+        'agencyId': guildRef.id,
+        'agencyType': type == AgencyType.reseller ? 'official_support' : 'community_hosting',
       });
     });
   }
 
-  /// 👑 Admin: Charge an agent's coin balance
-  Future<void> chargeAgentCoins(String agencyId, int amount) async {
+  /// 👑 Admin: Charge an agent's star balance
+  Future<void> chargeAgentStars(String agencyId, int amount) async {
     await _db.collection('agencies').doc(agencyId).update({
-      'coinBalance': FieldValue.increment(amount),
+      'agencyStars': FieldValue.increment(amount),
+      'agencyCoins': FieldValue.increment(amount),
     });
 
     await _db.collection('agent_transactions').add({
       'agencyId': agencyId,
-      'type': 'charge_coins',
+      'type': 'charge_stars',
       'amount': amount,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
 
-  /// 🏢 Agent: Transfer coins to a user
+  /// 🏢 Leader: Provide stars support to a member
   Future<void> transferCoinsToUser(String targetShortId, int amount) async {
     final agentUid = _auth.currentUser?.uid;
     if (agentUid == null) throw 'يجب تسجيل الدخول';
 
     final agentDoc = await _db.collection('users').doc(agentUid).get();
     final String? agencyId = agentDoc.data()?['agencyId'];
-    final String agentName = agentDoc.data()?['displayName'] ?? 'وكيل رويال';
+    final String agentName = agentDoc.data()?['displayName'] ?? 'قائد رويال';
     final String agentAvatar = agentDoc.data()?['photoUrl'] ?? agentDoc.data()?['photoURL'] ?? '';
     
-    if (agencyId == null) throw 'ليس لديك وكالة';
+    if (agencyId == null) throw 'ليس لديك بيت دعم مفعل';
 
-    final agencyRef = _db.collection('agencies').doc(agencyId);
+    final guildRef = _db.collection('agencies').doc(agencyId);
     
     final userQuery = await _db.collection('users').where('shortId', isEqualTo: targetShortId.toUpperCase()).limit(1).get();
-    if (userQuery.docs.isEmpty) throw 'لم يتم العثور على مستخدم بهذا الـ ID';
+    if (userQuery.docs.isEmpty) throw 'لم يتم العثور على عضو بهذا الـ ID';
     final userDoc = userQuery.docs.first;
 
     await _db.runTransaction((tx) async {
-      final agencySnap = await tx.get(agencyRef);
-      if (!agencySnap.exists) throw 'الوكالة غير موجودة';
+      final guildSnap = await tx.get(guildRef);
+      if (!guildSnap.exists) throw 'بيت الدعم غير موجود';
       
-      final int currentCoins = (agencySnap.data()?['coinBalance'] ?? 0).toInt();
-      if (currentCoins < amount) throw 'رصيد كوينز وكالتك غير كافٍ';
+      final int currentStars = (guildSnap.data()?['agencyStars'] ?? 0).toInt();
+      if (currentStars < amount) throw 'رصيد نجوم بيت دعمك غير كافٍ للنمو';
 
-      tx.update(agencyRef, {'coinBalance': currentCoins - amount});
-      tx.update(userDoc.reference, {'coins': FieldValue.increment(amount)});
+      tx.update(guildRef, {
+        'agencyStars': currentStars - amount,
+      });
+      tx.update(userDoc.reference, {
+        'stars': FieldValue.increment(amount),
+        'coins': FieldValue.increment(amount),
+      });
 
-      final saleRef = _db.collection('agent_sales').doc();
-      tx.set(saleRef, {
-        'agencyId': agencyId,
-        'agentUid': agentUid,
+      final supportLogRef = _db.collection('guild_support_logs').doc();
+      tx.set(supportLogRef, {
+        'guildId': agencyId,
+        'leaderUid': agentUid,
         'targetUid': userDoc.id,
-        'targetName': userDoc.data()['displayName'] ?? 'مستخدم',
+        'targetName': userDoc.data()['displayName'] ?? 'عضو',
         'amount': amount,
-        'currency': 'coins',
+        'currency': 'stars',
+        'type': 'growth_support',
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      // إرسال إشعار للمستلم (داخل الـ Transaction لضمان الوصول)
+      // إرسال إشعار للمستلم
       final notifyRef = _db.collection('users').doc(userDoc.id).collection('notifications').doc();
       tx.set(notifyRef, {
-        'title': "تم استلام كوينز 💰",
-        'body': "قام الوكيل $agentName بتحويل $amount كوينز إليك.",
-        'type': 'agency_charge',
+        'title': "دعم ملكي جديد ⭐",
+        'body': "قام قائد بيت الدعم $agentName بمنحك $amount نجمة ⭐ كدعم لنمو حسابك.",
+        'type': 'guild_support',
         'senderId': agentUid,
         'senderName': agentName,
         'senderAvatar': agentAvatar,

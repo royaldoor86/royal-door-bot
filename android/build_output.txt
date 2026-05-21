@@ -1,0 +1,2008 @@
+Picked up JAVA_TOOL_OPTIONS: -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8
+> Task :gradle:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle:pluginDescriptors UP-TO-DATE
+> Task :gradle:processResources UP-TO-DATE
+
+> Task :gradle:compileKotlin
+w: file:///C:/src/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:13:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///C:/src/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:15:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///C:/src/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:17:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///C:/src/flutter/packages/flutter_tools/gradle/src/main/kotlin/Deeplink.kt:19:5 This annotation is currently applied to the value parameter only, but in the future it will also be applied to property.
+- To opt in to applying to both value parameter and property, add '-Xannotation-default-target=param-property' to your compiler arguments.
+- To keep applying to the value parameter only, use the '@param:' annotation target.
+
+See https://youtrack.jetbrains.com/issue/KT-73255 for more details.
+w: file:///C:/src/flutter/packages/flutter_tools/gradle/src/main/kotlin/FlutterPlugin.kt:11:8 'interface ApkVariant : Any, BaseVariant, InstallableVariant, AndroidArtifactVariant, InternalBaseVariant' is deprecated. Deprecated in Java.
+w: file:///C:/src/flutter/packages/flutter_tools/gradle/src/main/kotlin/FlutterPlugin.kt:614:69 'interface ApkVariant : Any, BaseVariant, InstallableVariant, AndroidArtifactVariant, InternalBaseVariant' is deprecated. Deprecated in Java.
+
+> Task :gradle:compileJava NO-SOURCE
+> Task :gradle:compileGroovy NO-SOURCE
+> Task :gradle:classes UP-TO-DATE
+> Task :gradle:jar UP-TO-DATE
+> Task :agora_rtc_engine:preBuild UP-TO-DATE
+> Task :agora_rtc_engine:preDebugBuild UP-TO-DATE
+> Task :agora_rtc_engine:preProfileBuild UP-TO-DATE
+> Task :agora_rtc_engine:configureCMakeDebug[arm64-v8a]
+> Task :agora_rtc_engine:buildCMakeDebug[arm64-v8a]
+> Task :agora_rtc_engine:configureCMakeDebug[armeabi-v7a]
+> Task :agora_rtc_engine:buildCMakeDebug[armeabi-v7a]
+> Task :agora_rtc_engine:configureCMakeDebug[x86]
+> Task :agora_rtc_engine:buildCMakeDebug[x86]
+> Task :agora_rtc_engine:configureCMakeDebug[x86_64]
+> Task :agora_rtc_engine:buildCMakeDebug[x86_64]
+> Task :agora_rtc_engine:mergeDebugJniLibFolders UP-TO-DATE
+> Task :agora_rtc_engine:mergeDebugNativeLibs UP-TO-DATE
+> Task :agora_rtc_engine:stripDebugDebugSymbols UP-TO-DATE
+> Task :agora_rtc_engine:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :agora_rtc_engine:generateDebugResValues UP-TO-DATE
+> Task :agora_rtc_engine:generateDebugResources UP-TO-DATE
+> Task :agora_rtc_engine:packageDebugResources UP-TO-DATE
+> Task :agora_rtc_engine:parseDebugLocalResources UP-TO-DATE
+> Task :iris_method_channel:preBuild UP-TO-DATE
+> Task :iris_method_channel:preDebugBuild UP-TO-DATE
+> Task :iris_method_channel:generateDebugResValues UP-TO-DATE
+> Task :iris_method_channel:generateDebugResources UP-TO-DATE
+> Task :iris_method_channel:packageDebugResources UP-TO-DATE
+> Task :iris_method_channel:parseDebugLocalResources UP-TO-DATE
+> Task :iris_method_channel:generateDebugRFile UP-TO-DATE
+> Task :agora_rtc_engine:generateDebugRFile UP-TO-DATE
+> Task :iris_method_channel:javaPreCompileDebug UP-TO-DATE
+
+> Task :iris_method_channel:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :iris_method_channel:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :agora_rtc_engine:extractDebugAnnotations UP-TO-DATE
+> Task :agora_rtc_engine:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :agora_rtc_engine:mergeDebugShaders UP-TO-DATE
+> Task :agora_rtc_engine:compileDebugShaders NO-SOURCE
+> Task :agora_rtc_engine:generateDebugAssets UP-TO-DATE
+> Task :agora_rtc_engine:mergeDebugAssets UP-TO-DATE
+> Task :agora_rtc_engine:javaPreCompileDebug UP-TO-DATE
+
+> Task :agora_rtc_engine:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :agora_rtc_engine:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :agora_rtc_engine:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :agora_rtc_engine:prepareDebugArtProfile UP-TO-DATE
+> Task :agora_rtc_engine:prepareLintJarForPublish UP-TO-DATE
+> Task :agora_rtc_engine:processDebugManifest UP-TO-DATE
+> Task :agora_rtc_engine:processDebugJavaRes NO-SOURCE
+> Task :agora_rtc_engine:mergeDebugJavaResource UP-TO-DATE
+> Task :agora_rtc_engine:syncDebugLibJars
+> Task :agora_rtc_engine:writeDebugAarMetadata UP-TO-DATE
+> Task :agora_rtc_engine:bundleDebugAar
+> Task :agora_rtc_engine:assembleDebug
+> Task :agora_rtm:preBuild UP-TO-DATE
+> Task :agora_rtm:preDebugBuild UP-TO-DATE
+> Task :agora_rtm:mergeDebugJniLibFolders UP-TO-DATE
+> Task :agora_rtm:mergeDebugNativeLibs NO-SOURCE
+> Task :agora_rtm:stripDebugDebugSymbols NO-SOURCE
+> Task :agora_rtm:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :agora_rtm:generateDebugResValues UP-TO-DATE
+> Task :agora_rtm:generateDebugResources UP-TO-DATE
+> Task :agora_rtm:packageDebugResources UP-TO-DATE
+> Task :agora_rtm:parseDebugLocalResources UP-TO-DATE
+> Task :agora_rtm:generateDebugRFile UP-TO-DATE
+> Task :agora_rtm:extractDebugAnnotations UP-TO-DATE
+> Task :agora_rtm:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :agora_rtm:mergeDebugShaders UP-TO-DATE
+> Task :agora_rtm:compileDebugShaders NO-SOURCE
+> Task :agora_rtm:generateDebugAssets UP-TO-DATE
+> Task :agora_rtm:mergeDebugAssets UP-TO-DATE
+> Task :agora_rtm:javaPreCompileDebug UP-TO-DATE
+
+> Task :agora_rtm:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :agora_rtm:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :agora_rtm:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :agora_rtm:prepareDebugArtProfile UP-TO-DATE
+> Task :agora_rtm:prepareLintJarForPublish UP-TO-DATE
+> Task :agora_rtm:processDebugManifest UP-TO-DATE
+> Task :agora_rtm:processDebugJavaRes NO-SOURCE
+> Task :agora_rtm:mergeDebugJavaResource UP-TO-DATE
+> Task :agora_rtm:syncDebugLibJars UP-TO-DATE
+> Task :agora_rtm:writeDebugAarMetadata UP-TO-DATE
+> Task :agora_rtm:bundleDebugAar UP-TO-DATE
+> Task :agora_rtm:assembleDebug UP-TO-DATE
+> Task :app:DebugMinSdkCheck
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :agora_rtm:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :agora_rtc_engine:bundleLibCompileToJarDebug
+> Task :app:compileFlutterBuildDebug
+> Task :app:packJniLibsflutterBuildDebug
+> Task :agora_rtc_engine:compileDebugLibraryResources UP-TO-DATE
+> Task :agora_rtm:compileDebugLibraryResources UP-TO-DATE
+> Task :audio_session:preBuild UP-TO-DATE
+> Task :audio_session:preDebugBuild UP-TO-DATE
+> Task :audio_session:writeDebugAarMetadata UP-TO-DATE
+> Task :audioplayers_android:preBuild UP-TO-DATE
+> Task :audioplayers_android:preDebugBuild UP-TO-DATE
+> Task :audioplayers_android:writeDebugAarMetadata UP-TO-DATE
+> Task :background_fetch:preBuild UP-TO-DATE
+> Task :background_fetch:preDebugBuild UP-TO-DATE
+> Task :background_fetch:writeDebugAarMetadata UP-TO-DATE
+> Task :cloud_firestore:preBuild UP-TO-DATE
+> Task :cloud_firestore:preDebugBuild UP-TO-DATE
+> Task :cloud_firestore:writeDebugAarMetadata UP-TO-DATE
+> Task :cloud_functions:preBuild UP-TO-DATE
+> Task :cloud_functions:preDebugBuild UP-TO-DATE
+> Task :cloud_functions:writeDebugAarMetadata UP-TO-DATE
+> Task :connectivity_plus:preBuild UP-TO-DATE
+> Task :connectivity_plus:preDebugBuild UP-TO-DATE
+> Task :connectivity_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :file_picker:preBuild UP-TO-DATE
+> Task :file_picker:preDebugBuild UP-TO-DATE
+> Task :file_picker:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_analytics:preBuild UP-TO-DATE
+> Task :firebase_analytics:preDebugBuild UP-TO-DATE
+> Task :firebase_analytics:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_auth:preBuild UP-TO-DATE
+> Task :firebase_auth:preDebugBuild UP-TO-DATE
+> Task :firebase_auth:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_core:preBuild UP-TO-DATE
+> Task :firebase_core:preDebugBuild UP-TO-DATE
+> Task :firebase_core:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_database:preBuild UP-TO-DATE
+> Task :firebase_database:preDebugBuild UP-TO-DATE
+> Task :firebase_database:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_messaging:preBuild UP-TO-DATE
+> Task :firebase_messaging:preDebugBuild UP-TO-DATE
+> Task :firebase_messaging:writeDebugAarMetadata UP-TO-DATE
+> Task :firebase_storage:preBuild UP-TO-DATE
+> Task :firebase_storage:preDebugBuild UP-TO-DATE
+> Task :firebase_storage:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_callkit_incoming:preBuild UP-TO-DATE
+> Task :flutter_callkit_incoming:preDebugBuild UP-TO-DATE
+> Task :flutter_callkit_incoming:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_contacts:preBuild UP-TO-DATE
+> Task :flutter_contacts:preDebugBuild UP-TO-DATE
+> Task :flutter_contacts:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_image_compress_common:preBuild UP-TO-DATE
+> Task :flutter_image_compress_common:preDebugBuild UP-TO-DATE
+> Task :flutter_image_compress_common:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:preBuild UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:preDebugBuild UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_local_notifications:preBuild UP-TO-DATE
+> Task :flutter_local_notifications:preDebugBuild UP-TO-DATE
+> Task :flutter_local_notifications:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:preBuild UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:preDebugBuild UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_ringtone_player:preBuild UP-TO-DATE
+> Task :flutter_ringtone_player:preDebugBuild UP-TO-DATE
+> Task :flutter_ringtone_player:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_sound:preBuild UP-TO-DATE
+> Task :flutter_sound:preDebugBuild UP-TO-DATE
+> Task :flutter_sound:writeDebugAarMetadata UP-TO-DATE
+> Task :fluttertoast:preBuild UP-TO-DATE
+> Task :fluttertoast:preDebugBuild UP-TO-DATE
+> Task :fluttertoast:writeDebugAarMetadata UP-TO-DATE
+> Task :gal:preBuild UP-TO-DATE
+> Task :gal:preDebugBuild UP-TO-DATE
+> Task :gal:writeDebugAarMetadata UP-TO-DATE
+> Task :geolocator_android:preBuild UP-TO-DATE
+> Task :geolocator_android:preDebugBuild UP-TO-DATE
+> Task :geolocator_android:writeDebugAarMetadata UP-TO-DATE
+> Task :google_mobile_ads:preBuild UP-TO-DATE
+> Task :google_mobile_ads:preDebugBuild UP-TO-DATE
+> Task :google_mobile_ads:writeDebugAarMetadata UP-TO-DATE
+> Task :google_sign_in_android:preBuild UP-TO-DATE
+> Task :google_sign_in_android:preDebugBuild UP-TO-DATE
+> Task :google_sign_in_android:writeDebugAarMetadata UP-TO-DATE
+> Task :image_cropper:preBuild UP-TO-DATE
+> Task :image_cropper:preDebugBuild UP-TO-DATE
+> Task :image_cropper:writeDebugAarMetadata UP-TO-DATE
+> Task :image_picker_android:preBuild UP-TO-DATE
+> Task :image_picker_android:preDebugBuild UP-TO-DATE
+> Task :image_picker_android:writeDebugAarMetadata UP-TO-DATE
+> Task :iris_method_channel:writeDebugAarMetadata UP-TO-DATE
+> Task :just_audio:preBuild UP-TO-DATE
+> Task :just_audio:preDebugBuild UP-TO-DATE
+> Task :just_audio:writeDebugAarMetadata UP-TO-DATE
+> Task :package_info_plus:preBuild UP-TO-DATE
+> Task :package_info_plus:preDebugBuild UP-TO-DATE
+> Task :package_info_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :path_provider_android:preBuild UP-TO-DATE
+> Task :path_provider_android:preDebugBuild UP-TO-DATE
+> Task :path_provider_android:writeDebugAarMetadata UP-TO-DATE
+> Task :permission_handler_android:preBuild UP-TO-DATE
+> Task :permission_handler_android:preDebugBuild UP-TO-DATE
+> Task :permission_handler_android:writeDebugAarMetadata UP-TO-DATE
+> Task :pro_image_editor:preBuild UP-TO-DATE
+> Task :pro_image_editor:preDebugBuild UP-TO-DATE
+> Task :pro_image_editor:writeDebugAarMetadata UP-TO-DATE
+> Task :quill_native_bridge_android:preBuild UP-TO-DATE
+> Task :quill_native_bridge_android:preDebugBuild UP-TO-DATE
+> Task :quill_native_bridge_android:writeDebugAarMetadata UP-TO-DATE
+> Task :record_android:preBuild UP-TO-DATE
+> Task :record_android:preDebugBuild UP-TO-DATE
+> Task :record_android:writeDebugAarMetadata UP-TO-DATE
+> Task :share_plus:preBuild UP-TO-DATE
+> Task :share_plus:preDebugBuild UP-TO-DATE
+> Task :share_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :shared_preferences_android:preBuild UP-TO-DATE
+> Task :shared_preferences_android:preDebugBuild UP-TO-DATE
+> Task :shared_preferences_android:writeDebugAarMetadata UP-TO-DATE
+> Task :sqflite_android:preBuild UP-TO-DATE
+> Task :sqflite_android:preDebugBuild UP-TO-DATE
+> Task :sqflite_android:writeDebugAarMetadata UP-TO-DATE
+> Task :url_launcher_android:preBuild UP-TO-DATE
+> Task :url_launcher_android:preDebugBuild UP-TO-DATE
+> Task :url_launcher_android:writeDebugAarMetadata UP-TO-DATE
+> Task :video_compress:preBuild UP-TO-DATE
+> Task :video_compress:preDebugBuild UP-TO-DATE
+> Task :video_compress:writeDebugAarMetadata UP-TO-DATE
+> Task :video_player_android:preBuild UP-TO-DATE
+> Task :video_player_android:preDebugBuild UP-TO-DATE
+> Task :video_player_android:writeDebugAarMetadata UP-TO-DATE
+> Task :wakelock_plus:preBuild UP-TO-DATE
+> Task :wakelock_plus:preDebugBuild UP-TO-DATE
+> Task :wakelock_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :webview_flutter_android:preBuild UP-TO-DATE
+> Task :webview_flutter_android:preDebugBuild UP-TO-DATE
+> Task :webview_flutter_android:writeDebugAarMetadata UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:cleanMergeDebugAssets
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :audio_session:mergeDebugShaders UP-TO-DATE
+> Task :audio_session:compileDebugShaders NO-SOURCE
+> Task :audio_session:generateDebugAssets UP-TO-DATE
+> Task :audio_session:mergeDebugAssets UP-TO-DATE
+> Task :audioplayers_android:mergeDebugShaders UP-TO-DATE
+> Task :audioplayers_android:compileDebugShaders NO-SOURCE
+> Task :audioplayers_android:generateDebugAssets UP-TO-DATE
+> Task :audioplayers_android:mergeDebugAssets UP-TO-DATE
+> Task :background_fetch:mergeDebugShaders UP-TO-DATE
+> Task :background_fetch:compileDebugShaders NO-SOURCE
+> Task :background_fetch:generateDebugAssets UP-TO-DATE
+> Task :background_fetch:mergeDebugAssets UP-TO-DATE
+> Task :cloud_firestore:mergeDebugShaders UP-TO-DATE
+> Task :cloud_firestore:compileDebugShaders NO-SOURCE
+> Task :cloud_firestore:generateDebugAssets UP-TO-DATE
+> Task :cloud_firestore:mergeDebugAssets UP-TO-DATE
+> Task :cloud_functions:mergeDebugShaders UP-TO-DATE
+> Task :cloud_functions:compileDebugShaders NO-SOURCE
+> Task :cloud_functions:generateDebugAssets UP-TO-DATE
+> Task :cloud_functions:mergeDebugAssets UP-TO-DATE
+> Task :connectivity_plus:mergeDebugShaders UP-TO-DATE
+> Task :connectivity_plus:compileDebugShaders NO-SOURCE
+> Task :connectivity_plus:generateDebugAssets UP-TO-DATE
+> Task :connectivity_plus:mergeDebugAssets UP-TO-DATE
+> Task :file_picker:mergeDebugShaders UP-TO-DATE
+> Task :file_picker:compileDebugShaders NO-SOURCE
+> Task :file_picker:generateDebugAssets UP-TO-DATE
+> Task :file_picker:mergeDebugAssets UP-TO-DATE
+> Task :firebase_analytics:mergeDebugShaders UP-TO-DATE
+> Task :firebase_analytics:compileDebugShaders NO-SOURCE
+> Task :firebase_analytics:generateDebugAssets UP-TO-DATE
+> Task :firebase_analytics:mergeDebugAssets UP-TO-DATE
+> Task :firebase_auth:mergeDebugShaders UP-TO-DATE
+> Task :firebase_auth:compileDebugShaders NO-SOURCE
+> Task :firebase_auth:generateDebugAssets UP-TO-DATE
+> Task :firebase_auth:mergeDebugAssets UP-TO-DATE
+> Task :firebase_core:mergeDebugShaders UP-TO-DATE
+> Task :firebase_core:compileDebugShaders NO-SOURCE
+> Task :firebase_core:generateDebugAssets UP-TO-DATE
+> Task :firebase_core:mergeDebugAssets UP-TO-DATE
+> Task :firebase_database:mergeDebugShaders UP-TO-DATE
+> Task :firebase_database:compileDebugShaders NO-SOURCE
+> Task :firebase_database:generateDebugAssets UP-TO-DATE
+> Task :firebase_database:mergeDebugAssets UP-TO-DATE
+> Task :firebase_messaging:mergeDebugShaders UP-TO-DATE
+> Task :firebase_messaging:compileDebugShaders NO-SOURCE
+> Task :firebase_messaging:generateDebugAssets UP-TO-DATE
+> Task :firebase_messaging:mergeDebugAssets UP-TO-DATE
+> Task :firebase_storage:mergeDebugShaders UP-TO-DATE
+> Task :firebase_storage:compileDebugShaders NO-SOURCE
+> Task :firebase_storage:generateDebugAssets UP-TO-DATE
+> Task :firebase_storage:mergeDebugAssets UP-TO-DATE
+> Task :flutter_callkit_incoming:mergeDebugShaders UP-TO-DATE
+> Task :flutter_callkit_incoming:compileDebugShaders NO-SOURCE
+> Task :flutter_callkit_incoming:generateDebugAssets UP-TO-DATE
+> Task :flutter_callkit_incoming:mergeDebugAssets UP-TO-DATE
+> Task :flutter_contacts:mergeDebugShaders UP-TO-DATE
+> Task :flutter_contacts:compileDebugShaders NO-SOURCE
+> Task :flutter_contacts:generateDebugAssets UP-TO-DATE
+> Task :flutter_contacts:mergeDebugAssets UP-TO-DATE
+> Task :flutter_image_compress_common:mergeDebugShaders UP-TO-DATE
+> Task :flutter_image_compress_common:compileDebugShaders NO-SOURCE
+> Task :flutter_image_compress_common:generateDebugAssets UP-TO-DATE
+> Task :flutter_image_compress_common:mergeDebugAssets UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:mergeDebugShaders UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:compileDebugShaders NO-SOURCE
+> Task :flutter_keyboard_visibility_temp_fork:generateDebugAssets UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:mergeDebugAssets UP-TO-DATE
+> Task :flutter_local_notifications:mergeDebugShaders UP-TO-DATE
+> Task :flutter_local_notifications:compileDebugShaders NO-SOURCE
+> Task :flutter_local_notifications:generateDebugAssets UP-TO-DATE
+> Task :flutter_local_notifications:mergeDebugAssets UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mergeDebugShaders UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:compileDebugShaders NO-SOURCE
+> Task :flutter_plugin_android_lifecycle:generateDebugAssets UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mergeDebugAssets UP-TO-DATE
+> Task :flutter_ringtone_player:mergeDebugShaders UP-TO-DATE
+> Task :flutter_ringtone_player:compileDebugShaders NO-SOURCE
+> Task :flutter_ringtone_player:generateDebugAssets UP-TO-DATE
+> Task :flutter_ringtone_player:mergeDebugAssets UP-TO-DATE
+> Task :flutter_sound:mergeDebugShaders UP-TO-DATE
+> Task :flutter_sound:compileDebugShaders NO-SOURCE
+> Task :flutter_sound:generateDebugAssets UP-TO-DATE
+> Task :flutter_sound:mergeDebugAssets UP-TO-DATE
+> Task :fluttertoast:mergeDebugShaders UP-TO-DATE
+> Task :fluttertoast:compileDebugShaders NO-SOURCE
+> Task :fluttertoast:generateDebugAssets UP-TO-DATE
+> Task :fluttertoast:mergeDebugAssets UP-TO-DATE
+> Task :gal:mergeDebugShaders UP-TO-DATE
+> Task :gal:compileDebugShaders NO-SOURCE
+> Task :gal:generateDebugAssets UP-TO-DATE
+> Task :gal:mergeDebugAssets UP-TO-DATE
+> Task :geolocator_android:mergeDebugShaders UP-TO-DATE
+> Task :geolocator_android:compileDebugShaders NO-SOURCE
+> Task :geolocator_android:generateDebugAssets UP-TO-DATE
+> Task :geolocator_android:mergeDebugAssets UP-TO-DATE
+> Task :google_mobile_ads:mergeDebugShaders UP-TO-DATE
+> Task :google_mobile_ads:compileDebugShaders NO-SOURCE
+> Task :google_mobile_ads:generateDebugAssets UP-TO-DATE
+> Task :google_mobile_ads:mergeDebugAssets UP-TO-DATE
+> Task :google_sign_in_android:mergeDebugShaders UP-TO-DATE
+> Task :google_sign_in_android:compileDebugShaders NO-SOURCE
+> Task :google_sign_in_android:generateDebugAssets UP-TO-DATE
+> Task :google_sign_in_android:mergeDebugAssets UP-TO-DATE
+> Task :image_cropper:mergeDebugShaders UP-TO-DATE
+> Task :image_cropper:compileDebugShaders NO-SOURCE
+> Task :image_cropper:generateDebugAssets UP-TO-DATE
+> Task :image_cropper:mergeDebugAssets UP-TO-DATE
+> Task :image_picker_android:mergeDebugShaders UP-TO-DATE
+> Task :image_picker_android:compileDebugShaders NO-SOURCE
+> Task :image_picker_android:generateDebugAssets UP-TO-DATE
+> Task :image_picker_android:mergeDebugAssets UP-TO-DATE
+> Task :iris_method_channel:mergeDebugShaders UP-TO-DATE
+> Task :iris_method_channel:compileDebugShaders NO-SOURCE
+> Task :iris_method_channel:generateDebugAssets UP-TO-DATE
+> Task :iris_method_channel:mergeDebugAssets UP-TO-DATE
+> Task :just_audio:mergeDebugShaders UP-TO-DATE
+> Task :just_audio:compileDebugShaders NO-SOURCE
+> Task :just_audio:generateDebugAssets UP-TO-DATE
+> Task :just_audio:mergeDebugAssets UP-TO-DATE
+> Task :package_info_plus:mergeDebugShaders UP-TO-DATE
+> Task :package_info_plus:compileDebugShaders NO-SOURCE
+> Task :package_info_plus:generateDebugAssets UP-TO-DATE
+> Task :package_info_plus:mergeDebugAssets UP-TO-DATE
+> Task :path_provider_android:mergeDebugShaders UP-TO-DATE
+> Task :path_provider_android:compileDebugShaders NO-SOURCE
+> Task :path_provider_android:generateDebugAssets UP-TO-DATE
+> Task :path_provider_android:mergeDebugAssets UP-TO-DATE
+> Task :permission_handler_android:mergeDebugShaders UP-TO-DATE
+> Task :permission_handler_android:compileDebugShaders NO-SOURCE
+> Task :permission_handler_android:generateDebugAssets UP-TO-DATE
+> Task :permission_handler_android:mergeDebugAssets UP-TO-DATE
+> Task :pro_image_editor:mergeDebugShaders UP-TO-DATE
+> Task :pro_image_editor:compileDebugShaders NO-SOURCE
+> Task :pro_image_editor:generateDebugAssets UP-TO-DATE
+> Task :pro_image_editor:mergeDebugAssets UP-TO-DATE
+> Task :quill_native_bridge_android:mergeDebugShaders UP-TO-DATE
+> Task :quill_native_bridge_android:compileDebugShaders NO-SOURCE
+> Task :quill_native_bridge_android:generateDebugAssets UP-TO-DATE
+> Task :quill_native_bridge_android:mergeDebugAssets UP-TO-DATE
+> Task :record_android:mergeDebugShaders UP-TO-DATE
+> Task :record_android:compileDebugShaders NO-SOURCE
+> Task :record_android:generateDebugAssets UP-TO-DATE
+> Task :record_android:mergeDebugAssets UP-TO-DATE
+> Task :share_plus:mergeDebugShaders UP-TO-DATE
+> Task :share_plus:compileDebugShaders NO-SOURCE
+> Task :share_plus:generateDebugAssets UP-TO-DATE
+> Task :share_plus:mergeDebugAssets UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugShaders UP-TO-DATE
+> Task :shared_preferences_android:compileDebugShaders NO-SOURCE
+> Task :shared_preferences_android:generateDebugAssets UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugAssets UP-TO-DATE
+> Task :sqflite_android:mergeDebugShaders UP-TO-DATE
+> Task :sqflite_android:compileDebugShaders NO-SOURCE
+> Task :sqflite_android:generateDebugAssets UP-TO-DATE
+> Task :sqflite_android:mergeDebugAssets UP-TO-DATE
+> Task :url_launcher_android:mergeDebugShaders UP-TO-DATE
+> Task :url_launcher_android:compileDebugShaders NO-SOURCE
+> Task :url_launcher_android:generateDebugAssets UP-TO-DATE
+> Task :url_launcher_android:mergeDebugAssets UP-TO-DATE
+> Task :video_compress:mergeDebugShaders UP-TO-DATE
+> Task :video_compress:compileDebugShaders NO-SOURCE
+> Task :video_compress:generateDebugAssets UP-TO-DATE
+> Task :video_compress:mergeDebugAssets UP-TO-DATE
+> Task :video_player_android:mergeDebugShaders UP-TO-DATE
+> Task :video_player_android:compileDebugShaders NO-SOURCE
+> Task :video_player_android:generateDebugAssets UP-TO-DATE
+> Task :video_player_android:mergeDebugAssets UP-TO-DATE
+> Task :wakelock_plus:mergeDebugShaders UP-TO-DATE
+> Task :wakelock_plus:compileDebugShaders NO-SOURCE
+> Task :wakelock_plus:generateDebugAssets UP-TO-DATE
+> Task :wakelock_plus:mergeDebugAssets UP-TO-DATE
+> Task :webview_flutter_android:mergeDebugShaders UP-TO-DATE
+> Task :webview_flutter_android:compileDebugShaders NO-SOURCE
+> Task :webview_flutter_android:generateDebugAssets UP-TO-DATE
+> Task :webview_flutter_android:mergeDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:copyFlutterAssetsDebug
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:processDebugGoogleServices UP-TO-DATE
+> Task :audio_session:generateDebugResValues UP-TO-DATE
+> Task :audio_session:generateDebugResources UP-TO-DATE
+> Task :audio_session:packageDebugResources UP-TO-DATE
+> Task :audioplayers_android:generateDebugResValues UP-TO-DATE
+> Task :audioplayers_android:generateDebugResources UP-TO-DATE
+> Task :audioplayers_android:packageDebugResources UP-TO-DATE
+> Task :background_fetch:generateDebugResValues UP-TO-DATE
+> Task :background_fetch:generateDebugResources UP-TO-DATE
+> Task :background_fetch:packageDebugResources UP-TO-DATE
+> Task :cloud_firestore:generateDebugResValues UP-TO-DATE
+> Task :cloud_firestore:generateDebugResources UP-TO-DATE
+> Task :cloud_firestore:packageDebugResources UP-TO-DATE
+> Task :cloud_functions:generateDebugResValues UP-TO-DATE
+> Task :cloud_functions:generateDebugResources UP-TO-DATE
+> Task :cloud_functions:packageDebugResources UP-TO-DATE
+> Task :connectivity_plus:generateDebugResValues UP-TO-DATE
+> Task :connectivity_plus:generateDebugResources UP-TO-DATE
+> Task :connectivity_plus:packageDebugResources UP-TO-DATE
+> Task :file_picker:generateDebugResValues UP-TO-DATE
+> Task :file_picker:generateDebugResources UP-TO-DATE
+> Task :file_picker:packageDebugResources UP-TO-DATE
+> Task :firebase_analytics:generateDebugResValues UP-TO-DATE
+> Task :firebase_analytics:generateDebugResources UP-TO-DATE
+> Task :firebase_analytics:packageDebugResources UP-TO-DATE
+> Task :firebase_auth:generateDebugResValues UP-TO-DATE
+> Task :firebase_auth:generateDebugResources UP-TO-DATE
+> Task :firebase_auth:packageDebugResources UP-TO-DATE
+> Task :firebase_core:generateDebugResValues UP-TO-DATE
+> Task :firebase_core:generateDebugResources UP-TO-DATE
+> Task :firebase_core:packageDebugResources UP-TO-DATE
+> Task :firebase_database:generateDebugResValues UP-TO-DATE
+> Task :firebase_database:generateDebugResources UP-TO-DATE
+> Task :firebase_database:packageDebugResources UP-TO-DATE
+> Task :firebase_messaging:generateDebugResValues UP-TO-DATE
+> Task :firebase_messaging:generateDebugResources UP-TO-DATE
+> Task :firebase_messaging:packageDebugResources UP-TO-DATE
+> Task :firebase_storage:generateDebugResValues UP-TO-DATE
+> Task :firebase_storage:generateDebugResources UP-TO-DATE
+> Task :firebase_storage:packageDebugResources UP-TO-DATE
+> Task :flutter_callkit_incoming:generateDebugResValues UP-TO-DATE
+> Task :flutter_callkit_incoming:generateDebugResources UP-TO-DATE
+> Task :flutter_callkit_incoming:packageDebugResources UP-TO-DATE
+> Task :flutter_contacts:generateDebugResValues UP-TO-DATE
+> Task :flutter_contacts:generateDebugResources UP-TO-DATE
+> Task :flutter_contacts:packageDebugResources UP-TO-DATE
+> Task :flutter_image_compress_common:generateDebugResValues UP-TO-DATE
+> Task :flutter_image_compress_common:generateDebugResources UP-TO-DATE
+> Task :flutter_image_compress_common:packageDebugResources UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:generateDebugResValues UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:generateDebugResources UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:packageDebugResources UP-TO-DATE
+> Task :flutter_local_notifications:generateDebugResValues UP-TO-DATE
+> Task :flutter_local_notifications:generateDebugResources UP-TO-DATE
+> Task :flutter_local_notifications:packageDebugResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:generateDebugResValues UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:generateDebugResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:packageDebugResources UP-TO-DATE
+> Task :flutter_ringtone_player:generateDebugResValues UP-TO-DATE
+> Task :flutter_ringtone_player:generateDebugResources UP-TO-DATE
+> Task :flutter_ringtone_player:packageDebugResources UP-TO-DATE
+> Task :flutter_sound:generateDebugResValues UP-TO-DATE
+> Task :flutter_sound:generateDebugResources UP-TO-DATE
+> Task :flutter_sound:packageDebugResources UP-TO-DATE
+> Task :fluttertoast:generateDebugResValues UP-TO-DATE
+> Task :fluttertoast:generateDebugResources UP-TO-DATE
+> Task :fluttertoast:packageDebugResources UP-TO-DATE
+> Task :gal:generateDebugResValues UP-TO-DATE
+> Task :gal:generateDebugResources UP-TO-DATE
+> Task :gal:packageDebugResources UP-TO-DATE
+> Task :geolocator_android:generateDebugResValues UP-TO-DATE
+> Task :geolocator_android:generateDebugResources UP-TO-DATE
+> Task :geolocator_android:packageDebugResources UP-TO-DATE
+> Task :google_mobile_ads:generateDebugResValues UP-TO-DATE
+> Task :google_mobile_ads:generateDebugResources UP-TO-DATE
+> Task :google_mobile_ads:packageDebugResources UP-TO-DATE
+> Task :google_sign_in_android:generateDebugResValues UP-TO-DATE
+> Task :google_sign_in_android:generateDebugResources UP-TO-DATE
+> Task :google_sign_in_android:packageDebugResources UP-TO-DATE
+> Task :image_cropper:generateDebugResValues UP-TO-DATE
+> Task :image_cropper:generateDebugResources UP-TO-DATE
+> Task :image_cropper:packageDebugResources UP-TO-DATE
+> Task :image_picker_android:generateDebugResValues UP-TO-DATE
+> Task :image_picker_android:generateDebugResources UP-TO-DATE
+> Task :image_picker_android:packageDebugResources UP-TO-DATE
+> Task :just_audio:generateDebugResValues UP-TO-DATE
+> Task :just_audio:generateDebugResources UP-TO-DATE
+> Task :just_audio:packageDebugResources UP-TO-DATE
+> Task :package_info_plus:generateDebugResValues UP-TO-DATE
+> Task :package_info_plus:generateDebugResources UP-TO-DATE
+> Task :package_info_plus:packageDebugResources UP-TO-DATE
+> Task :path_provider_android:generateDebugResValues UP-TO-DATE
+> Task :path_provider_android:generateDebugResources UP-TO-DATE
+> Task :path_provider_android:packageDebugResources UP-TO-DATE
+> Task :permission_handler_android:generateDebugResValues UP-TO-DATE
+> Task :permission_handler_android:generateDebugResources UP-TO-DATE
+> Task :permission_handler_android:packageDebugResources UP-TO-DATE
+> Task :pro_image_editor:generateDebugResValues UP-TO-DATE
+> Task :pro_image_editor:generateDebugResources UP-TO-DATE
+> Task :pro_image_editor:packageDebugResources UP-TO-DATE
+> Task :quill_native_bridge_android:generateDebugResValues UP-TO-DATE
+> Task :quill_native_bridge_android:generateDebugResources UP-TO-DATE
+> Task :quill_native_bridge_android:packageDebugResources UP-TO-DATE
+> Task :record_android:generateDebugResValues UP-TO-DATE
+> Task :record_android:generateDebugResources UP-TO-DATE
+> Task :record_android:packageDebugResources UP-TO-DATE
+> Task :share_plus:generateDebugResValues UP-TO-DATE
+> Task :share_plus:generateDebugResources UP-TO-DATE
+> Task :share_plus:packageDebugResources UP-TO-DATE
+> Task :shared_preferences_android:generateDebugResValues UP-TO-DATE
+> Task :shared_preferences_android:generateDebugResources UP-TO-DATE
+> Task :shared_preferences_android:packageDebugResources UP-TO-DATE
+> Task :sqflite_android:generateDebugResValues UP-TO-DATE
+> Task :sqflite_android:generateDebugResources UP-TO-DATE
+> Task :sqflite_android:packageDebugResources UP-TO-DATE
+> Task :url_launcher_android:generateDebugResValues UP-TO-DATE
+> Task :url_launcher_android:generateDebugResources UP-TO-DATE
+> Task :url_launcher_android:packageDebugResources UP-TO-DATE
+> Task :video_compress:generateDebugResValues UP-TO-DATE
+> Task :video_compress:generateDebugResources UP-TO-DATE
+> Task :video_compress:packageDebugResources UP-TO-DATE
+> Task :video_player_android:generateDebugResValues UP-TO-DATE
+> Task :video_player_android:generateDebugResources UP-TO-DATE
+> Task :video_player_android:packageDebugResources UP-TO-DATE
+> Task :wakelock_plus:generateDebugResValues UP-TO-DATE
+> Task :wakelock_plus:generateDebugResources UP-TO-DATE
+> Task :wakelock_plus:packageDebugResources UP-TO-DATE
+> Task :webview_flutter_android:generateDebugResValues UP-TO-DATE
+> Task :webview_flutter_android:generateDebugResources UP-TO-DATE
+> Task :webview_flutter_android:packageDebugResources UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :agora_rtc_engine:extractDeepLinksDebug UP-TO-DATE
+> Task :agora_rtm:extractDeepLinksDebug UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :audio_session:extractDeepLinksDebug UP-TO-DATE
+> Task :audio_session:processDebugManifest UP-TO-DATE
+> Task :audioplayers_android:extractDeepLinksDebug UP-TO-DATE
+> Task :audioplayers_android:processDebugManifest UP-TO-DATE
+> Task :background_fetch:extractDeepLinksDebug UP-TO-DATE
+> Task :background_fetch:processDebugManifest UP-TO-DATE
+> Task :cloud_firestore:extractDeepLinksDebug UP-TO-DATE
+> Task :cloud_firestore:processDebugManifest UP-TO-DATE
+> Task :cloud_functions:extractDeepLinksDebug UP-TO-DATE
+> Task :cloud_functions:processDebugManifest UP-TO-DATE
+> Task :connectivity_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :connectivity_plus:processDebugManifest UP-TO-DATE
+> Task :file_picker:extractDeepLinksDebug UP-TO-DATE
+> Task :file_picker:processDebugManifest UP-TO-DATE
+> Task :firebase_analytics:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_analytics:processDebugManifest UP-TO-DATE
+> Task :firebase_auth:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_auth:processDebugManifest UP-TO-DATE
+> Task :firebase_core:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_core:processDebugManifest UP-TO-DATE
+> Task :firebase_database:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_database:processDebugManifest UP-TO-DATE
+> Task :firebase_messaging:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_messaging:processDebugManifest UP-TO-DATE
+> Task :firebase_storage:extractDeepLinksDebug UP-TO-DATE
+> Task :firebase_storage:processDebugManifest UP-TO-DATE
+> Task :flutter_callkit_incoming:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_callkit_incoming:processDebugManifest UP-TO-DATE
+> Task :flutter_contacts:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_contacts:processDebugManifest UP-TO-DATE
+> Task :flutter_image_compress_common:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_image_compress_common:processDebugManifest UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:processDebugManifest UP-TO-DATE
+> Task :flutter_local_notifications:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_local_notifications:processDebugManifest UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:processDebugManifest UP-TO-DATE
+> Task :flutter_ringtone_player:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_ringtone_player:processDebugManifest UP-TO-DATE
+> Task :flutter_sound:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_sound:processDebugManifest UP-TO-DATE
+> Task :fluttertoast:extractDeepLinksDebug UP-TO-DATE
+> Task :fluttertoast:processDebugManifest UP-TO-DATE
+> Task :gal:extractDeepLinksDebug UP-TO-DATE
+> Task :gal:processDebugManifest UP-TO-DATE
+> Task :geolocator_android:extractDeepLinksDebug UP-TO-DATE
+> Task :geolocator_android:processDebugManifest UP-TO-DATE
+> Task :google_mobile_ads:extractDeepLinksDebug UP-TO-DATE
+> Task :google_mobile_ads:processDebugManifest UP-TO-DATE
+> Task :google_sign_in_android:extractDeepLinksDebug UP-TO-DATE
+> Task :google_sign_in_android:processDebugManifest UP-TO-DATE
+> Task :image_cropper:extractDeepLinksDebug UP-TO-DATE
+> Task :image_cropper:processDebugManifest UP-TO-DATE
+> Task :image_picker_android:extractDeepLinksDebug UP-TO-DATE
+> Task :image_picker_android:processDebugManifest UP-TO-DATE
+> Task :iris_method_channel:extractDeepLinksDebug UP-TO-DATE
+> Task :iris_method_channel:processDebugManifest UP-TO-DATE
+> Task :just_audio:extractDeepLinksDebug UP-TO-DATE
+> Task :just_audio:processDebugManifest UP-TO-DATE
+> Task :package_info_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :package_info_plus:processDebugManifest UP-TO-DATE
+> Task :path_provider_android:extractDeepLinksDebug UP-TO-DATE
+> Task :path_provider_android:processDebugManifest UP-TO-DATE
+> Task :permission_handler_android:extractDeepLinksDebug UP-TO-DATE
+> Task :permission_handler_android:processDebugManifest UP-TO-DATE
+> Task :pro_image_editor:extractDeepLinksDebug UP-TO-DATE
+> Task :pro_image_editor:processDebugManifest UP-TO-DATE
+> Task :quill_native_bridge_android:extractDeepLinksDebug UP-TO-DATE
+> Task :quill_native_bridge_android:processDebugManifest UP-TO-DATE
+> Task :record_android:extractDeepLinksDebug UP-TO-DATE
+> Task :record_android:processDebugManifest UP-TO-DATE
+> Task :share_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :share_plus:processDebugManifest UP-TO-DATE
+> Task :shared_preferences_android:extractDeepLinksDebug UP-TO-DATE
+> Task :shared_preferences_android:processDebugManifest UP-TO-DATE
+> Task :sqflite_android:extractDeepLinksDebug UP-TO-DATE
+> Task :sqflite_android:processDebugManifest UP-TO-DATE
+> Task :url_launcher_android:extractDeepLinksDebug UP-TO-DATE
+> Task :url_launcher_android:processDebugManifest UP-TO-DATE
+> Task :video_compress:extractDeepLinksDebug UP-TO-DATE
+> Task :video_compress:processDebugManifest UP-TO-DATE
+> Task :video_player_android:extractDeepLinksDebug UP-TO-DATE
+> Task :video_player_android:processDebugManifest UP-TO-DATE
+> Task :wakelock_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :wakelock_plus:processDebugManifest UP-TO-DATE
+> Task :webview_flutter_android:extractDeepLinksDebug UP-TO-DATE
+> Task :webview_flutter_android:processDebugManifest UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:outputDebugAppLinkSettings UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :audio_session:compileDebugLibraryResources UP-TO-DATE
+> Task :audio_session:parseDebugLocalResources UP-TO-DATE
+> Task :audio_session:generateDebugRFile UP-TO-DATE
+> Task :audioplayers_android:compileDebugLibraryResources UP-TO-DATE
+> Task :audioplayers_android:parseDebugLocalResources UP-TO-DATE
+> Task :audioplayers_android:generateDebugRFile UP-TO-DATE
+> Task :background_fetch:compileDebugLibraryResources UP-TO-DATE
+> Task :background_fetch:parseDebugLocalResources UP-TO-DATE
+> Task :background_fetch:generateDebugRFile UP-TO-DATE
+> Task :cloud_firestore:compileDebugLibraryResources UP-TO-DATE
+> Task :cloud_firestore:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_core:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_core:generateDebugRFile UP-TO-DATE
+> Task :cloud_firestore:generateDebugRFile UP-TO-DATE
+> Task :cloud_functions:compileDebugLibraryResources UP-TO-DATE
+> Task :cloud_functions:parseDebugLocalResources UP-TO-DATE
+> Task :cloud_functions:generateDebugRFile UP-TO-DATE
+> Task :connectivity_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :connectivity_plus:parseDebugLocalResources UP-TO-DATE
+> Task :connectivity_plus:generateDebugRFile UP-TO-DATE
+> Task :file_picker:compileDebugLibraryResources UP-TO-DATE
+> Task :file_picker:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:generateDebugRFile UP-TO-DATE
+> Task :file_picker:generateDebugRFile UP-TO-DATE
+> Task :firebase_analytics:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_analytics:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_analytics:generateDebugRFile UP-TO-DATE
+> Task :firebase_auth:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_auth:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_auth:generateDebugRFile UP-TO-DATE
+> Task :firebase_core:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_database:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_database:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_database:generateDebugRFile UP-TO-DATE
+> Task :firebase_messaging:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_messaging:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_messaging:generateDebugRFile UP-TO-DATE
+> Task :firebase_storage:compileDebugLibraryResources UP-TO-DATE
+> Task :firebase_storage:parseDebugLocalResources UP-TO-DATE
+> Task :firebase_storage:generateDebugRFile UP-TO-DATE
+> Task :flutter_callkit_incoming:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_callkit_incoming:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_callkit_incoming:generateDebugRFile UP-TO-DATE
+> Task :flutter_contacts:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_contacts:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_contacts:generateDebugRFile UP-TO-DATE
+> Task :flutter_image_compress_common:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_image_compress_common:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_image_compress_common:generateDebugRFile UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:generateDebugRFile UP-TO-DATE
+> Task :flutter_local_notifications:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_local_notifications:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_local_notifications:generateDebugRFile UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_ringtone_player:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_ringtone_player:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_ringtone_player:generateDebugRFile UP-TO-DATE
+> Task :flutter_sound:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_sound:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_sound:generateDebugRFile UP-TO-DATE
+> Task :fluttertoast:compileDebugLibraryResources UP-TO-DATE
+> Task :fluttertoast:parseDebugLocalResources UP-TO-DATE
+> Task :fluttertoast:generateDebugRFile UP-TO-DATE
+> Task :gal:compileDebugLibraryResources UP-TO-DATE
+> Task :gal:parseDebugLocalResources UP-TO-DATE
+> Task :gal:generateDebugRFile UP-TO-DATE
+> Task :geolocator_android:compileDebugLibraryResources UP-TO-DATE
+> Task :geolocator_android:parseDebugLocalResources UP-TO-DATE
+> Task :geolocator_android:generateDebugRFile UP-TO-DATE
+> Task :google_mobile_ads:compileDebugLibraryResources UP-TO-DATE
+> Task :google_mobile_ads:parseDebugLocalResources UP-TO-DATE
+> Task :webview_flutter_android:parseDebugLocalResources UP-TO-DATE
+> Task :webview_flutter_android:generateDebugRFile UP-TO-DATE
+> Task :google_mobile_ads:generateDebugRFile UP-TO-DATE
+> Task :google_sign_in_android:compileDebugLibraryResources UP-TO-DATE
+> Task :google_sign_in_android:parseDebugLocalResources UP-TO-DATE
+> Task :google_sign_in_android:generateDebugRFile UP-TO-DATE
+> Task :image_cropper:compileDebugLibraryResources UP-TO-DATE
+> Task :image_cropper:parseDebugLocalResources UP-TO-DATE
+> Task :image_cropper:generateDebugRFile UP-TO-DATE
+> Task :image_picker_android:compileDebugLibraryResources UP-TO-DATE
+> Task :image_picker_android:parseDebugLocalResources UP-TO-DATE
+> Task :image_picker_android:generateDebugRFile UP-TO-DATE
+> Task :iris_method_channel:compileDebugLibraryResources UP-TO-DATE
+> Task :just_audio:compileDebugLibraryResources UP-TO-DATE
+> Task :just_audio:parseDebugLocalResources UP-TO-DATE
+> Task :just_audio:generateDebugRFile UP-TO-DATE
+> Task :package_info_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :package_info_plus:parseDebugLocalResources UP-TO-DATE
+> Task :package_info_plus:generateDebugRFile UP-TO-DATE
+> Task :path_provider_android:compileDebugLibraryResources UP-TO-DATE
+> Task :path_provider_android:parseDebugLocalResources UP-TO-DATE
+> Task :path_provider_android:generateDebugRFile UP-TO-DATE
+> Task :permission_handler_android:compileDebugLibraryResources UP-TO-DATE
+> Task :permission_handler_android:parseDebugLocalResources UP-TO-DATE
+> Task :permission_handler_android:generateDebugRFile UP-TO-DATE
+> Task :pro_image_editor:compileDebugLibraryResources UP-TO-DATE
+> Task :pro_image_editor:parseDebugLocalResources UP-TO-DATE
+> Task :pro_image_editor:generateDebugRFile UP-TO-DATE
+> Task :quill_native_bridge_android:compileDebugLibraryResources UP-TO-DATE
+> Task :quill_native_bridge_android:parseDebugLocalResources UP-TO-DATE
+> Task :quill_native_bridge_android:generateDebugRFile UP-TO-DATE
+> Task :record_android:compileDebugLibraryResources UP-TO-DATE
+> Task :record_android:parseDebugLocalResources UP-TO-DATE
+> Task :record_android:generateDebugRFile UP-TO-DATE
+> Task :share_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :share_plus:parseDebugLocalResources UP-TO-DATE
+> Task :share_plus:generateDebugRFile UP-TO-DATE
+> Task :shared_preferences_android:compileDebugLibraryResources UP-TO-DATE
+> Task :shared_preferences_android:parseDebugLocalResources UP-TO-DATE
+> Task :shared_preferences_android:generateDebugRFile UP-TO-DATE
+> Task :sqflite_android:compileDebugLibraryResources UP-TO-DATE
+> Task :sqflite_android:parseDebugLocalResources UP-TO-DATE
+> Task :sqflite_android:generateDebugRFile UP-TO-DATE
+> Task :url_launcher_android:compileDebugLibraryResources UP-TO-DATE
+> Task :url_launcher_android:parseDebugLocalResources UP-TO-DATE
+> Task :url_launcher_android:generateDebugRFile UP-TO-DATE
+> Task :video_compress:compileDebugLibraryResources UP-TO-DATE
+> Task :video_compress:parseDebugLocalResources UP-TO-DATE
+> Task :video_compress:generateDebugRFile UP-TO-DATE
+> Task :video_player_android:compileDebugLibraryResources UP-TO-DATE
+> Task :video_player_android:parseDebugLocalResources UP-TO-DATE
+> Task :video_player_android:generateDebugRFile UP-TO-DATE
+> Task :wakelock_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :wakelock_plus:parseDebugLocalResources UP-TO-DATE
+> Task :wakelock_plus:generateDebugRFile UP-TO-DATE
+> Task :webview_flutter_android:compileDebugLibraryResources UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :audio_session:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :audio_session:javaPreCompileDebug UP-TO-DATE
+> Task :audioplayers_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :audioplayers_android:javaPreCompileDebug UP-TO-DATE
+> Task :background_fetch:javaPreCompileDebug UP-TO-DATE
+> Task :background_fetch:compileDebugJavaWithJavac
+> Task :background_fetch:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :cloud_firestore:generateDebugBuildConfig UP-TO-DATE
+> Task :cloud_firestore:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_core:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_core:javaPreCompileDebug UP-TO-DATE
+> Task :audioplayers_android:compileDebugKotlin
+> Task :audio_session:compileDebugKotlin
+> Task :firebase_core:compileDebugJavaWithJavac
+> Task :audio_session:compileDebugJavaWithJavac NO-SOURCE
+> Task :audio_session:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :audioplayers_android:compileDebugJavaWithJavac NO-SOURCE
+> Task :audioplayers_android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :cloud_functions:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :cloud_functions:generateDebugBuildConfig UP-TO-DATE
+> Task :cloud_functions:javaPreCompileDebug UP-TO-DATE
+> Task :connectivity_plus:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_core:bundleLibCompileToJarDebug
+> Task :connectivity_plus:compileDebugJavaWithJavac
+> Task :cloud_firestore:compileDebugJavaWithJavac
+> Task :cloud_firestore:bundleLibCompileToJarDebug
+> Task :file_picker:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:javaPreCompileDebug UP-TO-DATE
+> Task :connectivity_plus:bundleLibCompileToJarDebug
+> Task :flutter_plugin_android_lifecycle:compileDebugJavaWithJavac
+> Task :flutter_plugin_android_lifecycle:bundleLibCompileToJarDebug UP-TO-DATE
+
+> Task :file_picker:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :firebase_analytics:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :firebase_analytics:generateDebugBuildConfig UP-TO-DATE
+> Task :file_picker:bundleLibCompileToJarDebug
+> Task :firebase_analytics:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_auth:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_auth:javaPreCompileDebug UP-TO-DATE
+
+> Task :firebase_auth:compileDebugJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :firebase_database:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :firebase_database:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_database:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_messaging:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_messaging:javaPreCompileDebug UP-TO-DATE
+> Task :firebase_auth:bundleLibCompileToJarDebug
+
+> Task :firebase_analytics:compileDebugKotlin
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_analytics-12.1.3/android/src/main/kotlin/io/flutter/plugins/firebase/analytics/FlutterFirebaseAnalyticsPlugin.kt:110:43 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>?'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_analytics-12.1.3/android/src/main/kotlin/io/flutter/plugins/firebase/analytics/FlutterFirebaseAnalyticsPlugin.kt:317:47 Unchecked cast of 'kotlin.collections.Map<*, *>' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_analytics-12.1.3/android/src/main/kotlin/io/flutter/plugins/firebase/analytics/FlutterFirebaseAnalyticsPlugin.kt:332:61 Unchecked cast of 'kotlin.collections.Map<*, *>' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+
+> Task :firebase_messaging:compileDebugJavaWithJavac
+
+> Task :cloud_functions:compileDebugKotlin
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/cloud_functions-6.0.7/android/src/main/kotlin/io/flutter/plugins/firebase/functions/FirebaseFunctionsStreamHandler.kt:23:34 Unchecked cast of 'kotlin.Any' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/cloud_functions-6.0.7/android/src/main/kotlin/io/flutter/plugins/firebase/functions/FlutterFirebaseFunctionsPlugin.kt:175:33 Unchecked cast of 'kotlin.collections.Map<kotlin.String, kotlin.Any?>' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+
+> Task :firebase_analytics:compileDebugJavaWithJavac
+> Task :cloud_functions:compileDebugJavaWithJavac
+> Task :cloud_functions:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :firebase_analytics:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :firebase_storage:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :firebase_storage:generateDebugBuildConfig UP-TO-DATE
+> Task :firebase_messaging:bundleLibCompileToJarDebug
+> Task :firebase_storage:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_callkit_incoming:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :flutter_callkit_incoming:compileDebugKotlin UP-TO-DATE
+> Task :flutter_callkit_incoming:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_callkit_incoming:compileDebugJavaWithJavac NO-SOURCE
+> Task :flutter_callkit_incoming:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :flutter_contacts:checkKotlinGradlePluginConfigurationErrors SKIPPED
+
+> Task :firebase_database:compileDebugKotlin
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_database-12.1.4/android/src/main/kotlin/io/flutter/plugins/firebase/database/ChildEventsProxy.kt:17:3 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_database-12.1.4/android/src/main/kotlin/io/flutter/plugins/firebase/database/EventStreamHandler.kt:21:3 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_database-12.1.4/android/src/main/kotlin/io/flutter/plugins/firebase/database/EventsProxy.kt:18:3 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_database-12.1.4/android/src/main/kotlin/io/flutter/plugins/firebase/database/QueryBuilder.kt:15:3 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_database-12.1.4/android/src/main/kotlin/io/flutter/plugins/firebase/database/TransactionHandler.kt:22:3 '@JvmOverloads' annotation has no effect for methods without default arguments.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_database-12.1.4/android/src/main/kotlin/io/flutter/plugins/firebase/database/ValueEventsProxy.kt:16:3 '@JvmOverloads' annotation has no effect for methods without default arguments.
+
+> Task :firebase_database:compileDebugJavaWithJavac
+> Task :firebase_database:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :flutter_contacts:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_image_compress_common:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :flutter_image_compress_common:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:javaPreCompileDebug UP-TO-DATE
+
+> Task :flutter_keyboard_visibility_temp_fork:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :flutter_keyboard_visibility_temp_fork:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :flutter_local_notifications:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_local_notifications:compileDebugJavaWithJavac
+> Task :flutter_ringtone_player:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_local_notifications:bundleLibCompileToJarDebug
+> Task :firebase_storage:compileDebugKotlin
+> Task :flutter_image_compress_common:compileDebugKotlin
+
+> Task :flutter_ringtone_player:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+Note: C:\Users\door8\AppData\Local\Pub\Cache\hosted\pub.dev\flutter_ringtone_player-4.0.0+4\android\src\main\java\io\inway\ringtone\player\FlutterRingtonePlayerPlugin.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+3 warnings
+
+> Task :flutter_contacts:compileDebugKotlin
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:41:40 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:42:30 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:43:30 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:44:33 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:45:37 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:46:32 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:47:36 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:48:30 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any?>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:49:29 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:50:32 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/Contact.kt:51:30 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.Any>>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:964:20 'static field PROTOCOL_AIM: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:965:20 'static field PROTOCOL_GOOGLE_TALK: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:966:20 'static field PROTOCOL_ICQ: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:967:20 'static field PROTOCOL_JABBER: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:968:20 'static field PROTOCOL_MSN: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:969:20 'static field PROTOCOL_NETMEETING: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:970:20 'static field PROTOCOL_QQ: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:971:20 'static field PROTOCOL_SKYPE: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:972:20 'static field PROTOCOL_YAHOO: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:985:50 'static field PROTOCOL_AIM: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:986:57 'static field PROTOCOL_GOOGLE_TALK: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:987:50 'static field PROTOCOL_ICQ: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:988:53 'static field PROTOCOL_JABBER: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:989:50 'static field PROTOCOL_MSN: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:990:57 'static field PROTOCOL_NETMEETING: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:991:53 'static field PROTOCOL_QQ: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:992:52 'static field PROTOCOL_SKYPE: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContacts.kt:993:52 'static field PROTOCOL_YAHOO: Int' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:47:58 'fun getFlutterEngine(): FlutterEngine' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:48:62 'fun getFlutterEngine(): FlutterEngine' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:178:47 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:207:47 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:208:43 Unchecked cast of 'kotlin.Any' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:222:47 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:223:43 Unchecked cast of 'kotlin.Any' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:238:71 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.String>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:251:47 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:252:41 Unchecked cast of 'kotlin.Any' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:262:47 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:263:41 Unchecked cast of 'kotlin.Any' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:273:47 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:274:41 Unchecked cast of 'kotlin.Any' to 'kotlin.collections.Map<kotlin.String, kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:283:47 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:291:47 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:305:47 Unchecked cast of 'kotlin.Any!' to 'kotlin.collections.List<kotlin.Any>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:306:63 Unchecked cast of 'kotlin.Any' to 'kotlin.collections.Map<kotlin.String, kotlin.Any?>'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/FlutterContactsPlugin.kt:380:68 'constructor(): Handler' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_contacts-1.1.9+2/android/src/main/kotlin/co/quis/flutter_contacts/properties/Account.kt:15:28 Unchecked cast of 'kotlin.Any?' to 'kotlin.collections.List<kotlin.String>'.
+
+> Task :firebase_storage:compileDebugJavaWithJavac
+> Task :firebase_storage:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :flutter_contacts:compileDebugJavaWithJavac NO-SOURCE
+> Task :flutter_contacts:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :flutter_image_compress_common:compileDebugJavaWithJavac
+> Task :flutter_image_compress_common:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :flutter_ringtone_player:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :flutter_sound:javaPreCompileDebug UP-TO-DATE
+
+> Task :flutter_sound:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :flutter_sound:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :fluttertoast:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :fluttertoast:javaPreCompileDebug UP-TO-DATE
+> Task :gal:javaPreCompileDebug UP-TO-DATE
+
+> Task :fluttertoast:compileDebugKotlin
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/fluttertoast-9.0.0/android/src/main/kotlin/io/github/ponnamkarthik/toast/fluttertoast/MethodCallHandlerImpl.kt:59:40 'fun setColorFilter(p0: Int, p1: PorterDuff.Mode): Unit' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/fluttertoast-9.0.0/android/src/main/kotlin/io/github/ponnamkarthik/toast/fluttertoast/MethodCallHandlerImpl.kt:77:29 'var view: View?' is deprecated. Deprecated in Java.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/fluttertoast-9.0.0/android/src/main/kotlin/io/github/ponnamkarthik/toast/fluttertoast/MethodCallHandlerImpl.kt:81:58 'var view: View?' is deprecated. Deprecated in Java.
+
+> Task :gal:compileDebugJavaWithJavac
+> Task :fluttertoast:compileDebugJavaWithJavac NO-SOURCE
+> Task :fluttertoast:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :geolocator_android:javaPreCompileDebug UP-TO-DATE
+> Task :gal:bundleLibCompileToJarDebug
+
+> Task :geolocator_android:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :google_mobile_ads:javaPreCompileDebug UP-TO-DATE
+> Task :webview_flutter_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :geolocator_android:bundleLibCompileToJarDebug
+> Task :webview_flutter_android:javaPreCompileDebug UP-TO-DATE
+> Task :google_sign_in_android:javaPreCompileDebug UP-TO-DATE
+> Task :google_sign_in_android:compileDebugJavaWithJavac
+> Task :image_cropper:javaPreCompileDebug UP-TO-DATE
+> Task :google_sign_in_android:bundleLibCompileToJarDebug
+
+> Task :image_cropper:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :image_cropper:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :image_picker_android:javaPreCompileDebug UP-TO-DATE
+> Task :image_picker_android:compileDebugJavaWithJavac
+> Task :just_audio:javaPreCompileDebug UP-TO-DATE
+> Task :image_picker_android:bundleLibCompileToJarDebug
+> Task :just_audio:compileDebugJavaWithJavac
+> Task :package_info_plus:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :just_audio:bundleLibCompileToJarDebug
+> Task :package_info_plus:javaPreCompileDebug UP-TO-DATE
+> Task :path_provider_android:javaPreCompileDebug UP-TO-DATE
+> Task :package_info_plus:compileDebugKotlin
+> Task :webview_flutter_android:compileDebugKotlin
+> Task :path_provider_android:compileDebugJavaWithJavac
+> Task :webview_flutter_android:compileDebugJavaWithJavac
+> Task :package_info_plus:compileDebugJavaWithJavac NO-SOURCE
+> Task :package_info_plus:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :permission_handler_android:javaPreCompileDebug UP-TO-DATE
+> Task :path_provider_android:bundleLibCompileToJarDebug
+> Task :webview_flutter_android:bundleLibCompileToJarDebug
+
+> Task :permission_handler_android:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :google_mobile_ads:compileDebugJavaWithJavac
+Java compiler version 25 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+Note: C:\Users\door8\AppData\Local\Pub\Cache\hosted\pub.dev\google_mobile_ads-5.3.1\android\src\main\java\io\flutter\plugins\googlemobileads\AdMessageCodec.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+3 warnings
+
+> Task :permission_handler_android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :pro_image_editor:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :google_mobile_ads:bundleLibCompileToJarDebug
+> Task :pro_image_editor:javaPreCompileDebug UP-TO-DATE
+> Task :quill_native_bridge_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :quill_native_bridge_android:javaPreCompileDebug UP-TO-DATE
+> Task :record_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :pro_image_editor:compileDebugKotlin
+> Task :quill_native_bridge_android:compileDebugKotlin
+> Task :pro_image_editor:compileDebugJavaWithJavac NO-SOURCE
+> Task :pro_image_editor:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :quill_native_bridge_android:compileDebugJavaWithJavac NO-SOURCE
+> Task :quill_native_bridge_android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :record_android:javaPreCompileDebug UP-TO-DATE
+> Task :share_plus:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :share_plus:javaPreCompileDebug UP-TO-DATE
+> Task :shared_preferences_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared_preferences_android:javaPreCompileDebug UP-TO-DATE
+> Task :sqflite_android:javaPreCompileDebug UP-TO-DATE
+> Task :sqflite_android:compileDebugJavaWithJavac
+> Task :url_launcher_android:generateDebugBuildConfig UP-TO-DATE
+> Task :url_launcher_android:javaPreCompileDebug UP-TO-DATE
+> Task :sqflite_android:bundleLibCompileToJarDebug
+> Task :url_launcher_android:compileDebugJavaWithJavac
+> Task :url_launcher_android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :video_compress:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :video_compress:javaPreCompileDebug UP-TO-DATE
+> Task :video_player_android:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :video_player_android:javaPreCompileDebug UP-TO-DATE
+> Task :wakelock_plus:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :wakelock_plus:javaPreCompileDebug UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:l8DexDesugarLibDebug UP-TO-DATE
+> Task :audio_session:processDebugJavaRes UP-TO-DATE
+> Task :audioplayers_android:processDebugJavaRes UP-TO-DATE
+> Task :background_fetch:processDebugJavaRes NO-SOURCE
+> Task :cloud_firestore:processDebugJavaRes NO-SOURCE
+> Task :cloud_functions:processDebugJavaRes UP-TO-DATE
+> Task :connectivity_plus:processDebugJavaRes NO-SOURCE
+> Task :file_picker:processDebugJavaRes NO-SOURCE
+> Task :firebase_analytics:processDebugJavaRes UP-TO-DATE
+> Task :firebase_auth:processDebugJavaRes NO-SOURCE
+> Task :firebase_core:processDebugJavaRes NO-SOURCE
+> Task :firebase_database:processDebugJavaRes UP-TO-DATE
+> Task :firebase_messaging:processDebugJavaRes NO-SOURCE
+> Task :firebase_storage:processDebugJavaRes UP-TO-DATE
+> Task :flutter_callkit_incoming:processDebugJavaRes UP-TO-DATE
+> Task :flutter_contacts:processDebugJavaRes UP-TO-DATE
+> Task :flutter_image_compress_common:processDebugJavaRes UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:processDebugJavaRes NO-SOURCE
+> Task :flutter_local_notifications:processDebugJavaRes NO-SOURCE
+> Task :flutter_plugin_android_lifecycle:processDebugJavaRes NO-SOURCE
+> Task :flutter_ringtone_player:processDebugJavaRes NO-SOURCE
+> Task :flutter_sound:processDebugJavaRes NO-SOURCE
+> Task :fluttertoast:processDebugJavaRes UP-TO-DATE
+> Task :gal:processDebugJavaRes NO-SOURCE
+> Task :geolocator_android:processDebugJavaRes NO-SOURCE
+> Task :google_mobile_ads:processDebugJavaRes NO-SOURCE
+> Task :google_sign_in_android:processDebugJavaRes NO-SOURCE
+> Task :image_cropper:processDebugJavaRes NO-SOURCE
+> Task :image_picker_android:processDebugJavaRes NO-SOURCE
+> Task :iris_method_channel:processDebugJavaRes NO-SOURCE
+> Task :just_audio:processDebugJavaRes NO-SOURCE
+> Task :package_info_plus:processDebugJavaRes UP-TO-DATE
+> Task :path_provider_android:processDebugJavaRes NO-SOURCE
+> Task :permission_handler_android:processDebugJavaRes NO-SOURCE
+> Task :pro_image_editor:processDebugJavaRes UP-TO-DATE
+> Task :quill_native_bridge_android:processDebugJavaRes UP-TO-DATE
+> Task :sqflite_android:processDebugJavaRes NO-SOURCE
+> Task :url_launcher_android:processDebugJavaRes NO-SOURCE
+> Task :webview_flutter_android:processDebugJavaRes UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :agora_rtc_engine:bundleLibRuntimeToDirDebug
+
+> Task :video_compress:compileDebugKotlin
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/video_compress-3.1.4/android/src/main/kotlin/com/example/video_compress/Utility.kt:45:49 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/video_compress-3.1.4/android/src/main/kotlin/com/example/video_compress/Utility.kt:46:46 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/video_compress-3.1.4/android/src/main/kotlin/com/example/video_compress/Utility.kt:47:47 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+
+> Task :video_compress:compileDebugJavaWithJavac NO-SOURCE
+> Task :video_compress:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :video_compress:processDebugJavaRes UP-TO-DATE
+> Task :agora_rtm:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :just_audio:bundleLibRuntimeToDirDebug
+> Task :audio_session:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :audioplayers_android:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :background_fetch:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :share_plus:compileDebugKotlin
+> Task :share_plus:compileDebugJavaWithJavac NO-SOURCE
+> Task :share_plus:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :share_plus:processDebugJavaRes UP-TO-DATE
+> Task :cloud_functions:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :cloud_firestore:bundleLibRuntimeToDirDebug
+> Task :connectivity_plus:bundleLibRuntimeToDirDebug
+> Task :file_picker:bundleLibRuntimeToDirDebug
+> Task :firebase_analytics:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :wakelock_plus:compileDebugKotlin
+> Task :wakelock_plus:compileDebugJavaWithJavac NO-SOURCE
+> Task :wakelock_plus:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :wakelock_plus:processDebugJavaRes UP-TO-DATE
+> Task :firebase_database:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :firebase_auth:bundleLibRuntimeToDirDebug
+> Task :firebase_messaging:bundleLibRuntimeToDirDebug
+> Task :app:compressDebugAssets
+> Task :firebase_storage:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :flutter_callkit_incoming:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :firebase_core:bundleLibRuntimeToDirDebug
+> Task :flutter_contacts:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :flutter_image_compress_common:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :flutter_local_notifications:bundleLibRuntimeToDirDebug
+> Task :image_picker_android:bundleLibRuntimeToDirDebug
+> Task :shared_preferences_android:compileDebugKotlin
+> Task :video_player_android:compileDebugKotlin
+
+> Task :record_android:compileDebugKotlin
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/record_android-1.5.1/android/src/main/kotlin/com/llfbandit/record/record/format/Format.kt:121:21 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'android.media.MediaCodecInfo.AudioCapabilities?'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/record_android-1.5.1/android/src/main/kotlin/com/llfbandit/record/record/format/Format.kt:123:11 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'android.media.MediaCodecInfo.AudioCapabilities?'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/record_android-1.5.1/android/src/main/kotlin/com/llfbandit/record/record/format/Format.kt:127:13 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'android.media.MediaCodecInfo.AudioCapabilities?'.
+w: file:///C:/Users/door8/AppData/Local/Pub/Cache/hosted/pub.dev/record_android-1.5.1/android/src/main/kotlin/com/llfbandit/record/record/format/Format.kt:135:25 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'android.media.MediaCodecInfo.AudioCapabilities?'.
+
+> Task :shared_preferences_android:compileDebugJavaWithJavac
+> Task :record_android:compileDebugJavaWithJavac
+> Task :record_android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :shared_preferences_android:bundleLibCompileToJarDebug
+> Task :video_player_android:compileDebugJavaWithJavac
+> Task :record_android:processDebugJavaRes UP-TO-DATE
+> Task :shared_preferences_android:processDebugJavaRes UP-TO-DATE
+> Task :video_player_android:processDebugJavaRes UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :flutter_ringtone_player:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :flutter_sound:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :video_player_android:bundleLibCompileToJarDebug
+> Task :fluttertoast:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :gal:bundleLibRuntimeToDirDebug
+> Task :geolocator_android:bundleLibRuntimeToDirDebug
+> Task :image_cropper:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :google_mobile_ads:bundleLibRuntimeToDirDebug
+> Task :iris_method_channel:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :google_sign_in_android:bundleLibRuntimeToDirDebug
+> Task :wakelock_plus:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :package_info_plus:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :path_provider_android:bundleLibRuntimeToDirDebug
+> Task :permission_handler_android:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :pro_image_editor:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :quill_native_bridge_android:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :record_android:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :share_plus:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :shared_preferences_android:bundleLibRuntimeToDirDebug
+> Task :url_launcher_android:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :video_compress:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :sqflite_android:bundleLibRuntimeToDirDebug
+> Task :video_player_android:bundleLibRuntimeToDirDebug
+> Task :webview_flutter_android:bundleLibRuntimeToDirDebug
+> Task :agora_rtc_engine:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :agora_rtm:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :app:configureCMakeDebug[arm64-v8a]
+> Task :app:buildCMakeDebug[arm64-v8a]
+> Task :app:configureCMakeDebug[armeabi-v7a]
+> Task :app:buildCMakeDebug[armeabi-v7a]
+> Task :app:configureCMakeDebug[x86_64]
+> Task :app:buildCMakeDebug[x86_64]
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :audio_session:mergeDebugJniLibFolders UP-TO-DATE
+> Task :audio_session:mergeDebugNativeLibs NO-SOURCE
+> Task :audio_session:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :audioplayers_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :audioplayers_android:mergeDebugNativeLibs NO-SOURCE
+> Task :audioplayers_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :background_fetch:mergeDebugJniLibFolders UP-TO-DATE
+> Task :background_fetch:mergeDebugNativeLibs NO-SOURCE
+> Task :background_fetch:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :cloud_firestore:mergeDebugJniLibFolders UP-TO-DATE
+> Task :cloud_firestore:mergeDebugNativeLibs NO-SOURCE
+> Task :cloud_firestore:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :cloud_functions:mergeDebugJniLibFolders UP-TO-DATE
+> Task :cloud_functions:mergeDebugNativeLibs NO-SOURCE
+> Task :cloud_functions:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :connectivity_plus:mergeDebugJniLibFolders UP-TO-DATE
+> Task :connectivity_plus:mergeDebugNativeLibs NO-SOURCE
+> Task :connectivity_plus:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :file_picker:mergeDebugJniLibFolders UP-TO-DATE
+> Task :file_picker:mergeDebugNativeLibs NO-SOURCE
+> Task :file_picker:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :firebase_analytics:mergeDebugJniLibFolders UP-TO-DATE
+> Task :firebase_analytics:mergeDebugNativeLibs NO-SOURCE
+> Task :firebase_analytics:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :firebase_auth:mergeDebugJniLibFolders UP-TO-DATE
+> Task :firebase_auth:mergeDebugNativeLibs NO-SOURCE
+> Task :firebase_auth:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :firebase_core:mergeDebugJniLibFolders UP-TO-DATE
+> Task :firebase_core:mergeDebugNativeLibs NO-SOURCE
+> Task :firebase_core:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :firebase_database:mergeDebugJniLibFolders UP-TO-DATE
+> Task :firebase_database:mergeDebugNativeLibs NO-SOURCE
+> Task :firebase_database:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :firebase_messaging:mergeDebugJniLibFolders UP-TO-DATE
+> Task :firebase_messaging:mergeDebugNativeLibs NO-SOURCE
+> Task :firebase_messaging:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :firebase_storage:mergeDebugJniLibFolders UP-TO-DATE
+> Task :firebase_storage:mergeDebugNativeLibs NO-SOURCE
+> Task :firebase_storage:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :flutter_callkit_incoming:mergeDebugJniLibFolders UP-TO-DATE
+> Task :flutter_callkit_incoming:mergeDebugNativeLibs NO-SOURCE
+> Task :flutter_callkit_incoming:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :flutter_contacts:mergeDebugJniLibFolders UP-TO-DATE
+> Task :flutter_contacts:mergeDebugNativeLibs NO-SOURCE
+> Task :flutter_contacts:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :flutter_image_compress_common:mergeDebugJniLibFolders UP-TO-DATE
+> Task :flutter_image_compress_common:mergeDebugNativeLibs NO-SOURCE
+> Task :flutter_image_compress_common:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:mergeDebugJniLibFolders UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:mergeDebugNativeLibs NO-SOURCE
+> Task :flutter_keyboard_visibility_temp_fork:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :flutter_local_notifications:mergeDebugJniLibFolders UP-TO-DATE
+> Task :flutter_local_notifications:mergeDebugNativeLibs NO-SOURCE
+> Task :flutter_local_notifications:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mergeDebugJniLibFolders UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mergeDebugNativeLibs NO-SOURCE
+> Task :flutter_plugin_android_lifecycle:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :flutter_ringtone_player:mergeDebugJniLibFolders UP-TO-DATE
+> Task :flutter_ringtone_player:mergeDebugNativeLibs NO-SOURCE
+> Task :flutter_ringtone_player:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :flutter_sound:mergeDebugJniLibFolders UP-TO-DATE
+> Task :flutter_sound:mergeDebugNativeLibs NO-SOURCE
+> Task :flutter_sound:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :fluttertoast:mergeDebugJniLibFolders UP-TO-DATE
+> Task :fluttertoast:mergeDebugNativeLibs NO-SOURCE
+> Task :fluttertoast:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :gal:mergeDebugJniLibFolders UP-TO-DATE
+> Task :gal:mergeDebugNativeLibs NO-SOURCE
+> Task :gal:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :geolocator_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :geolocator_android:mergeDebugNativeLibs NO-SOURCE
+> Task :geolocator_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :google_mobile_ads:mergeDebugJniLibFolders UP-TO-DATE
+> Task :google_mobile_ads:mergeDebugNativeLibs NO-SOURCE
+> Task :google_mobile_ads:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :google_sign_in_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :google_sign_in_android:mergeDebugNativeLibs NO-SOURCE
+> Task :google_sign_in_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :image_cropper:mergeDebugJniLibFolders UP-TO-DATE
+> Task :image_cropper:mergeDebugNativeLibs NO-SOURCE
+> Task :image_cropper:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :image_picker_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :image_picker_android:mergeDebugNativeLibs NO-SOURCE
+> Task :image_picker_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :iris_method_channel:preProfileBuild UP-TO-DATE
+> Task :iris_method_channel:configureCMakeDebug[arm64-v8a]
+> Task :app:compileDebugKotlin
+> Task :iris_method_channel:buildCMakeDebug[arm64-v8a]
+> Task :app:compileDebugJavaWithJavac
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:dexBuilderDebug UP-TO-DATE
+> Task :app:mergeProjectDexDebug UP-TO-DATE
+> Task :iris_method_channel:configureCMakeDebug[armeabi-v7a]
+> Task :iris_method_channel:buildCMakeDebug[armeabi-v7a]
+> Task :iris_method_channel:configureCMakeDebug[x86]
+> Task :iris_method_channel:buildCMakeDebug[x86]
+> Task :iris_method_channel:configureCMakeDebug[x86_64]
+> Task :iris_method_channel:buildCMakeDebug[x86_64]
+> Task :app:mergeLibDexDebug
+> Task :iris_method_channel:mergeDebugJniLibFolders UP-TO-DATE
+> Task :iris_method_channel:mergeDebugNativeLibs UP-TO-DATE
+> Task :iris_method_channel:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :just_audio:mergeDebugJniLibFolders UP-TO-DATE
+> Task :just_audio:mergeDebugNativeLibs NO-SOURCE
+> Task :just_audio:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :package_info_plus:mergeDebugJniLibFolders UP-TO-DATE
+> Task :package_info_plus:mergeDebugNativeLibs NO-SOURCE
+> Task :package_info_plus:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :path_provider_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :path_provider_android:mergeDebugNativeLibs NO-SOURCE
+> Task :path_provider_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :permission_handler_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :permission_handler_android:mergeDebugNativeLibs NO-SOURCE
+> Task :permission_handler_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :pro_image_editor:mergeDebugJniLibFolders UP-TO-DATE
+> Task :pro_image_editor:mergeDebugNativeLibs NO-SOURCE
+> Task :pro_image_editor:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :quill_native_bridge_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :quill_native_bridge_android:mergeDebugNativeLibs NO-SOURCE
+> Task :quill_native_bridge_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :record_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :record_android:mergeDebugNativeLibs NO-SOURCE
+> Task :record_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :share_plus:mergeDebugJniLibFolders UP-TO-DATE
+> Task :share_plus:mergeDebugNativeLibs NO-SOURCE
+> Task :share_plus:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugNativeLibs NO-SOURCE
+> Task :shared_preferences_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :sqflite_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :sqflite_android:mergeDebugNativeLibs NO-SOURCE
+> Task :sqflite_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :url_launcher_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :url_launcher_android:mergeDebugNativeLibs NO-SOURCE
+> Task :url_launcher_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :video_compress:mergeDebugJniLibFolders UP-TO-DATE
+> Task :video_compress:mergeDebugNativeLibs NO-SOURCE
+> Task :video_compress:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :video_player_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :video_player_android:mergeDebugNativeLibs NO-SOURCE
+> Task :video_player_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :wakelock_plus:mergeDebugJniLibFolders UP-TO-DATE
+> Task :wakelock_plus:mergeDebugNativeLibs NO-SOURCE
+> Task :wakelock_plus:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :webview_flutter_android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :webview_flutter_android:mergeDebugNativeLibs NO-SOURCE
+> Task :webview_flutter_android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :audio_session:stripDebugDebugSymbols NO-SOURCE
+> Task :audio_session:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :audio_session:extractDebugAnnotations UP-TO-DATE
+> Task :audio_session:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :audio_session:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :audio_session:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :audio_session:prepareDebugArtProfile UP-TO-DATE
+> Task :audio_session:prepareLintJarForPublish UP-TO-DATE
+> Task :audio_session:mergeDebugJavaResource UP-TO-DATE
+> Task :audio_session:syncDebugLibJars UP-TO-DATE
+> Task :audio_session:bundleDebugAar UP-TO-DATE
+> Task :audio_session:assembleDebug UP-TO-DATE
+> Task :audioplayers_android:stripDebugDebugSymbols NO-SOURCE
+> Task :audioplayers_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :audioplayers_android:extractDebugAnnotations UP-TO-DATE
+> Task :audioplayers_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :audioplayers_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :audioplayers_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :audioplayers_android:prepareDebugArtProfile UP-TO-DATE
+> Task :audioplayers_android:prepareLintJarForPublish UP-TO-DATE
+> Task :audioplayers_android:mergeDebugJavaResource UP-TO-DATE
+> Task :audioplayers_android:syncDebugLibJars UP-TO-DATE
+> Task :audioplayers_android:bundleDebugAar UP-TO-DATE
+> Task :audioplayers_android:assembleDebug UP-TO-DATE
+> Task :background_fetch:stripDebugDebugSymbols NO-SOURCE
+> Task :background_fetch:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :background_fetch:extractDebugAnnotations UP-TO-DATE
+> Task :background_fetch:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :background_fetch:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :background_fetch:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :background_fetch:prepareDebugArtProfile UP-TO-DATE
+> Task :background_fetch:prepareLintJarForPublish UP-TO-DATE
+> Task :background_fetch:mergeDebugJavaResource UP-TO-DATE
+> Task :background_fetch:syncDebugLibJars UP-TO-DATE
+> Task :background_fetch:bundleDebugAar UP-TO-DATE
+> Task :background_fetch:assembleDebug UP-TO-DATE
+> Task :cloud_firestore:stripDebugDebugSymbols NO-SOURCE
+> Task :cloud_firestore:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :cloud_firestore:extractDebugAnnotations UP-TO-DATE
+> Task :cloud_firestore:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :cloud_firestore:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :cloud_firestore:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :cloud_firestore:prepareDebugArtProfile UP-TO-DATE
+> Task :cloud_firestore:prepareLintJarForPublish UP-TO-DATE
+> Task :cloud_firestore:mergeDebugJavaResource UP-TO-DATE
+> Task :cloud_firestore:syncDebugLibJars
+> Task :cloud_firestore:bundleDebugAar
+> Task :cloud_firestore:assembleDebug
+> Task :cloud_functions:stripDebugDebugSymbols NO-SOURCE
+> Task :cloud_functions:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :cloud_functions:extractDebugAnnotations UP-TO-DATE
+> Task :cloud_functions:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :cloud_functions:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :cloud_functions:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :cloud_functions:prepareDebugArtProfile UP-TO-DATE
+> Task :cloud_functions:prepareLintJarForPublish UP-TO-DATE
+> Task :cloud_functions:mergeDebugJavaResource UP-TO-DATE
+> Task :cloud_functions:syncDebugLibJars UP-TO-DATE
+> Task :cloud_functions:bundleDebugAar UP-TO-DATE
+> Task :cloud_functions:assembleDebug UP-TO-DATE
+> Task :connectivity_plus:stripDebugDebugSymbols NO-SOURCE
+> Task :connectivity_plus:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :connectivity_plus:extractDebugAnnotations UP-TO-DATE
+> Task :connectivity_plus:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :connectivity_plus:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :connectivity_plus:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :connectivity_plus:prepareDebugArtProfile UP-TO-DATE
+> Task :connectivity_plus:prepareLintJarForPublish UP-TO-DATE
+> Task :connectivity_plus:mergeDebugJavaResource UP-TO-DATE
+> Task :connectivity_plus:syncDebugLibJars
+> Task :connectivity_plus:bundleDebugAar
+> Task :connectivity_plus:assembleDebug
+> Task :file_picker:stripDebugDebugSymbols NO-SOURCE
+> Task :file_picker:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :file_picker:extractDebugAnnotations UP-TO-DATE
+> Task :file_picker:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :file_picker:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :file_picker:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :file_picker:prepareDebugArtProfile UP-TO-DATE
+> Task :file_picker:prepareLintJarForPublish UP-TO-DATE
+> Task :file_picker:mergeDebugJavaResource UP-TO-DATE
+> Task :file_picker:syncDebugLibJars
+> Task :file_picker:bundleDebugAar
+> Task :file_picker:assembleDebug
+> Task :firebase_analytics:stripDebugDebugSymbols NO-SOURCE
+> Task :firebase_analytics:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :firebase_analytics:extractDebugAnnotations UP-TO-DATE
+> Task :firebase_analytics:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :firebase_analytics:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :firebase_analytics:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :firebase_analytics:prepareDebugArtProfile UP-TO-DATE
+> Task :firebase_analytics:prepareLintJarForPublish UP-TO-DATE
+> Task :firebase_analytics:mergeDebugJavaResource UP-TO-DATE
+> Task :firebase_analytics:syncDebugLibJars UP-TO-DATE
+> Task :firebase_analytics:bundleDebugAar UP-TO-DATE
+> Task :firebase_analytics:assembleDebug UP-TO-DATE
+> Task :firebase_auth:stripDebugDebugSymbols NO-SOURCE
+> Task :firebase_auth:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :firebase_auth:extractDebugAnnotations UP-TO-DATE
+> Task :firebase_auth:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :firebase_auth:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :firebase_auth:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :firebase_auth:prepareDebugArtProfile UP-TO-DATE
+> Task :firebase_auth:prepareLintJarForPublish UP-TO-DATE
+> Task :firebase_auth:mergeDebugJavaResource UP-TO-DATE
+> Task :firebase_auth:syncDebugLibJars
+> Task :firebase_auth:bundleDebugAar
+> Task :firebase_auth:assembleDebug
+> Task :firebase_core:stripDebugDebugSymbols NO-SOURCE
+> Task :firebase_core:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :firebase_core:extractDebugAnnotations UP-TO-DATE
+> Task :firebase_core:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :firebase_core:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :firebase_core:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :firebase_core:prepareDebugArtProfile UP-TO-DATE
+> Task :firebase_core:prepareLintJarForPublish UP-TO-DATE
+> Task :firebase_core:mergeDebugJavaResource UP-TO-DATE
+> Task :firebase_core:syncDebugLibJars
+> Task :firebase_core:bundleDebugAar
+> Task :firebase_core:assembleDebug
+> Task :firebase_database:stripDebugDebugSymbols NO-SOURCE
+> Task :firebase_database:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :firebase_database:extractDebugAnnotations UP-TO-DATE
+> Task :firebase_database:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :firebase_database:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :firebase_database:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :firebase_database:prepareDebugArtProfile UP-TO-DATE
+> Task :firebase_database:prepareLintJarForPublish UP-TO-DATE
+> Task :firebase_database:mergeDebugJavaResource UP-TO-DATE
+> Task :firebase_database:syncDebugLibJars UP-TO-DATE
+> Task :firebase_database:bundleDebugAar UP-TO-DATE
+> Task :firebase_database:assembleDebug UP-TO-DATE
+> Task :firebase_messaging:stripDebugDebugSymbols NO-SOURCE
+> Task :firebase_messaging:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :firebase_messaging:extractDebugAnnotations UP-TO-DATE
+> Task :firebase_messaging:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :firebase_messaging:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :firebase_messaging:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :firebase_messaging:prepareDebugArtProfile UP-TO-DATE
+> Task :firebase_messaging:prepareLintJarForPublish UP-TO-DATE
+> Task :firebase_messaging:mergeDebugJavaResource UP-TO-DATE
+> Task :firebase_messaging:syncDebugLibJars
+> Task :firebase_messaging:bundleDebugAar
+> Task :firebase_messaging:assembleDebug
+> Task :firebase_storage:stripDebugDebugSymbols NO-SOURCE
+> Task :firebase_storage:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :firebase_storage:extractDebugAnnotations UP-TO-DATE
+> Task :firebase_storage:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :firebase_storage:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :firebase_storage:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :firebase_storage:prepareDebugArtProfile UP-TO-DATE
+> Task :firebase_storage:prepareLintJarForPublish UP-TO-DATE
+> Task :firebase_storage:mergeDebugJavaResource UP-TO-DATE
+> Task :firebase_storage:syncDebugLibJars UP-TO-DATE
+> Task :firebase_storage:bundleDebugAar UP-TO-DATE
+> Task :firebase_storage:assembleDebug UP-TO-DATE
+> Task :flutter_callkit_incoming:stripDebugDebugSymbols NO-SOURCE
+> Task :flutter_callkit_incoming:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :flutter_callkit_incoming:extractDebugAnnotations UP-TO-DATE
+> Task :flutter_callkit_incoming:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :flutter_callkit_incoming:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :flutter_callkit_incoming:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :flutter_callkit_incoming:prepareDebugArtProfile UP-TO-DATE
+> Task :flutter_callkit_incoming:prepareLintJarForPublish UP-TO-DATE
+> Task :flutter_callkit_incoming:mergeDebugJavaResource UP-TO-DATE
+> Task :flutter_callkit_incoming:syncDebugLibJars UP-TO-DATE
+> Task :flutter_callkit_incoming:bundleDebugAar UP-TO-DATE
+> Task :flutter_callkit_incoming:assembleDebug UP-TO-DATE
+> Task :flutter_contacts:stripDebugDebugSymbols NO-SOURCE
+> Task :flutter_contacts:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :flutter_contacts:extractDebugAnnotations UP-TO-DATE
+> Task :flutter_contacts:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :flutter_contacts:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :flutter_contacts:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :flutter_contacts:prepareDebugArtProfile UP-TO-DATE
+> Task :flutter_contacts:prepareLintJarForPublish UP-TO-DATE
+> Task :flutter_contacts:mergeDebugJavaResource UP-TO-DATE
+> Task :flutter_contacts:syncDebugLibJars UP-TO-DATE
+> Task :flutter_contacts:bundleDebugAar UP-TO-DATE
+> Task :flutter_contacts:assembleDebug UP-TO-DATE
+> Task :flutter_image_compress_common:stripDebugDebugSymbols NO-SOURCE
+> Task :flutter_image_compress_common:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :flutter_image_compress_common:extractDebugAnnotations UP-TO-DATE
+> Task :flutter_image_compress_common:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :flutter_image_compress_common:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :flutter_image_compress_common:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :flutter_image_compress_common:prepareDebugArtProfile UP-TO-DATE
+> Task :flutter_image_compress_common:prepareLintJarForPublish UP-TO-DATE
+> Task :flutter_image_compress_common:mergeDebugJavaResource UP-TO-DATE
+> Task :flutter_image_compress_common:syncDebugLibJars UP-TO-DATE
+> Task :flutter_image_compress_common:bundleDebugAar UP-TO-DATE
+> Task :flutter_image_compress_common:assembleDebug UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:stripDebugDebugSymbols NO-SOURCE
+> Task :flutter_keyboard_visibility_temp_fork:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:extractDebugAnnotations UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:prepareDebugArtProfile UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:prepareLintJarForPublish UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:mergeDebugJavaResource UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:syncDebugLibJars UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:bundleDebugAar UP-TO-DATE
+> Task :flutter_keyboard_visibility_temp_fork:assembleDebug UP-TO-DATE
+> Task :flutter_local_notifications:stripDebugDebugSymbols NO-SOURCE
+> Task :flutter_local_notifications:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :flutter_local_notifications:extractDebugAnnotations UP-TO-DATE
+> Task :flutter_local_notifications:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :flutter_local_notifications:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :flutter_local_notifications:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :flutter_local_notifications:prepareDebugArtProfile UP-TO-DATE
+> Task :flutter_local_notifications:prepareLintJarForPublish UP-TO-DATE
+> Task :flutter_local_notifications:mergeDebugJavaResource UP-TO-DATE
+> Task :flutter_local_notifications:syncDebugLibJars
+> Task :flutter_local_notifications:bundleDebugAar
+> Task :flutter_local_notifications:assembleDebug
+> Task :flutter_plugin_android_lifecycle:stripDebugDebugSymbols NO-SOURCE
+> Task :flutter_plugin_android_lifecycle:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:extractDebugAnnotations UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:prepareDebugArtProfile UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:prepareLintJarForPublish UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mergeDebugJavaResource UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:syncDebugLibJars UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:bundleDebugAar UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:assembleDebug UP-TO-DATE
+> Task :flutter_ringtone_player:stripDebugDebugSymbols NO-SOURCE
+> Task :flutter_ringtone_player:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :flutter_ringtone_player:extractDebugAnnotations UP-TO-DATE
+> Task :flutter_ringtone_player:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :flutter_ringtone_player:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :flutter_ringtone_player:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :flutter_ringtone_player:prepareDebugArtProfile UP-TO-DATE
+> Task :flutter_ringtone_player:prepareLintJarForPublish UP-TO-DATE
+> Task :flutter_ringtone_player:mergeDebugJavaResource UP-TO-DATE
+> Task :flutter_ringtone_player:syncDebugLibJars UP-TO-DATE
+> Task :flutter_ringtone_player:bundleDebugAar UP-TO-DATE
+> Task :flutter_ringtone_player:assembleDebug UP-TO-DATE
+> Task :flutter_sound:stripDebugDebugSymbols NO-SOURCE
+> Task :flutter_sound:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :flutter_sound:extractDebugAnnotations UP-TO-DATE
+> Task :flutter_sound:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :flutter_sound:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :flutter_sound:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :flutter_sound:prepareDebugArtProfile UP-TO-DATE
+> Task :flutter_sound:prepareLintJarForPublish UP-TO-DATE
+> Task :flutter_sound:mergeDebugJavaResource UP-TO-DATE
+> Task :flutter_sound:syncDebugLibJars UP-TO-DATE
+> Task :flutter_sound:bundleDebugAar UP-TO-DATE
+> Task :flutter_sound:assembleDebug UP-TO-DATE
+> Task :fluttertoast:stripDebugDebugSymbols NO-SOURCE
+> Task :fluttertoast:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :fluttertoast:extractDebugAnnotations UP-TO-DATE
+> Task :fluttertoast:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :fluttertoast:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :fluttertoast:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :fluttertoast:prepareDebugArtProfile UP-TO-DATE
+> Task :fluttertoast:prepareLintJarForPublish UP-TO-DATE
+> Task :fluttertoast:mergeDebugJavaResource UP-TO-DATE
+> Task :fluttertoast:syncDebugLibJars UP-TO-DATE
+> Task :fluttertoast:bundleDebugAar UP-TO-DATE
+> Task :fluttertoast:assembleDebug UP-TO-DATE
+> Task :gal:stripDebugDebugSymbols NO-SOURCE
+> Task :gal:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :gal:extractDebugAnnotations UP-TO-DATE
+> Task :gal:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :gal:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :gal:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :gal:prepareDebugArtProfile UP-TO-DATE
+> Task :gal:prepareLintJarForPublish UP-TO-DATE
+> Task :gal:mergeDebugJavaResource UP-TO-DATE
+> Task :gal:syncDebugLibJars
+> Task :gal:bundleDebugAar
+> Task :gal:assembleDebug
+> Task :geolocator_android:stripDebugDebugSymbols NO-SOURCE
+> Task :geolocator_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :geolocator_android:extractDebugAnnotations UP-TO-DATE
+> Task :geolocator_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :geolocator_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :geolocator_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :geolocator_android:prepareDebugArtProfile UP-TO-DATE
+> Task :geolocator_android:prepareLintJarForPublish UP-TO-DATE
+> Task :geolocator_android:mergeDebugJavaResource UP-TO-DATE
+> Task :geolocator_android:syncDebugLibJars
+> Task :geolocator_android:bundleDebugAar
+> Task :geolocator_android:assembleDebug
+> Task :google_mobile_ads:stripDebugDebugSymbols NO-SOURCE
+> Task :google_mobile_ads:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :google_mobile_ads:extractDebugAnnotations UP-TO-DATE
+> Task :google_mobile_ads:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :google_mobile_ads:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :google_mobile_ads:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :google_mobile_ads:prepareDebugArtProfile UP-TO-DATE
+> Task :google_mobile_ads:prepareLintJarForPublish UP-TO-DATE
+> Task :google_mobile_ads:mergeDebugJavaResource UP-TO-DATE
+> Task :google_mobile_ads:syncDebugLibJars
+> Task :google_mobile_ads:bundleDebugAar
+> Task :google_mobile_ads:assembleDebug
+> Task :google_sign_in_android:stripDebugDebugSymbols NO-SOURCE
+> Task :google_sign_in_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :google_sign_in_android:extractDebugAnnotations UP-TO-DATE
+> Task :google_sign_in_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :google_sign_in_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :google_sign_in_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :google_sign_in_android:prepareDebugArtProfile UP-TO-DATE
+> Task :google_sign_in_android:prepareLintJarForPublish UP-TO-DATE
+> Task :google_sign_in_android:mergeDebugJavaResource UP-TO-DATE
+> Task :google_sign_in_android:syncDebugLibJars
+> Task :google_sign_in_android:bundleDebugAar
+> Task :google_sign_in_android:assembleDebug
+> Task :image_cropper:stripDebugDebugSymbols NO-SOURCE
+> Task :image_cropper:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :image_cropper:extractDebugAnnotations UP-TO-DATE
+> Task :image_cropper:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :image_cropper:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :image_cropper:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :image_cropper:prepareDebugArtProfile UP-TO-DATE
+> Task :image_cropper:prepareLintJarForPublish UP-TO-DATE
+> Task :image_cropper:mergeDebugJavaResource UP-TO-DATE
+> Task :image_cropper:syncDebugLibJars UP-TO-DATE
+> Task :image_cropper:bundleDebugAar UP-TO-DATE
+> Task :image_cropper:assembleDebug UP-TO-DATE
+> Task :image_picker_android:stripDebugDebugSymbols NO-SOURCE
+> Task :image_picker_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :image_picker_android:extractDebugAnnotations UP-TO-DATE
+> Task :image_picker_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :image_picker_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :image_picker_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :image_picker_android:prepareDebugArtProfile UP-TO-DATE
+> Task :image_picker_android:prepareLintJarForPublish UP-TO-DATE
+> Task :image_picker_android:mergeDebugJavaResource UP-TO-DATE
+> Task :image_picker_android:syncDebugLibJars
+> Task :image_picker_android:bundleDebugAar
+> Task :image_picker_android:assembleDebug
+> Task :iris_method_channel:stripDebugDebugSymbols UP-TO-DATE
+> Task :iris_method_channel:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :iris_method_channel:extractDebugAnnotations UP-TO-DATE
+> Task :iris_method_channel:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :iris_method_channel:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :iris_method_channel:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :iris_method_channel:prepareDebugArtProfile UP-TO-DATE
+> Task :iris_method_channel:prepareLintJarForPublish UP-TO-DATE
+> Task :iris_method_channel:mergeDebugJavaResource UP-TO-DATE
+> Task :iris_method_channel:syncDebugLibJars UP-TO-DATE
+> Task :iris_method_channel:bundleDebugAar UP-TO-DATE
+> Task :iris_method_channel:assembleDebug UP-TO-DATE
+> Task :just_audio:stripDebugDebugSymbols NO-SOURCE
+> Task :just_audio:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :just_audio:extractDebugAnnotations UP-TO-DATE
+> Task :just_audio:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :just_audio:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :just_audio:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :just_audio:prepareDebugArtProfile UP-TO-DATE
+> Task :just_audio:prepareLintJarForPublish UP-TO-DATE
+> Task :just_audio:mergeDebugJavaResource UP-TO-DATE
+> Task :just_audio:syncDebugLibJars
+> Task :just_audio:bundleDebugAar
+> Task :just_audio:assembleDebug
+> Task :package_info_plus:stripDebugDebugSymbols NO-SOURCE
+> Task :app:mergeDebugJavaResource
+> Task :package_info_plus:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :package_info_plus:extractDebugAnnotations UP-TO-DATE
+> Task :package_info_plus:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :package_info_plus:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :package_info_plus:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :package_info_plus:prepareDebugArtProfile UP-TO-DATE
+> Task :package_info_plus:prepareLintJarForPublish UP-TO-DATE
+> Task :package_info_plus:mergeDebugJavaResource UP-TO-DATE
+> Task :package_info_plus:syncDebugLibJars UP-TO-DATE
+> Task :package_info_plus:bundleDebugAar UP-TO-DATE
+> Task :package_info_plus:assembleDebug UP-TO-DATE
+> Task :path_provider_android:stripDebugDebugSymbols NO-SOURCE
+> Task :path_provider_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :path_provider_android:extractDebugAnnotations UP-TO-DATE
+> Task :path_provider_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :path_provider_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :path_provider_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :path_provider_android:prepareDebugArtProfile UP-TO-DATE
+> Task :path_provider_android:prepareLintJarForPublish UP-TO-DATE
+> Task :path_provider_android:mergeDebugJavaResource UP-TO-DATE
+> Task :path_provider_android:syncDebugLibJars
+> Task :path_provider_android:bundleDebugAar
+> Task :path_provider_android:assembleDebug
+> Task :permission_handler_android:stripDebugDebugSymbols NO-SOURCE
+> Task :permission_handler_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :permission_handler_android:extractDebugAnnotations UP-TO-DATE
+> Task :permission_handler_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :permission_handler_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :permission_handler_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :permission_handler_android:prepareDebugArtProfile UP-TO-DATE
+> Task :permission_handler_android:prepareLintJarForPublish UP-TO-DATE
+> Task :permission_handler_android:mergeDebugJavaResource UP-TO-DATE
+> Task :permission_handler_android:syncDebugLibJars UP-TO-DATE
+> Task :permission_handler_android:bundleDebugAar UP-TO-DATE
+> Task :permission_handler_android:assembleDebug UP-TO-DATE
+> Task :pro_image_editor:stripDebugDebugSymbols NO-SOURCE
+> Task :pro_image_editor:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :pro_image_editor:extractDebugAnnotations UP-TO-DATE
+> Task :pro_image_editor:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :pro_image_editor:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :pro_image_editor:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :pro_image_editor:prepareDebugArtProfile UP-TO-DATE
+> Task :pro_image_editor:prepareLintJarForPublish UP-TO-DATE
+> Task :pro_image_editor:mergeDebugJavaResource UP-TO-DATE
+> Task :pro_image_editor:syncDebugLibJars UP-TO-DATE
+> Task :pro_image_editor:bundleDebugAar UP-TO-DATE
+> Task :pro_image_editor:assembleDebug UP-TO-DATE
+> Task :quill_native_bridge_android:stripDebugDebugSymbols NO-SOURCE
+> Task :quill_native_bridge_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :quill_native_bridge_android:extractDebugAnnotations UP-TO-DATE
+> Task :quill_native_bridge_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :quill_native_bridge_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :quill_native_bridge_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :quill_native_bridge_android:prepareDebugArtProfile UP-TO-DATE
+> Task :quill_native_bridge_android:prepareLintJarForPublish UP-TO-DATE
+> Task :quill_native_bridge_android:mergeDebugJavaResource UP-TO-DATE
+> Task :quill_native_bridge_android:syncDebugLibJars UP-TO-DATE
+> Task :quill_native_bridge_android:bundleDebugAar UP-TO-DATE
+> Task :quill_native_bridge_android:assembleDebug UP-TO-DATE
+> Task :record_android:stripDebugDebugSymbols NO-SOURCE
+> Task :record_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :record_android:extractDebugAnnotations UP-TO-DATE
+> Task :record_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :record_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :record_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :record_android:prepareDebugArtProfile UP-TO-DATE
+> Task :record_android:prepareLintJarForPublish UP-TO-DATE
+> Task :record_android:mergeDebugJavaResource UP-TO-DATE
+> Task :record_android:syncDebugLibJars UP-TO-DATE
+> Task :record_android:bundleDebugAar UP-TO-DATE
+> Task :record_android:assembleDebug UP-TO-DATE
+> Task :share_plus:stripDebugDebugSymbols NO-SOURCE
+> Task :share_plus:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :share_plus:extractDebugAnnotations UP-TO-DATE
+> Task :share_plus:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :share_plus:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :share_plus:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :share_plus:prepareDebugArtProfile UP-TO-DATE
+> Task :share_plus:prepareLintJarForPublish UP-TO-DATE
+> Task :share_plus:mergeDebugJavaResource UP-TO-DATE
+> Task :share_plus:syncDebugLibJars UP-TO-DATE
+> Task :share_plus:bundleDebugAar UP-TO-DATE
+> Task :share_plus:assembleDebug UP-TO-DATE
+> Task :shared_preferences_android:stripDebugDebugSymbols NO-SOURCE
+> Task :shared_preferences_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :shared_preferences_android:extractDebugAnnotations UP-TO-DATE
+> Task :shared_preferences_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :shared_preferences_android:prepareDebugArtProfile UP-TO-DATE
+> Task :shared_preferences_android:prepareLintJarForPublish UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugJavaResource UP-TO-DATE
+> Task :shared_preferences_android:syncDebugLibJars
+> Task :shared_preferences_android:bundleDebugAar
+> Task :shared_preferences_android:assembleDebug
+> Task :sqflite_android:stripDebugDebugSymbols NO-SOURCE
+> Task :sqflite_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :sqflite_android:extractDebugAnnotations UP-TO-DATE
+> Task :sqflite_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :sqflite_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :sqflite_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :sqflite_android:prepareDebugArtProfile UP-TO-DATE
+> Task :sqflite_android:prepareLintJarForPublish UP-TO-DATE
+> Task :sqflite_android:mergeDebugJavaResource UP-TO-DATE
+> Task :sqflite_android:syncDebugLibJars
+> Task :sqflite_android:bundleDebugAar
+> Task :sqflite_android:assembleDebug
+> Task :url_launcher_android:stripDebugDebugSymbols NO-SOURCE
+> Task :url_launcher_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :url_launcher_android:extractDebugAnnotations UP-TO-DATE
+> Task :url_launcher_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :url_launcher_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :url_launcher_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :url_launcher_android:prepareDebugArtProfile UP-TO-DATE
+> Task :url_launcher_android:prepareLintJarForPublish UP-TO-DATE
+> Task :url_launcher_android:mergeDebugJavaResource UP-TO-DATE
+> Task :url_launcher_android:syncDebugLibJars UP-TO-DATE
+> Task :url_launcher_android:bundleDebugAar UP-TO-DATE
+> Task :url_launcher_android:assembleDebug UP-TO-DATE
+> Task :video_compress:stripDebugDebugSymbols NO-SOURCE
+> Task :video_compress:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :video_compress:extractDebugAnnotations UP-TO-DATE
+> Task :video_compress:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :video_compress:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :video_compress:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :video_compress:prepareDebugArtProfile UP-TO-DATE
+> Task :video_compress:prepareLintJarForPublish UP-TO-DATE
+> Task :video_compress:mergeDebugJavaResource UP-TO-DATE
+> Task :video_compress:syncDebugLibJars UP-TO-DATE
+> Task :video_compress:bundleDebugAar UP-TO-DATE
+> Task :video_compress:assembleDebug UP-TO-DATE
+> Task :video_player_android:stripDebugDebugSymbols NO-SOURCE
+> Task :video_player_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :video_player_android:extractDebugAnnotations UP-TO-DATE
+> Task :video_player_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :video_player_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :video_player_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :video_player_android:prepareDebugArtProfile UP-TO-DATE
+> Task :video_player_android:prepareLintJarForPublish UP-TO-DATE
+> Task :video_player_android:mergeDebugJavaResource UP-TO-DATE
+> Task :video_player_android:syncDebugLibJars
+> Task :video_player_android:bundleDebugAar
+> Task :video_player_android:assembleDebug
+> Task :wakelock_plus:stripDebugDebugSymbols NO-SOURCE
+> Task :wakelock_plus:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :wakelock_plus:extractDebugAnnotations UP-TO-DATE
+> Task :wakelock_plus:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :wakelock_plus:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :wakelock_plus:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :wakelock_plus:prepareDebugArtProfile UP-TO-DATE
+> Task :wakelock_plus:prepareLintJarForPublish UP-TO-DATE
+> Task :wakelock_plus:mergeDebugJavaResource UP-TO-DATE
+> Task :wakelock_plus:syncDebugLibJars UP-TO-DATE
+> Task :wakelock_plus:bundleDebugAar UP-TO-DATE
+> Task :wakelock_plus:assembleDebug UP-TO-DATE
+> Task :webview_flutter_android:stripDebugDebugSymbols NO-SOURCE
+> Task :webview_flutter_android:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :webview_flutter_android:extractDebugAnnotations UP-TO-DATE
+> Task :webview_flutter_android:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :webview_flutter_android:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :webview_flutter_android:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :webview_flutter_android:prepareDebugArtProfile UP-TO-DATE
+> Task :webview_flutter_android:prepareLintJarForPublish UP-TO-DATE
+> Task :webview_flutter_android:mergeDebugJavaResource UP-TO-DATE
+> Task :webview_flutter_android:syncDebugLibJars
+> Task :webview_flutter_android:bundleDebugAar
+> Task :webview_flutter_android:assembleDebug
+> Task :app:mergeDebugNativeLibs
+> Task :app:stripDebugDebugSymbols
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleDebug
+
+[Incubating] Problems report is available at: file:///D:/royaldoor/android/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.0.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 3m 10s
+1352 actionable tasks: 169 executed, 1183 up-to-date

@@ -8,8 +8,11 @@ import '../../services/firestore_service.dart';
 import '../../services/auth_service.dart';
 import '../../services/localization_service.dart';
 import '../../app_theme.dart';
+import '../../theme/design_tokens.dart';
+import '../../theme/reusable_widgets.dart';
 import '../voice_room_page.dart';
 import '../profile/profile_page.dart';
+import '../../widgets/feature_lock_wrapper.dart';
 
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../services/ad_manager.dart';
@@ -33,6 +36,8 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
   String _searchQuery = "";
   bool _isSearching = false;
   late AnimationController _pulseController;
+  BannerAd? _bannerAd;
+  bool _isAdLoaded = false;
 
   @override
   void initState() {
@@ -44,12 +49,25 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
       setState(
               () => _searchQuery = _searchController.text.trim().toLowerCase());
     });
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = AdManager().getBannerAd(
+      size: AdSize.banner,
+      onAdLoaded: () {
+        setState(() {
+          _isAdLoaded = true;
+        });
+      },
+    );
   }
 
   @override
   void dispose() {
     _pulseController.dispose();
     _searchController.dispose();
+    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -69,51 +87,74 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
     final user = _authService.currentUser;
     if (user == null) return;
 
+    // التحقق من قفل إنشاء الغرف
+    final systemDoc = await FirebaseFirestore.instance.collection('system_settings').doc('global').get();
+    if (systemDoc.exists) {
+      final data = systemDoc.data()!;
+      if (data['isCreateRoomLocked'] == true) {
+        // التحقق مما إذا كان مديراً
+        final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        final userData = userDoc.data() ?? {};
+        final String role = userData['role'] ?? 'user';
+        final bool isAdmin = userData['isAdmin'] ?? false;
+        if (!isAdmin && !['admin', 'owner', 'developer', 'staff'].contains(role)) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('عذراً، ميزة إنشاء الغرف قيد التطوير حالياً 👑'),
+              backgroundColor: Colors.orange,
+            ));
+          }
+          return;
+        }
+      }
+    }
+
+    final bool isEn = trans.locale.languageCode == 'en';
     File? selectedImage;
     final nameController = TextEditingController();
 
     bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: const Color(0xFF1A0202),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25),
-              side: BorderSide(color: AppTheme.royalGold.withValues(alpha: 0.3))),
-          title: Column(
-            children: [
-              Text(trans.get('agency_create'),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: AppTheme.royalGold, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.amber.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.amber.withOpacity(0.3)),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.diamond, color: Colors.cyanAccent, size: 16),
-                    SizedBox(width: 4),
-                    Text("التكلفة: 10,000 جوهرة",
-                        style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          content: SingleChildScrollView(
+        builder: (context, setDialogState) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: GlassCard(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                HeadingText(isEn ? "Found Royal Room" : "تأسيس غرفة ملكية",
+                    color: DesignTokens.primaryGold),
+                const SizedBox(height: DesignTokens.spacingSm),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: DesignTokens.spacingMd,
+                      vertical: DesignTokens.spacingXs),
+                  decoration: BoxDecoration(
+                    color: DesignTokens.primaryGold.withValues(alpha: 0.1),
+                    borderRadius:
+                        BorderRadius.circular(DesignTokens.borderRadiusMd),
+                    border: Border.all(
+                        color: DesignTokens.primaryGold.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.diamond,
+                          color: DesignTokens.primarySapphireLight, size: 16),
+                      const SizedBox(width: DesignTokens.spacingXs),
+                      BodyText(
+                        isEn ? "Cost: 10,000 Gems" : "التكلفة: 10,000 جوهرة",
+                        fontSize: DesignTokens.fontSizeSm,
+                        fontWeight: DesignTokens.fontWeightBold,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: DesignTokens.spacingLg),
                 GestureDetector(
                   onTap: () async {
                     final XFile? image =
-                    await _picker.pickImage(source: ImageSource.gallery);
+                        await _picker.pickImage(source: ImageSource.gallery);
                     if (image != null) {
                       setDialogState(() => selectedImage = File(image.path));
                     }
@@ -122,89 +163,92 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
                     height: 120,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(20),
+                      color: DesignTokens.neutralWhite.withValues(alpha: 0.05),
+                      borderRadius:
+                          BorderRadius.circular(DesignTokens.borderRadiusXl),
                       border: Border.all(
-                          color: AppTheme.royalGold.withValues(alpha: 0.2)),
+                          color: DesignTokens.primaryGold
+                              .withValues(alpha: 0.2)),
                       image: selectedImage != null
                           ? DecorationImage(
-                          image: FileImage(selectedImage!),
-                          fit: BoxFit.cover)
+                              image: FileImage(selectedImage!),
+                              fit: BoxFit.cover)
                           : null,
                     ),
                     child: selectedImage == null
                         ? const Icon(Icons.add_photo_alternate_outlined,
-                        color: AppTheme.royalGold, size: 40)
+                            color: DesignTokens.primaryGold, size: 40)
                         : null,
                   ),
                 ),
-                const SizedBox(height: 20),
-                TextField(
+                const SizedBox(height: DesignTokens.spacingLg),
+                RoyalTextField(
                   controller: nameController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: "Room Name",
-                    hintStyle: const TextStyle(color: Colors.white24),
-                    prefixIcon: const Icon(Icons.stars_rounded,
-                        color: AppTheme.royalGold),
-                    filled: true,
-                    fillColor: Colors.white.withValues(alpha: 0.05),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide.none),
-                  ),
+                  hintText: isEn ? "Room Name" : "اسم الغرفة",
+                  prefixIcon: Icons.stars_rounded,
+                ),
+                const SizedBox(height: DesignTokens.spacingXl),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SecondaryButton(
+                        label: trans.get('logout').contains('خروج')
+                            ? 'إلغاء'
+                            : 'Cancel',
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                    const SizedBox(width: DesignTokens.spacingMd),
+                    Expanded(
+                      child: RoyalButton(
+                        label: trans.get('save'),
+                        onPressed: () => Navigator.pop(context, true),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                    trans.get('logout').contains('خروج') ? 'إلغاء' : 'Cancel',
-                    style: const TextStyle(color: Colors.white24))),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.royalGold,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15))),
-              child: Text(trans.get('save'),
-                  style: const TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
-            ),
-          ],
         ),
       ),
     );
+
+    if (!context.mounted) return;
 
     if (confirmed == true && nameController.text.isNotEmpty) {
       showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) => const Center(
-              child: CircularProgressIndicator(color: AppTheme.royalGold)));
+              child: RoyalLoadingIndicator(message: "Creating room...")));
 
       try {
-        final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
         final userData = userDoc.data() ?? {};
-        final int currentGems = userData['harvestWallet'] ?? 0;
-        const int roomCost = 25000;
+        final int currentGems = (userData['gems'] ?? 0).toInt();
+        const int roomCost = 10000;
 
         if (currentGems < roomCost) {
           if (mounted) {
             Navigator.pop(context); // Close loading
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('رصيد الجواهر غير كافٍ. تحتاج إلى 10,000 جوهرة.'),
-                backgroundColor: Colors.redAccent));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(isEn
+                    ? 'Insufficient gems. You need 10,000 gems.'
+                    : 'رصيد الجواهر غير كافٍ. تحتاج إلى 10,000 جوهرة.'),
+                backgroundColor: DesignTokens.semanticError));
           }
           return;
         }
 
         // خصم الجواهر
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-          'harvestWallet': FieldValue.increment(-roomCost)
-        });
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'gems': FieldValue.increment(-roomCost)});
 
         String? imageUrl;
         if (selectedImage != null) {
@@ -222,18 +266,18 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
               context,
               MaterialPageRoute(
                   builder: (context) => VoiceRoomPage(
-                    roomId: roomId,
-                    roomName: nameController.text.trim(),
-                    roomImage: imageUrl,
-                    ownerId: user.uid,
-                  )));
+                        roomId: roomId,
+                        roomName: nameController.text.trim(),
+                        roomImage: imageUrl,
+                        ownerId: user.uid,
+                      )));
         }
       } catch (e) {
         if (mounted) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('حدث خطأ: $e'),
-              backgroundColor: Colors.redAccent));
+              content: Text(isEn ? 'An error occurred: $e' : 'حدث خطأ: $e'),
+              backgroundColor: DesignTokens.semanticError));
         }
       }
     }
@@ -246,12 +290,21 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
 
     return Directionality(
       textDirection: isEn ? TextDirection.ltr : TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        bottomNavigationBar: SizedBox(
-          height: 50,
-          child: AdWidget(ad: AdManager().getBannerAd()),
-        ),
+      child: FeatureLockWrapper(
+        lockField: 'isRoomsLocked',
+        child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        bottomNavigationBar: _isAdLoaded && _bannerAd != null
+            ? Container(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                height: _bannerAd!.size.height.toDouble(),
+                width: _bannerAd!.size.width.toDouble(),
+                child: AdWidget(
+                  key: ObjectKey(_bannerAd),
+                  ad: _bannerAd!,
+                ),
+              )
+            : null,
         floatingActionButton:
         (_activeTabIndex == 2) ? _buildAnimatedCreateButton(trans) : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -268,8 +321,9 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildTopBar(Translations trans) {
     return Padding(
@@ -279,13 +333,9 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
         children: [
           IconButton(
               icon: Icon(_isSearching ? Icons.search_off : Icons.search,
-                  color: Colors.white70),
+                  color: DesignTokens.neutralWhite.withValues(alpha: 0.7)),
               onPressed: () => setState(() => _isSearching = !_isSearching)),
-          Text(trans.get('rooms'),
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold)),
+          HeadingText(trans.get('rooms'), fontSize: DesignTokens.fontSizeXl),
           _buildProfileBadge(),
         ],
       ),
@@ -320,19 +370,23 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
         if (index == 2) _activeFilter = "My";
       }),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        duration: DesignTokens.durationBase,
+        margin: const EdgeInsets.symmetric(horizontal: DesignTokens.spacingSm),
+        padding: const EdgeInsets.symmetric(
+            horizontal: DesignTokens.spacingXl, vertical: DesignTokens.spacingSm),
         decoration: BoxDecoration(
-          color:
-          isSelected ? AppTheme.royalGold : Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
+          color: isSelected
+              ? DesignTokens.primaryGold
+              : DesignTokens.neutralWhite.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(DesignTokens.borderRadiusFull),
         ),
         child: Text(title,
             style: TextStyle(
-                color: isSelected ? Colors.black : Colors.white54,
-                fontWeight: FontWeight.bold,
-                fontSize: 14)),
+                color: isSelected
+                    ? DesignTokens.neutralBlack
+                    : DesignTokens.neutralWhite.withValues(alpha: 0.54),
+                fontWeight: DesignTokens.fontWeightBold,
+                fontSize: DesignTokens.fontSizeSm)),
       ),
     );
   }
@@ -359,25 +413,27 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
       onTap: () => setState(() {
         _activeFilter = label;
         _activeTabIndex =
-        0; // العودة لتبويب "اكتشاف" عند اختيار فلتر فرعي لضمان المنطق
+            0; // العودة لتبويب "اكتشاف" عند اختيار فلتر فرعي لضمان المنطق
       }),
       child: Container(
-        margin: const EdgeInsets.only(right: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        margin: const EdgeInsets.only(right: DesignTokens.spacingSm),
+        padding: const EdgeInsets.symmetric(horizontal: DesignTokens.spacingLg),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: Border.all(
               color: isSelected
-                  ? AppTheme.royalGold.withValues(alpha: 0.5)
-                  : Colors.white10),
-          borderRadius: BorderRadius.circular(15),
+                  ? DesignTokens.primaryGold.withValues(alpha: 0.5)
+                  : DesignTokens.neutralWhite.withValues(alpha: 0.1)),
+          borderRadius: BorderRadius.circular(DesignTokens.borderRadiusLg),
           color: isSelected
-              ? AppTheme.royalGold.withValues(alpha: 0.05)
+              ? DesignTokens.primaryGold.withValues(alpha: 0.05)
               : Colors.transparent,
         ),
         child: Text(label,
             style: TextStyle(
-                color: isSelected ? AppTheme.royalGold : Colors.white38,
+                color: isSelected
+                    ? DesignTokens.primaryGold
+                    : DesignTokens.neutralWhite.withValues(alpha: 0.38),
                 fontSize: 11)),
       ),
     );
@@ -404,16 +460,35 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
           return StreamBuilder<QuerySnapshot>(
             stream: _getFilteredQuery(),
             builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: BodyText("خطأ في تحميل البيانات: ${snapshot.error}",
+                      color: DesignTokens.semanticError,
+                      fontSize: DesignTokens.fontSizeXs),
+                );
+              }
               if (!snapshot.hasData) {
-                return const Center(
-                    child:
-                    CircularProgressIndicator(color: AppTheme.royalGold));
+                return const RoyalShimmerGrid(
+                  itemCount: 6,
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.85,
+                );
               }
 
               var rooms = snapshot.data!.docs
                   .map((doc) =>
               {...doc.data() as Map<String, dynamic>, 'id': doc.id})
                   .toList();
+
+              // ترتيب يدوي لتبويب "غرفتي" لأننا أزلنا orderBy من الاستعلام لتجنب خطأ الـ Index
+              if (_activeTabIndex == 2) {
+                rooms.sort((a, b) {
+                  final aTime = a['createdAt'] as Timestamp?;
+                  final bTime = b['createdAt'] as Timestamp?;
+                  if (aTime == null || bTime == null) return 0;
+                  return bTime.compareTo(aTime);
+                });
+              }
 
               // تطبيق الفلاتر التي تتطلب معالجة جانب العميل (بسبب قيود Firestore في الاستعلامات المركبة)
               if (_activeFilter == "تم المتابعة" ||
@@ -443,17 +518,10 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
               }
 
               if (rooms.isEmpty) {
-                return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.meeting_room_outlined,
-                            size: 64, color: Colors.white.withValues(alpha: 0.1)),
-                        const SizedBox(height: 16),
-                        Text("لا توجد غرف متاحة حالياً",
-                            style: TextStyle(color: Colors.white.withValues(alpha: 0.3))),
-                      ],
-                    ));
+                return const EmptyStateWidget(
+                  icon: Icons.meeting_room_outlined,
+                  title: "لا توجد غرف متاحة حالياً",
+                );
               }
 
               return GridView.builder(
@@ -479,9 +547,9 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
 
     // تبويب "غرفتي"
     if (_activeTabIndex == 2) {
+      // إزالة orderBy لتجنب الحاجة إلى Index فوري، وسنقوم بالترتيب برمجياً في Dart
       return roomsRef
           .where('ownerId', isEqualTo: currentUser?.uid)
-          .orderBy('createdAt', descending: true)
           .snapshots();
     }
 
@@ -512,97 +580,92 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
     if (imagePath == null || imagePath.isEmpty) {
       return const AssetImage('assets/images/default_room.png');
     }
-    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
+    try {
+      final uri = Uri.parse(imagePath);
+      if (uri.host.isEmpty) {
+        return const AssetImage('assets/images/default_room.png');
+      }
       return NetworkImage(imagePath);
-    } else {
-      return AssetImage(imagePath);
+    } catch (e) {
+      return const AssetImage('assets/images/default_room.png');
     }
   }
 
   Widget _buildRoomCard(Map<String, dynamic> room) {
     final String? displayImage = room['roomImage'] ?? room['image'];
 
-    return GestureDetector(
+    return GlassCard(
+      padding: EdgeInsets.zero,
       onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => VoiceRoomPage(
-                roomId: room['id'],
-                roomName: room['name'],
-                roomImage: displayImage,
-                ownerId: room['ownerId'],
-              ))),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white10),
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  Container(
+                    roomId: room['id'],
+                    roomName: room['name'],
+                    roomImage: displayImage,
+                    ownerId: room['ownerId'],
+                  ))),
+      child: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(DesignTokens.borderRadiusXl2)),
+                    image: DecorationImage(
+                      image: _getRoomImageProvider(displayImage),
+                      fit: BoxFit.cover,
+                      onError: (error, stackTrace) {},
+                    ),
+                  ),
+                  width: double.infinity,
+                ),
+                Positioned(
+                  top: DesignTokens.spacingSm,
+                  left: DesignTokens.spacingSm,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: DesignTokens.spacingSm, vertical: 2),
                     decoration: BoxDecoration(
-                      borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(20)),
-                      image: DecorationImage(
-                        image: _getRoomImageProvider(displayImage),
-                        fit: BoxFit.cover,
-                        onError: (error, stackTrace) {
-                          // يمكن إضافة معالجة للخطأ هنا إذا لزم الأمر
-                        },
-                      ),
-                    ),
-                    width: double.infinity,
+                        color: DesignTokens.neutralBlack.withValues(alpha: 0.54),
+                        borderRadius: BorderRadius.circular(
+                            DesignTokens.borderRadiusMd)),
+                    child: Row(children: [
+                      const Icon(Icons.people,
+                          color: DesignTokens.primaryGold, size: 10),
+                      const SizedBox(width: 4),
+                      Text("${room['membersCount'] ?? 0}",
+                          style: const TextStyle(
+                              color: DesignTokens.neutralWhite, fontSize: 9)),
+                    ]),
                   ),
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Row(children: [
-                        const Icon(Icons.people,
-                            color: AppTheme.royalGold, size: 10),
-                        const SizedBox(width: 4),
-                        Text("${room['membersCount'] ?? 0}",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 9)),
-                      ]),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(room['name'] ?? '',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13)),
-                  const SizedBox(height: 4),
-                  const Row(children: [
-                    Icon(Icons.circle, color: Colors.green, size: 8),
-                    SizedBox(width: 5),
-                    Text("Active Now",
-                        style: TextStyle(color: Colors.white24, fontSize: 9))
-                  ]),
-                ],
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(DesignTokens.spacingSm),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BodyText(room['name'] ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    fontSize: DesignTokens.fontSizeSm,
+                    fontWeight: DesignTokens.fontWeightBold),
+                const SizedBox(height: 4),
+                const Row(children: [
+                  Icon(Icons.circle,
+                      color: DesignTokens.primaryEmerald, size: 8),
+                  SizedBox(width: 5),
+                  CaptionText("Active Now", fontSize: 9)
+                ]),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -610,37 +673,29 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
   Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: TextField(
+      child: RoyalTextField(
         controller: _searchController,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          hintText: "Search rooms...",
-          hintStyle: const TextStyle(color: Colors.white24, fontSize: 14),
-          prefixIcon: const Icon(Icons.search, color: AppTheme.royalGold),
-          filled: true,
-          fillColor: Colors.white.withValues(alpha: 0.05),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none),
-        ),
+        hintText: "Search rooms...",
+        prefixIcon: Icons.search,
       ),
     );
   }
 
   Widget _buildAnimatedCreateButton(Translations trans) {
     return ScaleTransition(
-      scale: Tween(begin: 1.0, end: 1.05).animate(
-          CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut)),
+      scale: Tween(begin: 1.0, end: 1.05).animate(CurvedAnimation(
+          parent: _pulseController, curve: DesignTokens.curveEaseInOut)),
       child: FloatingActionButton.extended(
         onPressed: () => _createNewRoom(trans),
-        backgroundColor: AppTheme.royalGold,
+        backgroundColor: DesignTokens.primaryGold,
         label: Text(
             trans.get('agency_create').contains('إنشاء')
                 ? 'إنشاء غرفة ملكية'
                 : 'Create Royal Room',
             style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold)),
-        icon: const Icon(Icons.add, color: Colors.black),
+                color: DesignTokens.neutralBlack,
+                fontWeight: DesignTokens.fontWeightBold)),
+        icon: const Icon(Icons.add, color: DesignTokens.neutralBlack),
       ),
     );
   }
@@ -670,15 +725,18 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppTheme.royalGold, width: 1)),
+                  border:
+                      Border.all(color: DesignTokens.primaryGold, width: 1)),
               child: CircleAvatar(
                 radius: 15,
-                backgroundColor: Colors.white10,
+                backgroundColor: DesignTokens.neutralWhite.withValues(alpha: 0.1),
                 backgroundImage: (profilePic != null && profilePic.isNotEmpty)
                     ? NetworkImage(profilePic)
                     : null,
                 child: (profilePic == null || profilePic.isEmpty)
-                    ? const Icon(Icons.person, size: 18, color: Colors.white24)
+                    ? Icon(Icons.person,
+                        size: 18,
+                        color: DesignTokens.neutralWhite.withValues(alpha: 0.24))
                     : null,
               ),
             ),

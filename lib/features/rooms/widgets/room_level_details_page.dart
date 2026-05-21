@@ -33,19 +33,20 @@ class RoomLevelDetailsPage extends StatelessWidget {
             final data = snapshot.data!.data() as Map<String, dynamic>? ?? {};
             final int currentExp = data['exp'] ?? 0;
             final int level = data['level'] ?? 1;
-            final String ownerName = data['ownerName'] ?? 'اناقه طالبه';
-            final String ownerId = data['ownerId'] ?? '20848894636';
+            final String roomName = data['name'] ?? 'غرفة رويال';
+            final String ownerId = data['ownerId'] ?? roomId;
+            final String roomImageUrl = data['roomImage'] ?? ''; // جلب صورة واجهة الغرفة
 
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  // بطاقة صاحب النادي
-                  _buildUserCard(ownerName, ownerId),
+                  // بطاقة الغرفة (استخدام صورة واجهة الغرفة الحقيقية)
+                  _buildUserCard(roomName, ownerId, roomImageUrl),
                   const SizedBox(height: 25),
                   
-                  // إجمالي النقاط
-                  const Text('إجمالي نقاط النادي لهذه الدورة', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                  // إجمالي الخبرة
+                  const Text('إجمالي خبرة النادي (XP) لهذه الدورة', style: TextStyle(color: Colors.white70, fontSize: 14)),
                   Text('$currentExp', style: const TextStyle(color: Colors.amber, fontSize: 32, fontWeight: FontWeight.bold)),
                   const Text('الدورة الإحصائية: 18/01/2026 - 25/01/2026', style: TextStyle(color: Colors.white38, fontSize: 10)),
                   
@@ -66,7 +67,7 @@ class RoomLevelDetailsPage extends StatelessWidget {
                   
                   const SizedBox(height: 30),
                   
-                  // قوانين كسب النقاط (الربط الحقيقي بالمقترحات)
+                  // قوانين كسب النقاط
                   _buildPointsRulesSection(),
                   
                   const SizedBox(height: 50),
@@ -79,19 +80,21 @@ class RoomLevelDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildUserCard(String name, String id) {
+  Widget _buildUserCard(String name, String id, String imageUrl) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [Colors.amber.withOpacity(0.3), Colors.brown.withOpacity(0.5)]),
+        gradient: LinearGradient(colors: [Colors.amber.withValues(alpha: 0.3), Colors.brown.withValues(alpha: 0.5)]),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.amber.withOpacity(0.5), width: 1),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.5), width: 1),
       ),
       child: Row(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset('assets/images/avatar_placeholder.png', width: 50, height: 50, fit: BoxFit.cover),
+            child: imageUrl.isNotEmpty 
+              ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover, errorBuilder: (c,e,s) => const Icon(Icons.meeting_room, color: Colors.amber, size: 40))
+              : Image.asset('assets/images/room_global.jpg', width: 50, height: 50, fit: BoxFit.cover, errorBuilder: (c,e,s) => const Icon(Icons.meeting_room, color: Colors.amber, size: 40)),
           ),
           const SizedBox(width: 15),
           Expanded(
@@ -124,7 +127,7 @@ class RoomLevelDetailsPage extends StatelessWidget {
             ),
             Container(
               height: 6,
-              width: 150, // حسب الحسبة الحقيقية
+              width: 150, 
               decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(3)),
             ),
           ],
@@ -157,9 +160,8 @@ class RoomLevelDetailsPage extends StatelessWidget {
         Stack(
           alignment: Alignment.center,
           children: [
-            Image.asset('assets/images/trophy.png', width: 120, height: 120, errorBuilder: (c,e,s) => const Icon(Icons.shield, size: 100, color: Colors.amber)),
+            const Icon(Icons.shield, size: 100, color: Colors.amber),
             Positioned(
-              top: 40,
               child: Text('$level', style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
             ),
           ],
@@ -174,9 +176,9 @@ class RoomLevelDetailsPage extends StatelessWidget {
   Widget _buildPrivilegesSection() {
     return Column(
       children: [
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Icon(Icons.auto_awesome, color: Colors.amber, size: 18),
             SizedBox(width: 10),
             Text('الامتيازات 3/8', style: TextStyle(color: Colors.amber, fontSize: 16, fontWeight: FontWeight.bold)),
@@ -205,9 +207,9 @@ class RoomLevelDetailsPage extends StatelessWidget {
       margin: const EdgeInsets.only(left: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.amber.withOpacity(0.2)),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
@@ -227,20 +229,20 @@ class RoomLevelDetailsPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black26,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.amber.withOpacity(0.1)),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('كيفية كسب نقاط النادي ⚡', style: TextStyle(color: Colors.amber, fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text('كيفية كسب خبرة (XP) النادي ⭐', style: TextStyle(color: Colors.amber, fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 15),
-          _ruleItem('الدردشة على المايك (كل ساعة)', '60 نقطة'),
-          _ruleItem('إرسال الرسائل (لكل رسالة)', '1 نقطة'),
-          _ruleItem('مشاركة الغرفة والانضمام', '40 نقطة'),
-          _ruleItem('هدايا الجواهر (لكل هدية)', '5 نقاط'),
-          _ruleItem('هدايا الكوينز (لكل هدية)', '5 نقاط'),
-          _ruleItem('شراء موضوع بالغرفة', '25 نقطة'),
-          _ruleItem('الفوز بالمعركة', '10 نقاط'),
+          _ruleItem('الدردشة على المايك (كل ساعة)', '60 XP'),
+          _ruleItem('إرسال الرسائل (لكل رسالة)', '1 XP'),
+          _ruleItem('مشاركة الغرفة والانضمام', '40 XP'),
+          _ruleItem('هدايا الجواهر (لكل هدية)', '5 XP'),
+          _ruleItem('هدايا النجوم (لكل هدية)', '5 XP'),
+          _ruleItem('شراء موضوع بالغرفة', '25 XP'),
+          _ruleItem('الفوز بالمعركة', '10 XP'),
         ],
       ),
     );

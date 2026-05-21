@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../theme/app_theme.dart';
+import '../../app_theme.dart';
+import '../../theme/design_tokens.dart';
+import '../../theme/reusable_widgets.dart';
 
 class AdminRoomsPage extends StatefulWidget {
   const AdminRoomsPage({super.key});
@@ -19,7 +21,7 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
     "ROYALDOOR 👑": 100,
     "الياقوت 💎": 75,
     "اللؤلؤ 💎": 50,
-    "المرجان 🛡️": 40,
+    "الزمرد 🛡️": 40,
     "الفيروز ⚔️": 30,
   };
 
@@ -31,10 +33,14 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
     await showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (context, setModalState) => AlertDialog(
-          backgroundColor: const Color(0xFF1B0233),
+        builder: (modalCtx, setModalState) => AlertDialog(
+          backgroundColor: AppTheme.backgroundBlack,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl2), 
+            side: BorderSide(color: DesignTokens.primaryGold.withValues(alpha: 0.3))
+          ),
           title: const Text("إنشاء غرفة VIP ملكية 👑",
-              style: TextStyle(color: Colors.white, fontSize: 16)),
+              style: TextStyle(color: DesignTokens.primaryGold, fontSize: DesignTokens.fontSizeBase, fontWeight: DesignTokens.fontWeightBold)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -56,10 +62,10 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                 ),
                 const SizedBox(height: 20),
                 const Text("اختر الرتبة الملكية (عدد المايكات):",
-                    style: TextStyle(color: Colors.amber, fontSize: 12)),
+                    style: TextStyle(color: DesignTokens.primaryGold, fontSize: 12)),
                 DropdownButton<String>(
                   value: selectedRank,
-                  dropdownColor: const Color(0xFF1B0233),
+                  dropdownColor: AppTheme.primaryWarm,
                   isExpanded: true,
                   items: vipMicCounts.keys
                       .map((rank) => DropdownMenuItem(
@@ -103,18 +109,19 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                     'image': 'assets/rooms/room_party.jpg',
                     'createdAt': FieldValue.serverTimestamp(),
                   });
-                  if (mounted) {
-                    Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("تم إنشاء غرفة $selectedRank بنجاح ✅")));
-                  }
+                  if (!modalCtx.mounted) return;
+                  Navigator.of(modalCtx).pop();
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("تم إنشاء غرفة بنجاح ✅")));
                 } catch (e) {
+                  if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text("خطأ: $e"), backgroundColor: Colors.red));
                 }
               },
               style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber, foregroundColor: Colors.black),
+                  backgroundColor: DesignTokens.primaryGold, foregroundColor: Colors.black),
               child: const Text("تفعيل وإنشاء"),
             ),
           ],
@@ -146,14 +153,14 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
         });
       }
       await batch.commit();
-      if (mounted)
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("تم إنشاء 10 غرف ملكية بنجاح ✅"),
-            backgroundColor: Colors.green));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("تم إنشاء 10 غرف ملكية بنجاح ✅"),
+          backgroundColor: Colors.green));
     } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("فشل الإنشاء: $e"), backgroundColor: Colors.red));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("فشل الإنشاء: $e"), backgroundColor: Colors.red));
     } finally {
       if (mounted) setState(() => _isSeeding = false);
     }
@@ -163,7 +170,8 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1B0233),
+        backgroundColor: AppTheme.backgroundBlack,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text("حذف الغرفة نهائياً",
             style: TextStyle(color: Colors.redAccent)),
         content: Text("هل أنت متأكد من حذف غرفة '$name'؟",
@@ -181,9 +189,9 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
     );
     if (confirm == true) {
       await FirebaseFirestore.instance.collection('rooms').doc(roomId).delete();
-      if (mounted)
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("تم حذف الغرفة")));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("تم حذف الغرفة")));
     }
   }
 
@@ -192,14 +200,15 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
     await showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1B0233),
+        backgroundColor: AppTheme.backgroundBlack,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text("تعيين رقم سري للغرفة",
-            style: TextStyle(color: Colors.white)),
+            style: TextStyle(color: DesignTokens.primaryGold)),
         content: TextField(
             controller: passController,
             style: const TextStyle(color: Colors.white),
             decoration:
-                const InputDecoration(hintText: "اتركه فارغاً لإلغاء القفل")),
+                const InputDecoration(hintText: "اتركه فارغاً لإلغاء القفل", hintStyle: TextStyle(color: Colors.white24))),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx), child: const Text("إلغاء")),
@@ -214,7 +223,8 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                       : passController.text.trim(),
                   'isPrivate': passController.text.trim().isNotEmpty,
                 });
-                if (mounted) Navigator.pop(ctx);
+                if (!ctx.mounted) return;
+                Navigator.pop(ctx);
               },
               child: const Text("حفظ")),
         ],
@@ -226,34 +236,38 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
     await showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1B0233),
+        backgroundColor: AppTheme.backgroundBlack,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title:
-            const Text("إدارة المايكات", style: TextStyle(color: Colors.white)),
+            const Text("إدارة المايكات", style: TextStyle(color: DesignTokens.primaryGold)),
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
                 icon: const Icon(Icons.remove_circle, color: Colors.red),
-                onPressed: () {
-                  if (currentMics > 1)
-                    FirebaseFirestore.instance
+                onPressed: () async {
+                  if (currentMics > 1) {
+                    await FirebaseFirestore.instance
                         .collection('rooms')
                         .doc(roomId)
                         .update({'micsCount': currentMics - 1});
+                  }
+                  if (!ctx.mounted) return;
                   Navigator.pop(ctx);
                 }),
             Text("$currentMics مايك",
                 style: const TextStyle(
-                    color: Colors.amber,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold)),
+                    color: DesignTokens.primaryGold,
+                    fontSize: DesignTokens.fontSizeLg,
+                    fontWeight: DesignTokens.fontWeightBold)),
             IconButton(
                 icon: const Icon(Icons.add_circle, color: Colors.green),
-                onPressed: () {
-                  FirebaseFirestore.instance
+                onPressed: () async {
+                  await FirebaseFirestore.instance
                       .collection('rooms')
                       .doc(roomId)
                       .update({'micsCount': currentMics + 1});
+                  if (!ctx.mounted) return;
                   Navigator.pop(ctx);
                 }),
           ],
@@ -274,9 +288,10 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
         context: context,
         builder: (ctx) => StatefulBuilder(
             builder: (c, setModal) => AlertDialog(
-                  backgroundColor: const Color(0xFF1B0233),
+                  backgroundColor: AppTheme.backgroundBlack,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   title: const Text('إدارة رتب VIP',
-                      style: TextStyle(color: Colors.amber)),
+                      style: TextStyle(color: DesignTokens.primaryGold)),
                   content: SingleChildScrollView(
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
                     TextField(
@@ -340,11 +355,11 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                             'goldBadge': gold,
                             'priority': priority
                           });
-                          if (mounted) {
-                            Navigator.pop(ctx);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('تم حفظ الرتبة')));
-                          }
+                          if (!ctx.mounted) return;
+                          Navigator.pop(ctx);
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('تم حفظ الرتبة')));
                         },
                         child: const Text('حفظ'))
                   ],
@@ -353,153 +368,170 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: "بحث عن غرفة...",
-                    prefixIcon: const Icon(Icons.search, color: Colors.amber),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.05),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide.none),
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundBlack,
+      appBar: AppBar(
+        title: const Text('إدارة الغرف الملكية', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    style: const TextStyle(color: DesignTokens.neutralWhite),
+                    decoration: InputDecoration(
+                      hintText: "بحث عن غرفة...",
+                      hintStyle: const TextStyle(color: Colors.white24),
+                      prefixIcon: const Icon(Icons.search, color: DesignTokens.primaryGold),
+                      filled: true,
+                      fillColor: DesignTokens.neutralWhite.withValues(alpha: DesignTokens.opacityGlass),
+                      border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(DesignTokens.borderRadiusLg)),
+                          borderSide: BorderSide.none),
+                    ),
+                    onChanged: (v) =>
+                        setState(() => _searchText = v.toLowerCase()),
                   ),
-                  onChanged: (v) =>
-                      setState(() => _searchText = v.toLowerCase()),
                 ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                onPressed: _createVipRoomDialog,
-                icon: const Icon(Icons.stars, color: Colors.amber, size: 28),
-                tooltip: "إنشاء غرفة VIP ملكية",
-              ),
-              IconButton(
-                  onPressed: _manageVipRanksDialog,
-                  icon: const Icon(Icons.rule_folder, color: Colors.amber),
-                  tooltip: 'إدارة رتب VIP'),
-              _isSeeding
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.amber))
-                  : IconButton(
-                      onPressed: _seedTenRooms,
-                      icon: const Icon(Icons.auto_awesome, color: Colors.amber),
-                      tooltip: "إنشاء 10 غرف تلقائية"),
-            ],
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: _createVipRoomDialog,
+                  icon: const Icon(Icons.stars, color: DesignTokens.primaryGold, size: 28),
+                  tooltip: "إنشاء غرفة VIP ملكية",
+                ),
+                IconButton(
+                    onPressed: _manageVipRanksDialog,
+                    icon: const Icon(Icons.rule_folder, color: DesignTokens.primaryGold),
+                    tooltip: 'إدارة رتب VIP'),
+                _isSeeding
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: DesignTokens.primaryGold))
+                    : IconButton(
+                        onPressed: _seedTenRooms,
+                        icon: const Icon(Icons.auto_awesome, color: DesignTokens.primaryGold),
+                        tooltip: "إنشاء 10 غرف تلقائية"),
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('rooms').snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData)
-                return const Center(child: CircularProgressIndicator());
-              var docs = snapshot.data!.docs;
-              if (_searchText.isNotEmpty) {
-                docs = docs
-                    .where((doc) =>
-                        (doc['name'] ?? '')
-                            .toString()
-                            .toLowerCase()
-                            .contains(_searchText) ||
-                        doc.id.toLowerCase().contains(_searchText))
-                    .toList();
-              }
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('rooms').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const RoyalLoadingIndicator();
+                }
+                
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("لا توجد غرف حالياً", style: TextStyle(color: Colors.white54)));
+                }
 
-              return ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: docs.length,
-                itemBuilder: (context, index) {
-                  final data = docs[index].data() as Map<String, dynamic>;
-                  final id = docs[index].id;
-                  final bool isClosed = data['isClosed'] ?? false;
-                  final int mics = data['micsCount'] ?? 8;
-                  final String? rank = data['vipRank'];
+                var docs = snapshot.data!.docs;
+                if (_searchText.isNotEmpty) {
+                  docs = docs
+                      .where((doc) =>
+                          (doc['name'] ?? '')
+                              .toString()
+                              .toLowerCase()
+                              .contains(_searchText) ||
+                          doc.id.toLowerCase().contains(_searchText))
+                      .toList();
+                }
 
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(15),
-                      border: rank != null
-                          ? Border.all(
-                              color: Colors.amber.withOpacity(0.3), width: 1)
-                          : null,
-                    ),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          leading: Icon(rank != null ? Icons.stars : Icons.mic,
-                              color: Colors.amber),
-                          title: Text(data['name'] ?? "غرفة",
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
-                          subtitle: Text(
-                              rank != null
-                                  ? "رتبة: $rank | مايكات: $mics"
-                                  : "ID: $id | المايكات: $mics",
-                              style: const TextStyle(
-                                  color: Colors.white54, fontSize: 11)),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                  icon: Icon(
-                                      isClosed ? Icons.lock : Icons.lock_open,
-                                      color:
-                                          isClosed ? Colors.red : Colors.green),
-                                  onPressed: () => FirebaseFirestore.instance
-                                      .collection('rooms')
-                                      .doc(id)
-                                      .update({'isClosed': !isClosed})),
-                              IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.redAccent),
-                                  onPressed: () =>
-                                      _deleteRoom(id, data['name'])),
-                            ],
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    final data = docs[index].data() as Map<String, dynamic>;
+                    final id = docs[index].id;
+                    final bool isClosed = data['isClosed'] ?? false;
+                    final int mics = data['micsCount'] ?? 8;
+                    final String? rank = data['vipRank'];
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: DesignTokens.spacingSm),
+                      decoration: BoxDecoration(
+                        color: DesignTokens.neutralWhite.withValues(alpha: DesignTokens.opacityGlass),
+                        borderRadius: BorderRadius.circular(DesignTokens.borderRadiusLg),
+                        border: rank != null
+                            ? Border.all(
+                                color: DesignTokens.primaryGold.withValues(alpha: 0.3), width: 1)
+                            : null,
+                      ),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(rank != null ? Icons.stars : Icons.mic,
+                                color: DesignTokens.primaryGold),
+                            title: Text(data['name'] ?? "غرفة",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                            subtitle: Text(
+                                rank != null
+                                    ? "رتبة: $rank | مايكات: $mics"
+                                    : "ID: $id | المايكات: $mics",
+                                style: const TextStyle(
+                                    color: Colors.white54, fontSize: 11)),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                    icon: Icon(
+                                        isClosed ? Icons.lock : Icons.lock_open,
+                                        color:
+                                            isClosed ? Colors.red : Colors.green),
+                                    onPressed: () => FirebaseFirestore.instance
+                                        .collection('rooms')
+                                        .doc(id)
+                                        .update({'isClosed': !isClosed})),
+                                IconButton(
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.redAccent),
+                                    onPressed: () =>
+                                        _deleteRoom(id, data['name'])),
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              TextButton.icon(
-                                  icon: const Icon(Icons.password, size: 16),
-                                  label: const Text("رقم سري",
-                                      style: TextStyle(fontSize: 12)),
-                                  onPressed: () => _setRoomPassword(id)),
-                              TextButton.icon(
-                                  icon: const Icon(Icons.add_task, size: 16),
-                                  label: const Text("المايكات",
-                                      style: TextStyle(fontSize: 12)),
-                                  onPressed: () => _manageMics(id, mics)),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                TextButton.icon(
+                                    icon: const Icon(Icons.password, size: 16, color: DesignTokens.primaryGold),
+                                    label: const Text("رقم سري",
+                                        style: TextStyle(fontSize: 12, color: Colors.white70)),
+                                    onPressed: () => _setRoomPassword(id)),
+                                TextButton.icon(
+                                    icon: const Icon(Icons.add_task, size: 16, color: DesignTokens.primaryGold),
+                                    label: const Text("المايكات",
+                                        style: TextStyle(fontSize: 12, color: Colors.white70)),
+                                    onPressed: () => _manageMics(id, mics)),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

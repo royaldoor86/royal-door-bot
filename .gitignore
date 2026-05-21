@@ -170,4 +170,44 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-lib/royal_door_bot/serviceAccountKey.json
+node_modules
+
+# ============================================
+# Flutter & Dart
+# ============================================
+build/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Flutter.xcframework
+ios/Pods/
+android/.gradle/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+.dart_tool/
+pubspec.lock
+.packages
+.pub-cache/
+*.iml
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================================
+# Build & Analysis Files
+# ============================================
+*.log
+build.log
+build_error.log
+build_output.log
+analyze_out.txt
+*.analyze.dart
+*.tmp
+
+# ============================================
+# Analysis & Temporary Files
+# ============================================
+*.analyze.dart
+.analyze_cache/
