@@ -48,7 +48,8 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('تعذر فتح الرابط، يرجى المحاولة لاحقاً')),
+            const SnackBar(
+                content: Text('تعذر فتح الرابط، يرجى المحاولة لاحقاً')),
           );
         }
       }
@@ -74,7 +75,9 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: const Text('مركز الدعم والديوان', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          title: const Text('مركز الدعم والديوان',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),
         ),
@@ -107,14 +110,25 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppTheme.royalGold.withValues(alpha: 0.3), width: 2),
-            boxShadow: [BoxShadow(color: AppTheme.royalGold.withValues(alpha: 0.1), blurRadius: 30)],
+            border: Border.all(
+                color: AppTheme.royalGold.withValues(alpha: 0.3), width: 2),
+            boxShadow: [
+              BoxShadow(
+                  color: AppTheme.royalGold.withValues(alpha: 0.1),
+                  blurRadius: 30)
+            ],
           ),
-          child: const Icon(Icons.headset_mic_rounded, size: 60, color: AppTheme.royalGold),
+          child: const Icon(Icons.headset_mic_rounded,
+              size: 60, color: AppTheme.royalGold),
         ),
         const SizedBox(height: 20),
-        const Text('كيف يمكننا خدمتك اليوم؟', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-        const Text('فريق الدعم الملكي متواجد لخدمتك على مدار الساعة', style: TextStyle(color: Colors.white38, fontSize: 13)),
+        const Text('كيف يمكننا خدمتك اليوم؟',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold)),
+        const Text('فريق الدعم الملكي متواجد لخدمتك على مدار الساعة',
+            style: TextStyle(color: Colors.white38, fontSize: 13)),
       ],
     );
   }
@@ -124,7 +138,11 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
       alignment: Alignment.centerRight,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 15),
-        child: Text(title, style: const TextStyle(color: AppTheme.royalGold, fontSize: 16, fontWeight: FontWeight.bold)),
+        child: Text(title,
+            style: const TextStyle(
+                color: AppTheme.royalGold,
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -151,7 +169,8 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
           title: 'انستغرام رويال دور',
           subtitle: '@royaldoor86',
           color: Colors.pinkAccent,
-          onTap: () => _launchURL("https://www.instagram.com/royaldoor86?igsh=MXhnbTVhcXFjdWViMw=="),
+          onTap: () => _launchURL(
+              "https://www.instagram.com/royaldoor86?igsh=MXhnbTVhcXFjdWViMw=="),
         ),
         _buildSocialItem(
           icon: FontAwesomeIcons.telegram,
@@ -172,13 +191,19 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
           title: 'قناة يوتيوب رويال دور',
           subtitle: 'دروس وشروحات وبث مباشر',
           color: Colors.red,
-          onTap: () => _launchURL("https://youtube.com/@royaldoor?si=lIaXbSUaNKE1Aily"),
+          onTap: () =>
+              _launchURL("https://youtube.com/@royaldoor?si=lIaXbSUaNKE1Aily"),
         ),
       ],
     );
   }
 
-  Widget _buildSocialItem({required IconData icon, required String title, required String subtitle, required Color color, required VoidCallback onTap}) {
+  Widget _buildSocialItem(
+      {required dynamic icon,
+      required String title,
+      required String subtitle,
+      required Color color,
+      required VoidCallback onTap}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: AppTheme.glassContainer(
@@ -188,12 +213,21 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
           onTap: onTap,
           leading: Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: Icon(icon, color: color, size: 24),
+            decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+            child: icon is IconData
+                ? Icon(icon, color: color, size: 24)
+                : FaIcon(icon, color: color, size: 24),
           ),
-          title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-          subtitle: Text(subtitle, style: const TextStyle(color: Colors.white24, fontSize: 11)),
-          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white10, size: 14),
+          title: Text(title,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold)),
+          subtitle: Text(subtitle,
+              style: const TextStyle(color: Colors.white24, fontSize: 11)),
+          trailing: const Icon(Icons.arrow_forward_ios,
+              color: Colors.white10, size: 14),
         ),
       ),
     );
