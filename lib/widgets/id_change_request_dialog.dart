@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../app_theme.dart';
-import '../theme/design_tokens.dart';
 import '../theme/reusable_widgets.dart';
 
 class IdChangeRequestDialog extends StatefulWidget {
@@ -18,7 +17,8 @@ class IdChangeRequestDialog extends StatefulWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => IdChangeRequestDialog(requestData: data, requestId: id),
+      builder: (context) =>
+          IdChangeRequestDialog(requestData: data, requestId: id),
     );
   }
 
@@ -32,7 +32,8 @@ class _IdChangeRequestDialogState extends State<IdChangeRequestDialog> {
   Future<void> _respond(String action) async {
     setState(() => _isProcessing = true);
     try {
-      final callable = FirebaseFunctions.instance.httpsCallable('respondToRoyalIdRequest');
+      final callable = FirebaseFunctions.instanceFor(region: 'us-central1')
+          .httpsCallable('respondToRoyalIdRequest');
       final result = await callable.call({
         'requestId': widget.requestId,
         'action': action,
@@ -42,10 +43,11 @@ class _IdChangeRequestDialogState extends State<IdChangeRequestDialog> {
         if (result.data['success'] == true) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(action == 'accept' 
-                ? 'تم تحديث المعرف الملكي بنجاح! 👑' 
-                : 'تم رفض طلب التغيير'),
-              backgroundColor: action == 'accept' ? Colors.green : Colors.orange,
+              content: Text(action == 'accept'
+                  ? 'تم تحديث المعرف الملكي بنجاح! 👑'
+                  : 'تم رفض طلب التغيير'),
+              backgroundColor:
+                  action == 'accept' ? Colors.green : Colors.orange,
             ),
           );
         }
@@ -66,8 +68,8 @@ class _IdChangeRequestDialogState extends State<IdChangeRequestDialog> {
   Widget build(BuildContext context) {
     final newId = widget.requestData['newRoyalId'] ?? '---';
 
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: false,
       child: Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -75,10 +77,11 @@ class _IdChangeRequestDialogState extends State<IdChangeRequestDialog> {
           decoration: BoxDecoration(
             color: const Color(0xFF0F172A),
             borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: AppTheme.royalGold.withOpacity(0.3), width: 1),
+            border: Border.all(
+                color: AppTheme.royalGold.withValues(alpha: 0.3), width: 1),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.royalGold.withOpacity(0.1),
+                color: AppTheme.royalGold.withValues(alpha: 0.1),
                 blurRadius: 20,
                 spreadRadius: 5,
               )
@@ -87,7 +90,8 @@ class _IdChangeRequestDialogState extends State<IdChangeRequestDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.stars_rounded, color: AppTheme.royalGold, size: 60),
+              const Icon(Icons.stars_rounded,
+                  color: AppTheme.royalGold, size: 60),
               const SizedBox(height: 20),
               const HeadingText(
                 'هوية ملكية جديدة معروضة! 👑',
@@ -99,9 +103,11 @@ class _IdChangeRequestDialogState extends State<IdChangeRequestDialog> {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  style: const TextStyle(color: Colors.white70, fontSize: 16, fontFamily: 'Cairo'),
+                  style: const TextStyle(
+                      color: Colors.white70, fontSize: 16, fontFamily: 'Cairo'),
                   children: [
-                    const TextSpan(text: 'يرغب المدير في منحك المعرف المميز التالي:\n\n'),
+                    const TextSpan(
+                        text: 'يرغب المدير في منحك المعرف المميز التالي:\n\n'),
                     TextSpan(
                       text: '[$newId]',
                       style: const TextStyle(
@@ -123,7 +129,8 @@ class _IdChangeRequestDialogState extends State<IdChangeRequestDialog> {
                     Expanded(
                       child: TextButton(
                         onPressed: () => _respond('reject'),
-                        style: TextButton.styleFrom(foregroundColor: Colors.white54),
+                        style: TextButton.styleFrom(
+                            foregroundColor: Colors.white54),
                         child: const Text('رفض التغيير'),
                       ),
                     ),
@@ -135,9 +142,11 @@ class _IdChangeRequestDialogState extends State<IdChangeRequestDialog> {
                           backgroundColor: AppTheme.royalGold,
                           foregroundColor: Colors.black,
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: const Text('موافق، شكراً!', style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: const Text('موافق، شكراً!',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],

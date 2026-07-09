@@ -1,13 +1,13 @@
-// Service: إدارة النقاط والخبرة
-// Cloud Function: updateUserPointsXP
+// Service: إدارة المستوى والخبرة
+// Cloud Function: updateUserLevelXP
 import 'package:cloud_functions/cloud_functions.dart';
 
-class PointsXPService {
+class LevelXPService {
   static final FirebaseFunctions _functions =
       FirebaseFunctions.instanceFor(region: 'us-central1');
 
-  /// تحديث نقاط/خبرة المستخدم (Admin/System)
-  static Future<Map<String, dynamic>> updateUserPointsXP(
+  /// تحديث مستوى/خبرة المستخدم (Admin/System)
+  static Future<Map<String, dynamic>> updateUserLevelXP(
       Map<String, dynamic> data) async {
     final callable = _functions.httpsCallable('updateUserPointsXP');
     final result = await callable.call(data);

@@ -98,7 +98,7 @@ class _RoyalRewardsMarketplacePageState
                 ? Container(
                     height: _bannerAd!.size.height.toDouble(),
                     width: double.infinity,
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     child: AdWidget(ad: _bannerAd!),
                   )
                 : null,
@@ -521,7 +521,7 @@ class _RoyalRewardsMarketplacePageState
               SizedBox(
                 width: double.infinity,
                 child: AppTheme.gradientButton(
-                  text: 'شراء الحصاد الآن',
+                  text: 'شراء المكافآت الآن',
                   onPressed: () => _showPurchaseDialog(listing),
                   isRoyal: true,
                 ),

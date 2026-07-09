@@ -1,116 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../services/challenges_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// صفحة إدارة التحديات الإدارية (عالمية)
 
 class AdminChallengesPage extends StatelessWidget {
-  const AdminChallengesPage({Key? key}) : super(key: key);
-
-  void _showUpdatePointsXPDialog(
-      BuildContext context, String userId, Map<String, dynamic> userData) {
-    final coinsController =
-        TextEditingController(text: userData['coins']?.toString() ?? '0');
-    final xpController =
-        TextEditingController(text: userData['xp']?.toString() ?? '0');
-    final levelController =
-        TextEditingController(text: userData['level']?.toString() ?? '1');
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        bool loading = false;
-        String? errorMsg;
-        bool success = false;
-        return StatefulBuilder(
-          builder: (context, setState) => AlertDialog(
-            title: const Text('تحديث النقاط والخبرة'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: coinsController,
-                  decoration: const InputDecoration(labelText: 'النقاط'),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: xpController,
-                  decoration: const InputDecoration(labelText: 'الخبرة'),
-                  keyboardType: TextInputType.number,
-                ),
-                TextField(
-                  controller: levelController,
-                  decoration: const InputDecoration(labelText: 'المستوى'),
-                  keyboardType: TextInputType.number,
-                ),
-                if (loading) ...[
-                  const SizedBox(height: 12),
-                  const CircularProgressIndicator(),
-                ],
-                if (success) ...[
-                  const SizedBox(height: 8),
-                  Text('تم التحديث بنجاح 🎉',
-                      style: TextStyle(
-                          color: Colors.green, fontWeight: FontWeight.bold)),
-                ],
-                if (errorMsg != null) ...[
-                  const SizedBox(height: 8),
-                  Text(errorMsg!, style: const TextStyle(color: Colors.red)),
-                ],
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: loading ? null : () => Navigator.pop(ctx),
-                child: const Text('إلغاء'),
-              ),
-              ElevatedButton(
-                onPressed: loading
-                    ? null
-                    : () async {
-                        setState(() {
-                          loading = true;
-                          errorMsg = null;
-                          success = false;
-                        });
-                        try {
-                          final res =
-                              await ChallengesService.updateUserPointsXP(
-                            uid: userId,
-                            points: int.tryParse(coinsController.text),
-                            xp: int.tryParse(xpController.text),
-                            level: int.tryParse(levelController.text),
-                          );
-                          if (res['success'] == true) {
-                            setState(() {
-                              success = true;
-                            });
-                            await Future.delayed(const Duration(seconds: 1));
-                            Navigator.pop(ctx);
-                          } else {
-                            setState(() {
-                              errorMsg = res['message'] ?? 'فشل التحديث';
-                            });
-                          }
-                        } catch (e) {
-                          setState(() {
-                            errorMsg = 'خطأ: $e';
-                          });
-                        } finally {
-                          setState(() {
-                            loading = false;
-                          });
-                        }
-                      },
-                style:
-                    ElevatedButton.styleFrom(minimumSize: const Size(120, 36)),
-                child: const Text('تحديث'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  const AdminChallengesPage({super.key});
 
   void _showChallengeDialog(BuildContext context,
       {Map<String, dynamic>? challenge, String? challengeId}) {
@@ -147,7 +41,7 @@ class AdminChallengesPage extends StatelessWidget {
                   TextField(
                     controller: rewardController,
                     decoration:
-                        const InputDecoration(labelText: 'المكافأة (نقاط)'),
+                        const InputDecoration(labelText: 'المكافأة (نجوم ⭐)'),
                     keyboardType: TextInputType.number,
                   ),
                   TextField(
@@ -305,10 +199,12 @@ class AdminChallengesPage extends StatelessWidget {
                                   ),
                                 );
                                 if (confirm == true) {
-                                  await ChallengesService.manageChallenge({
-                                    'action': 'delete',
-                                    'challengeId': docs[i].id,
-                                  });
+                                  if (context.mounted) {
+                                    await ChallengesService.manageChallenge({
+                                      'action': 'delete',
+                                      'challengeId': docs[i].id,
+                                    });
+                                  }
                                 }
                               },
                             ),
@@ -327,8 +223,8 @@ class AdminChallengesPage extends StatelessWidget {
         onPressed: () {
           _showChallengeDialog(context);
         },
-        child: const Icon(Icons.add),
         tooltip: 'إضافة تحدي جديد',
+        child: const Icon(Icons.add),
       ),
     );
   }

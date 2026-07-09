@@ -8,8 +8,8 @@ import 'package:path/path.dart' as p;
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../services/firestore_service.dart';
 import '../../services/storage_service.dart';
-// import '../../services/auth_service.dart';
 import '../../models/post_model.dart';
+import '../../app_theme.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
@@ -32,7 +32,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
   int _recordDuration = 0;
 
   final FirestoreService _firestoreService = FirestoreService();
-  // final StorageService _storageService = StorageService();
 
   @override
   void dispose() {
@@ -46,7 +45,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     final List<XFile> images = await _picker.pickMultiImage();
     if (images.isNotEmpty) {
       setState(() {
-        _selectedVideo = null; // إفراغ الفيديو عند اختيار صور
+        _selectedVideo = null;
         _selectedImages.addAll(images.map((img) => File(img.path)));
       });
     }
@@ -56,7 +55,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
     final XFile? video = await _picker.pickVideo(source: ImageSource.gallery);
     if (video != null) {
       setState(() {
-        _selectedImages.clear(); // إفراغ الصور عند اختيار فيديو
+        _selectedImages.clear();
         _selectedVideo = File(video.path);
       });
     }
@@ -90,25 +89,31 @@ class _CreatePostPageState extends State<CreatePostPage> {
     if (_textController.text.trim().isEmpty &&
         _selectedImages.isEmpty &&
         _selectedVideo == null &&
-        _audioPath == null) return;
+        _audioPath == null) {
+      return;
+    }
     setState(() => _isLoading = true);
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
       final userSnap = await _firestoreService.streamUserData(user.uid).first;
 
-      String? imageUrl;
-      if (_selectedImages.isNotEmpty)
-        imageUrl =
-            await StorageService.uploadDailyPostImage(_selectedImages.first);
+      List<String>? imageUrls;
+      String? firstImageUrl;
+
+      if (_selectedImages.isNotEmpty) {
+        imageUrls = [];
+        for (var img in _selectedImages) {
+          final url = await StorageService.uploadDailyPostImage(img);
+          imageUrls.add(url);
+        }
+        if (imageUrls.isNotEmpty) firstImageUrl = imageUrls.first;
+      }
 
       String? videoUrl;
-      if (_selectedVideo != null)
+      if (_selectedVideo != null) {
         videoUrl = await StorageService.uploadDailyPostVideo(_selectedVideo!);
-
-      String? audioUrl;
-      // إذا كان لديك دالة uploadAudio يمكنك استخدامها هنا، أو أبقها كما هي إذا كانت غير متوفرة
-      if (_audioPath != null) audioUrl = null;
+      }
 
       final newPost = PostModel(
         id: '',
@@ -116,9 +121,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
         authorName: userSnap.name,
         authorPic: userSnap.profilePic,
         content: _textController.text.trim(),
-        imageUrl: imageUrl,
+        imageUrl: firstImageUrl,
+        imageUrls: imageUrls,
         videoUrl: videoUrl,
-        audioUrl: audioUrl,
+        audioUrl: _audioPath, // Assuming you handle audio upload or reference
         audioDuration: _audioPath != null ? _recordDuration : null,
         createdAt: DateTime.now(),
         isVip: userSnap.accountLevel > 5,
@@ -138,53 +144,159 @@ class _CreatePostPageState extends State<CreatePostPage> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF121212),
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('إلغاء', style: TextStyle(color: Colors.grey))),
-          title: const Text('منشور ملكي جديد',
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          leading: IconButton(
+            icon: const Icon(Icons.close, color: Colors.white70),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: const Text('إنشاء منشور',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18)),
           actions: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: _isLoading
-                  ? const CircularProgressIndicator(color: Colors.amber)
+                  ? const Center(
+                      child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                              color: AppTheme.royalGold, strokeWidth: 2)))
                   : ElevatedButton(
                       onPressed: _isRecording ? null : _handlePost,
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber),
-                      child: const Text('نشر الآن')),
+                          backgroundColor: AppTheme.royalGold,
+                          foregroundColor: Colors.black,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20))),
+                      child: const Text('نشر',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
             ),
           ],
         ),
         body: Column(
           children: [
+            // Header User Info
+            _buildUserInfoHeader(),
+
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
                     TextField(
                         controller: _textController,
-                        maxLines: 5,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
                         decoration: const InputDecoration(
                             hintText: 'بماذا تفكر يا ملك؟ شاركنا لحظاتك...',
+                            hintStyle:
+                                TextStyle(color: Colors.white24, fontSize: 16),
                             border: InputBorder.none),
-                        style: const TextStyle(fontSize: 18)),
-                    if (_audioPath != null) _buildAudioPreview(),
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.white)),
+
                     const SizedBox(height: 20),
+                    if (_audioPath != null) _buildAudioPreview(),
                     if (_selectedVideo != null) _buildVideoPreview(),
                     if (_selectedImages.isNotEmpty) _buildImagesGrid(),
+                    const SizedBox(height: 100), // Space for tools
                   ],
                 ),
               ),
             ),
-            if (_isRecording) _buildRecordingUI(),
-            _buildBottomTools(),
+
+            // Fixed Tools at bottom, but flexible layout
+            _buildBottomBar(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserInfoHeader() {
+    final user = FirebaseAuth.instance.currentUser;
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.white10,
+            backgroundImage:
+                user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
+            child: user?.photoURL == null
+                ? const Icon(Icons.person, color: Colors.white24)
+                : null,
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(user?.displayName ?? 'مستخدم ملكي',
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
+              const Text('عام',
+                  style: TextStyle(color: Colors.white38, fontSize: 12)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return Container(
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + 10, top: 10),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_isRecording) _buildRecordingUI(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _toolItem(Icons.image_rounded, 'صور', Colors.green, _pickImages),
+              _toolItem(
+                  Icons.videocam_rounded, 'فيديو', Colors.blue, _pickVideo),
+              _toolItem(Icons.mic_rounded, 'صوت', Colors.orange,
+                  _isRecording ? _stopRecording : _startRecording),
+              _toolItem(Icons.tag_rounded, 'هاشتاج', Colors.purple, () {
+                _textController.text += ' #';
+                _textController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: _textController.text.length));
+              }),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _toolItem(
+      IconData icon, String label, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 4),
+            Text(label,
+                style: const TextStyle(color: Colors.white54, fontSize: 11)),
           ],
         ),
       ),
@@ -193,20 +305,26 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   Widget _buildVideoPreview() {
     return Container(
+      margin: const EdgeInsets.only(top: 10),
       height: 200,
       width: double.infinity,
       decoration: BoxDecoration(
           color: Colors.black, borderRadius: BorderRadius.circular(15)),
       child: Stack(alignment: Alignment.center, children: [
-        const Icon(Icons.videocam, color: Colors.white54, size: 50),
+        const Icon(Icons.play_circle_fill, color: AppTheme.royalGold, size: 50),
         Positioned(
             top: 10,
             right: 10,
-            child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white),
-                onPressed: () => setState(() => _selectedVideo = null))),
-        const Text("مقطع فيديو جاهز للنشر 🎥",
-            style: TextStyle(color: Colors.white70, fontSize: 12)),
+            child: CircleAvatar(
+              backgroundColor: Colors.black54,
+              child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () => setState(() => _selectedVideo = null)),
+            )),
+        const Positioned(
+            bottom: 15,
+            child: Text("مقطع فيديو جاهز للنشر",
+                style: TextStyle(color: Colors.white70, fontSize: 12))),
       ]),
     );
   }
@@ -214,73 +332,60 @@ class _CreatePostPageState extends State<CreatePostPage> {
   Widget _buildImagesGrid() {
     return GridView.builder(
       shrinkWrap: true,
+      padding: const EdgeInsets.only(top: 10),
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3, crossAxisSpacing: 8, mainAxisSpacing: 8),
       itemCount: _selectedImages.length,
-      itemBuilder: (context, index) => Stack(children: [
+      itemBuilder: (context, index) => Stack(fit: StackFit.expand, children: [
         ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.file(_selectedImages[index],
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity)),
+            child: Image.file(_selectedImages[index], fit: BoxFit.cover)),
         Positioned(
             top: 5,
             right: 5,
             child: GestureDetector(
                 onTap: () => setState(() => _selectedImages.removeAt(index)),
-                child: const Icon(Icons.close, color: Colors.white, size: 18)))
+                child: const CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Colors.black54,
+                    child: Icon(Icons.close, color: Colors.white, size: 14))))
       ]),
     );
   }
 
   Widget _buildAudioPreview() {
     return Container(
+        margin: const EdgeInsets.only(top: 10),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-            color: Colors.amber.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(15)),
+            color: Colors.orange.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.orange.withValues(alpha: 0.3))),
         child: Row(children: [
-          const Icon(Icons.mic, color: Colors.amber),
+          const Icon(Icons.mic, color: Colors.orange),
           const SizedBox(width: 10),
-          const Text('تسجيل صوتي جاهز'),
+          Text('تسجيل صوتي ($_recordDuration ثانية)',
+              style: const TextStyle(color: Colors.white70)),
           const Spacer(),
           IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
+              icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
               onPressed: () => setState(() => _audioPath = null))
         ]));
   }
 
   Widget _buildRecordingUI() {
     return Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(children: [
-          const Text('جاري التسجيل...', style: TextStyle(color: Colors.red)),
-          const SizedBox(height: 10),
-          IconButton(
-              icon: const Icon(Icons.stop, color: Colors.red, size: 40),
-              onPressed: _stopRecording)
-        ]));
-  }
-
-  Widget _buildBottomTools() {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Colors.black12))),
-      child: Row(children: [
-        IconButton(
-            icon: const Icon(Icons.image, color: Colors.green),
-            onPressed: _pickImages),
-        IconButton(
-            icon: const Icon(Icons.videocam, color: Colors.blue),
-            onPressed: _pickVideo),
-        IconButton(
-            icon: const Icon(Icons.mic, color: Colors.orange),
-            onPressed: _isRecording ? null : _startRecording),
-      ]),
-    );
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.circle, color: Colors.red, size: 12),
+            const SizedBox(width: 8),
+            Text('جاري التسجيل: $_recordDuration ثانية',
+                style: const TextStyle(
+                    color: Colors.red, fontWeight: FontWeight.bold)),
+          ],
+        ));
   }
 }

@@ -131,7 +131,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text("تم تأكيد هويتك بنجاح، أهلاً بك في المملكة! 👑"),
+            content: Text("تم تأكيد هويتك بنجاح، أهلاً بك في المملكة العراقية! 👑"),
             backgroundColor: Colors.green),
       );
       Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);

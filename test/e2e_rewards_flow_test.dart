@@ -1,9 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:royaldoor/services/rewards_service.dart';
 import 'package:royaldoor/constants/rewards_constants.dart';
-import 'package:royaldoor/models/rewards_models.dart';
 
 void main() {
   // هذا الاختبار مصمم ليتم تشغيله في بيئة محاكاة أو جهاز حقيقي مع صلاحيات إدارية
@@ -11,9 +9,9 @@ void main() {
   
   group('E2E Rewards System Test', () {
     late RewardsService rewardsService;
-    final String testUserId = 'test_user_123';
-    final String recipientRoyalId = 'ROYAL999';
-    final String recipientUid = 'recipient_user_456';
+    const String testUserId = 'test_user_123';
+    const String recipientRoyalId = 'ROYAL999';
+    const String recipientUid = 'recipient_user_456';
 
     setUp(() {
       rewardsService = RewardsService();
@@ -53,7 +51,7 @@ void main() {
 
       // 3. تفعيل العداد وحصاد المكافأة اليومية (Daily Harvest)
       // سنقوم بتجاوز وقت الانتظار برمجياً في Firestore (اختياري في الوحدة الحقيقية نحاكي مرور الوقت)
-      await rewardsService.activateDailyReward(activeReward.id);
+      await rewardsService.activateDailyReward(activeReward.id, adWatched: true);
       
       final updatedUserDoc = await userRef.get();
       final currentGems = (updatedUserDoc.data()?['rewards_wallet_gems'] ?? 0.0) as double;
@@ -62,7 +60,7 @@ void main() {
       expect(currentGems, greaterThan(50000.0));
 
       // 4. تحويل هدية للتحقق من الصندوق العالمي (Transfer Gift & Global Support)
-      final double transferAmount = 10000.0;
+      const double transferAmount = 10000.0;
       await rewardsService.transferRoyalGifts(
         senderId: testUserId,
         recipientRoyalId: recipientRoyalId,

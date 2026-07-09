@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 class RoyalStoreIcon extends StatefulWidget {
   const RoyalStoreIcon({super.key, this.size = 28});
@@ -27,7 +26,7 @@ class _RoyalStoreIconState extends State<RoyalStoreIcon>
       end: 0.1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     _color = ColorTween(
-      begin: Colors.amber,
+      begin: Colors.pinkAccent,
       end: Colors.purpleAccent,
     ).animate(_controller);
   }
@@ -51,12 +50,12 @@ class _RoyalStoreIconState extends State<RoyalStoreIcon>
             size: widget.size,
             shadows: [
               Shadow(
-                color: Colors.amber.withOpacity(0.5),
+                color: Colors.pinkAccent.withValues(alpha: 0.5),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
               Shadow(
-                color: Colors.purpleAccent.withOpacity(0.3),
+                color: Colors.purpleAccent.withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: const Offset(0, -2),
               ),

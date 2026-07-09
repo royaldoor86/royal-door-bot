@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminVerificationMgmtPage extends StatefulWidget {
-  const AdminVerificationMgmtPage({Key? key}) : super(key: key);
+  const AdminVerificationMgmtPage({super.key});
 
   @override
   State<AdminVerificationMgmtPage> createState() => _AdminVerificationMgmtPageState();
@@ -19,7 +19,7 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
   Color _parseColor(String? hex) {
     try {
       String cleanHex = (hex ?? standardBlueHex).replaceAll('#', '').replaceAll('0x', '');
-      if (cleanHex.length == 6) cleanHex = 'FF' + cleanHex;
+      if (cleanHex.length == 6) cleanHex = 'FF$cleanHex';
       return Color(int.parse(cleanHex, radix: 16));
     } catch (_) {
       return const Color(0xFF2196F3);
@@ -93,14 +93,14 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: accentGold.withOpacity(0.1)),
+        border: Border.all(color: accentGold.withValues(alpha: 0.1)),
       ),
       child: ListTile(
         leading: Icon(Icons.verified, color: _parseColor(data['color']), size: 30),
         title: Text(data['name'] ?? 'توثيق حساب', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text('السعر: ${data['price']} كوينز', style: TextStyle(color: accentGold, fontSize: 13)),
+        subtitle: Text('السعر: ${data['price']} نجوم ⭐', style: TextStyle(color: accentGold, fontSize: 13)),
         trailing: IconButton(
           icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
           onPressed: () => _deleteVerification(id),
@@ -145,7 +145,7 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
               _buildLabel('اسم الحزمة (مثال: توثيق رويال)'),
               _buildField(nameCtrl, 'الاسم'),
               const SizedBox(height: 15),
-              _buildLabel('السعر بالكوينز'),
+              _buildLabel('السعر بالنجوم ⭐'),
               _buildField(priceCtrl, '0', isNumber: true),
               const SizedBox(height: 20),
               Center(
@@ -181,7 +181,7 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
     );
   }
 
-  Widget _buildLabel(String text) => Padding(padding: const EdgeInsets.only(bottom: 8, right: 5), child: Text(text, style: TextStyle(color: accentGold.withOpacity(0.7), fontSize: 12)));
+  Widget _buildLabel(String text) => Padding(padding: const EdgeInsets.only(bottom: 8, right: 5), child: Text(text, style: TextStyle(color: accentGold.withValues(alpha: 0.7), fontSize: 12)));
 
   Widget _buildField(TextEditingController ctrl, String hint, {bool isNumber = false}) {
     return TextField(
@@ -190,7 +190,7 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: hint, hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
-        filled: true, fillColor: Colors.white.withOpacity(0.05),
+        filled: true, fillColor: Colors.white.withValues(alpha: 0.05),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
       ),
     );
@@ -201,7 +201,7 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.verified_outlined, size: 80, color: accentGold.withOpacity(0.1)),
+          Icon(Icons.verified_outlined, size: 80, color: accentGold.withValues(alpha: 0.1)),
           const SizedBox(height: 16),
           const Text('لا توجد حزم توثيق مضافة', style: TextStyle(color: Colors.white24, fontSize: 16)),
         ],

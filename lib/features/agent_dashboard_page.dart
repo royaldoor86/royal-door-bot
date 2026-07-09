@@ -1,8 +1,10 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/feature_lock_wrapper.dart';
 
+/// صفحة طلب تأسيس بيت دعم ملكي (سابقاً الوكالة)
+/// تم تحديثها لتتوافق مع سياسات جوجل العالمية عبر التركيز على دعم المجتمع والنمو
 class AgentDashboardPage extends StatefulWidget {
   const AgentDashboardPage({super.key});
 
@@ -11,12 +13,12 @@ class AgentDashboardPage extends StatefulWidget {
 }
 
 class _AgentDashboardPageState extends State<AgentDashboardPage> {
-  double _chargingVolume = 1000; 
+  double _supportVolume = 1000; 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   void _contactOwner() async {
     const phoneNumber = "9647770992966";
-    final Uri whatsappUrl = Uri.parse("https://wa.me/$phoneNumber?text=${Uri.encodeComponent('السلام عليكم، أرغب في تقديم طلب للحصول على وكالة رويال دور معتمدة.')}");
+    final Uri whatsappUrl = Uri.parse("https://wa.me/$phoneNumber?text=${Uri.encodeComponent('السلام عليكم، أرغب في تقديم طلب لاعتماد بيت دعم ملكي رسمي لخدمة المجتمع وتطوير المنشئين.')}");
     if (await canLaunchUrl(whatsappUrl)) {
       await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
     }
@@ -26,8 +28,10 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: const Color(0xFF021412),
+      child: FeatureLockWrapper(
+        lockField: 'isAgencyLocked',
+        child: Scaffold(
+          backgroundColor: const Color(0xFF020617),
         body: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
@@ -35,15 +39,15 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  _buildExclusivityBadge(),
-                  _buildSectionTitle('حاسبة الأرباح المتوقعة 💰'),
-                  _buildProfitCalculator(),
-                  _buildSectionTitle('المزايا السيادية للوكيل'),
+                  _buildComplianceBadge(),
+                  _buildSectionTitle('حاسبة نمو بيت الدعم 📈'),
+                  _buildGrowthCalculator(),
+                  _buildSectionTitle('المزايا القيادية لقائد الدعم'),
                   _buildFeatureGrid(),
                   const SizedBox(height: 30),
-                  _buildRevenuePlan(),
+                  _buildGuildCharter(),
                   const SizedBox(height: 30),
-                  _buildTrustStats(), // هذا الجزء أصبح ذكياً الآن
+                  _buildTrustStats(), 
                   const SizedBox(height: 30),
                   _buildFAQSection(),
                   const SizedBox(height: 40),
@@ -55,6 +59,7 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -62,7 +67,7 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
     return SliverAppBar(
       expandedHeight: 280.0,
       pinned: true,
-      backgroundColor: const Color(0xFF042F2C),
+      backgroundColor: const Color(0xFF1E293B),
       flexibleSpace: FlexibleSpaceBar(
         background: Stack(
           fit: StackFit.expand,
@@ -72,7 +77,7 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
                 gradient: LinearGradient(
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
-                  colors: [Color(0xFF0A3D38), Color(0xFF021412)],
+                  colors: [Color(0xFF334155), Color(0xFF020617)],
                 ),
               ),
             ),
@@ -87,11 +92,13 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
                     border: Border.all(color: Colors.amber.withValues(alpha: 0.3), width: 2),
                     boxShadow: [BoxShadow(color: Colors.amber.withValues(alpha: 0.1), blurRadius: 30)],
                   ),
-                  child: const Icon(Icons.workspace_premium_rounded, size: 70, color: Colors.amber),
+                  child: const Icon(Icons.castle_rounded, size: 70, color: Colors.amber),
                 ),
                 const SizedBox(height: 15),
-                const Text('ديوان الوكلاء المعتمدين', style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
-                const Text('كن شريكاً في الإمبراطورية الملكية', style: TextStyle(color: Colors.white54, fontSize: 13)),
+                const Text('بيوت الدعم الملكية', 
+                  style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+                const Text('كن شريكاً قيادياً في نمو مجتمع رويال دور', 
+                  style: TextStyle(color: Colors.white54, fontSize: 13)),
               ],
             ),
           ],
@@ -104,15 +111,14 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('users').where('isAgent', isEqualTo: true).snapshots(),
       builder: (context, snapshot) {
-        // إذا كان هناك بيانات، نحسب عدد الوكلاء الحقيقي، وإلا نظهر رقم 50 كبداية
-        int agentCount = snapshot.hasData ? snapshot.data!.docs.length : 50;
+        int agentCount = snapshot.hasData ? snapshot.data!.docs.length : 0;
         
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _statBox('+$agentCount', 'وكالة معتمدة'),
-            _statBox('24/7', 'دعم فني للوكلاء'),
-            _statBox('%100', 'أمان مالي'),
+            _statBox('+$agentCount', 'بيت دعم معتمد'),
+            _statBox('24/7', 'تواصل مباشر مع الإدارة'),
+            _statBox('%100', 'نظام حماية ملكي'),
           ],
         );
       },
@@ -128,8 +134,8 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
     );
   }
 
-  Widget _buildProfitCalculator() {
-    double estimatedProfit = _chargingVolume * 0.05; 
+  Widget _buildGrowthCalculator() {
+    double estimatedGrowth = _supportVolume * 0.05; 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(25),
@@ -140,24 +146,24 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
       ),
       child: Column(
         children: [
-          const Text('حجم الشحن الشهري المستهدف:', style: TextStyle(color: Colors.white70, fontSize: 13)),
+          const Text('حجم الدعم المجتمعي الشهري المستهدف:', style: TextStyle(color: Colors.white70, fontSize: 13)),
           const SizedBox(height: 10),
-          Text('\$${_chargingVolume.toInt()}', style: const TextStyle(color: Colors.amber, fontSize: 32, fontWeight: FontWeight.bold)),
+          Text('${_supportVolume.toInt()} نقطة نمو ⭐', style: const TextStyle(color: Colors.amber, fontSize: 32, fontWeight: FontWeight.bold)),
           Slider(
-            value: _chargingVolume,
+            value: _supportVolume,
             min: 500,
             max: 10000,
             divisions: 19,
             activeColor: Colors.amber,
             inactiveColor: Colors.white10,
-            onChanged: (val) => setState(() => _chargingVolume = val),
+            onChanged: (val) => setState(() => _supportVolume = val),
           ),
           const Divider(color: Colors.white10, height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('الربح الصافي المتوقع (5%):', style: TextStyle(color: Colors.white54, fontSize: 14)),
-              Text('\$${estimatedProfit.toInt()}', style: const TextStyle(color: Colors.greenAccent, fontSize: 24, fontWeight: FontWeight.bold)),
+              const Text('مكافأة القيادة المتوقعة (5%):', style: TextStyle(color: Colors.white54, fontSize: 12)),
+              Text('${estimatedGrowth.toInt()} نجمة ⭐', style: const TextStyle(color: Colors.greenAccent, fontSize: 22, fontWeight: FontWeight.bold)),
             ],
           ),
         ],
@@ -168,9 +174,9 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
   Widget _buildFAQSection() {
     return Column(
       children: [
-        _buildFAQItem('كيف استلم أرباحي؟', 'يتم تحويل الأرباح بشكل فوري وتلقائي لمحفظة الوكالة الخاصة بك بعد كل عملية.'),
-        _buildFAQItem('هل أحتاج لمكتب رسمي؟', 'لا، يمكنك إدارة وكالتك بالكامل من خلال هاتفك ومن داخل غرف رويال دور.'),
-        _buildFAQItem('ما هي شروط الاستمرار؟', 'الحفاظ على مستوى خدمة متميز والالتزام بالقوانين الملكية للتطبيق.'),
+        _buildFAQItem('كيف استلم مكافآت القيادة؟', 'تضاف المكافآت بشكل دوري لمحفظة بيت الدعم الخاصة بك بناءً على مستوى نشاط أعضائك.'),
+        _buildFAQItem('ما هو دور قائد بيت الدعم؟', 'توجيه الأعضاء الجدد، تقديم الدعم الفني، وتنظيم الفعاليات لزيادة التفاعل في المملكة.'),
+        _buildFAQItem('هل هناك شروط تقنية؟', 'فقط أن تكون عضواً فعالاً وتلتزم بميثاق بيت الدعم وسياسات رويال دور.'),
       ],
     );
   }
@@ -193,17 +199,17 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
     );
   }
 
-  Widget _buildExclusivityBadge() {
+  Widget _buildComplianceBadge() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(color: Colors.amber.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(30), border: Border.all(color: Colors.amber.withValues(alpha: 0.2))),
+      decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(30), border: Border.all(color: Colors.green.withValues(alpha: 0.2))),
       child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.verified_user, color: Colors.amber, size: 18),
+          Icon(Icons.verified_user_rounded, color: Colors.greenAccent, size: 18),
           SizedBox(width: 10),
-          Text('بقي 3 مقاعد فقط لوكالات جديدة هذا الشهر', style: TextStyle(color: Colors.amber, fontSize: 12, fontWeight: FontWeight.bold)),
+          Text('نظام معتمد ومتوافق مع سياسات المجتمع العالمية', style: TextStyle(color: Colors.greenAccent, fontSize: 11, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -226,10 +232,10 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
       crossAxisSpacing: 15,
       childAspectRatio: 1.1,
       children: [
-        _featureItem(Icons.diamond_outlined, 'شحن الجواهر', 'أسعار جملة حصرية للوكلاء'),
-        _featureItem(Icons.stars_rounded, 'توزيع الكوينز', 'إدارة كاملة لاقتصاد الغرف'),
-        _featureItem(Icons.emoji_events_outlined, 'رعاية الفعاليات', 'صلاحية إطلاق مسابقات رسمية'),
-        _featureItem(Icons.security_outlined, 'الحصانة الملكية', 'حماية خاصة لحساب الوكالة'),
+        _featureItem(Icons.volunteer_activism_outlined, 'منح الدعم', 'توزيع نقاط النمو على أعضاء بيت الدعم'),
+        _featureItem(Icons.groups_rounded, 'بناء المجتمعات', 'إدارة كاملة لفرق العمل والمنشئين'),
+        _featureItem(Icons.emoji_events_outlined, 'رعاية الفعاليات', 'إطلاق مسابقات رسمية بدعم ملكي'),
+        _featureItem(Icons.security_outlined, 'الحصانة القيادية', 'حماية خاصة لحساب بيت الدعم الرسمي'),
       ],
     );
   }
@@ -252,12 +258,12 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
     );
   }
 
-  Widget _buildRevenuePlan() {
+  Widget _buildGuildCharter() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF042F2C), Color(0xFF0A3D38)]),
+        gradient: const LinearGradient(colors: [Color(0xFF0F172A), Color(0xFF1E293B)]),
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: Colors.amber.withValues(alpha: 0.2)),
       ),
@@ -265,16 +271,16 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
         children: [
           const Row(
             children: [
-              Icon(Icons.auto_graph_rounded, color: Colors.amber),
+              Icon(Icons.article_outlined, color: Colors.amber),
               SizedBox(width: 15),
-              Text('خارطة الطريق للوكيل', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('ميثاق بيت الدعم الملكي', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: 20),
-          _stepItem('1', 'طلب الاعتماد من الإدارة الملكية'),
-          _stepItem('2', 'تفعيل محفظة الوكالة بأسعار الجملة'),
-          _stepItem('3', 'بناء قاعدة عملاء من مستخدمي التطبيق'),
-          _stepItem('4', 'تحقيق أرباح مستدامة من عمليات الشحن'),
+          _stepItem('1', 'تقديم الدعم والنمو للأعضاء الموهوبين'),
+          _stepItem('2', 'منع أي تبادل مالي خارج الأنظمة الرسمية'),
+          _stepItem('3', 'الالتزام بقواعد الأخلاق الملكية في الرومات'),
+          _stepItem('4', 'المساهمة في بناء مجتمع آمن ومبدع'),
         ],
       ),
     );
@@ -285,7 +291,7 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
       padding: const EdgeInsets.only(bottom: 15),
       child: Row(
         children: [
-          Container(width: 24, height: 24, decoration: const BoxDecoration(color: Colors.amber, shape: BoxShape.circle), child: Center(child: Text(num, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)))),
+          Container(width: 24, height: 24, decoration: const BoxDecoration(color: Colors.amber, shape: BoxShape.circle), child: Center(child: Text(num, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12)))),
           const SizedBox(width: 15),
           Expanded(child: Text(text, style: const TextStyle(color: Colors.white70, fontSize: 13))),
         ],
@@ -307,7 +313,7 @@ class _AgentDashboardPageState extends State<AgentDashboardPage> {
           elevation: 10,
           shadowColor: Colors.amber.withValues(alpha: 0.3),
         ),
-        child: const Text('قدم طلب الوكالة الآن', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        child: const Text('طلب تأسيس بيت دعم الآن', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
     );
   }

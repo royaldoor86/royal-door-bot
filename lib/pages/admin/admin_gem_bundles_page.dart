@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../theme/app_theme.dart';
+import '../../app_theme.dart';
 
 /// صفحة إدارة باقات الجواهر 👑
 class AdminGemBundlesPage extends StatefulWidget {
@@ -78,12 +78,12 @@ class _AdminGemBundlesPageState extends State<AdminGemBundlesPage> {
                   final d = docs[index];
                   final data = d.data();
                   final name = (data['name'] ?? '').toString();
-                  final gems = (data['gems'] ?? 0) as num;
-                  final price = (data['price'] ?? 0) as num;
+                  final gems = _parseDouble(data['gems'] ?? 0);
+                  final price = _parseDouble(data['price'] ?? 0);
                   final priceText = (data['priceText'] ?? '').toString();
                   final onSale = (data['onSale'] ?? false) == true;
-                  final salePrice = data['salePrice'] is num
-                      ? (data['salePrice'] as num)
+                  final salePrice = data['salePrice'] != null
+                      ? _parseDouble(data['salePrice'])
                       : null;
                   final salePriceText =
                       (data['salePriceText'] ?? '').toString();
@@ -92,10 +92,10 @@ class _AdminGemBundlesPageState extends State<AdminGemBundlesPage> {
                   return _GemBundleCard(
                     name: name,
                     gems: gems.toInt(),
-                    price: price.toDouble(),
+                    price: price,
                     priceText: priceText,
                     onSale: onSale,
-                    salePrice: salePrice?.toDouble(),
+                    salePrice: salePrice,
                     salePriceText: salePriceText,
                     active: active,
                     onEdit: () => _openBundleEditor(
@@ -112,6 +112,15 @@ class _AdminGemBundlesPageState extends State<AdminGemBundlesPage> {
         ),
       ),
     );
+  }
+
+  double _parseDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value.replaceAll('%', '')) ?? 0.0;
+    }
+    return 0.0;
   }
 
   /// فتح نافذة إضافة / تعديل باقة
@@ -185,7 +194,7 @@ class _AdminGemBundlesPageState extends State<AdminGemBundlesPage> {
                     _buildTextField(
                       controller: priceTextController,
                       label: 'وصف السعر (اختياري)',
-                      hint: 'مثال: 5.99 \$',
+                      hint: 'مثال: 5.99 دينار',
                     ),
                     const Divider(height: 20, color: Colors.white24),
                     SwitchListTile(
@@ -209,7 +218,7 @@ class _AdminGemBundlesPageState extends State<AdminGemBundlesPage> {
                       _buildTextField(
                         controller: salePriceTextController,
                         label: 'وصف سعر العرض (اختياري)',
-                        hint: 'مثال: 3.99 \$ لفترة محدودة',
+                        hint: 'مثال: 3.99 دينار لفترة محدودة',
                       ),
                     ],
                     const Divider(height: 20, color: Colors.white24),

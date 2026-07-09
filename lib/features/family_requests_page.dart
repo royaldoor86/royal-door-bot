@@ -45,32 +45,35 @@ class _FamilyRequestsPageState extends State<FamilyRequestsPage> {
                     margin: const EdgeInsets.only(bottom: 10),
                     padding: const EdgeInsets.all(10),
                     opacity: 0.05,
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: (req['profilePic'] != null && req['profilePic']!.isNotEmpty) 
-                          ? NetworkImage(req['profilePic']) 
-                          : null,
-                      ),
-                      title: Text(req['name'] ?? 'مستخدم', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      subtitle: Text('ليفل ${req['level'] ?? 1}', style: const TextStyle(color: Colors.white54)),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.check_circle, color: Colors.green),
-                            onPressed: () async {
-                              try {
-                                await _familyService.acceptJoinRequest(widget.familyId, uid);
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-                              }
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.cancel, color: Colors.redAccent),
-                            onPressed: () => _familyService.rejectJoinRequest(widget.familyId, uid),
-                          ),
-                        ],
+                    child: Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: (req['profilePic'] != null && req['profilePic']!.isNotEmpty) 
+                            ? NetworkImage(req['profilePic']) 
+                            : null,
+                        ),
+                        title: Text(req['name'] ?? 'مستخدم', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        subtitle: Text('ليفل ${req['level'] ?? 1}', style: const TextStyle(color: Colors.white54)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.check_circle, color: Colors.green),
+                              onPressed: () async {
+                                try {
+                                  await _familyService.acceptJoinRequest(widget.familyId, uid);
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                }
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.cancel, color: Colors.redAccent),
+                              onPressed: () => _familyService.rejectJoinRequest(widget.familyId, uid),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

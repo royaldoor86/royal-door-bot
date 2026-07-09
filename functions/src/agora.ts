@@ -13,7 +13,7 @@ export const generateAgoraToken = functions.https.onCall((data, context) => {
   const appId = "daed7a59dcbd4de2969b7504ae0843dc";
   // ملاحظة: يجب وضع App Certificate الخاص بك هنا ليعمل الأمان
   // يمكنك الحصول عليه من لوحة تحكم Agora
-  const appCertificate = "ضع_هنا_APP_CERTIFICATE_الخاص_بك"; 
+  const appCertificate = "def60ed9868745069770195dd762f586"; 
   
   const channelName = data.channelName;
   if (!channelName) {

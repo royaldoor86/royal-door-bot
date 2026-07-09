@@ -35,7 +35,7 @@ export const purchaseRewardFromMarketplace = functions.region("us-central1").htt
 
     const sellerId = listingData.sellerId;
     const askingPrice = Number(listingData.askingPrice);
-    const currency = listingData.currency; // 'stars' or 'gems'
+    const currency = listingData.currency; // "stars" or "gems"
     const rewardId = listingData.rewardId;
 
     if (sellerId === buyerId) {
@@ -51,9 +51,9 @@ export const purchaseRewardFromMarketplace = functions.region("us-central1").htt
 
     const buyerData = buyerSnap.data()!;
     // تحديد الحقل الصحيح بناءً على العملة (ندعم الحقول الجديدة والقديمة للتوافق)
-    const buyerBalance = (currency === "stars")
-      ? Number(buyerData.stars || buyerData.coins || 0)
-      : Number(buyerData.gems || 0);
+    const buyerBalance = (currency === "stars") ?
+      Number(buyerData.stars || buyerData.coins || 0) :
+      Number(buyerData.gems || 0);
 
     if (buyerBalance < askingPrice) {
       throw new functions.https.HttpsError("failed-precondition", "رصيدك غير كافٍ لإتمام عملية الشراء");

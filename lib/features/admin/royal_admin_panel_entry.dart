@@ -5,13 +5,14 @@ import 'royal_panel/royal_admin_panel_page.dart';
 
 /// نقطة الدخول للوحة التحكم الملكية
 class RoyalAdminPanelEntry extends StatelessWidget {
-  const RoyalAdminPanelEntry({Key? key}) : super(key: key);
+  const RoyalAdminPanelEntry({super.key});
 
   bool _isOwner(User? user, Map<String, dynamic>? userData) {
     if (user == null) return false;
     final email = user.email?.toLowerCase();
-    if (email == 'royaldoor86@gmail.com' || email == 'doorty86@gmail.com')
+    if (email == 'royaldoor86@gmail.com' || email == 'doorty86@gmail.com') {
       return true;
+    }
     if (userData != null && (userData['isOwner'] == true)) return true;
     return false;
   }

@@ -1,0 +1,60 @@
+ؤrules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // --- الدوال المساعدة ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.get('isAdmin', false) == true ||
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.get('role', 'user') in ['admin', 'owner', 'developer', 'manager'];
+    }
+
+    // --- الملفات العامة (الصور الرمزية، الإطارات، الفقاعات، إلخ) ---
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // --- صور المستخدمين ---
+    match /users/{userId}/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
+    // --- ملفات الغرف الصوتية ---
+    match /rooms/{roomId}/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn(); // يمكن تقييدها بالمالكين والمشرفين لاحقاً
+    }
+
+    // --- ملفات المنشورات ---
+    match /posts/{postId}/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn(); // يمكن تقييدها بصاحب المنشور
+    }
+
+    // --- ملفات الرسائل ---
+    match /messages/{messageId}/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    // --- ملفات الإدارة ---
+    match /admin/{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // --- قاعدة عامة ---
+    match /{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+  }
+}

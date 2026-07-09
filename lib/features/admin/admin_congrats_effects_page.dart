@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// صفحة إدارة التهاني والمؤثرات الملكية
 class AdminCongratsEffectsPage extends StatelessWidget {
-  const AdminCongratsEffectsPage({Key? key}) : super(key: key);
+  const AdminCongratsEffectsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +57,8 @@ class AdminCongratsEffectsPage extends StatelessWidget {
         onPressed: () {
           _showEditEffectDialog(context, null, null);
         },
-        child: const Icon(Icons.add),
         tooltip: 'إضافة تهنئة/مؤثر جديد',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -105,7 +105,7 @@ class AdminCongratsEffectsPage extends StatelessWidget {
                   ],
                   if (success) ...[
                     const SizedBox(height: 8),
-                    Text('تم الحفظ بنجاح 🎉',
+                    const Text('تم الحفظ بنجاح 🎉',
                         style: TextStyle(
                             color: Colors.green, fontWeight: FontWeight.bold)),
                   ],
@@ -159,15 +159,21 @@ class AdminCongratsEffectsPage extends StatelessWidget {
                             success = true;
                           });
                           await Future.delayed(const Duration(seconds: 1));
-                          Navigator.pop(ctx);
+                          if (ctx.mounted) {
+                            Navigator.pop(ctx);
+                          }
                         } catch (e) {
-                          setState(() {
-                            errorMsg = 'خطأ: $e';
-                          });
+                          if (context.mounted) {
+                            setState(() {
+                              errorMsg = 'خطأ: $e';
+                            });
+                          }
                         } finally {
-                          setState(() {
-                            loading = false;
-                          });
+                          if (context.mounted) {
+                            setState(() {
+                              loading = false;
+                            });
+                          }
                         }
                       },
                 style:

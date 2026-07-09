@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../app_theme.dart';
 
 class SupportRatePage extends StatelessWidget {
@@ -46,8 +47,11 @@ class SupportRatePage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                     ),
-                    onPressed: () {
-                      // هنا يمكن إضافة رابط المتجر لاحقاً
+                    onPressed: () async {
+                      final url = Uri.parse('https://play.google.com/store/apps/details?id=com.royaldoor.live');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
                     },
                     icon: const Icon(Icons.rate_review_rounded),
                     label: const Text("قيمنا الآن على المتجر", style: TextStyle(fontWeight: FontWeight.bold)),

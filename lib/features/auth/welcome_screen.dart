@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../app_theme.dart';
+import '../../services/user_bootstrap_service.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -12,11 +14,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 4), () {
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
+    _handleStartUp();
+  }
+
+  Future<void> _handleStartUp() async {
+    // زيادة وقت الانتظار إلى 5 ثواني بناءً على طلب المستخدم
+    await Future.delayed(const Duration(seconds: 5));
+    
+    if (!mounted) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    
+    if (user != null) {
+      try {
+        await UserBootstrapService.bootstrapUser();
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      } catch (e) {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/login');
+        }
       }
-    });
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   @override
@@ -26,13 +48,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       child: Scaffold(
         body: Stack(
           children: [
-            // استخدام الخلفية الملكية الزرقاء الموحدة
             AppTheme.background(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // الشعار بلمسة توهج ذهبي
                     Container(
                       width: 180, height: 180,
                       decoration: BoxDecoration(
@@ -43,7 +63,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                          'assets/images/app_icon.png',
+                          'assets/app/app_icon.png',
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) => const Icon(Icons.stars_rounded, size: 100, color: AppTheme.royalGold),
                         ),
@@ -68,7 +88,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 40),
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 60),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

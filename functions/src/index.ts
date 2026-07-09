@@ -1,23 +1,24 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
-// Version: 1.0.1 - Updated Agora Keys
+// Version: 1.0.1 - Removed Agora
 import {claimDailyLogin} from "./rewards/dailyLogin";
 import {completeDailyTask} from "./rewards/dailyTasks";
 import {resetDailyTasks} from "./rewards/resetDailyTasks";
 import {generateAgoraToken} from "./agora";
+import {sendCallNotification} from "./agora";
 
 admin.initializeApp();
 
 import {purchaseRewardFromMarketplace} from "./rewards/marketplace";
 
-export {claimDailyLogin, completeDailyTask, resetDailyTasks, generateAgoraToken, purchaseRewardFromMarketplace};
+export {claimDailyLogin, completeDailyTask, resetDailyTasks, purchaseRewardFromMarketplace, generateAgoraToken, sendCallNotification};
 
 import {manageChallenge, claimChallengeReward} from "./admin/challenges";
 import {purchaseRoyalId, assignRoyalIdToUser, respondToRoyalIdRequest} from "./admin/royalIdManagement";
-import {sendOTP, verifyOTP} from "./otp";
+import {sendGift, collectRoomEarnings} from "./gifts";
 
-export {manageChallenge, claimChallengeReward, purchaseRoyalId, assignRoyalIdToUser, respondToRoyalIdRequest, sendOTP, verifyOTP};
+export {manageChallenge, claimChallengeReward, purchaseRoyalId, assignRoyalIdToUser, respondToRoyalIdRequest, sendGift, collectRoomEarnings};
 
 // تصدير كافة وظائف الإشعارات من الملف الموحد
 export {
@@ -34,6 +35,12 @@ export {
   sendFamilyNotification,
   sendTransferNotification,
   sendGameInviteNotification,
+  sendFamilyWarNotification,
+  sendFamilyVoteNotification,
+  sendFamilyMiniGameNotification,
+  sendFamilyChallengeNotification,
+  sendFamilyAllianceNotification,
+  sendFamilyMemberJoinedNotification,
 } from "./notifications";
 
 /* ================================
@@ -100,69 +107,13 @@ export const adminUnbanUser = functions.region("us-central1").https.onCall(async
 // تصدير وظائف الستوري
 export {onStoryDelete, onNotificationCreate} from "./storyFunctions";
 
-/* ================================
-   4️⃣ sendCallNotification (With Actions)
-   ================================ */
-export const sendCallNotification = functions.firestore
-  .document("calls/{callId}")
-  .onCreate(async (snapshot, context) => {
-    const callData = snapshot.data();
-    const receiverId = callData.receiverId;
-    const callerId = callData.callerId;
-
-    const receiverDoc = await admin.firestore().collection("users").doc(receiverId).get();
-    const receiverData = receiverDoc.data();
-    
-    if (!receiverData || !receiverData.fcmToken) return null;
-
-    const callerDoc = await admin.firestore().collection("users").doc(callerId).get();
-    const callerName = callerDoc.data()?.name || "مستخدم";
-
-    // إرسال رسالة تحتوي على بيانات + إشعار مرئي ليتلقى الجهاز الإشعار حتى لو كان التطبيق مغلقاً
-    const payload: admin.messaging.Message = {
-      token: receiverData.fcmToken,
-      notification: {
-        title: "مكالمة واردة",
-        body: `${callerName} يتصل بك...`,
-      },
-      data: {
-        type: "call",
-        callId: context.params.callId,
-        channelName: callData.channelName,
-        callerId: callerId,
-        callerName: callerName,
-        isVideo: callData.type === "video" ? "true" : "false",
-      },
-      android: {
-        priority: "high",
-        ttl: 60000,
-        notification: {
-          channelId: "call_channel",
-          sound: "default",
-          defaultSound: true,
-          visibility: "public",
-        },
-      },
-      apns: {
-        payload: {
-          aps: {
-            alert: { title: "مكالمة واردة", body: `${callerName} يتصل بك...` },
-            sound: "default",
-            contentAvailable: true,
-          },
-        },
-      },
-    };
-
-    return admin.messaging().send(payload);
-  });
 
 /* ================================
    5️⃣ checkExpiredHarvests (Scheduled)
    ================================ */
 export const checkExpiredHarvests = functions.pubsub
   .schedule("every 1 hours") // يعمل كل ساعة
-  .onRun(async (context) => {
+  .onRun(async () => {
     const now = admin.firestore.Timestamp.now();
     const db = admin.firestore();
 
@@ -217,7 +168,7 @@ export const checkExpiredHarvests = functions.pubsub
 export const activateDailyRewards = functions.pubsub
   .schedule("0 6 * * *")
   .timeZone("Asia/Baghdad")
-  .onRun(async (context) => {
+  .onRun(async () => {
     const db = admin.firestore();
     const now = admin.firestore.Timestamp.now();
     console.log("Activating daily rewards for all users...");
@@ -245,7 +196,7 @@ export const activateDailyRewards = functions.pubsub
           return;
         }
 
-        const lastRewardDate = reward.lastRewardDate ? 
+        const lastRewardDate = reward.lastRewardDate ?
           reward.lastRewardDate.toDate() : null;
         const dailyReward = reward.dailyReward || 0;
         const packageName = reward.packageName || "Unknown";
@@ -320,7 +271,7 @@ export const activateDailyRewards = functions.pubsub
 export const finalizeExpiredPackages = functions.pubsub
   .schedule("0 7 * * *")
   .timeZone("Asia/Baghdad")
-  .onRun(async (context) => {
+  .onRun(async () => {
     const db = admin.firestore();
     const now = admin.firestore.Timestamp.now();
     console.log("Finalizing expired packages after 31 days...");
@@ -418,7 +369,7 @@ export const finalizeExpiredPackages = functions.pubsub
       });
 
       await Promise.all(promises);
-      console.log(`Successfully processed package finalization.`);
+      console.log("Successfully processed package finalization.");
       return null;
     } catch (error) {
       console.error("Error finalizing expired packages:", error);
@@ -432,7 +383,7 @@ export const finalizeExpiredPackages = functions.pubsub
 export const sendHarvestReminders = functions.pubsub
   .schedule("0 */4 * * *") // كل 4 ساعات
   .timeZone("Asia/Baghdad")
-  .onRun(async (context) => {
+  .onRun(async () => {
     const db = admin.firestore();
     const now = admin.firestore.Timestamp.now();
     console.log("Sending harvest reminders...");
@@ -455,7 +406,7 @@ export const sendHarvestReminders = functions.pubsub
 
         if (!userId) return;
 
-        const lastRewardDate = reward.lastRewardDate ? 
+        const lastRewardDate = reward.lastRewardDate ?
           reward.lastRewardDate.toDate() : null;
 
         if (!lastRewardDate) return; // لم يحصد بعد
@@ -493,12 +444,12 @@ export const sendHarvestReminders = functions.pubsub
   });
 
 /* ================================
-   🔟 sendPackageExpiryWarnings (Scheduled)
+   10 sendPackageExpiryWarnings (Scheduled)
    ================================ */
 export const sendPackageExpiryWarnings = functions.pubsub
   .schedule("0 9 * * *") // يومياً الساعة 9 صباحاً
   .timeZone("Asia/Baghdad")
-  .onRun(async (context) => {
+  .onRun(async () => {
     const db = admin.firestore();
     const now = admin.firestore.Timestamp.now();
     console.log("Sending package expiry warnings...");
@@ -556,7 +507,7 @@ export const sendPackageExpiryWarnings = functions.pubsub
   });
 
 /* ================================
-   1️⃣1️⃣ onHarvestListingCreated (Alert System)
+   11 onHarvestListingCreated (Alert System)
    ================================ */
 export const onHarvestListingCreated = functions.firestore
   .document("harvest_listings/{listingId}")
@@ -565,7 +516,7 @@ export const onHarvestListingCreated = functions.firestore
     if (!listing || listing.status !== "active") return null;
 
     const db = admin.firestore();
-    
+
     // البحث عن التنبيهات المطابقة لنوع الباقة والسعر والعملة
     const alertsSnapshot = await db.collection("harvest_market_alerts")
       .where("packageName", "==", listing.packageName)
@@ -577,13 +528,13 @@ export const onHarvestListingCreated = functions.firestore
 
     const promises = alertsSnapshot.docs.map(async (alertDoc) => {
       const alert = alertDoc.data();
-      
+
       // لا ترسل إشعاراً لصاحب العرض نفسه
       if (alert.userId === listing.sellerId) return null;
 
       const userDoc = await db.collection("users").doc(alert.userId).get();
       const userData = userDoc.data();
-      
+
       if (!userData || !userData.fcmToken) return null;
 
       const message: admin.messaging.Message = {
@@ -599,10 +550,218 @@ export const onHarvestListingCreated = functions.firestore
       };
 
       await admin.messaging().send(message);
-      
+
       // حذف التنبيه تلقائياً بعد إرسال أول إشعار مطابق لتقليل الإزعاج
       return alertDoc.ref.delete();
     });
 
     return Promise.all(promises);
+  });
+
+/* ================================
+   12 endExpiredFamilyWars (Scheduled)
+   ================================ */
+export const endExpiredFamilyWars = functions.pubsub
+  .schedule("every 1 minutes")
+  .timeZone("Asia/Baghdad")
+  .onRun(async () => {
+    const db = admin.firestore();
+    const now = admin.firestore.Timestamp.now();
+    console.log("Checking for expired family wars...");
+
+    try {
+      // جلب جميع الحروب النشطة التي انتهى وقتها
+      const warsSnapshot = await db
+        .collection("family_wars")
+        .where("status", "==", "active")
+        .where("endTime", "<=", now)
+        .get();
+
+      if (warsSnapshot.empty) {
+        console.log("No expired wars found.");
+        return null;
+      }
+
+      console.log(`Found ${warsSnapshot.size} expired wars to process.`);
+
+      const promises = warsSnapshot.docs.map(async (doc) => {
+        const war = doc.data();
+        const warId = doc.id;
+
+        const challengerPoints = war.challengerPoints || 0;
+        const targetPoints = war.targetPoints || 0;
+        const challengerId = war.challengerId;
+        const targetId = war.targetId;
+        const rewards = war.rewards || {};
+
+        let winnerId: string | null = null;
+
+        // تحديد الفائز بناءً على النقاط
+        if (challengerPoints > targetPoints) {
+          winnerId = challengerId;
+        } else if (targetPoints > challengerPoints) {
+          winnerId = targetId;
+        }
+
+        await db.runTransaction(async (transaction) => {
+          if (winnerId) {
+            const loserId = winnerId === challengerId ? targetId : challengerId;
+
+            // توزيع المكافآت للفائز
+            const winnerRef = db.collection("families").doc(winnerId);
+            transaction.update(winnerRef, {
+              warWins: admin.firestore.FieldValue.increment(1),
+              warExp: admin.firestore.FieldValue.increment(100),
+              warPoints: admin.firestore.FieldValue.increment(100),
+              familyGems: admin.firestore.FieldValue.increment(rewards.winnerGems || 500),
+              familyStars: admin.firestore.FieldValue.increment(rewards.winnerStars || 2500),
+              familyCoins: admin.firestore.FieldValue.increment(rewards.winnerStars || 2500),
+              currentWarId: null,
+            });
+
+            // توزيع مكافآت الخاسر
+            const loserRef = db.collection("families").doc(loserId);
+            transaction.update(loserRef, {
+              warLosses: admin.firestore.FieldValue.increment(1),
+              familyGems: admin.firestore.FieldValue.increment(rewards.loserGems || 100),
+              familyStars: admin.firestore.FieldValue.increment(rewards.loserStars || 500),
+              familyCoins: admin.firestore.FieldValue.increment(rewards.loserStars || 500),
+              currentWarId: null,
+            });
+
+            // منح شارة الحرب للفائز
+            if (rewards.badge) {
+              transaction.set(
+                winnerRef.collection("badges").doc(rewards.badge),
+                {
+                  badgeId: rewards.badge,
+                  awardedAt: admin.firestore.FieldValue.serverTimestamp(),
+                  type: "war_reward",
+                  warId: warId,
+                }
+              );
+            }
+          } else {
+            // تعادل
+            transaction.update(db.collection("families").doc(challengerId), {
+              familyGems: admin.firestore.FieldValue.increment(200),
+              familyStars: admin.firestore.FieldValue.increment(1000),
+              familyCoins: admin.firestore.FieldValue.increment(1000),
+              currentWarId: null,
+            });
+            transaction.update(db.collection("families").doc(targetId), {
+              familyGems: admin.firestore.FieldValue.increment(200),
+              familyStars: admin.firestore.FieldValue.increment(1000),
+              familyCoins: admin.firestore.FieldValue.increment(1000),
+              currentWarId: null,
+            });
+          }
+
+          // تحديث حالة الحرب
+          transaction.update(doc.ref, {
+            status: "completed",
+            winnerId: winnerId,
+            completedAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+        });
+
+        console.log(`War ${warId} ended. Winner: ${winnerId || "Draw"}`);
+      });
+
+      await Promise.all(promises);
+      console.log(`Successfully processed ${warsSnapshot.size} expired wars.`);
+      return null;
+    } catch (error) {
+      console.error("Error ending expired family wars:", error);
+      return null;
+    }
+  });
+
+/* ================================
+   13 updateMemberRanksDaily (Scheduled)
+   ================================ */
+export const updateMemberRanksDaily = functions.pubsub
+  .schedule("0 0 * * *") // يومياً منتصف الليل
+  .timeZone("Asia/Baghdad")
+  .onRun(async () => {
+    const db = admin.firestore();
+    console.log("Updating member ranks for all families...");
+
+    try {
+      // جلب جميع العائلات
+      const familiesSnapshot = await db.collection("families").get();
+
+      if (familiesSnapshot.empty) {
+        console.log("No families found.");
+        return null;
+      }
+
+      console.log(`Found ${familiesSnapshot.size} families to process.`);
+
+      // تعريف الرتب الافتراضية
+      const defaultRanks = [
+        {id: "bronze", requiredPoints: 0},
+        {id: "silver", requiredPoints: 500},
+        {id: "gold", requiredPoints: 1500},
+        {id: "platinum", requiredPoints: 3000},
+        {id: "diamond", requiredPoints: 5000},
+        {id: "royal", requiredPoints: 10000},
+      ];
+
+      const promises = familiesSnapshot.docs.map(async (familyDoc) => {
+        const familyId = familyDoc.id;
+        const familyName = familyDoc.data()?.name || "Unknown";
+
+        // جلب جميع أعضاء العائلة
+        const membersSnapshot = await db
+          .collection("families")
+          .doc(familyId)
+          .collection("members")
+          .get();
+
+        if (membersSnapshot.empty) return;
+
+        const memberPromises = membersSnapshot.docs.map(async (memberDoc) => {
+          const memberData = memberDoc.data();
+          const userId = memberDoc.id;
+          const contributionPoints = memberData.contributionPoints || 0;
+          const currentRankId = memberData.rankId || "bronze";
+
+          // تحديد الرتبة المناسبة بناءً على النقاط
+          let newRank = defaultRanks[0];
+          for (const rank of defaultRanks) {
+            if (contributionPoints >= rank.requiredPoints) {
+              newRank = rank;
+            } else {
+              break;
+            }
+          }
+
+          // تحديث الرتبة إذا تغيرت
+          if (newRank.id !== currentRankId) {
+            await db
+              .collection("families")
+              .doc(familyId)
+              .collection("members")
+              .doc(userId)
+              .update({
+                rankId: newRank.id,
+                rankLevel: defaultRanks.findIndex((r) => r.id === newRank.id) + 1,
+                rankUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+              });
+
+            console.log(`Updated rank for user ${userId} in family ${familyName}: ${currentRankId} -> ${newRank.id}`);
+          }
+        });
+
+        await Promise.all(memberPromises);
+      });
+
+      await Promise.all(promises);
+      console.log("Successfully updated member ranks for all families.");
+      return null;
+    } catch (error) {
+      console.error("Error updating member ranks:", error);
+      return null;
+    }
   });

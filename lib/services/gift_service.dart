@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'challenges_service.dart';
 
 class GiftService {
   static final _firestore = FirebaseFirestore.instance;
@@ -14,19 +15,21 @@ class GiftService {
     required String giftName,
     required int price,
     String? giftImage,
+    String? roomId,
+    int? battlePoints,
   }) async {
     final senderUid = _auth.currentUser?.uid;
     if (senderUid == null) return;
 
     final batch = _firestore.batch();
 
-    // 1. خصم من محفظة الراسل (التي تم إنشاؤها في البوتستراب)
+    // 1. خصم من محفظة الراسل
     final senderWalletRef = _firestore.collection('wallets').doc(senderUid);
     batch.update(senderWalletRef, {
       'balance': FieldValue.increment(-price),
     });
 
-    // 2. إضافة سجل "هدايا مرسلة" (Lazy Creation)
+    // 2. إضافة سجل "هدايا مرسلة"
     final sentGiftRef = _firestore
         .collection('gifts_sent')
         .doc(senderUid)
@@ -40,7 +43,7 @@ class GiftService {
       'timestamp': FieldValue.serverTimestamp(),
     });
 
-    // 3. إضافة سجل "هدايا مستلمة" للمستقبل (Lazy Creation)
+    // 3. إضافة سجل "هدايا مستلمة"
     final receivedGiftRef = _firestore
         .collection('received_gifts')
         .doc(receiverUid)
@@ -55,5 +58,41 @@ class GiftService {
     });
 
     await batch.commit();
+
+    // 4. حساب النقاط في المعركة إذا كانت المعركة نشطة
+    if (roomId != null && battlePoints != null && battlePoints > 0) {
+      await _addBattlePoints(roomId, receiverUid, battlePoints);
+    }
+
+    // ربط التحديات اليومية (تحديث تقدم تحدي إرسال الهدايا)
+    await ChallengesService.updateProgress(ChallengesService.typeGift);
+  }
+
+  static Future<void> _addBattlePoints(
+      String roomId, String receiverUid, int points) async {
+    // تحديد الفريق بناءً على مقعد المستخدم
+    final roomRef = _firestore.collection('rooms').doc(roomId);
+    final roomSnap = await roomRef.get();
+    if (!roomSnap.exists) return;
+
+    final roomData = roomSnap.data() as Map<String, dynamic>;
+    final micSeats = roomData['mic_seats'] as Map<String, dynamic>?;
+    if (micSeats == null) return;
+
+    // البحث عن مقعد المستخدم لتحديد الفريق
+    int? seatNumber;
+    micSeats.forEach((seat, data) {
+      if (data['userId'] == receiverUid) {
+        seatNumber = int.tryParse(seat);
+      }
+    });
+
+    if (seatNumber == null) return;
+
+    // تحديد الفريق (فردي = أحمر، زوجي = أزرق)
+    final isBlueTeam = seatNumber! % 2 == 0;
+    final field = isBlueTeam ? 'battle.bluePoints' : 'battle.redPoints';
+
+    await roomRef.update({field: FieldValue.increment(points)});
   }
 }

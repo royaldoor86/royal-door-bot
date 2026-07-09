@@ -7,13 +7,15 @@ class PostModel {
   final String authorPic;
   final String content;
   final String? imageUrl;
-  final String? videoUrl; // إضافة حقل الفيديو هنا
+  final List<String>? imageUrls; // دعم الصور المتعددة
+  final String? videoUrl;
   final String? audioUrl;
   final int? audioDuration;
   final DateTime createdAt;
   final List<String> likes;
   final int commentCount;
   final bool isVip;
+  final bool isPinned; // دعم المنشور المثبت
 
   PostModel({
     required this.id,
@@ -22,13 +24,15 @@ class PostModel {
     required this.authorPic,
     required this.content,
     this.imageUrl,
-    this.videoUrl, // تحديث المشيد
+    this.imageUrls,
+    this.videoUrl,
     this.audioUrl,
     this.audioDuration,
     required this.createdAt,
     this.likes = const [],
     this.commentCount = 0,
     this.isVip = false,
+    this.isPinned = false,
   });
 
   factory PostModel.fromMap(Map<String, dynamic> data, String documentId) {
@@ -39,13 +43,15 @@ class PostModel {
       authorPic: data['authorPic'] ?? '',
       content: data['content'] ?? '',
       imageUrl: data['imageUrl'],
-      videoUrl: data['videoUrl'], // قراءة رابط الفيديو
+      imageUrls: data['imageUrls'] != null ? List<String>.from(data['imageUrls']) : null,
+      videoUrl: data['videoUrl'],
       audioUrl: data['audioUrl'],
       audioDuration: data['audioDuration'],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       likes: List<String>.from(data['likes'] ?? []),
       commentCount: data['commentCount'] ?? 0,
       isVip: data['isVip'] ?? false,
+      isPinned: data['isPinned'] ?? false,
     );
   }
 
@@ -56,13 +62,15 @@ class PostModel {
       'authorPic': authorPic,
       'content': content,
       'imageUrl': imageUrl,
-      'videoUrl': videoUrl, // حفظ رابط الفيديو
+      'imageUrls': imageUrls,
+      'videoUrl': videoUrl,
       'audioUrl': audioUrl,
       'audioDuration': audioDuration,
       'createdAt': FieldValue.serverTimestamp(),
       'likes': likes,
       'commentCount': commentCount,
       'isVip': isVip,
+      'isPinned': isPinned,
     };
   }
 }
@@ -74,6 +82,9 @@ class CommentModel {
   final String userPic;
   final String text;
   final DateTime createdAt;
+  final String? parentId; // معرف التعليق الأب (في حال كان رداً)
+  final String? replyToName; // اسم الشخص الذي تم الرد عليه
+  final List<String> likes;
 
   CommentModel({
     required this.id,
@@ -82,6 +93,9 @@ class CommentModel {
     required this.userPic,
     required this.text,
     required this.createdAt,
+    this.parentId,
+    this.replyToName,
+    this.likes = const [],
   });
 
   factory CommentModel.fromMap(Map<String, dynamic> data, String documentId) {
@@ -92,6 +106,9 @@ class CommentModel {
       userPic: data['userPic'] ?? '',
       text: data['text'] ?? '',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      parentId: data['parentId'],
+      replyToName: data['replyToName'],
+      likes: List<String>.from(data['likes'] ?? []),
     );
   }
 
@@ -102,6 +119,9 @@ class CommentModel {
       'userPic': userPic,
       'text': text,
       'createdAt': FieldValue.serverTimestamp(),
+      'parentId': parentId,
+      'replyToName': replyToName,
+      'likes': likes,
     };
   }
 }

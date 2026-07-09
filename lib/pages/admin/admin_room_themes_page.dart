@@ -25,19 +25,27 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
         appBar: AppBar(
           backgroundColor: primaryDark,
           elevation: 0,
-          title: Text('خزانة ثيمات الرومات', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
+          title: Text('خزانة ثيمات الرومات',
+              style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
           centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: accentGold,
           onPressed: _showAddThemeDialog,
-          child: const Icon(Icons.add_photo_alternate_rounded, color: Colors.black),
+          child: const Icon(Icons.add_photo_alternate_rounded,
+              color: Colors.black),
         ),
         body: StreamBuilder<QuerySnapshot>(
-          stream: _db.collection('room_themes').orderBy('createdAt', descending: true).snapshots(),
+          stream: _db
+              .collection('room_themes')
+              .orderBy('createdAt', descending: true)
+              .snapshots(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator(color: Colors.amber));
-            
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.amber));
+            }
+
             final docs = snapshot.data?.docs ?? [];
             if (docs.isEmpty) return _buildEmptyState();
 
@@ -64,20 +72,24 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
   Widget _buildThemeCard(String id, Map<String, dynamic> data) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: accentGold.withOpacity(0.1)),
+        border: Border.all(color: accentGold.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(25)),
               child: Image.network(
                 data['imageUrl'] ?? '',
                 fit: BoxFit.cover,
-                errorBuilder: (c, e, s) => Container(color: Colors.white10, child: const Icon(Icons.image_not_supported, color: Colors.white24)),
+                errorBuilder: (c, e, s) => Container(
+                    color: Colors.white10,
+                    child: const Icon(Icons.image_not_supported,
+                        color: Colors.white24)),
               ),
             ),
           ),
@@ -85,12 +97,22 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
-                Text(data['name'] ?? 'بدون اسم', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13), overflow: TextOverflow.ellipsis),
+                Text(data['name'] ?? 'بدون اسم',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13),
+                    overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 4),
-                Text('${data['price'] ?? 0} كوينز 🪙', style: TextStyle(color: accentGold, fontSize: 11, fontWeight: FontWeight.bold)),
+                Text('${data['price'] ?? 0} كوينز 🪙',
+                    style: TextStyle(
+                        color: accentGold,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold)),
                 const SizedBox(height: 5),
                 IconButton(
-                  icon: const Icon(Icons.delete_forever_rounded, color: Colors.redAccent, size: 20),
+                  icon: const Icon(Icons.delete_forever_rounded,
+                      color: Colors.redAccent, size: 20),
                   onPressed: () => _confirmDelete(id),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -114,82 +136,113 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModalState) => AlertDialog(
           backgroundColor: const Color(0xFF1A1A2E),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25), side: BorderSide(color: accentGold.withOpacity(0.3))),
-          title: Text('إصدار ثيم ملكي جديد', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25),
+              side: BorderSide(color: accentGold.withValues(alpha: 0.3))),
+          title: Text('إصدار ثيم ملكي جديد',
+              style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 GestureDetector(
                   onTap: () async {
-                    final img = await ImagePicker().pickImage(source: ImageSource.gallery);
-                    if (img != null) setModalState(() => selectedImage = File(img.path));
+                    final img = await ImagePicker()
+                        .pickImage(source: ImageSource.gallery);
+                    if (img != null) {
+                      setModalState(() => selectedImage = File(img.path));
+                    }
                   },
                   child: Container(
-                    height: 120, width: double.infinity,
+                    height: 120,
+                    width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: accentGold.withOpacity(0.2)),
-                      image: selectedImage != null ? DecorationImage(image: FileImage(selectedImage!), fit: BoxFit.cover) : null,
+                      border:
+                          Border.all(color: accentGold.withValues(alpha: 0.2)),
+                      image: selectedImage != null
+                          ? DecorationImage(
+                              image: FileImage(selectedImage!),
+                              fit: BoxFit.cover)
+                          : null,
                     ),
-                    child: selectedImage == null ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add_a_photo_rounded, color: accentGold, size: 30),
-                        const SizedBox(height: 8),
-                        const Text('اختر خلفية الروم', style: TextStyle(color: Colors.white38, fontSize: 10)),
-                      ],
-                    ) : null,
+                    child: selectedImage == null
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_a_photo_rounded,
+                                  color: accentGold, size: 30),
+                              const SizedBox(height: 8),
+                              const Text('اختر خلفية الروم',
+                                  style: TextStyle(
+                                      color: Colors.white38, fontSize: 10)),
+                            ],
+                          )
+                        : null,
                   ),
                 ),
                 const SizedBox(height: 20),
                 _buildField(nameCtrl, 'اسم الثيم', Icons.title),
                 const SizedBox(height: 12),
-                _buildField(priceCtrl, 'السعر بالكوينز', Icons.monetization_on, isNumber: true),
+                _buildField(priceCtrl, 'السعر بالنجوم', Icons.stars,
+                    isNumber: true),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء', style: TextStyle(color: Colors.white38))),
-            if (isUploading) const CircularProgressIndicator()
-            else ElevatedButton(
-              onPressed: () async {
-                if (nameCtrl.text.isNotEmpty && selectedImage != null) {
-                  setModalState(() => isUploading = true);
-                  try {
-                    final url = await StorageService.uploadRoomTheme(nameCtrl.text, selectedImage!);
-                    await _db.collection('room_themes').add({
-                      'name': nameCtrl.text.trim(),
-                      'imageUrl': url,
-                      'price': int.parse(priceCtrl.text),
-                      'createdAt': FieldValue.serverTimestamp()
-                    });
-                    Navigator.pop(ctx);
-                  } catch (e) {
-                    setModalState(() => isUploading = false);
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('إلغاء',
+                    style: TextStyle(color: Colors.white38))),
+            if (isUploading)
+              const CircularProgressIndicator()
+            else
+              ElevatedButton(
+                onPressed: () async {
+                  if (nameCtrl.text.isNotEmpty && selectedImage != null) {
+                    setModalState(() => isUploading = true);
+                    try {
+                      final url = await StorageService.uploadRoomTheme(
+                          nameCtrl.text, selectedImage!);
+                      await _db.collection('room_themes').add({
+                        'name': nameCtrl.text.trim(),
+                        'imageUrl': url,
+                        'price': int.parse(priceCtrl.text),
+                        'createdAt': FieldValue.serverTimestamp()
+                      });
+                      Navigator.pop(ctx);
+                    } catch (e) {
+                      setModalState(() => isUploading = false);
+                    }
                   }
-                }
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: accentGold, foregroundColor: Colors.black),
-              child: const Text('حفظ ونشر', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: accentGold, foregroundColor: Colors.black),
+                child: const Text('حفظ ونشر',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildField(TextEditingController ctrl, String hint, IconData icon, {bool isNumber = false}) {
+  Widget _buildField(TextEditingController ctrl, String hint, IconData icon,
+      {bool isNumber = false}) {
     return TextField(
       controller: ctrl,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        hintText: hint, hintStyle: const TextStyle(color: Colors.white24, fontSize: 12),
+        hintText: hint,
+        hintStyle: const TextStyle(color: Colors.white24, fontSize: 12),
         prefixIcon: Icon(icon, color: accentGold, size: 18),
-        filled: true, fillColor: Colors.white.withOpacity(0.05),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+        filled: true,
+        fillColor: Colors.white.withValues(alpha: 0.05),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none),
       ),
     );
   }
@@ -202,8 +255,13 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
         title: const Text('حذف الثيم', style: TextStyle(color: Colors.white)),
         content: const Text('هل تريد إزالة هذا الثيم من المتجر نهائياً؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('تراجع')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: const Text('حذف')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('تراجع')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('حذف')),
         ],
       ),
     );
@@ -215,9 +273,11 @@ class _AdminRoomThemesPageState extends State<AdminRoomThemesPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.palette_outlined, size: 80, color: accentGold.withOpacity(0.1)),
+          Icon(Icons.palette_outlined,
+              size: 80, color: accentGold.withValues(alpha: 0.1)),
           const SizedBox(height: 16),
-          const Text('خزانة الثيمات فارغة حالياً', style: TextStyle(color: Colors.white24, fontSize: 16)),
+          const Text('خزانة الثيمات فارغة حالياً',
+              style: TextStyle(color: Colors.white24, fontSize: 16)),
         ],
       ),
     );

@@ -22,8 +22,17 @@ class AppAnnouncement {
       text: data['text'] ?? '',
       isActive: data['isActive'] ?? false,
       imageUrl: data['imageUrl'],
-      speed: (data['speed'] ?? 40).toDouble(),
+      speed: _parseDouble(data['speed'] ?? 40),
     );
+  }
+
+  static double _parseDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value.replaceAll('%', '')) ?? 0.0;
+    }
+    return 0.0;
   }
 
   Map<String, dynamic> toMap() {

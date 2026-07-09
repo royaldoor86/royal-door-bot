@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../app_theme.dart';
 
 class FeatureLockWrapper extends StatelessWidget {
   final String lockField;
@@ -64,7 +63,7 @@ class FeatureLockWrapper extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.AutoAwesome_rounded,
+              const Icon(Icons.auto_awesome_rounded,
                   size: 100, color: Color(0xFFD4AF37)),
               const SizedBox(height: 30),
               const Text(

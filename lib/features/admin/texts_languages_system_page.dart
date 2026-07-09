@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// صفحة إدارة النصوص واللغات الملكية
 class TextsLanguagesSystemPage extends StatelessWidget {
-  const TextsLanguagesSystemPage({Key? key}) : super(key: key);
+  const TextsLanguagesSystemPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +58,8 @@ class TextsLanguagesSystemPage extends StatelessWidget {
         onPressed: () {
           _showEditTextDialog(context, null, null);
         },
-        child: const Icon(Icons.add),
         tooltip: 'إضافة نص جديد',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -101,7 +101,7 @@ class TextsLanguagesSystemPage extends StatelessWidget {
                   ],
                   if (success) ...[
                     const SizedBox(height: 8),
-                    Text('تم الحفظ بنجاح 🎉',
+                    const Text('تم الحفظ بنجاح 🎉',
                         style: TextStyle(
                             color: Colors.green, fontWeight: FontWeight.bold)),
                   ],

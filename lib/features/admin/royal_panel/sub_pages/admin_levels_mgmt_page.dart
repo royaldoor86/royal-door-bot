@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminLevelsMgmtPage extends StatefulWidget {
-  const AdminLevelsMgmtPage({Key? key}) : super(key: key);
+  const AdminLevelsMgmtPage({super.key});
 
   @override
   State<AdminLevelsMgmtPage> createState() => _AdminLevelsMgmtPageState();
@@ -52,32 +52,37 @@ class _AdminLevelsMgmtPageState extends State<AdminLevelsMgmtPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: accentGold.withOpacity(0.1)),
+        border: Border.all(color: accentGold.withValues(alpha: 0.1)),
       ),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: accentGold.withOpacity(0.1),
-          backgroundImage: NetworkImage(data['profilePic'] ?? ''),
-          child: (data['profilePic'] ?? '').isEmpty ? Icon(Icons.person, color: accentGold) : null,
-        ),
-        title: Text(data['name'] ?? 'مستخدم ملكي', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text('المستوى الحالي: ROYAL $currentLevel', style: TextStyle(color: accentGold.withOpacity(0.6), fontSize: 12)),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.keyboard_double_arrow_up_rounded, color: Colors.greenAccent),
-              onPressed: () => _updateUserLevel(uid, currentLevel + 1),
-              tooltip: 'ترفيع ملكي',
-            ),
-            IconButton(
-              icon: const Icon(Icons.keyboard_double_arrow_down_rounded, color: Colors.redAccent),
-              onPressed: () => _updateUserLevel(uid, currentLevel > 1 ? currentLevel - 1 : 1),
-              tooltip: 'تخفيض الرتبة',
-            ),
-          ],
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: accentGold.withValues(alpha: 0.1),
+            backgroundImage: (data['profilePic'] != null && data['profilePic'].toString().isNotEmpty)
+                ? NetworkImage(data['profilePic'])
+                : null,
+            child: (data['profilePic'] ?? '').isEmpty ? Icon(Icons.person, color: accentGold) : null,
+          ),
+          title: Text(data['name'] ?? 'مستخدم ملكي', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          subtitle: Text('المستوى الحالي: ROYAL $currentLevel', style: TextStyle(color: accentGold.withValues(alpha: 0.6), fontSize: 12)),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.keyboard_double_arrow_up_rounded, color: Colors.greenAccent),
+                onPressed: () => _updateUserLevel(uid, currentLevel + 1),
+                tooltip: 'ترفيع ملكي',
+              ),
+              IconButton(
+                icon: const Icon(Icons.keyboard_double_arrow_down_rounded, color: Colors.redAccent),
+                onPressed: () => _updateUserLevel(uid, currentLevel > 1 ? currentLevel - 1 : 1),
+                tooltip: 'تخفيض الرتبة',
+              ),
+            ],
+          ),
         ),
       ),
     );

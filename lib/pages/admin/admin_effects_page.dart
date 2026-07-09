@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../theme/app_theme.dart';
 import '../../models/entry_effect_model.dart';
 import '../../services/storage_service.dart';
 
@@ -86,7 +85,9 @@ class _AdminEffectsPageState extends State<AdminEffectsPage> {
                 ElevatedButton(
                   onPressed: () async {
                     if (nameCtrl.text.isEmpty ||
-                        (effect == null && selectedFile == null)) return;
+                        (effect == null && selectedFile == null)) {
+                      return;
+                    }
 
                     setST(() => isUploading = true);
                     try {
@@ -115,9 +116,10 @@ class _AdminEffectsPageState extends State<AdminEffectsPage> {
                       }
                       if (mounted) Navigator.pop(ctx);
                     } catch (e) {
-                      if (mounted)
+                      if (mounted) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text("خطأ: $e")));
+                      }
                     } finally {
                       setST(() => isUploading = false);
                     }
@@ -160,8 +162,9 @@ class _AdminEffectsPageState extends State<AdminEffectsPage> {
           child: StreamBuilder<QuerySnapshot>(
             stream: _db.collection('entry_effects').snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData)
+              if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
+              }
               final docs = snapshot.data!.docs;
 
               return GridView.builder(

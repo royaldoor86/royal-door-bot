@@ -2,15 +2,30 @@ import 'package:audioplayers/audioplayers.dart';
 import '../constants/domino_sounds.dart';
 
 class DominoSoundService {
-  static final AudioPlayer _player = AudioPlayer();
+  static final Map<String, AudioPlayer> _players = {};
 
   static Future<void> play(String assetPath) async {
     try {
-      await _player.stop();
-      await _player.play(AssetSource(assetPath));
+      // Use a pool of players or a dedicated player per sound to avoid state conflicts
+      if (!_players.containsKey(assetPath)) {
+        _players[assetPath] = AudioPlayer();
+      }
+      final player = _players[assetPath]!;
+      
+      if (player.state == PlayerState.playing) {
+        await player.stop();
+      }
+      await player.play(AssetSource(assetPath));
     } catch (e) {
-      print('Error playing sound: $e');
+      print('Error playing sound ($assetPath): $e');
     }
+  }
+
+  static void dispose() {
+    for (var player in _players.values) {
+      player.dispose();
+    }
+    _players.clear();
   }
 
   static Future<void> playPlaceTile() => play(DominoSounds.placeTile);

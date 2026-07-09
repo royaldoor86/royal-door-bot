@@ -1,5 +1,7 @@
 // lib/pages/admin/admin_special_ids_page.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 
@@ -204,7 +206,7 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage> {
                       ]),
                       const SizedBox(height: 15),
                       DropdownButtonFormField<String>(
-                        value: _selectedCategory,
+                        initialValue: _selectedCategory,
                         dropdownColor: const Color(0xFF1A0A10),
                         decoration:
                             _fieldDecoration("الفئة الملكية", Icons.category),
@@ -255,8 +257,9 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage> {
   }
 
   void _snack(String msg) {
-    if (mounted)
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    }
   }
 
   @override
@@ -284,8 +287,9 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage> {
                 .orderBy('createdAt', descending: true)
                 .snapshots(),
             builder: (context, snap) {
-              if (!snap.hasData)
+              if (!snap.hasData) {
                 return const Center(child: CircularProgressIndicator());
+              }
               final docs = snap.data!.docs;
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
@@ -334,8 +338,8 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage> {
         if (!isSold)
           Row(children: [
             Expanded(
-                child: _adminField(
-                    _grantCtrl, "منح لمستخدم (ID أو UID)", Icons.person_add)),
+                child: _adminField(_grantCtrl, "منح لمستخدم (UID أو Royal ID)",
+                    Icons.person_add)),
             IconButton(
                 icon: const Icon(Icons.send, color: Colors.amber),
                 onPressed: () =>
@@ -371,41 +375,56 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage> {
 
   Future<void> _grantIdToUser(
       {required String specialDocId, required String newId}) async {
-    final input = _grantCtrl.text.trim();
-    if (input.isEmpty) {
-      _snack('أدخل UID أو shortId للمستخدم');
+    final target = _grantCtrl.text.trim();
+    if (target.isEmpty) {
+      _snack('أدخل UID أو المعرف الملكي للمستخدم');
       return;
     }
     setState(() => _isLoading = true);
     try {
-      QuerySnapshot q = await _db
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw 'يرجى تسجيل الدخول أولاً لإجراء هذه العملية';
+      }
+
+      await user.reload();
+      await user.getIdToken(true);
+
+      DocumentSnapshot userDoc;
+      final query = await _db
           .collection('users')
-          .where('shortId', isEqualTo: input.toUpperCase())
+          .where('royalId', isEqualTo: target)
           .limit(1)
           .get();
 
-      // تم الإصلاح هنا بتعريف النوع الصريح لتجنب Object Error
-      DocumentSnapshot userDoc;
-      if (q.docs.isNotEmpty) {
-        userDoc = q.docs.first;
+      if (query.docs.isNotEmpty) {
+        userDoc = query.docs.first;
       } else {
-        userDoc = await _db.collection('users').doc(input).get();
+        userDoc = await _db.collection('users').doc(target).get();
       }
 
-      if (!userDoc.exists) throw 'لم يتم العثور على المستخدم';
+      if (!userDoc.exists) throw 'لم يتم العثور على المستخدم UID أو Royal ID';
 
-      await _db.runTransaction((tx) async {
-        tx.update(_db.collection('users').doc(userDoc.id), {
-          'shortId': newId,
-          'shortIdChangedAt': FieldValue.serverTimestamp()
-        });
-        tx.update(_db.collection('special_ids').doc(specialDocId), {
-          'isSold': true,
-          'ownerUid': userDoc.id,
-          'grantedAt': FieldValue.serverTimestamp()
-        });
+      final callable = FirebaseFunctions.instanceFor(region: 'us-central1')
+          .httpsCallable('assignRoyalIdToUser');
+      final response = await callable.call({
+        'targetUid': userDoc.id,
+        'newRoyalId': newId,
+        'reason': 'منح يدوي من لوحة التحكم',
       });
+
+      if (response.data['success'] != true) {
+        throw Exception(response.data['message'] ?? 'فشل تعيين المعرف');
+      }
+
+      await _db.collection('special_ids').doc(specialDocId).update({
+        'isSold': true,
+        'ownerUid': userDoc.id,
+        'grantedAt': FieldValue.serverTimestamp()
+      });
+
       _snack('تم منح المعرف بنجاح 👑');
+      _grantCtrl.clear();
     } catch (e) {
       _snack('فشل: $e');
     } finally {
@@ -431,7 +450,7 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage> {
         labelStyle: const TextStyle(color: Colors.white54, fontSize: 12),
         prefixIcon: Icon(icon, color: Colors.amber, size: 18),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
+        fillColor: Colors.white.withValues(alpha: 0.05),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none));

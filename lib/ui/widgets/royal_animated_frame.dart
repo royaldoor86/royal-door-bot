@@ -5,31 +5,32 @@ class RoyalAnimatedFrame extends StatefulWidget {
   final Widget child; // الصورة الشخصية
   final String frameUrl;
   final double size;
-  final bool isAnimated;
 
   const RoyalAnimatedFrame({
-    Key? key,
+    super.key,
     required this.child,
     required this.frameUrl,
     this.size = 100,
-    this.isAnimated = true,
-  }) : super(key: key);
+  });
 
   @override
   State<RoyalAnimatedFrame> createState() => _RoyalAnimatedFrameState();
 }
 
-class _RoyalAnimatedFrameState extends State<RoyalAnimatedFrame> with SingleTickerProviderStateMixin {
+class _RoyalAnimatedFrameState extends State<RoyalAnimatedFrame>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  bool _shouldAnimate = false;
 
   @override
   void initState() {
     super.initState();
+    _shouldAnimate = widget.frameUrl.toLowerCase().endsWith('.gif');
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
     );
-    if (widget.isAnimated) {
+    if (_shouldAnimate) {
       _controller.repeat();
     }
   }
@@ -54,9 +55,9 @@ class _RoyalAnimatedFrameState extends State<RoyalAnimatedFrame> with SingleTick
             height: widget.size * 0.75,
             child: widget.child,
           ),
-          
+
           // 2. طبقة التوهج الملكي (نستخدم IgnorePointer لكي لا تمنع النقر)
-          if (widget.isAnimated)
+          if (_shouldAnimate)
             IgnorePointer(
               child: AnimatedBuilder(
                 animation: _controller,
@@ -68,7 +69,9 @@ class _RoyalAnimatedFrameState extends State<RoyalAnimatedFrame> with SingleTick
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.amber.withOpacity(0.2 + (0.1 * math.sin(_controller.value * 2 * math.pi))),
+                          color: Colors.amber.withValues(alpha: 0.2 +
+                              (0.1 *
+                                  math.sin(_controller.value * 2 * math.pi))),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -85,10 +88,11 @@ class _RoyalAnimatedFrameState extends State<RoyalAnimatedFrame> with SingleTick
               animation: _controller,
               builder: (context, child) {
                 double scale = 1.0;
-                if (widget.isAnimated) {
-                  scale = 1.0 + (0.03 * math.sin(_controller.value * 2 * math.pi));
+                if (_shouldAnimate) {
+                  scale =
+                      1.0 + (0.03 * math.sin(_controller.value * 2 * math.pi));
                 }
-                
+
                 return Transform.scale(
                   scale: scale,
                   child: Image.network(

@@ -53,7 +53,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBG1zLTl2gjJBOVlRzRtOUcfHeshJzasnA',
-    appId: '1:836724893984:android:42c6fc1e086ec878990f45',
+    appId: '1:836724893984:android:102b64a39876193e990f45',
     messagingSenderId: '836724893984',
     projectId: 'royaldoor86-e6489',
     databaseURL: 'https://royaldoor86-e6489-default-rtdb.firebaseio.com',
@@ -67,9 +67,11 @@ class DefaultFirebaseOptions {
     projectId: 'royaldoor86-e6489',
     databaseURL: 'https://royaldoor86-e6489-default-rtdb.firebaseio.com',
     storageBucket: 'royaldoor86-e6489.firebasestorage.app',
-    androidClientId: '836724893984-25mme0cunr79t67sehe7d0ohkrj8tt0j.apps.googleusercontent.com',
-    iosClientId: '836724893984-pu9oc09a8ocltc811hjaoupnr5gkqco4.apps.googleusercontent.com',
-    iosBundleId: 'com.example.flutterApplication1',
+    androidClientId:
+        '836724893984-25mme0cunr79t67sehe7d0ohkrj8tt0j.apps.googleusercontent.com',
+    iosClientId:
+        '836724893984-pu9oc09a8ocltc811hjaoupnr5gkqco4.apps.googleusercontent.com',
+    iosBundleId: 'com.royaldoor.live',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -79,9 +81,11 @@ class DefaultFirebaseOptions {
     projectId: 'royaldoor86-e6489',
     databaseURL: 'https://royaldoor86-e6489-default-rtdb.firebaseio.com',
     storageBucket: 'royaldoor86-e6489.firebasestorage.app',
-    androidClientId: '836724893984-25mme0cunr79t67sehe7d0ohkrj8tt0j.apps.googleusercontent.com',
-    iosClientId: '836724893984-pu9oc09a8ocltc811hjaoupnr5gkqco4.apps.googleusercontent.com',
-    iosBundleId: 'com.example.flutterApplication1',
+    androidClientId:
+        '836724893984-25mme0cunr79t67sehe7d0ohkrj8tt0j.apps.googleusercontent.com',
+    iosClientId:
+        '836724893984-pu9oc09a8ocltc811hjaoupnr5gkqco4.apps.googleusercontent.com',
+    iosBundleId: 'com.royaldoor.live',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
@@ -94,5 +98,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'royaldoor86-e6489.firebasestorage.app',
     measurementId: 'G-VW49NGSSV3',
   );
-
 }

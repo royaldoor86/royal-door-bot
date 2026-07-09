@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/rewards_service.dart';
 import 'dart:ui' as ui;
+import '../widgets/feature_lock_wrapper.dart';
 
 class RewardsLeaderboardPage extends StatelessWidget {
   const RewardsLeaderboardPage({super.key});
@@ -12,8 +13,10 @@ class RewardsLeaderboardPage extends StatelessWidget {
 
     return Directionality(
       textDirection: ui.TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: const Color(0xFF0F2027),
+      child: FeatureLockWrapper(
+        lockField: 'isLeaderboardLocked',
+        child: Scaffold(
+          backgroundColor: const Color(0xFF0F2027),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -102,6 +105,7 @@ class RewardsLeaderboardPage extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }
