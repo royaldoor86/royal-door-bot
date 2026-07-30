@@ -173,6 +173,27 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           ),
                         ),
                       ),
+                      // عرض الكوينز والجواهر في الأعلى
+                      Positioned(
+                        top: 50,
+                        left: 20,
+                        child: _buildCurrencyBadge(
+                          Icons.stars_rounded,
+                          (user.rewardStars ?? 0).toInt(),
+                          Colors.amber,
+                          'كوينز',
+                        ),
+                      ),
+                      Positioned(
+                        top: 50,
+                        right: 20,
+                        child: _buildCurrencyBadge(
+                          Icons.diamond_outlined,
+                          (user.rewardGems ?? 0).toInt(),
+                          Colors.cyan,
+                          'جواهر',
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -606,6 +627,41 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCurrencyBadge(IconData icon, int amount, Color color, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.5), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 18),
+          const SizedBox(width: 6),
+          Text(
+            amount.toString(),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

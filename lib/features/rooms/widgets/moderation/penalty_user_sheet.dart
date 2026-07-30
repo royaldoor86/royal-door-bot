@@ -59,6 +59,14 @@ class PenaltyUserSheet extends StatelessWidget {
           try {
             await FirebaseFirestore.instance
                 .runTransaction((transaction) async {
+              // Get room data to find owner
+              final roomRef = FirebaseFirestore.instance.collection('rooms').doc(roomId);
+              final roomSnap = await transaction.get(roomRef);
+              if (!roomSnap.exists) return;
+              
+              final roomData = roomSnap.data() as Map<String, dynamic>;
+              final roomOwnerId = roomData['ownerId'] as String?;
+              
               // Apply penalty
               final userRef =
                   FirebaseFirestore.instance.collection('users').doc(userId);
@@ -79,6 +87,24 @@ class PenaltyUserSheet extends StatelessWidget {
               
               transaction.update(userRef, updates);
 
+              // Add deducted amount to room owner's wallet
+              if (roomOwnerId != null && roomOwnerId.isNotEmpty) {
+                final ownerRef = FirebaseFirestore.instance.collection('users').doc(roomOwnerId);
+                Map<String, dynamic> ownerUpdates = {};
+                if (field == 'coins') {
+                  // إضافة للنجوم
+                  ownerUpdates['rewardStars'] = FieldValue.increment(amount);
+                  ownerUpdates['harvest_stars_wallet'] = FieldValue.increment(amount);
+                  ownerUpdates['starsHarvestWallet'] = FieldValue.increment(amount);
+                } else if (field == 'gems') {
+                  // إضافة للجواهر
+                  ownerUpdates['rewardGems'] = FieldValue.increment(amount);
+                  ownerUpdates['harvest_wallet'] = FieldValue.increment(amount);
+                  ownerUpdates['harvestWallet'] = FieldValue.increment(amount);
+                }
+                transaction.update(ownerRef, ownerUpdates);
+              }
+
               // Log the penalty
               final logRef = FirebaseFirestore.instance
                   .collection('rooms')
@@ -94,6 +120,8 @@ class PenaltyUserSheet extends StatelessWidget {
                 'amount': amount,
                 'reason': 'عقوبة من المشرف',
                 'timestamp': FieldValue.serverTimestamp(),
+                'roomOwnerId': roomOwnerId,
+                'transferredToOwner': roomOwnerId != null,
               });
             });
 
