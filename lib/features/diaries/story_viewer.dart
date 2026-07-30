@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import '../../models/story_model.dart';
 import '../../services/firestore_service.dart';
+import '../../services/privacy_service.dart';
 import '../../models/chat_model.dart';
 import '../../app_theme.dart';
 
@@ -63,11 +64,49 @@ class _StoryViewerState extends State<StoryViewer> {
     _innerIndex = pair['inner']!;
 
     _pageController = PageController(initialPage: _groupIndex);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
+        // Check privacy before viewing
+        final canView = await _checkPrivacy(_currentStory);
+        if (!canView) {
+          _showPrivacyDeniedDialog();
+          return;
+        }
         _initCurrent();
         _markViewed(_currentStory);
       }
+    });
+  }
+
+  Future<bool> _checkPrivacy(StoryModel story) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return false;
+
+    // Owner can always view their own stories
+    if (story.userId == currentUser.uid) return true;
+
+    return await PrivacyService.canViewContent(
+      contentOwnerId: story.userId,
+      privacyLevel: story.privacy,
+      viewerId: currentUser.uid,
+    );
+  }
+
+  void _showPrivacyDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('غير مسموح'),
+        content: const Text('ليس لديك صلاحية لعرض هذا المحتوى'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('حسناً'),
+          ),
+        ],
+      ),
+    ).then((_) {
+      Navigator.of(context).pop();
     });
   }
 
@@ -330,13 +369,21 @@ class _StoryViewerState extends State<StoryViewer> {
                   CircleAvatar(
                     radius: 18,
                     backgroundColor: Colors.white12,
-                    backgroundImage:
-                        (currentGroup.userPic.isNotEmpty && Uri.tryParse(currentGroup.userPic)?.host.isNotEmpty == true)
-                          ? CachedNetworkImageProvider(currentGroup.userPic)
-                          : null,
-                    child: (currentGroup.userPic.isEmpty || Uri.tryParse(currentGroup.userPic)?.host.isNotEmpty != true)
-                      ? const Icon(Icons.person, color: Colors.white24, size: 20)
-                      : null,
+                    backgroundImage: (currentGroup.userPic.isNotEmpty &&
+                            Uri.tryParse(currentGroup.userPic)
+                                    ?.host
+                                    .isNotEmpty ==
+                                true)
+                        ? CachedNetworkImageProvider(currentGroup.userPic)
+                        : null,
+                    child: (currentGroup.userPic.isEmpty ||
+                            Uri.tryParse(currentGroup.userPic)
+                                    ?.host
+                                    .isNotEmpty !=
+                                true)
+                        ? const Icon(Icons.person,
+                            color: Colors.white24, size: 20)
+                        : null,
                   ),
                   const SizedBox(width: 10),
                   Expanded(
@@ -400,6 +447,27 @@ class _StoryViewerState extends State<StoryViewer> {
                       color: const Color(0xFF1A1A1A),
                       offset: const Offset(0, 40),
                       itemBuilder: (BuildContext context) => [
+                        PopupMenuItem<String>(
+                          value: 'archive',
+                          child: Row(
+                            children: [
+                              Icon(
+                                _currentStory.archivedBy.contains(uid)
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_border,
+                                color: AppTheme.royalGold,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                _currentStory.archivedBy.contains(uid)
+                                    ? 'إلغاء الحفظ'
+                                    : 'حفظ القصة',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
                         const PopupMenuItem<String>(
                           value: 'report',
                           child: Row(
@@ -426,7 +494,9 @@ class _StoryViewerState extends State<StoryViewer> {
                         ),
                       ],
                       onSelected: (String value) {
-                        if (value == 'report') {
+                        if (value == 'archive') {
+                          _toggleArchive();
+                        } else if (value == 'report') {
                           _showReportStory();
                         } else if (value == 'close') {
                           _closeViewer();
@@ -564,21 +634,123 @@ class _StoryViewerState extends State<StoryViewer> {
       );
     }
 
-    final bool isValidUrl = story.imageUrl != null && story.imageUrl!.isNotEmpty && Uri.tryParse(story.imageUrl!)?.host.isNotEmpty == true;
+    final bool isValidUrl = story.imageUrl != null &&
+        story.imageUrl!.isNotEmpty &&
+        Uri.tryParse(story.imageUrl!)?.host.isNotEmpty == true;
 
-    return isValidUrl 
-      ? CachedNetworkImage(
-          imageUrl: story.imageUrl!,
-          fit: BoxFit.cover,
-          fadeOutDuration: Duration.zero,
-          fadeInDuration: Duration.zero,
-          placeholder: (c, u) => const Center(
-              child: CircularProgressIndicator(
-                  color: AppTheme.royalGold, strokeWidth: 2)),
-          errorWidget: (context, url, error) =>
-              const Center(child: Icon(Icons.error, color: Colors.white30)),
-        )
-      : const Center(child: Icon(Icons.broken_image, color: Colors.white30, size: 50));
+    if (isValidUrl) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          CachedNetworkImage(
+            imageUrl: story.imageUrl!,
+            fit: BoxFit.contain,
+            fadeOutDuration: Duration.zero,
+            fadeInDuration: Duration.zero,
+            placeholder: (c, u) => const Center(
+                child: CircularProgressIndicator(
+                    color: AppTheme.royalGold, strokeWidth: 2)),
+            errorWidget: (context, url, error) =>
+                const Center(child: Icon(Icons.error, color: Colors.white30)),
+          ),
+          if (story.postReference != null ||
+              (story.postContent != null && story.postContent!.isNotEmpty))
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Colors.black.withValues(alpha: 0.8), Colors.transparent],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (story.postAuthorName != null &&
+                        story.postAuthorName!.isNotEmpty)
+                      Text('منشور مشترك بواسطة ${story.postAuthorName}',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14)),
+                    if (story.postContent != null &&
+                        story.postContent!.isNotEmpty)
+                      Text(story.postContent!,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.white70, fontSize: 13)),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      );
+    }
+
+    if (story.storyText != null && story.storyText!.isNotEmpty) {
+      return Container(
+        color: _parseBackgroundColor(story.storyBackgroundColor) ??
+            const Color(0xFF121212),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        child: Center(
+          child: Text(
+            story.storyText!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              height: 1.4,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (story.postContent != null && story.postContent!.isNotEmpty) {
+      return Container(
+        color: const Color(0xFF121212),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (story.postAuthorName != null &&
+                  story.postAuthorName!.isNotEmpty)
+                Text('منشور مشترك بواسطة ${story.postAuthorName}',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
+              const SizedBox(height: 16),
+              Text(
+                story.postContent!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white70, fontSize: 18),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return const Center(
+        child: Icon(Icons.broken_image, color: Colors.white30, size: 50));
+  }
+
+  Color? _parseBackgroundColor(String? value) {
+    if (value == null || value.isEmpty) return null;
+    try {
+      return Color(int.parse(value));
+    } catch (_) {
+      return null;
+    }
   }
 
   String _timeAgo(DateTime dt) {
@@ -699,11 +871,18 @@ class _StoryViewerState extends State<StoryViewer> {
                   final viewer = snap.data!;
                   return ListTile(
                     leading: CircleAvatar(
-                        backgroundImage:
-                            (viewer.profilePic.isNotEmpty && Uri.tryParse(viewer.profilePic)?.host.isNotEmpty == true)
-                              ? CachedNetworkImageProvider(viewer.profilePic)
-                              : null,
-                        child: (viewer.profilePic.isEmpty || Uri.tryParse(viewer.profilePic)?.host.isNotEmpty != true)
+                      backgroundImage: (viewer.profilePic.isNotEmpty &&
+                              Uri.tryParse(viewer.profilePic)
+                                      ?.host
+                                      .isNotEmpty ==
+                                  true)
+                          ? CachedNetworkImageProvider(viewer.profilePic)
+                          : null,
+                      child: (viewer.profilePic.isEmpty ||
+                              Uri.tryParse(viewer.profilePic)
+                                      ?.host
+                                      .isNotEmpty !=
+                                  true)
                           ? const Icon(Icons.person, color: Colors.white24)
                           : null,
                     ),
@@ -787,7 +966,8 @@ class _StoryViewerState extends State<StoryViewer> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
-        title: const Text('إبلاغ عن قصة غير لائقة', style: TextStyle(color: Colors.white)),
+        title: const Text('إبلاغ عن قصة غير لائقة',
+            style: TextStyle(color: Colors.white)),
         content: TextField(
           controller: reasonController,
           maxLines: 3,
@@ -798,25 +978,69 @@ class _StoryViewerState extends State<StoryViewer> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء', style: TextStyle(color: Colors.white38))),
-          TextButton(onPressed: () async {
-            if (reasonController.text.trim().isEmpty) return;
-            final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-            await FirebaseFirestore.instance.collection('reports').add({
-              'type': 'story',
-              'targetId': _currentStory.id,
-              'targetName': _currentStory.userName,
-              'reason': reasonController.text.trim(),
-              'reporterId': uid,
-              'reporterName': 'User',
-              'createdAt': FieldValue.serverTimestamp(),
-              'status': 'new',
-            });
-            if (context.mounted) Navigator.pop(ctx);
-            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم إرسال البلاغ للإدارة')));
-          }, child: const Text('إرسال', style: TextStyle(color: AppTheme.royalGold))),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child:
+                  const Text('إلغاء', style: TextStyle(color: Colors.white38))),
+          TextButton(
+              onPressed: () async {
+                if (reasonController.text.trim().isEmpty) return;
+                final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+                await FirebaseFirestore.instance.collection('reports').add({
+                  'type': 'story',
+                  'targetId': _currentStory.id,
+                  'targetName': _currentStory.userName,
+                  'reason': reasonController.text.trim(),
+                  'reporterId': uid,
+                  'reporterName': 'User',
+                  'createdAt': FieldValue.serverTimestamp(),
+                  'status': 'new',
+                });
+                if (context.mounted) Navigator.pop(ctx);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('تم إرسال البلاغ للإدارة')));
+                }
+              },
+              child: const Text('إرسال',
+                  style: TextStyle(color: AppTheme.royalGold))),
         ],
       ),
     ).then((_) => _resume());
+  }
+
+  Future<void> _toggleArchive() async {
+    _pause();
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    if (uid.isEmpty) return;
+
+    try {
+      await _fs.toggleStoryArchive(_currentStory.id, uid);
+
+      if (mounted) {
+        setState(() {
+          if (_currentStory.archivedBy.contains(uid)) {
+            _currentStory.archivedBy.remove(uid);
+          } else {
+            _currentStory.archivedBy.add(uid);
+          }
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _currentStory.archivedBy.contains(uid)
+                  ? 'تم حفظ القصة ✅'
+                  : 'تم إلغاء حفظ القصة',
+            ),
+            backgroundColor: AppTheme.royalGold,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error toggling archive: $e');
+    } finally {
+      _resume();
+    }
   }
 }

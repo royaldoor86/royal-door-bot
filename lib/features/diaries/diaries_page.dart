@@ -294,6 +294,15 @@ class _PostsListTabViewState extends State<_PostsListTabView>
                 _handleStoryAction(ImageSource.camera, false);
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.text_fields, color: Colors.purple),
+              title: const Text('قصة نصية فقط',
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _showTextStoryDialog(context);
+              },
+            ),
             const SizedBox(height: 20),
           ],
         ),
@@ -309,6 +318,261 @@ class _PostsListTabViewState extends State<_PostsListTabView>
       if (file == null) return;
 
       if (!mounted) return;
+
+      // إذا كانت صورة، نعرض خيارات الفلتر
+      if (!isVideo) {
+        await _showFilterOptions(context, File(file.path));
+      } else {
+        // الفيديو يرفع مباشرة بدون فلتر
+        await _uploadStory(file.path, true, null);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('حدث خطأ: $e'), backgroundColor: Colors.redAccent));
+      }
+    }
+  }
+
+  Future<void> _showFilterOptions(BuildContext context, File imageFile) async {
+    final List<Map<String, dynamic>> filters = [
+      {'name': 'بدون فلتر', 'filter': null, 'color': Colors.transparent},
+      {
+        'name': 'رمادي',
+        'filter': const ColorFilter.matrix(<double>[
+          0.2126,
+          0.7152,
+          0.0722,
+          0,
+          0,
+          0.2126,
+          0.7152,
+          0.0722,
+          0,
+          0,
+          0.2126,
+          0.7152,
+          0.0722,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+        ]),
+        'color': Colors.grey
+      },
+      {
+        'name': 'سبيا',
+        'filter': const ColorFilter.matrix(<double>[
+          0.393,
+          0.769,
+          0.189,
+          0,
+          0,
+          0.349,
+          0.686,
+          0.168,
+          0,
+          0,
+          0.272,
+          0.534,
+          0.131,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+        ]),
+        'color': Colors.brown
+      },
+      {
+        'name': 'أزرق بارد',
+        'filter': const ColorFilter.matrix(<double>[
+          0.2,
+          0.5,
+          0.3,
+          0,
+          0,
+          0.2,
+          0.5,
+          0.3,
+          0,
+          0,
+          0.2,
+          0.5,
+          0.3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+        ]),
+        'color': Colors.blue
+      },
+      {
+        'name': 'دافئ',
+        'filter': const ColorFilter.matrix(<double>[
+          1.2,
+          0.1,
+          0.1,
+          0,
+          0,
+          0.1,
+          1.1,
+          0.1,
+          0,
+          0,
+          0.1,
+          0.1,
+          1.0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+        ]),
+        'color': Colors.orange
+      },
+    ];
+
+    int selectedFilterIndex = 0;
+
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A1A),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) {
+          final bottomPadding = MediaQuery.of(ctx).viewPadding.bottom;
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding + 20),
+            child: Column(
+          children: [
+            const Text('اختر فلتر للصورة',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  final filter = filters[selectedFilterIndex]['filter'] as ColorFilter?;
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: filter != null
+                        ? ColorFiltered(
+                            colorFilter: filter,
+                            child: Image.file(imageFile, fit: BoxFit.cover),
+                          )
+                        : Image.file(imageFile, fit: BoxFit.cover),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 80,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: filters.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () =>
+                        setModalState(() => selectedFilterIndex = index),
+                    child: Container(
+                      width: 70,
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: selectedFilterIndex == index
+                              ? AppTheme.royalGold
+                              : Colors.white24,
+                          width: selectedFilterIndex == index ? 3 : 1,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: filters[index]['color'],
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            filters[index]['name'],
+                            style: TextStyle(
+                              color: selectedFilterIndex == index
+                                  ? AppTheme.royalGold
+                                  : Colors.white70,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white24,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('إلغاء'),
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      _uploadStory(imageFile.path, false,
+                          filters[selectedFilterIndex]['filter']);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.royalGold,
+                      foregroundColor: Colors.black,
+                    ),
+                    child: const Text('نشر'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        );
+        },
+      ),
+    );
+  }
+
+  Future<void> _uploadStory(
+      String filePath, bool isVideo, ColorFilter? filter) async {
+    try {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('جاري رفع القصة... ⏳'),
           backgroundColor: DesignTokens.primaryGold));
@@ -318,9 +582,16 @@ class _PostsListTabViewState extends State<_PostsListTabView>
 
       String? url;
       if (isVideo) {
-        url = await StorageService.uploadStoryVideo(File(file.path));
+        url = await StorageService.uploadStoryVideo(File(filePath));
       } else {
-        url = await StorageService.uploadStoryImage(File(file.path));
+        url = await StorageService.uploadStoryImage(File(filePath));
+      }
+
+      // تحويل الفلتر إلى سلسلة JSON للحفظ
+      String? filterData;
+      if (filter != null) {
+        // سنحفظ نوع الفلتر فقط للتبسيط
+        filterData = 'applied';
       }
 
       await widget.firestoreService.addStory(
@@ -329,10 +600,135 @@ class _PostsListTabViewState extends State<_PostsListTabView>
         userPic: userData.profilePic,
         imageUrl: isVideo ? null : url,
         videoUrl: isVideo ? url : null,
+        storyFilter: filterData,
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('تم نشر القصة بنجاح! 🎉'),
+            backgroundColor: Colors.green));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('حدث خطأ: $e'), backgroundColor: Colors.redAccent));
+      }
+    }
+  }
+
+  Future<void> _showTextStoryDialog(BuildContext context) async {
+    final TextEditingController textController = TextEditingController();
+    final List<Color> backgroundColors = [
+      const Color(0xFF833AB4),
+      const Color(0xFFE1306C),
+      const Color(0xFFF77737),
+      const Color(0xFF25D366),
+      const Color(0xFF1DA1F2),
+      const Color(0xFF000000),
+    ];
+    int selectedColorIndex = 0;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          scrollable: true,
+          backgroundColor: const Color(0xFF1A1A1A),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text('قصة نصية',
+              style: TextStyle(color: Colors.white, fontSize: 18)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: textController,
+                maxLines: 5,
+                maxLength: 200,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+                decoration: const InputDecoration(
+                  hintText: 'اكتب نص قصتك هنا...',
+                  hintStyle: TextStyle(color: Colors.white24),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text('اختر لون الخلفية',
+                  style: TextStyle(color: Colors.white70, fontSize: 12)),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 10,
+                children: List.generate(backgroundColors.length, (index) {
+                  return GestureDetector(
+                    onTap: () =>
+                        setDialogState(() => selectedColorIndex = index),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: backgroundColors[index],
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: selectedColorIndex == index
+                              ? Colors.white
+                              : Colors.transparent,
+                          width: 3,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child:
+                  const Text('إلغاء', style: TextStyle(color: Colors.white38)),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (textController.text.trim().isEmpty) return;
+                Navigator.pop(ctx);
+                await _uploadTextStory(
+                  textController.text.trim(),
+                  backgroundColors[selectedColorIndex],
+                );
+              },
+              child: const Text('نشر',
+                  style: TextStyle(color: AppTheme.royalGold)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _uploadTextStory(String text, Color backgroundColor) async {
+    try {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('جاري نشر القصة... ⏳'),
+          backgroundColor: DesignTokens.primaryGold));
+
+      final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      final userData = await widget.firestoreService.streamUserData(uid).first;
+
+      // إنشاء صورة من النص والخلفية
+      // سنقوم بحفظ النص واللون كبيانات في القصة
+      await widget.firestoreService.addStory(
+        userId: uid,
+        userName: userData.name,
+        userPic: userData.profilePic,
+        imageUrl: null,
+        videoUrl: null,
+        storyText: text,
+        storyBackgroundColor: backgroundColor.toARGB32().toString(),
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('تم نشر القصة النصية بنجاح! 🎉'),
             backgroundColor: Colors.green));
       }
     } catch (e) {

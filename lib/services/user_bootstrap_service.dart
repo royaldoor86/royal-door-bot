@@ -13,15 +13,21 @@ class UserBootstrapService {
     if (user == null) return;
 
     final uid = user.uid;
+    print('🚀 UserBootstrapService: Starting bootstrap for $uid');
 
-    await Future.wait([
-      _createUserIfNotExists(uid, user.displayName, user.email),
-      _createWalletIfNotExists(uid),
-      _createSettingsIfNotExists(uid),
-      _createFollowersIfNotExists(uid),
-      _createFollowsIfNotExists(uid),
-      _recordCurrentSession(uid),
-    ]);
+    try {
+      await Future.wait([
+        _createUserIfNotExists(uid, user.displayName, user.email),
+        _createWalletIfNotExists(uid),
+        _createSettingsIfNotExists(uid),
+        _createFollowersIfNotExists(uid),
+        _createFollowsIfNotExists(uid),
+        _recordCurrentSession(uid),
+      ]);
+      print('✅ UserBootstrapService: Bootstrap completed for $uid');
+    } catch (e) {
+      print('❌ UserBootstrapService: Bootstrap failed for $uid - $e');
+    }
   }
 
   static Future<void> _recordCurrentSession(String uid) async {
@@ -82,7 +88,7 @@ class UserBootstrapService {
         'following': [],
         'followers': [],
         'agentData': {
-          'friendlyPoints': 0,
+          'friendlyCoins': 0,
           'invitedCount': 0,
           'referralEarnings': 0,
         }
@@ -92,15 +98,36 @@ class UserBootstrapService {
       final data = doc.data() ?? {};
       Map<String, dynamic> updates = {};
 
-      // لا نقوم بتحديث royalId أو shortId إذا كان المستخدم موجوداً بالفعل
-      // الآيدي يجب أن يتغير فقط عبر: منح يدوي، شراء، أو موافقة طلب
+      // لا نقوم بتغيير الـ ID إذا كان موجوداً (للحفاظ على الأرقام المميزة)
+      // نقوم فقط بتوليده إذا كان مفقوداً تماماً
+      if (data['royalId'] == null || data['royalId'].toString().isEmpty) {
+        final randomRoyalId = (10000000 + Random().nextInt(90000000)).toString();
+        updates['royalId'] = randomRoyalId;
+        if (data['shortId'] == null) {
+          updates['shortId'] = randomRoyalId;
+        }
+      }
 
       if (data['agentData'] == null) {
         updates['agentData'] = {
-          'friendlyPoints': 0,
+          'friendlyCoins': 0,
           'invitedCount': 0,
           'referralEarnings': 0,
         };
+      }
+
+      // إضافة تاريخ الانضمام إذا لم يكن موجوداً
+      if (data['createdAt'] == null && data['joinDate'] == null) {
+        final authUser = _auth.currentUser;
+        if (authUser?.metadata.creationTime != null) {
+          updates['createdAt'] =
+              Timestamp.fromDate(authUser!.metadata.creationTime!);
+          updates['joinDate'] =
+              Timestamp.fromDate(authUser.metadata.creationTime!);
+        } else {
+          updates['createdAt'] = FieldValue.serverTimestamp();
+          updates['joinDate'] = FieldValue.serverTimestamp();
+        }
       }
 
       if (updates.isNotEmpty) {
