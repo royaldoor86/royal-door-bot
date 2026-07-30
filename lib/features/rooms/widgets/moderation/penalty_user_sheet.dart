@@ -16,31 +16,33 @@ class PenaltyUserSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
-    return Container(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding + 20),
-      decoration: const BoxDecoration(
-          color: Color(0xFF1A242F),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                  color: Colors.white24,
-                  borderRadius: BorderRadius.circular(2))),
-          const SizedBox(height: 20),
-          Text("تطبيق عقوبة على $userName",
-              style: const TextStyle(
-                  color: Colors.purpleAccent,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          _penaltyOption(context, "خصم 100 نجمة ⭐", 100, "coins"),
-          _penaltyOption(context, "خصم 500 نجمة ⭐", 500, "coins"),
-          _penaltyOption(context, "خصم 100 ألماس 💎", 10, "gems"),
-        ],
+    return SafeArea(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding + 20),
+        decoration: const BoxDecoration(
+            color: Color(0xFF1A242F),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 20),
+            Text("تطبيق عقوبة على $userName",
+                style: const TextStyle(
+                    color: Colors.purpleAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            _penaltyOption(context, "خصم 100 كوينز ⭐", 100, "coins"),
+            _penaltyOption(context, "خصم 500 كوينز ⭐", 500, "coins"),
+            _penaltyOption(context, "خصم 100 جوهرة 💎", 10, "gems"),
+          ],
+        ),
       ),
     );
   }

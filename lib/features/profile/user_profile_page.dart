@@ -179,7 +179,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         left: 20,
                         child: _buildCurrencyBadge(
                           Icons.stars_rounded,
-                          (user.rewardStars ?? 0).toInt(),
+                          _parseCurrencyValue(user.rewardStars, user.harvestStarsWallet),
                           Colors.amber,
                           'كوينز',
                         ),
@@ -189,7 +189,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         right: 20,
                         child: _buildCurrencyBadge(
                           Icons.diamond_outlined,
-                          (user.rewardGems ?? 0).toInt(),
+                          _parseCurrencyValue(user.rewardGems, user.harvestWallet),
                           Colors.cyan,
                           'جواهر',
                         ),
@@ -667,5 +667,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
         ],
       ),
     );
+  }
+
+  int _parseCurrencyValue(int? primary, dynamic? secondary) {
+    if (primary != null && primary > 0) return primary;
+    if (secondary != null) {
+      if (secondary is int) return secondary;
+      if (secondary is double) return secondary.toInt();
+    }
+    return 0;
   }
 }

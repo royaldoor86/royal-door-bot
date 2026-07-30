@@ -17,11 +17,12 @@ class BanUserSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
-    return Container(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding + 20),
-      decoration: const BoxDecoration(
-          color: Color(0xFF1A242F),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+    return SafeArea(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding + 20),
+        decoration: const BoxDecoration(
+            color: Color(0xFF1A242F),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -89,6 +90,7 @@ class BanUserSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
         ],
+      ),
       ),
     );
   }
