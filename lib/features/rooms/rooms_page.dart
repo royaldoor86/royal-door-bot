@@ -285,7 +285,7 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
         child: Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           floatingActionButton:
-              (_activeTabIndex == 3) ? _buildAnimatedCreateButton(trans) : null,
+              (_activeTabIndex == 2) ? _buildAnimatedCreateButton(trans) : null,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           body: AppTheme.background(
@@ -324,8 +324,8 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
 
   Widget _buildTopTabs(Translations trans) {
     final tabs = trans.locale.languageCode == 'ar'
-        ? ["اكتشاف", "شائعة", "الأصدقاء", "غرفتي"]
-        : ["Discover", "Popular", "Friends", "My Room"];
+        ? ["اكتشاف", "شائعة", "غرفتي"]
+        : ["Discover", "Popular", "My Room"];
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -347,8 +347,7 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
         _activeTabIndex = index;
         // عند تغيير التبويب العلوي، قد نرغب في إعادة الفلتر الافتراضي
         if (index == 1) _activeFilter = "Popular";
-        if (index == 2) _activeFilter = "Friends";
-        if (index == 3) _activeFilter = "My";
+        if (index == 2) _activeFilter = "My";
       }),
       child: AnimatedContainer(
         duration: DesignTokens.durationBase,
@@ -515,7 +514,7 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
               }
 
               // ترتيب يدوي لتبويب "غرفتي" لأننا أزلنا orderBy من الاستعلام لتجنب خطأ الـ Index
-              if (_activeTabIndex == 3) {
+              if (_activeTabIndex == 2) {
                 rooms.sort((a, b) {
                   final aTime = a['createdAt'] as Timestamp?;
                   final bTime = b['createdAt'] as Timestamp?;
@@ -589,18 +588,8 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
         FirebaseFirestore.instance.collection('rooms');
     final currentUser = FirebaseAuth.instance.currentUser;
 
-    // تبويب "الأصدقاء"
+    // تبويب "غرفي"
     if (_activeTabIndex == 2) {
-      if (friends == null || friends.isEmpty) {
-        return roomsRef.where('ownerId', isEqualTo: '___NONE___').snapshots();
-      }
-      return roomsRef
-          .where('ownerId', whereIn: friends.take(30).toList())
-          .snapshots();
-    }
-
-    // تبويب "غرفتي"
-    if (_activeTabIndex == 3) {
       return roomsRef.where('ownerId', isEqualTo: currentUser?.uid).snapshots();
     }
 
