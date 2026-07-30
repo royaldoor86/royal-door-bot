@@ -76,15 +76,13 @@ class PenaltyUserSheet extends StatelessWidget {
               // تحديد الحقول الصحيحة للخصم
               Map<String, dynamic> updates = {};
               if (field == 'coins') {
-                // خصم من النجوم
+                // خصم من الكوينز
+                updates['coins'] = FieldValue.increment(-amount);
                 updates['rewardStars'] = FieldValue.increment(-amount);
-                updates['harvest_stars_wallet'] = FieldValue.increment(-amount);
-                updates['starsHarvestWallet'] = FieldValue.increment(-amount);
               } else if (field == 'gems') {
                 // خصم من الجواهر
+                updates['gems'] = FieldValue.increment(-amount);
                 updates['rewardGems'] = FieldValue.increment(-amount);
-                updates['harvest_wallet'] = FieldValue.increment(-amount);
-                updates['harvestWallet'] = FieldValue.increment(-amount);
               }
               
               transaction.update(userRef, updates);
@@ -94,15 +92,13 @@ class PenaltyUserSheet extends StatelessWidget {
                 final ownerRef = FirebaseFirestore.instance.collection('users').doc(roomOwnerId);
                 Map<String, dynamic> ownerUpdates = {};
                 if (field == 'coins') {
-                  // إضافة للنجوم
+                  // إضافة للكوينز
+                  ownerUpdates['coins'] = FieldValue.increment(amount);
                   ownerUpdates['rewardStars'] = FieldValue.increment(amount);
-                  ownerUpdates['harvest_stars_wallet'] = FieldValue.increment(amount);
-                  ownerUpdates['starsHarvestWallet'] = FieldValue.increment(amount);
                 } else if (field == 'gems') {
                   // إضافة للجواهر
+                  ownerUpdates['gems'] = FieldValue.increment(amount);
                   ownerUpdates['rewardGems'] = FieldValue.increment(amount);
-                  ownerUpdates['harvest_wallet'] = FieldValue.increment(amount);
-                  ownerUpdates['harvestWallet'] = FieldValue.increment(amount);
                 }
                 transaction.update(ownerRef, ownerUpdates);
               }

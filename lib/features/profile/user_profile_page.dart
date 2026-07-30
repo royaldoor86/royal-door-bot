@@ -400,7 +400,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
         context: context,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
-        builder: (context) => sheet);
+        builder: (context) => SafeArea(
+          child: sheet,
+        ));
   }
 
   Widget _buildModerationControls(String userName) {
