@@ -77,7 +77,6 @@ class SilenceUserSheet extends StatelessWidget {
           Navigator.pop(context);
         },
       ),
-      ),
     );
   }
 }
