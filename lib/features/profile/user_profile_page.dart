@@ -179,7 +179,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         left: 20,
                         child: _buildCurrencyBadge(
                           Icons.stars_rounded,
-                          _parseCurrencyValue(user.rewardStars, user.harvestStarsWallet),
+                          _parseCurrencyValue(user.rewardStars, user.coins),
                           Colors.amber,
                           'كوينز',
                         ),
@@ -189,7 +189,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         right: 20,
                         child: _buildCurrencyBadge(
                           Icons.diamond_outlined,
-                          _parseCurrencyValue(user.rewardGems, user.harvestWallet),
+                          _parseCurrencyValue(user.rewardGems, user.gems),
                           Colors.cyan,
                           'جواهر',
                         ),

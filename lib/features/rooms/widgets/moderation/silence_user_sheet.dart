@@ -21,27 +21,28 @@ class SilenceUserSheet extends StatelessWidget {
         decoration: const BoxDecoration(
             color: Color(0xFF1A242F),
             borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                  color: Colors.white24,
-                  borderRadius: BorderRadius.circular(2))),
-          const SizedBox(height: 20),
-          Text("إصمات $userName",
-              style: const TextStyle(
-                  color: Colors.amber,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          _option(context, "10 دقائق", 10),
-          _option(context, "ساعة واحدة", 60),
-          _option(context, "يوم كامل", 1440),
-          _option(context, "إلغاء الإصمات", 0, isRemove: true),
-        ],
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 20),
+            Text("إصمات $userName",
+                style: const TextStyle(
+                    color: Colors.amber,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            _option(context, "10 دقائق", 10),
+            _option(context, "ساعة واحدة", 60),
+            _option(context, "يوم كامل", 1440),
+            _option(context, "إلغاء الإصمات", 0, isRemove: true),
+          ],
+        ),
       ),
     );
   }
