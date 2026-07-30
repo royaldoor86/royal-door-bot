@@ -12,12 +12,20 @@ import '../rooms/widgets/moderation/mute_user_sheet.dart';
 import '../rooms/widgets/moderation/penalty_user_sheet.dart';
 import '../rooms/widgets/moderation/silence_user_sheet.dart';
 import '../chat/individual_chat_page.dart';
+import '../../services/custom_car_service.dart';
+import '../../widgets/animated_vehicle_preview.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String userId;
   final String? roomId; // لاستخدامه في المستقبل (مثل إرسال هدية من البروفايل)
+  final bool useScaffold; // لتحديد ما إذا كان سيتم استخدام Scaffold أم لا
 
-  const UserProfilePage({super.key, required this.userId, this.roomId});
+  const UserProfilePage({
+    super.key,
+    required this.userId,
+    this.roomId,
+    this.useScaffold = true,
+  });
 
   @override
   State<UserProfilePage> createState() => _UserProfilePageState();
@@ -27,11 +35,26 @@ class _UserProfilePageState extends State<UserProfilePage> {
   final String _currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
   final FirestoreService _firestoreService = FirestoreService();
   bool _hasPower = false;
+  String? _roomOwnerId;
+  List<String> _roomAdmins = [];
+  List<String> _roomModerators = [];
+  Map<String, dynamic> _moderatorPermissions = {};
+  Map<String, dynamic>? _activeVehicle;
 
   @override
   void initState() {
     super.initState();
     _checkModerationPower();
+    _loadActiveVehicle();
+  }
+
+  Future<void> _loadActiveVehicle() async {
+    final vehicle = await CustomCarService.getActiveCar(widget.userId);
+    if (mounted) {
+      setState(() {
+        _activeVehicle = vehicle;
+      });
+    }
   }
 
   void _checkModerationPower() async {
@@ -44,13 +67,27 @@ class _UserProfilePageState extends State<UserProfilePage> {
     if (roomDoc.exists && roomDoc.data() != null) {
       final data = roomDoc.data()!;
       final ownerId = data['ownerId'] as String?;
+      final admins = List<String>.from(data['admins'] ?? []);
       final moderators = List<String>.from(data['moderators'] ?? []);
+      final perms = data['moderatorPermissions'] as Map<String, dynamic>? ?? {};
 
       if (mounted) {
-        setState(() => _hasPower =
-            (_currentUserId == ownerId) || moderators.contains(_currentUserId));
+        setState(() {
+          _roomOwnerId = ownerId;
+          _roomAdmins = admins;
+          _roomModerators = moderators;
+          _hasPower = (_currentUserId == ownerId) ||
+              admins.contains(_currentUserId) ||
+              moderators.contains(_currentUserId);
+          _moderatorPermissions = perms;
+        });
       }
     }
+  }
+
+  bool _can(String key) {
+    if (_currentUserId == _roomOwnerId) return true;
+    return _moderatorPermissions[key] ?? false;
   }
 
   @override
@@ -62,6 +99,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
+          if (!widget.useScaffold) {
+            return const Center(
+                child: CircularProgressIndicator(color: AppTheme.royalGold));
+          }
           return const Scaffold(
             backgroundColor: Color(0xFF121212),
             body: Center(
@@ -69,6 +110,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
           );
         }
         if (!snapshot.data!.exists) {
+          if (!widget.useScaffold) {
+            return const Center(
+                child: Text('عذراً، لم يتم العثور على المستخدم',
+                    style: TextStyle(color: Colors.white)));
+          }
           return Scaffold(
             backgroundColor: const Color(0xFF121212),
             appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
@@ -83,10 +129,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
         final bool isFollowing = user.followers.contains(_currentUserId);
 
-        return Scaffold(
-          backgroundColor: const Color(0xFF0F1B25),
-          body: CustomScrollView(
-            slivers: [
+        final content = CustomScrollView(
+          slivers: [
               SliverAppBar(
                 expandedHeight: 280.0,
                 pinned: true,
@@ -150,7 +194,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                           true)
                                   ? CachedNetworkImageProvider(user.profilePic)
                                   : const AssetImage(
-                                          'assets/images/default_profile.png')
+                                          'assets/images/default_avatar.png')
                                       as ImageProvider,
                             ),
                           )
@@ -166,7 +210,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                           true)
                                   ? CachedNetworkImageProvider(user.profilePic)
                                   : const AssetImage(
-                                          'assets/images/default_profile.png')
+                                          'assets/images/default_avatar.png')
                                       as ImageProvider,
                             ),
                           ),
@@ -215,6 +259,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               Colors.pinkAccent),
                         ],
                       ),
+                      if (_activeVehicle != null &&
+                          _activeVehicle!['enabled'] == true)
+                        _buildActiveVehicleSection(),
                       const Divider(
                           color: Colors.white12,
                           height: 40,
@@ -285,8 +332,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ),
               ),
             ],
-          ),
-        );
+          );
+
+        if (widget.useScaffold) {
+          return Scaffold(
+            backgroundColor: const Color(0xFF0F1B25),
+            body: content,
+          );
+        }
+        return content;
       },
     );
   }
@@ -304,7 +358,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             roomId: widget.roomId!,
             userId: userId,
             userName: name,
-            hasPower: _hasPower);
+            hasPower: _can('canBan'));
         break;
       case "kick":
         sheet = KickUserSheet(
@@ -329,6 +383,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Widget _buildModerationControls(String userName) {
+    final bool isTargetOwner = widget.userId == _roomOwnerId;
+    final bool isTargetAdmin = _roomAdmins.contains(widget.userId);
+    final bool isTargetMod = _roomModerators.contains(widget.userId);
+
+    // صاحب الغرفة فقط يمكنه تعيين مسؤولين
+    final bool canManageAdmins = _currentUserId == _roomOwnerId;
+    // صاحب الغرفة والمسؤولون يمكنهم تعيين مشرفين
+    final bool canManageMods =
+        (_currentUserId == _roomOwnerId) || _roomAdmins.contains(_currentUserId);
+
     return Padding(
       padding: const EdgeInsets.only(top: 25.0),
       child: Column(
@@ -341,24 +405,78 @@ class _UserProfilePageState extends State<UserProfilePage> {
             runSpacing: 10,
             alignment: WrapAlignment.center,
             children: [
-              _modActionButton(
-                  'طرد من الغرفة',
-                  Icons.exit_to_app,
-                  Colors.orange,
-                  () => _showModerationSheet("kick", widget.userId, userName)),
-              _modActionButton('حظر من الغرفة', Icons.gavel_rounded, Colors.red,
-                  () => _showModerationSheet("ban", widget.userId, userName)),
-              _modActionButton(
-                  'إصمات',
-                  Icons.mic_off_rounded,
-                  Colors.purpleAccent,
-                  () =>
-                      _showModerationSheet("silence", widget.userId, userName)),
+              if (canManageAdmins && !isTargetOwner)
+                _modActionButton(
+                  isTargetAdmin ? 'إزالة كمسؤول' : 'تعيين كمسؤول',
+                  isTargetAdmin ? Icons.person_remove : Icons.admin_panel_settings,
+                  isTargetAdmin ? Colors.redAccent : Colors.blue,
+                  () => _toggleRoomRole('admins', widget.userId, !isTargetAdmin),
+                ),
+              if (canManageMods && !isTargetOwner && !isTargetAdmin)
+                _modActionButton(
+                  isTargetMod ? 'إزالة كمشرف' : 'تعيين كمشرف',
+                  isTargetMod ? Icons.remove_circle_outline : Icons.shield_outlined,
+                  isTargetMod ? Colors.orangeAccent : Colors.teal,
+                  () => _toggleRoomRole('moderators', widget.userId, !isTargetMod),
+                ),
+              if (_can('canKick') && !isTargetOwner && !isTargetAdmin)
+                _modActionButton(
+                    'طرد من الغرفة',
+                    Icons.exit_to_app,
+                    Colors.orange,
+                    () =>
+                        _showModerationSheet("kick", widget.userId, userName)),
+              if (_can('canBan') && !isTargetOwner && !isTargetAdmin)
+                _modActionButton(
+                    'حظر من الغرفة',
+                    Icons.gavel_rounded,
+                    Colors.red,
+                    () => _showModerationSheet("ban", widget.userId, userName)),
+              if (_can('canMute') && !isTargetOwner && !isTargetAdmin)
+                _modActionButton(
+                    'إصمات',
+                    Icons.mic_off_rounded,
+                    Colors.purpleAccent,
+                    () => _showModerationSheet(
+                        "silence", widget.userId, userName)),
+              if (_can('canPenalty') && !isTargetOwner && !isTargetAdmin)
+                _modActionButton(
+                    'عقوبة',
+                    Icons.warning_rounded,
+                    Colors.deepOrange,
+                    () => _showModerationSheet(
+                        "penalty", widget.userId, userName)),
             ],
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _toggleRoomRole(String field, String userId, bool add) async {
+    if (widget.roomId == null) return;
+    try {
+      await FirebaseFirestore.instance
+          .collection('rooms')
+          .doc(widget.roomId!)
+          .update({
+        field: add ? FieldValue.arrayUnion([userId]) : FieldValue.arrayRemove([userId])
+      });
+      _checkModerationPower(); // تحديث الحالة
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(add ? 'تم التعيين بنجاح' : 'تمت الإزالة بنجاح'),
+          backgroundColor: Colors.green,
+        ));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('فشل الإجراء: $e'),
+          backgroundColor: Colors.red,
+        ));
+      }
+    }
   }
 
   Widget _modActionButton(
@@ -403,6 +521,95 @@ class _UserProfilePageState extends State<UserProfilePage> {
           style: const TextStyle(fontSize: 12, color: Colors.white70),
         ),
       ],
+    );
+  }
+
+  Widget _buildActiveVehicleSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.royalGold.withValues(alpha: 0.15),
+            AppTheme.royalGold.withValues(alpha: 0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppTheme.royalGold.withValues(alpha: 0.4),
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: _activeVehicle?['url'] != null
+                ? AnimatedVehiclePreview(
+                    url: _activeVehicle!['url'],
+                    type: _activeVehicle!['type'] ?? 'gif',
+                    fit: BoxFit.cover,
+                  )
+                : const Icon(Icons.directions_car,
+                    color: AppTheme.royalGold, size: 35),
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'المركبة النشطة',
+                      style: TextStyle(
+                        color: AppTheme.royalGold,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.royalGold,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'VIP',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'مركبة ملكية فاخرة',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.6),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

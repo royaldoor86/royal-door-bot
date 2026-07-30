@@ -1,34 +1,54 @@
 import '../widgets/online_users_sheet.dart'; // تأكد من صحة المسار
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'profile/user_profile_page.dart';
 import 'rooms/widgets/announced_room_info_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:marquee/marquee.dart';
 import 'package:file_picker/file_picker.dart';
 import '../services/agora_service.dart';
 import '../services/room_presence_service.dart';
+import '../services/custom_car_service.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'rooms/widgets/gift_shop_sheet.dart';
 import 'rooms/widgets/room_info_sheet.dart';
 import 'rooms/widgets/battle_result_dialog.dart';
 import 'rooms/widgets/room_more_menu_sheet.dart';
-import 'rooms/widgets/gift_animation_widget.dart';
 import 'rooms/widgets/lucky_box_dialog.dart';
 import 'rooms/widgets/leaderboard_sheet.dart';
+import 'rooms/widgets/game_selector_sheet.dart';
+import 'rooms/widgets/games/tic_tac_toe_game.dart';
+import 'rooms/widgets/games/fruit_war_game.dart';
+import 'rooms/widgets/games/voting_game.dart';
+import 'rooms/widgets/games/lucky_draw_game.dart';
+import 'rooms/widgets/games/bomb_game.dart';
+import 'rooms/widgets/games/crocodile_game.dart';
+import 'rooms/widgets/mic_queue_sheet.dart';
 
 import 'rooms/widgets/moderation/silence_user_sheet.dart';
 import 'rooms/widgets/moderation/ban_user_sheet.dart';
 import 'rooms/widgets/moderation/kick_user_sheet.dart';
 import 'rooms/widgets/moderation/penalty_user_sheet.dart';
 import 'rooms/widgets/moderation/mute_user_sheet.dart';
+import 'rooms/room_notification_preferences.dart';
+import 'rooms/room_event_feedback.dart';
 
 import 'dart:async';
 import 'dart:math' as math;
 import '../app_theme.dart';
 import '../services/firestore_service.dart';
+import 'voice_room_ui_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lottie/lottie.dart';
+
+// New imports for refactored modules
+import 'voice_room_constants.dart';
+import 'voice_room_mic_logic.dart';
+import 'voice_room_battle_logic.dart';
+import 'voice_room_gift_logic.dart';
 
 class VoiceRoomPage extends StatefulWidget {
   final String roomId;
@@ -49,15 +69,19 @@ class VoiceRoomPage extends StatefulWidget {
 }
 
 class _VoiceRoomPageState extends State<VoiceRoomPage>
-    with TickerProviderStateMixin, WidgetsBindingObserver {
+    with TickerProviderStateMixin, WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
   final FirestoreService _firestoreService = FirestoreService();
   late String _roomName;
   bool _showEntryBanner = false;
+  bool _showRoomEntranceEffect = false;
   String _entryBannerText = '';
+  Map<String, dynamic>? _activeVehicle;
+  bool _showVehicleEntry = false;
   final TextEditingController _messageController = TextEditingController();
   final AgoraService _agoraService = AgoraService();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AudioPlayer _eventAudioPlayer = AudioPlayer();
 
   bool _isMuted = false;
   bool _isMicMuted = false;
@@ -65,22 +89,39 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   bool _eyeComfort = false;
   bool _dataSaverMode = false;
 
-  String _roomNoticeText =
-      'اهلا بكم في رويال دور , يرجى الدردشه بطريقه لائقة تليق بالمجتمع';
+  String _roomNoticeText = VoiceRoomConstants.defaultRoomNotice;
   String? _dynamicBgImage;
   String? _dynamicRoomImage;
-  String _micMode = 'normal';
-  int _maxSeats = 5; // تقييد المايكات إلى 5 فقط لتوفير التكلفة
+  String _micMode = VoiceRoomConstants.defaultMicMode;
+  int _maxSeats = VoiceRoomConstants.maxMicSeats;
 
   bool _muteChatGlobal = false;
+  bool _mutePublic = false;
+  bool _requireMicApproval = false;
+  int _minLevelRequired = 1;
+  Map<String, dynamic> _moderatorPermissions = {};
   bool _adminOnlyMic = false;
+  bool _roomNoiseReductionEnabled = false;
+  bool _roomEyeComfortEnabled = false;
+  RoomNotificationPreferences _roomNotificationPrefs =
+      const RoomNotificationPreferences(
+    enabled: true,
+    welcomeMessage: '',
+    toggles: {
+      'welcome': true,
+      'battle': true,
+      'gift': true,
+    },
+  );
 
   Map<int, Map<String, dynamic>> _micSeats = {};
   Set<int> _lockedSeats = {};
   List<String> _moderators = [];
+  List<String> _admins = []; // إضافة قائمة المسؤولين
   int? _mySeat;
 
   Map<String, dynamic>? _battleData;
+  Map<String, dynamic>? _activeGame;
   Timer? _battleTimer;
   bool _resultShown = false;
 
@@ -91,13 +132,21 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   late AnimationController _boxAnimController;
   late AnimationController _comboAnimController;
   late AnimationController _entryAnimController;
+  late AnimationController _eventPulseController;
+  late AnimationController _roomEntranceController;
 
   StreamSubscription? _announcementSub;
+  StreamSubscription? _micRequestSub;
   bool _showCapsule = false;
   Map<String, dynamic>? _capsuleData;
   Timer? _capsuleTimer;
 
   String? _lastGiftEventId;
+
+  // Refactored logic instances
+  late VoiceRoomMicLogic _micLogic;
+  late VoiceRoomBattleLogic _battleLogic;
+  late VoiceRoomGiftLogic _giftLogic;
 
   Widget _buildAutoScaleText(String text, TextStyle style,
       {double maxFontSize = 16, double minFontSize = 10}) {
@@ -119,9 +168,6 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   bool _initialGiftLoaded = false;
   String? _currentEntryEffect;
   String? _entryUserName;
-
-  final List<Map<String, dynamic>> _giftQueue = [];
-  bool _isGiftPlaying = false;
 
   final List<Widget> _floatingHearts = [];
 
@@ -147,6 +193,8 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   int _musicDuration = 0;
   int _musicPosition = 0;
   StreamSubscription? _musicPositionSub;
+  bool _audioBlockedByBrowser = false;
+  StreamSubscription? _moderationSub;
   String _currentMusicName = 'لم يتم اختيار ملف';
 
   StreamSubscription? _volumeSub;
@@ -156,6 +204,9 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   Timer? _reconnectionTimer;
   int _reconnectionAttempts = 0;
   static const int _maxReconnectionAttempts = 3;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -178,19 +229,179 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
     _entryAnimController =
         AnimationController(duration: const Duration(seconds: 4), vsync: this);
+    _eventPulseController = AnimationController(
+        duration: const Duration(milliseconds: 900), vsync: this)
+      ..repeat(reverse: true);
+    _roomEntranceController = AnimationController(
+        duration: const Duration(milliseconds: 1500), vsync: this);
 
-    _initAgora();
+    // Initialize refactored logic instances
+    _micLogic = VoiceRoomMicLogic(
+      db: _db,
+      auth: _auth,
+      agoraService: _agoraService,
+      roomId: widget.roomId,
+      ownerId: widget.ownerId ?? '',
+      admins: _admins,
+      moderators: _moderators,
+      moderatorPermissions: _moderatorPermissions,
+      maxSeats: _maxSeats,
+      adminOnlyMic: _adminOnlyMic,
+      requireMicApproval: _requireMicApproval,
+      lockedSeats: _lockedSeats.toList(),
+      onError: (error) {
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(error)));
+        }
+      },
+      onSeatTaken: (seat) {
+        setState(() => _mySeat = seat);
+      },
+      onSeatLeft: () {
+        setState(() => _mySeat = null);
+      },
+      onRequestMic: () => _requestMic(),
+    );
+
+    _battleLogic = VoiceRoomBattleLogic(
+      db: _db,
+      roomId: widget.roomId,
+      onError: (error) {
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(error)));
+        }
+      },
+      moderators: _moderators,
+      ownerId: widget.ownerId ?? '',
+      micSeats: _micSeats,
+      onBattleEnded: (redScore, blueScore) {
+        _showBattleResult(redScore, blueScore);
+      },
+      onBattleTick: () {
+        if (mounted) setState(() {});
+      },
+    );
+
+    _giftLogic = VoiceRoomGiftLogic(roomId: widget.roomId, context: context);
+
+    // التحقق من المصادقة قبل تهيئة Agora
+    _checkAuthenticationAndInit();
     _loadUserVoiceSettings(); // إضافة تحميل إعدادات المستخدم
+    _loadActiveVehicle().then((_) async {
+      await _updatePresence(true);
+      if (mounted) {
+        _listenToModerationStatus();
+      }
+    });
     _listenToRoomChanges();
     _listenToMicSeats();
-    _updatePresence(true);
     _checkMyVipStatus();
+    _listenToMyMicRequest();
     _cleanupOldSeats();
     _listenToNewEntries();
     _listenToGlobalAnnouncements();
     _listenToMusicStream();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() => _showRoomEntranceEffect = true);
+      _roomEntranceController.forward(from: 0).then((_) {
+        if (mounted) {
+          setState(() => _showRoomEntranceEffect = false);
+        }
+      });
+    });
     _listenToVolumeIndication();
     _listenToConnectionState();
+  }
+
+  Future<void> _loadActiveVehicle() async {
+    try {
+      final userId = _currentUserId;
+      final activeVehicle = await CustomCarService.getActiveCar(userId);
+      if (mounted) {
+        setState(() {
+          _activeVehicle = activeVehicle;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading active vehicle: $e');
+    }
+  }
+
+  Widget _buildVehicleAnimation(String url, String type) {
+    if (type == 'lottie' && url.startsWith('http')) {
+      return Lottie.network(
+        url,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return const Icon(Icons.directions_car,
+              color: AppTheme.royalGold, size: 80);
+        },
+      );
+    } else if (type == 'gif' && url.startsWith('http')) {
+      return Image.network(
+        url,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return const Icon(Icons.directions_car,
+              color: AppTheme.royalGold, size: 80);
+        },
+      );
+    } else if (url.startsWith('assets')) {
+      return Image.asset(
+        url,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return const Icon(Icons.directions_car,
+              color: AppTheme.royalGold, size: 80);
+        },
+      );
+    }
+    return const Icon(Icons.directions_car,
+        color: AppTheme.royalGold, size: 80);
+  }
+
+  /// التحقق من المصادقة قبل تهيئة Agora
+  Future<void> _checkAuthenticationAndInit() async {
+    final auth = FirebaseAuth.instance;
+    if (auth.currentUser == null) {
+      debugPrint('⚠️ User not authenticated, skipping Agora init');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('يجب تسجيل الدخول للدخول إلى الغرفة الصوتية'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Force token refresh to ensure fresh authentication
+    try {
+      await auth.currentUser!.getIdToken(true);
+      debugPrint('✅ User authenticated successfully');
+      _initAgora();
+
+    if (kIsWeb) {
+      _agoraService.audioBlockedStream.listen((blocked) {
+        if (mounted) setState(() => _audioBlockedByBrowser = blocked);
+      });
+    }
+    } catch (e) {
+      debugPrint('❌ Authentication refresh failed: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('فشل التحقق من المصادقة، يرجى تسجيل الدخول مرة أخرى'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   /// الاستماع إلى حالة الاتصال مع محاولة إعادة الاتصال التلقائية
@@ -210,6 +421,49 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
         // إعادة تعيين عدادات إعادة الاتصال عند نجاح الاتصال
         _reconnectionAttempts = 0;
         _reconnectionTimer?.cancel();
+      }
+    });
+  }
+
+  /// مراقبة حالة الإشراف (الحظر والطرد) بشكل فوري
+  void _listenToModerationStatus() {
+    if (_currentUserId.isEmpty) return;
+
+    // 1. مراقبة الحظر من الغرفة
+    _moderationSub = _db
+        .collection('rooms')
+        .doc(widget.roomId)
+        .collection('bans')
+        .doc(_currentUserId)
+        .snapshots()
+        .listen((snap) {
+      if (snap.exists && mounted) {
+        _performForcedExit(reason: 'عذراً، لقد تم حظرك من هذه الغرفة 🚫');
+      }
+    });
+
+    // 2. مراقبة الطرد (عن طريق الحذف من online_users)
+    _db
+        .collection('rooms')
+        .doc(widget.roomId)
+        .collection('online_users')
+        .doc(_currentUserId)
+        .snapshots()
+        .listen((snap) {
+      if (!snap.exists && mounted) {
+        // ننتظر ثانية للتأكد أن الحذف لم يكن بسبب انقطاع اتصال مؤقت
+        Future.delayed(const Duration(seconds: 1), () async {
+          if (!mounted) return;
+          final currentSnap = await _db
+              .collection('rooms')
+              .doc(widget.roomId)
+              .collection('online_users')
+              .doc(_currentUserId)
+              .get();
+          if (!currentSnap.exists && mounted) {
+            _performForcedExit(reason: 'لقد تم طردك من الغرفة من قبل الإدارة 🛡️');
+          }
+        });
       }
     });
   }
@@ -299,16 +553,18 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   /// - Auto-Mute بعد 5 ثواني من الصمت (فقط للمتحدثين)
   /// - الخروج التلقائي بعد 30 دقيقة من الصمت (للمستمعين)
   void _startInactivityTimers() {
-    // 1. مؤقت الكتم (5 ثواني) - فقط إذا كان على المايك وغير مكتوم
-    // هذا يوفر التكلفة بكتم الصوت تلقائياً عند عدم التحدث
-    if (_mySeat != null && !_isMicMuted && _inactivityMuteTimer == null) {
-      _inactivityMuteTimer = Timer(const Duration(seconds: 5), () {
-        if (mounted && _mySeat != null && !_isMicMuted) {
+    // 1. مؤقت الكتم (10 ثواني) - فقط إذا كان على المايك وغير مكتوم
+    // يتم إيقاف المؤقت إذا كانت الموسيقى تعمل لمنع التوقف المفاجئ
+    if (_mySeat != null &&
+        !_isMicMuted &&
+        _inactivityMuteTimer == null &&
+        !_isMusicPlaying) {
+      _inactivityMuteTimer = Timer(const Duration(seconds: 10), () {
+        if (mounted && _mySeat != null && !_isMicMuted && !_isMusicPlaying) {
           _toggleMicMute();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content:
-                  Text('تم كتم المايك تلقائياً بسبب عدم التحدث لـ 5 ثواني 🔇'),
+              content: Text('تم كتم المايك تلقائياً بسبب عدم التحدث 🔇'),
               duration: Duration(seconds: 2),
             ),
           );
@@ -328,34 +584,96 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
     }
   }
 
+  void _listenToMyMicRequest() {
+    if (_currentUserId.isEmpty) return;
+    _micRequestSub?.cancel();
+    _micRequestSub = _db
+        .collection('rooms')
+        .doc(widget.roomId)
+        .collection('mic_requests')
+        .doc(_currentUserId)
+        .snapshots()
+        .listen((snap) {
+      if (snap.exists) {
+        final data = snap.data() as Map<String, dynamic>;
+        if (data['status'] == 'rejected') {
+          _showRejectionDialog();
+          // حذف الطلب المرفوض حتى لا يتكرر التنبيه
+          snap.reference.delete();
+        }
+      }
+    });
+  }
+
+  void _showRejectionDialog() {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF0F1B25),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: Colors.redAccent, width: 1.5)),
+        title: const Text('طلب المايك مرفوض 🚫',
+            style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center),
+        content: const Text(
+          'عذراً، لقد تم رفض طلبك للصعود على المايك من قبل الإدارة. هل تود البقاء كمستمع أم مغادرة الغرفة؟',
+          style: TextStyle(color: Colors.white70, fontSize: 14),
+          textAlign: TextAlign.center,
+        ),
+        actionsAlignment: MainAxisAlignment.spaceEvenly,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _performForcedExit();
+            },
+            child: const Text('مغادرة الغرفة', style: TextStyle(color: Colors.redAccent)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.royalGold,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('البقاء كمستمع', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _checkMyVipStatus() async {
     await _db.collection('users').doc(_currentUserId).get();
-    if (mounted) {
-      setState(() {
-        // VIP rank data loaded but not currently displayed
-      });
-    }
+    // لا نحتاج setState لأن البيانات غير مستخدمة حالياً
   }
 
   void _listenToMusicStream() {
     _musicPositionSub = _agoraService.musicPositionStream.listen((pos) {
       if (mounted && _isMusicPlaying) {
-        setState(() {
-          _musicPosition = pos;
-        });
-        if (_musicDuration > 0 && pos >= _musicDuration - 500) {
-          _stopMusicLocally();
-        }
+        _musicPosition = pos;
+      }
+    });
+
+    _agoraService.mixingStateStream.listen((state) {
+      if (!mounted) return;
+      if (state == AudioMixingStateType.audioMixingStateStopped ||
+          state == AudioMixingStateType.audioMixingStateFailed) {
+        _isMusicPlaying = false;
+        _musicPosition = 0;
+      } else if (state == AudioMixingStateType.audioMixingStatePlaying) {
+        _isMusicPlaying = true;
+        _resetInactivityTimers();
       }
     });
   }
 
   void _stopMusicLocally() {
     if (!mounted) return;
-    setState(() {
-      _isMusicPlaying = false;
-      _musicPosition = 0;
-    });
+    _isMusicPlaying = false;
+    _musicPosition = 0;
   }
 
   String _formatDuration(int msec) {
@@ -387,16 +705,82 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
     });
   }
 
+  void _toggleDataSaver(bool enabled) async {
+    _dataSaverMode = enabled;
+    if (enabled) {
+      // 1. تقليل جودة الصوت لتوفير البيانات
+      await _agoraService.engine?.setAudioProfile(
+        profile: AudioProfileType.audioProfileSpeechStandard,
+        scenario: AudioScenarioType.audioScenarioChatroom,
+      );
+      // 2. إيقاف التحميل المسبق للصور عالية الجودة إن وجد
+    } else {
+      // استعادة الجودة العالية
+      await _agoraService.engine?.setAudioProfile(
+        profile: AudioProfileType.audioProfileMusicStandard,
+        scenario: AudioScenarioType.audioScenarioGameStreaming,
+      );
+    }
+  }
+
   void _triggerCapsule(Map<String, dynamic> data) {
-    if (!mounted) return;
+    if (!mounted || _dataSaverMode) {
+      return; // عدم عرض الكبسولة في وضع توفير البيانات
+    }
     _capsuleTimer?.cancel();
-    setState(() {
-      _capsuleData = data;
-      _showCapsule = true;
-    });
+    _capsuleData = data;
+    _showCapsule = true;
     _capsuleTimer = Timer(const Duration(seconds: 5), () {
-      if (mounted) setState(() => _showCapsule = false);
+      if (mounted) _showCapsule = false;
     });
+  }
+
+  Future<void> _playRoomEventFeedback(String eventType) async {
+    if (!mounted) return;
+    HapticFeedback.heavyImpact();
+    _eventPulseController.forward(from: 0);
+    Future.delayed(const Duration(milliseconds: 120), () {
+      if (mounted) {
+        HapticFeedback.mediumImpact();
+      }
+    });
+    try {
+      await _eventAudioPlayer
+          .play(AssetSource(RoomEventFeedback.assetFor(eventType)));
+    } catch (e) {
+      debugPrint('Unable to play room event sound: $e');
+    }
+  }
+
+  void _showRoomEventToast(String title, String message, Color color) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: color,
+        duration: const Duration(seconds: 3),
+        content: Row(
+          children: [
+            const Icon(Icons.notifications_active, color: Colors.white, size: 18),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 2),
+                  Text(message, style: const TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _cleanupOldSeats() async {
@@ -423,26 +807,38 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
       if (snap.docs.isNotEmpty) {
         final data = snap.docs.first.data();
         final String uid = data['uid'];
-        if (uid == _currentUserId) return;
+        if (uid == _currentUserId || _dataSaverMode) return;
         final userDoc = await _db.collection('users').doc(uid).get();
         final String? effect = userDoc.data()?['entryEffect'];
         if (effect != null && mounted) {
-          setState(() {
-            _currentEntryEffect = effect;
-            _entryUserName = userDoc.data()?['name'] ?? 'ملك رويال';
-          });
+          _playRoomEventFeedback('welcome');
+          _currentEntryEffect = effect;
+          _entryUserName = userDoc.data()?['name'] ?? 'ملك رويال';
           _entryAnimController.forward(from: 0).then((_) {
-            if (mounted) setState(() => _currentEntryEffect = null);
+            if (mounted) _currentEntryEffect = null;
           });
         }
       }
     });
   }
 
-  void _updatePresence(bool isJoining) async {
+  Future<void> _updatePresence(bool isJoining) async {
     if (_currentUserId.isEmpty) return;
     final roomRef = _db.collection('rooms').doc(widget.roomId);
     if (isJoining) {
+      // تنظيف أي مقعد قديم للمستخدم (حل مشكلة الصعود التلقائي للمايك عند الدخول)
+      try {
+        final oldSeats = await roomRef
+            .collection('mic_seats')
+            .where('userId', isEqualTo: _currentUserId)
+            .get();
+        for (var doc in oldSeats.docs) {
+          await doc.reference.delete();
+        }
+      } catch (e) {
+        debugPrint("Error cleaning old seats on join: $e");
+      }
+
       final userDoc = await _db.collection('users').doc(_currentUserId).get();
       final String noble = userDoc.data()?['nobleLevel'] ?? 'N1';
       final String name = _auth.currentUser?.displayName ?? 'مستخدم';
@@ -456,13 +852,25 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
         'nobleLevel': noble
       });
       if (mounted) {
-        setState(() {
-          _entryBannerText = 'أهلاً بك $name في رويال دور 👑✨';
+        final roomSnapshot = await roomRef.get();
+        final roomData = roomSnapshot.data();
+        _roomNotificationPrefs = RoomNotificationPreferences.fromMap(roomData);
+        final welcomeMessage = _roomNotificationPrefs
+            .resolvedWelcomeMessage('أهلاً بك $name في Royal Door 👑✨');
+
+        // عرض المركبة إذا كانت مفعلة، وإلا عرض الترحيب العادي
+        if (_activeVehicle != null && _activeVehicle!['enabled'] == true) {
+          _showVehicleEntry = true;
+          Future.delayed(const Duration(seconds: 5), () {
+            if (mounted) _showVehicleEntry = false;
+          });
+        } else if (_roomNotificationPrefs.shouldShow('welcome')) {
+          _entryBannerText = welcomeMessage;
           _showEntryBanner = true;
-        });
-        Future.delayed(const Duration(seconds: 5), () {
-          if (mounted) setState(() => _showEntryBanner = false);
-        });
+          Future.delayed(const Duration(seconds: 5), () {
+            if (mounted) _showEntryBanner = false;
+          });
+        }
       }
     } else {
       if (_mySeat != null) {
@@ -495,11 +903,11 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
         final double micVol = (data['micVolume'] ?? 0.8).toDouble();
         final double speakerVol = (data['speakerVolume'] ?? 1.0).toDouble();
         final bool noiseCancel = data['noiseCancellation'] ?? true;
+        final bool echoCancel = data['echoCancellation'] ?? true;
+        final bool micAutoEnabled = data['micAutoEnabled'] ?? true;
+        final bool speakerAutoEnabled = data['speakerAutoEnabled'] ?? true;
 
-        setState(() {
-          _noiseReduction = noiseCancel;
-          // يمكن إضافة المزيد من الحقول هنا إذا لزم الأمر
-        });
+        _noiseReduction = noiseCancel;
 
         // تطبيق على Agora
         await _agoraService.engine
@@ -512,6 +920,21 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
               ?.setParameters('{"che.audio.opensles":true}');
           await _agoraService.engine?.setParameters('{"che.audio.agc":true}');
           await _agoraService.engine?.setParameters('{"che.audio.ans":true}');
+        }
+
+        if (echoCancel) {
+          await _agoraService.engine?.setParameters('{"che.audio.aec":true}');
+        }
+
+        // تطبيق الإعدادات التلقائية
+        if (micAutoEnabled && _mySeat == null) {
+          // تفعيل المايك تلقائياً إذا كان الإعداد مفعل
+          // يمكن إضافة منطق هنا لاتخاذ المايك تلقائياً
+        }
+
+        if (speakerAutoEnabled) {
+          // Speakerphone auto-enable - method not available in AgoraService
+          // Implement setSpeakerphone in AgoraService if needed
         }
       }
     } catch (e) {
@@ -530,14 +953,57 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
             _roomNoticeText = data['notice'] ?? _roomNoticeText;
             _lockedSeats = Set<int>.from(data['lockedSeats'] ?? []);
             _moderators = List<String>.from(data['moderators'] ?? []);
+            _admins = List<String>.from(data['admins'] ?? []); // تحميل المسؤولين
             _micMode = data['micMode'] ?? 'normal';
             _muteChatGlobal = data['muteChat'] ?? false;
+            _mutePublic = data['mutePublic'] ?? false;
+            _requireMicApproval = data['requireMicApproval'] ?? false;
+            _minLevelRequired = data['minLevelRequired'] ?? 1;
+            _moderatorPermissions =
+                data['moderatorPermissions'] as Map<String, dynamic>? ?? {};
             _adminOnlyMic = data['adminOnlyMic'] ?? false;
-            _maxSeats = data['maxSeats'] ?? 10;
+            _roomNoiseReductionEnabled = data['noiseReductionEnabled'] ?? false;
+            _roomEyeComfortEnabled = data['eyeComfortEnabled'] ?? false;
+            _roomNotificationPrefs = RoomNotificationPreferences.fromMap(data);
+            _maxSeats = data['maxSeats'] ?? 8;
+
+            // تحديث بيانات منطق المايك عند حدوث تغييرات في الغرفة
+            _micLogic = VoiceRoomMicLogic(
+              db: _db,
+              auth: _auth,
+              agoraService: _agoraService,
+              roomId: widget.roomId,
+              ownerId: widget.ownerId ?? '',
+              admins: _admins, // تمرير المسؤولين
+              moderators: _moderators,
+              moderatorPermissions: _moderatorPermissions,
+              maxSeats: _maxSeats,
+              adminOnlyMic: _adminOnlyMic,
+              requireMicApproval: _requireMicApproval,
+              lockedSeats: _lockedSeats.toList(),
+              onError: (error) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(error)));
+                }
+              },
+              onSeatTaken: (seat) => _mySeat = seat,
+              onSeatLeft: () => _mySeat = null,
+              onRequestMic: () => _requestMic(),
+            );
+
             var newBattleData = data['battle'];
             if (newBattleData != null && newBattleData['active'] == true) {
+              final wasBattleActive =
+                  _battleData != null && _battleData!['active'] == true;
               _battleData = newBattleData;
               _resultShown = false;
+              if (!wasBattleActive &&
+                  _roomNotificationPrefs.shouldShow('battle')) {
+                _playRoomEventFeedback('battle');
+                _showRoomEventToast(
+                    'معركة جديدة', 'بدأت معركة داخل الغرفة 👑', Colors.orange);
+              }
               _startBattleCountdown();
             } else {
               if (_battleData != null &&
@@ -548,6 +1014,7 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                 _resultShown = true;
               }
               _battleData = newBattleData;
+            _activeGame = data['activeGame'];
               _battleTimer?.cancel();
             }
           });
@@ -565,16 +1032,49 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
         .listen((snap) {
       Map<int, Map<String, dynamic>> newSeats = {};
       int? foundMySeat;
+      Set<String> onlineUserIds = {};
+
       for (var doc in snap.docs) {
         int index = int.parse(doc.id);
         newSeats[index] = doc.data();
-        if (doc.data()['userId'] == _currentUserId) foundMySeat = index;
+        final uid = doc.data()['userId'];
+        onlineUserIds.add(uid);
+        if (uid == _currentUserId) foundMySeat = index;
       }
+
       if (mounted) {
-        setState(() {
-          _micSeats = newSeats;
-          _mySeat = foundMySeat;
-        });
+        final bool wasOnMic = _mySeat != null;
+        final bool isNowOnMic = foundMySeat != null;
+
+        _micSeats = newSeats;
+        _mySeat = foundMySeat;
+
+        // مزامنة حالة أكورا تلقائياً عند تغيير المقعد (يدوياً أو بواسطة مشرف)
+        if (!wasOnMic && isNowOnMic) {
+          debugPrint('🎙️ Auto-activating mic: User assigned to seat $foundMySeat');
+          _agoraService.updateClientRole(true);
+          _isMicMuted = false;
+          _playRoomEventFeedback('mic');
+        } else if (wasOnMic && !isNowOnMic) {
+          debugPrint('🔇 Auto-deactivating mic: User left seat');
+          _agoraService.updateClientRole(false);
+        }
+
+        // تحقق من خروج أحد المتسابقين إذا كانت المعركة نشطة
+        if (_battleData != null && _battleData!['active'] == true) {
+          final mode = _battleData!['mode'] ?? 'team';
+          if (mode == 'individual') {
+            final redId = _battleData!['redId'];
+            final blueId = _battleData!['blueId'];
+
+            // إذا خرج أي من الطرفين من المايك، تنتهي المعركة بسبب الهروب
+            if (!onlineUserIds.contains(redId)) {
+              _endBattle(reason: 'red_escaped');
+            } else if (!onlineUserIds.contains(blueId)) {
+              _endBattle(reason: 'blue_escaped');
+            }
+          }
+        }
       }
     });
   }
@@ -599,34 +1099,78 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   /// - مغادرة قناة Agora لتوفير التكلفة
   /// - إلغاء جميع الاشتراكات والمؤقتات
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+        // عند الاحتفاظ بالغرفة أو التبديل إلى تطبيق آخر
+        unawaited(_agoraService.setBackgroundMode(true));
+        break;
+      case AppLifecycleState.resumed:
+        // عند العودة إلى التطبيق
+        unawaited(_agoraService.setBackgroundMode(false));
+        break;
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+        break;
+    }
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    if (!RoomPresenceService().isMinimized) {
+
+    // إذا كان الغرفة في وضع الاحتفاظ (مغلقة للشاشة فقط)، لا نغادر قناة أكورا
+    bool isMinimized = RoomPresenceService().isMinimized;
+
+    if (!isMinimized) {
       _updatePresence(false);
+      _agoraService.stopMusic();
+      // مغادرة قناة Agora فقط عند الخروج النهائي
+      _agoraService.leave();
+    } else {
+      // إذا كان احتفاظ، نضمن استمرار الصوت في الخلفية
+      unawaited(_agoraService.setBackgroundMode(true));
     }
+
+    _micRequestSub?.cancel();
     _announcementSub?.cancel();
     _capsuleTimer?.cancel();
     _battleTimer?.cancel();
     _musicPositionSub?.cancel();
+    _moderationSub?.cancel();
     _volumeSub?.cancel();
     _connectionSub?.cancel();
     _inactivityMuteTimer?.cancel();
     _inactivityKickTimer?.cancel();
-    _reconnectionTimer?.cancel(); // تنظيف مؤقت إعادة الاتصال
-    _agoraService.stopMusic();
-    // مغادرة قناة Agora لتوفير التكلفة ومنع تسرب الذاكرة
-    _agoraService.leave();
+    _reconnectionTimer?.cancel();
+
     _messageController.dispose();
+    _eventAudioPlayer.dispose();
     _giftAnimController.dispose();
     _speakingAnimController.dispose();
     _boxAnimController.dispose();
     _comboAnimController.dispose();
     _entryAnimController.dispose();
+    _eventPulseController.dispose();
+    _roomEntranceController.dispose();
     super.dispose();
   }
 
   bool get _hasPower =>
-      _currentUserId == widget.ownerId || _moderators.contains(_currentUserId);
+      _currentUserId == widget.ownerId ||
+      _admins.contains(_currentUserId) ||
+      _moderators.contains(_currentUserId);
+
+  bool _hasPermission(String key) {
+    if (_currentUserId == widget.ownerId || _admins.contains(_currentUserId)) {
+      return true;
+    }
+    if (!_moderators.contains(_currentUserId)) return false;
+    return _moderatorPermissions[key] ?? false;
+  }
 
   /// أخذ المايك مع التحقق من الشروط
   /// - التحقق من أن رقم المايك ضمن الحد المسموح (5 مايكات فقط)
@@ -635,63 +1179,16 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   /// - تحويل المستخدم إلى متحدث (Broadcaster) - يبدأ احتساب التكلفة
   void _takeMic(int seatNumber) async {
     HapticFeedback.lightImpact(); // اهتزاز خفيف عند لمس المايك
-
-    // التحقق من أن رقم المايك ضمن الحد المسموح (5 مايكات فقط لتوفير التكلفة)
-    if (seatNumber > _maxSeats) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'عذراً، الحد الأقصى للمايكات هو $_maxSeats فقط لتوفير التكلفة 💰')),
-        );
-      }
-      return;
+    
+    // المنطق الآن محمي بالكامل داخل _micLogic
+    await _micLogic.takeMic(seatNumber, _mySeat);
+    
+    // تحديث الحالة المحلية إذا تم أخذ المايك (المشرفين فقط أو إذا كانت الموافقة معطلة)
+    if (_mySeat == seatNumber) {
+      setState(() {
+        _isMicMuted = false;
+      });
     }
-
-    if (_adminOnlyMic && !_hasPower) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('عذراً، المايك مخصص للمسؤولين حالياً 👑')));
-      }
-      return;
-    }
-    if (_lockedSeats.contains(seatNumber) && !_hasPower) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('هذا المايك مغلق من قبل الإدارة 🔒')));
-      }
-      return;
-    }
-    if (_mySeat != null) {
-      await _db
-          .collection('rooms')
-          .doc(widget.roomId)
-          .collection('mic_seats')
-          .doc(_mySeat.toString())
-          .delete();
-    }
-    final userDoc = await _db.collection('users').doc(_currentUserId).get();
-    final String? micFrame = userDoc.data()?['currentFrame'];
-    await _db
-        .collection('rooms')
-        .doc(widget.roomId)
-        .collection('mic_seats')
-        .doc(seatNumber.toString())
-        .set({
-      'userId': _currentUserId,
-      'name': _auth.currentUser?.displayName ?? 'مستخدم',
-      'photoUrl': _auth.currentUser?.photoURL ?? '',
-      'isMuted': false,
-      'timestamp': FieldValue.serverTimestamp(),
-      'agoraUid': _agoraService.localUid,
-      'micFrame': micFrame,
-    });
-    // تحويل الدور لمتحدث (Broadcaster) عند أخذ المايك - يبدأ احتساب التكلفة
-    await _agoraService.updateClientRole(true);
-    setState(() {
-      _mySeat = seatNumber;
-      _isMicMuted = false;
-    });
   }
 
   /// مغادرة المايك والعودة للمستمع
@@ -700,17 +1197,7 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   /// - هذا مهم جداً لتوفير التكلفة عند عدم التحدث
   void _leaveMic() async {
     HapticFeedback.mediumImpact(); // اهتزاز عند النزول
-    if (_mySeat != null) {
-      await _db
-          .collection('rooms')
-          .doc(widget.roomId)
-          .collection('mic_seats')
-          .doc(_mySeat.toString())
-          .delete();
-      // العودة لدور مستمع (Audience) لتوفير التكاليف - يتوقف احتساب التكلفة
-      await _agoraService.updateClientRole(false);
-      if (mounted) setState(() => _mySeat = null);
-    }
+    await _micLogic.leaveMic(_mySeat);
   }
 
   /// كتم/فتح المايك مع تغيير الدور تلقائياً
@@ -736,18 +1223,262 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
     HapticFeedback.selectionClick();
   }
 
+  Widget _buildActiveGameOverlay() {
+    if (_activeGame?['id'] == 'tic_tac_toe') {
+      return TicTacToeGame(
+        roomId: widget.roomId,
+        gameData: _activeGame!,
+        hasPower: _hasPower,
+      );
+    } else if (_activeGame?['id'] == 'fruit_war') {
+      return FruitWarGame(
+        roomId: widget.roomId,
+        gameData: _activeGame!,
+        hasPower: _hasPower,
+      );
+    } else if (_activeGame?['id'] == 'voting') {
+      return VotingGame(
+        roomId: widget.roomId,
+        gameData: _activeGame!,
+        hasPower: _hasPower,
+      );
+    } else if (_activeGame?['id'] == 'lucky_draw') {
+      return LuckyDrawGame(
+        roomId: widget.roomId,
+        gameData: _activeGame!,
+        hasPower: _hasPower,
+      );
+    } else if (_activeGame?['id'] == 'bomb') {
+      return BombGame(
+        roomId: widget.roomId,
+        gameData: _activeGame!,
+        hasPower: _hasPower,
+      );
+    } else if (_activeGame?['id'] == 'crocodile') {
+      return CrocodileGame(
+        roomId: widget.roomId,
+        gameData: _activeGame!,
+        hasPower: _hasPower,
+      );
+    }
+
+    final gameName = _activeGame?['name'] ?? 'لعبة جارية';
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.indigo.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.indigoAccent, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 10,
+          )
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.videogame_asset, color: Colors.white, size: 24),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(gameName,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+                const Text('انقر للمشاركة في اللعبة الملكية',
+                    style: TextStyle(color: Colors.white70, fontSize: 11)),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close, color: Colors.white54, size: 20),
+            onPressed: () {
+              if (_hasPower) {
+                _db.collection('rooms').doc(widget.roomId).update({
+                  'activeGame': FieldValue.delete(),
+                });
+              } else {
+                _activeGame = null; // إخفاء محلي للمستخدم
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showGamesSelector() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => GameSelectorSheet(
+        roomId: widget.roomId,
+        hasPower: _hasPower,
+      ),
+    );
+  }
+
+  void _showUserProfileBottomSheet(String userId) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => _UserProfileBottomSheet(
+        userId: userId,
+        roomId: widget.roomId,
+        currentUserId: _auth.currentUser?.uid ?? '',
+      ),
+    );
+  }
+
+  Future<void> _requestMic() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return;
+
+      final userDoc = await _db.collection('users').doc(user.uid).get();
+      final userData = userDoc.data() ?? {};
+
+      await _db
+          .collection('rooms')
+          .doc(widget.roomId)
+          .collection('mic_requests')
+          .doc(user.uid)
+          .set({
+        'userId': user.uid,
+        'name': userData['name'] ?? user.displayName ?? 'مستخدم ملكي',
+        'photoUrl': userData['profilePic'] ?? user.photoURL ?? '',
+        'timestamp': FieldValue.serverTimestamp(),
+        'status': 'pending', // إضافة الحالة
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('تم إرسال طلب الصعود للمايك بنجاح ⏳'),
+            backgroundColor: Colors.blueAccent));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('فشل إرسال الطلب ❌'),
+            backgroundColor: Colors.redAccent));
+      }
+    }
+  }
+
+  void _showMicQueue() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => FractionallySizedBox(
+        heightFactor: 0.7,
+        child: MicQueueSheet(
+          roomId: widget.roomId,
+          hasPower: _hasPower,
+          onApprove: (uid, name, photo) async {
+            // الموافقة تعني إعطاءه أول مايك فارغ متاح
+            int? freeSeat;
+            for (int i = 1; i <= _maxSeats; i++) {
+              if (!_micSeats.containsKey(i) && !_lockedSeats.contains(i)) {
+                freeSeat = i;
+                break;
+              }
+            }
+
+            if (freeSeat != null) {
+              await _db
+                  .collection('rooms')
+                  .doc(widget.roomId)
+                  .collection('mic_seats')
+                  .doc(freeSeat.toString())
+                  .set({
+                'userId': uid,
+                'name': name,
+                'photoUrl': photo,
+                'joinedAt': FieldValue.serverTimestamp(),
+                'isMuted': false,
+                'agoraUid': 0, // سيتم تحديثه عند دخوله الفعلي
+              });
+              // إزالة من القائمة
+              await _db
+                  .collection('rooms')
+                  .doc(widget.roomId)
+                  .collection('mic_requests')
+                  .doc(uid)
+                  .delete();
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('تم السماح لـ $name بالصعود للمايك 🎙️')));
+              }
+            } else {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('عذراً، لا توجد مايكات فارغة حالياً 🚫')));
+              }
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   void _onSendPressed({String? customText, bool isSystem = false}) async {
     HapticFeedback.lightImpact(); // اهتزاز عند الإرسال
     _resetInactivityTimers(); // تصفير عدادات الخمول عند إرسال رسالة
     final text = customText ?? _messageController.text.trim();
     if (text.isEmpty) return;
-    if (_muteChatGlobal && !_hasPower && !isSystem) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('الدردشة مغلقة حالياً من قبل الإدارة 🔇')));
+
+    if (!isSystem) {
+      final userSnap = await _db.collection('users').doc(_currentUserId).get();
+      final userData = userSnap.data() ?? {};
+      final int userLevel = (userData['accountLevel'] ?? 1).toInt();
+      final bool isOwnerOrModerator = _hasPower;
+
+      // 1. التحقق من كتم الدردشة العام
+      if (_muteChatGlobal && !isOwnerOrModerator) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('الدردشة مغلقة حالياً من قبل الإدارة 🔇')));
+        }
+        return;
       }
-      return;
+
+      // 2. التحقق من الحد الأدنى للمستوى
+      if (userLevel < _minLevelRequired && !isOwnerOrModerator) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('يجب أن يكون مستواك $_minLevelRequired على الأقل للدردشة 🏆')));
+        }
+        return;
+      }
+
+      // 3. التحقق من كتم غير الأعضاء
+      if (_mutePublic && !isOwnerOrModerator) {
+        final memberSnap = await _db
+            .collection('rooms')
+            .doc(widget.roomId)
+            .collection('members')
+            .doc(_currentUserId)
+            .get();
+        if (!memberSnap.exists) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('يجب أن تكون عضواً في الغرفة للدردشة 👑')));
+          }
+          return;
+        }
+      }
     }
+
     if (customText == null) _messageController.clear();
     final userSnap = await _db.collection('users').doc(_currentUserId).get();
     final String noble = userSnap.data()?['nobleLevel'] ?? 'N1';
@@ -768,7 +1499,11 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
 
   void _handleTap(bool isBlueTeam, Offset position) async {
     if (_battleData == null || _battleData!['active'] != true) return;
-    _addFloatingHeart(position, isBlueTeam ? Colors.blue : Colors.red);
+
+    final blueColor = Color(_battleData!['blueColor'] ?? Colors.blue.value);
+    final redColor = Color(_battleData!['redColor'] ?? Colors.red.value);
+
+    _addFloatingHeart(position, isBlueTeam ? blueColor : redColor);
     final field = isBlueTeam ? 'battle.bluePoints' : 'battle.redPoints';
     await _db
         .collection('rooms')
@@ -777,15 +1512,13 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   }
 
   void _addFloatingHeart(Offset pos, Color color) {
-    setState(() {
-      _floatingHearts.add(_FloatingHeart(
-          key: UniqueKey(),
-          position: pos,
-          color: color,
-          onComplete: (key) {
-            setState(() => _floatingHearts.removeWhere((h) => h.key == key));
-          }));
-    });
+    _floatingHearts.add(_FloatingHeart(
+        key: UniqueKey(),
+        position: pos,
+        color: color,
+        onComplete: (key) {
+          _floatingHearts.removeWhere((h) => h.key == key);
+        }));
   }
 
   Future<void> _pickAndPlayMusic() async {
@@ -818,7 +1551,7 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
     } else {
       await _agoraService.resumeMusic();
     }
-    if (mounted) setState(() => _isMusicPlaying = !_isMusicPlaying);
+    if (mounted) _isMusicPlaying = !_isMusicPlaying;
   }
 
   @override
@@ -830,14 +1563,16 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.black, // إضافة لون خلفية افتراضي
         body: Stack(
           children: [
-            _buildBackground(),
+            Positioned.fill(child: _buildBackground()),
             SafeArea(
               child: Column(
                 children: [
                   _buildTopBar(),
                   _buildMarqueeBar(),
+                  if (isBattleActive) _buildBattleNotificationOverlay(),
                   _buildGiftEventListener(),
                   Expanded(
                     child: Stack(
@@ -845,14 +1580,13 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                         CustomScrollView(
                           physics: const BouncingScrollPhysics(),
                           slivers: [
+                            if (isBattleActive)
+                              SliverToBoxAdapter(child: _buildBattleBar()),
                             // 1. المايكات وتوزيعها الديناميكي حسب النمط
                             SliverPadding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 15),
                                 sliver: _buildDynamicMicLayout(isBattleActive)),
-                            // 2. شريط المعركة (النجوم والوقت) تحت المايكات مباشرة
-                            if (isBattleActive)
-                              SliverToBoxAdapter(child: _buildBattleBar()),
                             SliverToBoxAdapter(
                                 child: Column(children: [
                               const SizedBox(height: 10),
@@ -860,29 +1594,152 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                             ])),
                           ],
                         ),
-                        if (isBattleActive) ...[
+                        if (_activeGame != null) 
                           Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            child: _buildActiveGameOverlay(),
+                          ),
+                        if (isBattleActive)
+                          Positioned.fill(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTapDown: (d) =>
+                                        _handleTap(true, d.globalPosition),
+                                    behavior: HitTestBehavior.translucent,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                          colors: [
+                                            Color(_battleData!['blueColor'] ??
+                                                    Colors.blue.value)
+                                                .withValues(alpha: 0.08),
+                                            Colors.transparent,
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTapDown: (d) =>
+                                        _handleTap(false, d.globalPosition),
+                                    behavior: HitTestBehavior.translucent,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.centerRight,
+                                          end: Alignment.centerLeft,
+                                          colors: [
+                                            Color(_battleData!['redColor'] ??
+                                                    Colors.red.value)
+                                                .withValues(alpha: 0.08),
+                                            Colors.transparent,
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ...(_dataSaverMode ? [] : _floatingHearts),
+                        if (_audioBlockedByBrowser)
+                          Positioned.fill(
+                            child: Container(
+                              color: Colors.black87,
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.volume_off,
+                                        size: 64, color: Colors.amber),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      "المتصفح يمنع تشغيل الصوت تلقائياً",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      "اضغط على الزر لتفعيل الصوت",
+                                      style: TextStyle(
+                                          color: Colors.white70, fontSize: 14),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    ElevatedButton.icon(
+                                      onPressed: () async {
+                                        await _agoraService.resumeAudio();
+                                        if (mounted) {
+                                          setState(() =>
+                                              _audioBlockedByBrowser = false);
+                                        }
+                                      },
+                                      icon: const Icon(Icons.volume_up),
+                                      label: const Text("تفعيل الصوت"),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.amber,
+                                        foregroundColor: Colors.black,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 32, vertical: 12),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (_showVehicleEntry && _activeVehicle != null)
+                          Positioned(
+                              top: 20,
                               left: 0,
-                              top: 100,
-                              bottom: 200,
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: GestureDetector(
-                                  onTapDown: (d) =>
-                                      _handleTap(true, d.globalPosition),
-                                  behavior: HitTestBehavior.translucent,
-                                  child: Container())),
-                          Positioned(
                               right: 0,
-                              top: 100,
-                              bottom: 200,
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: GestureDetector(
-                                  onTapDown: (d) =>
-                                      _handleTap(false, d.globalPosition),
-                                  behavior: HitTestBehavior.translucent,
-                                  child: Container())),
-                        ],
-                        ..._floatingHearts,
+                              child: Center(
+                                  child: Container(
+                                      width: 300,
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                          color: Colors.black
+                                              .withValues(alpha: 0.8),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 10,
+                                                offset: Offset(0, 4))
+                                          ]),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Text(
+                                            '🚗 دخول ملكي',
+                                            style: TextStyle(
+                                                color: AppTheme.royalGold,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Expanded(
+                                            child: _buildVehicleAnimation(
+                                                _activeVehicle!['url'],
+                                                _activeVehicle!['type']),
+                                          ),
+                                        ],
+                                      )))),
                         if (_showEntryBanner)
                           Positioned(
                               top: 20,
@@ -913,14 +1770,22 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                       ],
                     ),
                   ),
-                  if (isBattleActive) _buildBattleNotificationOverlay(),
                   _buildChatArea(),
                   _buildBottomBar(),
                 ],
               ),
             ),
+            if (_showRoomEntranceEffect) _buildRoomEntranceOverlay(),
             _buildComboOverlay(),
             _buildVipEntryOverlay(),
+            if (_eyeComfort)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: Container(
+                    color: Colors.orange.withValues(alpha: 0.15),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -929,7 +1794,50 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
 
   Widget _buildDynamicMicLayout(bool isBattle) {
     // توزيع المايكات بناءً على النمط micMode
-    if (_micMode == 'broadcast-5') {
+    if (_micMode == 'chat-5' || (_micMode == '4-4' && _maxSeats == 5)) {
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [1, 2, 3, 4, 5].map((n) => _buildMicSeat(n)).toList(),
+          ),
+        ),
+      );
+    } else if (_micMode == '4-4' || (_maxSeats == 8 && _micMode != 'broadcast-5')) {
+      return SliverToBoxAdapter(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [1, 2, 3, 4].map((n) => _buildMicSeat(n)).toList(),
+            ),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [5, 6, 7, 8].map((n) => _buildMicSeat(n)).toList(),
+            ),
+          ],
+        ),
+      );
+    } else if (_micMode == 'normal' && _maxSeats == 10) {
+      // نمط 10 مايكات (صفين من 5)
+      return SliverToBoxAdapter(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [1, 2, 3, 4, 5].map((n) => _buildMicSeat(n)).toList(),
+            ),
+            const SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [6, 7, 8, 9, 10].map((n) => _buildMicSeat(n)).toList(),
+            ),
+          ],
+        ),
+      );
+    } else if (_micMode == 'broadcast-5') {
       return SliverToBoxAdapter(
         child: Column(
           children: [
@@ -979,26 +1887,37 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
           ],
         ),
       );
+    } else if (_micMode == 'chat-15' || _maxSeats == 15) {
+      return SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        sliver: SliverGrid(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              mainAxisSpacing: 15,
+              crossAxisSpacing: 5,
+              childAspectRatio: 0.7),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            int seatNumber = index + 1;
+            if (seatNumber > 15) return null;
+            return _buildMicSeat(seatNumber);
+          }, childCount: 15),
+        ),
+      );
     } else {
-      // النمط العادي أو أنماط الدردشة (Grid)
-      int crossCount = _micMode == 'chat-15' ? 5 : 5;
+      // النمط الشبكي الافتراضي للغرف الأخرى
+      int crossCount = 4;
       return SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossCount,
-            mainAxisSpacing: 15,
-            crossAxisSpacing: 5,
-            childAspectRatio: 0.8),
+            mainAxisSpacing: 20,
+            crossAxisSpacing: 10,
+            childAspectRatio: 0.75),
         delegate: SliverChildBuilderDelegate((context, index) {
           int seatNumber = index + 1;
           if (seatNumber > _maxSeats) return null;
           Color? team;
           if (isBattle) {
-            if (_maxSeats >= 30) {
-              team = (seatNumber % 2 == 0) ? Colors.blue : Colors.red;
-            } else {
-              if ([5, 4, 3, 10, 9].contains(seatNumber)) team = Colors.blue;
-              if ([2, 1, 8, 7, 6].contains(seatNumber)) team = Colors.red;
-            }
+            team = (seatNumber % 2 == 0) ? Colors.blue : Colors.red;
           }
           return _buildMicSeat(seatNumber, teamColor: team);
         }, childCount: _maxSeats),
@@ -1175,6 +2094,10 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
     if (_battleData == null) return const SizedBox.shrink();
     int redPoints = _battleData!['redPoints'] ?? 0;
     int bluePoints = _battleData!['bluePoints'] ?? 0;
+
+    final blueColor = Color(_battleData!['blueColor'] ?? Colors.blue.value);
+    final redColor = Color(_battleData!['redColor'] ?? Colors.red.value);
+
     double total = _parseDouble(redPoints + bluePoints);
     double blueRatio = total == 0 ? 0.5 : _parseDouble(bluePoints) / total;
     if (blueRatio < 0.05) blueRatio = 0.05;
@@ -1194,18 +2117,23 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(children: [
-                const Icon(Icons.shield, color: Colors.blue, size: 16),
+                Icon(Icons.shield, color: blueColor, size: 16),
                 const SizedBox(width: 4),
                 Text('$bluePoints',
-                    style: const TextStyle(
-                        color: Colors.blue, fontWeight: FontWeight.bold))
+                    style: TextStyle(
+                        color: blueColor, fontWeight: FontWeight.bold))
               ]),
+              const Text('GLOBAL BATTLE 🔥',
+                  style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold)),
               Row(children: [
                 Text('$redPoints',
-                    style: const TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        color: redColor, fontWeight: FontWeight.bold)),
                 const SizedBox(width: 4),
-                const Icon(Icons.shield, color: Colors.red, size: 16)
+                Icon(Icons.shield, color: redColor, size: 16)
               ]),
             ],
           ),
@@ -1221,12 +2149,12 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(colors: [
-                          Colors.blue.shade900,
-                          Colors.blue.shade400
+                          blueColor.withValues(alpha: 0.8),
+                          blueColor
                         ]),
                       ),
                       child: const Center(
-                          child: Text('BLUE',
+                          child: Text('TEAM 1',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 8,
@@ -1237,11 +2165,13 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                     flex: ((1 - blueRatio) * 100).toInt() + 1,
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            colors: [Colors.red.shade400, Colors.red.shade900]),
+                        gradient: LinearGradient(colors: [
+                          redColor,
+                          redColor.withValues(alpha: 0.8)
+                        ]),
                       ),
                       child: const Center(
-                          child: Text('RED',
+                          child: Text('TEAM 2',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 8,
@@ -1280,27 +2210,131 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   Widget _buildVipEntryOverlay() {
     if (_currentEntryEffect == null) return const SizedBox.shrink();
     return IgnorePointer(
-        child: Center(
+        child: AnimatedBuilder(
+            animation: _entryAnimController,
+            builder: (context, child) {
+              final progress = (_entryAnimController.value).clamp(0.0, 1.0);
+              final opacity = (1.0 - progress).clamp(0.0, 1.0);
+              return Transform.scale(
+                scale: 0.9 + (progress * 0.25),
+                child: Opacity(
+                  opacity: opacity,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black.withValues(alpha: 0.85),
+                            const Color(0xFF1A1228).withValues(alpha: 0.95),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                            color: AppTheme.royalGold.withValues(alpha: 0.9),
+                            width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.royalGold.withValues(alpha: 0.35),
+                            blurRadius: 24,
+                            spreadRadius: 2,
+                          )
+                        ],
+                      ),
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        const Icon(Icons.auto_awesome,
+                            color: AppTheme.royalGold, size: 64),
+                        const SizedBox(height: 10),
+                        const Text("👑 وصول فخم 👑",
+                            style: TextStyle(
+                                color: Colors.amber,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Text(_entryUserName ?? '',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold))
+                      ]),
+                    ),
+                  ),
+                ),
+              );
+            }));
+  }
+
+  Widget _buildRoomEntranceOverlay() {
+    return IgnorePointer(
+      child: AnimatedBuilder(
+        animation: _roomEntranceController,
+        builder: (context, child) {
+          final progress =
+              Curves.easeOutCubic.transform(_roomEntranceController.value);
+          final opacity = (1.0 - progress).clamp(0.0, 1.0);
+          return Opacity(
+            opacity: opacity,
             child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                    color: Colors.black87,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.amber, width: 2)),
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.stars, color: Colors.amber, size: 60),
-                  const SizedBox(height: 10),
-                  const Text("👑 وصول فخم 👑",
-                      style: TextStyle(
-                          color: Colors.amber,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold)),
-                  Text(_entryUserName ?? '',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold))
-                ]))));
+              color: Colors.black.withValues(alpha: 0.35),
+              child: Center(
+                child: Transform.scale(
+                  scale: 0.8 + (progress * 0.35),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 28, vertical: 24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFF1A0F2B).withValues(alpha: 0.95),
+                          const Color(0xFF26153C).withValues(alpha: 0.95),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                          color: AppTheme.royalGold.withValues(alpha: 0.9),
+                          width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.royalGold.withValues(alpha: 0.35),
+                          blurRadius: 30,
+                          spreadRadius: 3,
+                        ),
+                      ],
+                    ),
+                    child: const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.auto_awesome,
+                            color: AppTheme.royalGold, size: 56),
+                        SizedBox(height: 10),
+                        Text(
+                          'Royal Door',
+                          style: TextStyle(
+                            color: AppTheme.royalGold,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          'أهلاً بك في الغرفة الصوتية 👑',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildComboOverlay() {
@@ -1317,12 +2351,20 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                           parent: _comboAnimController,
                           curve: Curves.elasticOut),
                       child: Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                              color: Colors.black54,
+                              gradient: LinearGradient(colors: [
+                                Colors.black.withValues(alpha: 0.8),
+                                const Color(0xFF2A1450).withValues(alpha: 0.95),
+                              ]),
                               borderRadius: BorderRadius.circular(30),
-                              border:
-                                  Border.all(color: Colors.amber, width: 3)),
+                              border: Border.all(color: Colors.amber, width: 3),
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Colors.amberAccent,
+                                    blurRadius: 20,
+                                    spreadRadius: 2)
+                              ]),
                           child: RichText(
                               text: const TextSpan(children: [
                             WidgetSpan(
@@ -1371,7 +2413,6 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                 return true;
               }).toList();
               return ListView.builder(
-                  cacheExtent: 500.0,
                   reverse: true,
                   itemCount: docs.length,
                   itemBuilder: (context, index) {
@@ -1434,72 +2475,99 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
 
   Widget _buildTopBar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            height: 38,
-            padding: const EdgeInsets.only(left: 15, right: 2),
-            decoration: BoxDecoration(
-              color: Colors.black.withAlpha(77),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: () => showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
+          // القسم الأيسر: معلومات الغرفة (يأخذ المساحة المتبقية بالكامل)
+          Expanded(
+            child: Container(
+              height: 38,
+              padding: const EdgeInsets.only(left: 12, right: 2),
+              decoration: BoxDecoration(
+                color: Colors.black.withAlpha(77),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    fullscreenDialog: true,
                     builder: (context) => RoomInfoSheet(
                       roomId: widget.roomId,
                       roomName: _roomName,
                       ownerId: widget.ownerId,
                       onRoomNameChanged: (newName) {
-                        setState(() {
-                          _roomName = newName;
-                        });
+                        _roomName = newName;
                       },
                     ),
                   ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircleAvatar(
+                      radius: 16,
+                      backgroundImage: (_dynamicRoomImage != null &&
+                              _dynamicRoomImage != '' &&
+                              Uri.tryParse(_dynamicRoomImage!)
+                                      ?.host
+                                      .isNotEmpty ==
+                                  true)
+                          ? NetworkImage(_dynamicRoomImage!)
+                          : const AssetImage('assets/images/room_party.jpg')
+                              as ImageProvider,
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: _buildAutoScaleText(
+                        _roomName,
+                        const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                        maxFontSize: 14,
+                        minFontSize: 8,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 10),
+
+          // القسم الأيمن: الأيقونات (تأخذ مساحتها الطبيعية دون ضغط)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_roomNoiseReductionEnabled || _roomEyeComfortEnabled)
+                Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [
+                      Colors.teal.withValues(alpha: 0.25),
+                      Colors.purple.withValues(alpha: 0.2),
+                    ]),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Colors.white24),
+                  ),
                   child: Row(
                     children: [
-                      CircleAvatar(
-                        radius: 16,
-                        backgroundImage: (_dynamicRoomImage != null &&
-                                _dynamicRoomImage != '' &&
-                                Uri.tryParse(_dynamicRoomImage!)
-                                        ?.host
-                                        .isNotEmpty ==
-                                    true)
-                            ? NetworkImage(_dynamicRoomImage!)
-                            : const AssetImage('assets/images/room_party.jpg')
-                                as ImageProvider,
-                      ),
-                      const SizedBox(width: 8),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.45),
-                        child: _buildAutoScaleText(
-                          _roomName.length > 20
-                              ? '${_roomName.substring(0, 20)}…'
-                              : _roomName,
-                          const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                          maxFontSize: 15,
-                          minFontSize: 10,
-                        ),
-                      ),
+                      if (_roomNoiseReductionEnabled)
+                        const Icon(Icons.graphic_eq,
+                            color: Colors.white, size: 12),
+                      if (_roomNoiseReductionEnabled && _roomEyeComfortEnabled)
+                        const SizedBox(width: 4),
+                      if (_roomEyeComfortEnabled)
+                        const Icon(Icons.nightlight_round,
+                            color: Colors.white, size: 12),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Row(
-            children: [
               StreamBuilder<QuerySnapshot>(
                 stream: _db
                     .collection('rooms')
@@ -1526,40 +2594,30 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                          horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
                             Colors.white.withValues(alpha: 0.25),
                             Colors.white.withValues(alpha: 0.1),
                           ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                             color: Colors.white.withValues(alpha: 0.3)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
-                          )
-                        ],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(Icons.group,
                               color: Colors.white, size: 16),
-                          const SizedBox(width: 5),
+                          const SizedBox(width: 4),
                           Text(
                             '$count',
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 13),
+                                fontSize: 12),
                           ),
                         ],
                       ),
@@ -1567,15 +2625,18 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                   );
                 },
               ),
+              const SizedBox(width: 8),
               GestureDetector(
-                onTap: () => _showMoreMenu(context), // Keep this
+                onTap: () => _showMoreMenu(context),
                 child:
-                    const Icon(Icons.more_horiz, color: Colors.white, size: 28),
+                    const Icon(Icons.more_horiz, color: Colors.white, size: 26),
               ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 8),
               IconButton(
+                constraints: const BoxConstraints(),
+                padding: EdgeInsets.zero,
                 icon: const Icon(Icons.power_settings_new,
-                    color: Colors.white, size: 26),
+                    color: Colors.white, size: 24),
                 onPressed: () => _showExitOptions(),
               ),
             ],
@@ -1591,6 +2652,88 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (ctx) => LeaderboardSheet(roomId: widget.roomId));
+  }
+
+  Widget _buildMicRequestButton() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _db
+          .collection('rooms')
+          .doc(widget.roomId)
+          .collection('mic_requests')
+          .doc(_currentUserId)
+          .snapshots(),
+      builder: (context, snap) {
+        bool alreadyRequested = snap.hasData && snap.data!.exists;
+        return IconButton(
+          icon: Icon(alreadyRequested ? Icons.hourglass_top : Icons.mic_none,
+              color: alreadyRequested ? Colors.amber : Colors.white,
+              size: 26),
+          onPressed: alreadyRequested
+              ? () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('طلبك قيد الانتظار حالياً ⏳')));
+                }
+              : _requestMic,
+        );
+      },
+    );
+  }
+
+  Widget _buildAdminQueueButton() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db
+          .collection('rooms')
+          .doc(widget.roomId)
+          .collection('mic_requests')
+          .snapshots(),
+      builder: (context, snap) {
+        final count = snap.hasData ? snap.data!.docs.length : 0;
+        if (count == 0) {
+          return IconButton(
+              icon: const Icon(Icons.mic_external_on, color: Colors.white70, size: 26),
+              onPressed: _showMicQueue);
+        }
+
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // هالة نبض للفت الانتباه
+            ScaleTransition(
+              scale: _eventPulseController,
+              child: Container(
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.amber.withValues(alpha: 0.2),
+                ),
+              ),
+            ),
+            IconButton(
+                icon: const Icon(Icons.mic_external_on, color: Colors.amber, size: 26),
+                onPressed: _showMicQueue),
+            Positioned(
+              right: 2,
+              top: 2,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.white, width: 1)),
+                child: Text(
+                  '$count',
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildBottomBar() {
@@ -1616,6 +2759,15 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                           colors: [Colors.purple, Colors.pink, Colors.orange])),
                   child: const Icon(Icons.card_giftcard,
                       color: Colors.white, size: 22))),
+          if (_mySeat != null)
+            IconButton(
+                icon: Icon(_isMicMuted ? Icons.mic_off : Icons.mic,
+                    color: _isMicMuted ? Colors.redAccent : Colors.greenAccent,
+                    size: 26),
+                onPressed: _toggleMicMute)
+          else if (_requireMicApproval)
+            _buildMicRequestButton(),
+          if (_hasPower) _buildAdminQueueButton(),
           const SizedBox(width: 8),
           GestureDetector(
               onTap: _showLuckyBox,
@@ -1655,13 +2807,29 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
           IconButton(
               icon: Icon(_isMuted ? Icons.volume_off : Icons.volume_up,
                   color: _isMuted ? Colors.redAccent : Colors.white, size: 26),
-              onPressed: () {
-                setState(() => _isMuted = !_isMuted);
-                _agoraService.toggleAllRemoteAudio(_isMuted);
+              onPressed: () async {
+                _isMuted = !_isMuted;
+                await _agoraService.toggleMuteFromChat(_isMuted);
               }),
         ],
       ),
     );
+  }
+
+  Future<void> _updateNoiseReduction(bool enabled) async {
+    if (_agoraService.engine == null) return;
+    try {
+      if (enabled) {
+        await _agoraService.engine
+            ?.setParameters('{"che.audio.opensles":true}');
+        await _agoraService.engine?.setParameters('{"che.audio.agc":true}');
+        await _agoraService.engine?.setParameters('{"che.audio.ans":true}');
+      } else {
+        await _agoraService.engine?.setParameters('{"che.audio.ans":false}');
+      }
+    } catch (e) {
+      debugPrint('Error updating noise reduction: $e');
+    }
   }
 
   void _showMoreMenu(BuildContext context) {
@@ -1673,17 +2841,30 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
               roomId: widget.roomId,
               roomName: widget.roomName,
               roomImage: _dynamicRoomImage ?? widget.roomImage,
+              ownerId: widget.ownerId,
               hasPower: _hasPower,
+              moderatorPermissions: _moderatorPermissions,
               isBattleActive:
                   _battleData != null && _battleData!['active'] == true,
               micMode: _micMode,
               noiseReduction: _noiseReduction,
               eyeComfort: _eyeComfort,
-              onNoiseReductionChanged: (v) =>
-                  setState(() => _noiseReduction = v),
+              onNoiseReductionChanged: (v) {
+                _noiseReduction = v;
+                _updateNoiseReduction(v);
+              },
               onEyeComfortChanged: (v) => setState(() => _eyeComfort = v),
               onEndBattle: _endBattle,
-              onFixAudio: () {},
+              onShowGames: _showGamesSelector,
+              onFixAudio: () async {
+                // إعادة تهيئة الصوت لحل المشكلات
+                await _agoraService.leave();
+                await Future.delayed(const Duration(milliseconds: 500));
+                await _agoraService.joinChannel(
+                  channelId: widget.roomId,
+                  asSpeaker: _mySeat != null,
+                );
+              },
               onShowLeaderboard: _showLeaderboard,
               extraWidgets: [
                 if (_hasPower)
@@ -1717,10 +2898,16 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                 SwitchListTile(
                     title: const Text('توفير البيانات',
                         style: TextStyle(color: Colors.white)),
+                    subtitle: const Text(
+                        'تقليل جودة الصوت وإيقاف التأثيرات لتوفير الإنترنت',
+                        style: TextStyle(color: Colors.white38, fontSize: 10)),
                     value: _dataSaverMode,
-                    onChanged: (v) => setState(() => _dataSaverMode = v)),
+                    activeThumbColor: Colors.greenAccent,
+                    onChanged: (v) {
+                      Navigator.pop(context);
+                      _toggleDataSaver(v);
+                    }),
               ],
-              ownerId: widget.ownerId,
             ));
   }
 
@@ -1830,55 +3017,74 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                                 return const SizedBox.shrink();
                               }
 
-                              return Material(
-                                color: Colors.transparent,
-                                child: ListTile(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    _showUserCard(memberUid);
-                                  },
-                                  leading: CircleAvatar(
-                                    backgroundColor:
-                                        Colors.amber.withValues(alpha: 0.1),
-                                    backgroundImage: (userData['profilePic'] !=
-                                                null &&
-                                            userData['profilePic'] != '' &&
-                                            Uri.tryParse(userData['profilePic'])
-                                                    ?.host
-                                                    .isNotEmpty ==
-                                                true)
-                                        ? NetworkImage(userData['profilePic'])
-                                        : null,
-                                    child: (userData['profilePic'] == null ||
-                                            userData['profilePic'] == '' ||
-                                            Uri.tryParse(userData[
-                                                            'profilePic'] ??
-                                                        '')
-                                                    ?.host
-                                                    .isEmpty ==
-                                                true)
-                                        ? Text(
-                                            userData['name']
-                                                    ?.substring(0, 1)
-                                                    .toUpperCase() ??
-                                                'U',
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Material(
+                                  color: Colors.white.withValues(alpha: 0.03),
+                                  borderRadius: BorderRadius.circular(12),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: ListTile(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      _showUserCard(memberUid);
+                                    },
+                                    leading: CircleAvatar(
+                                      backgroundColor:
+                                          Colors.amber.withValues(alpha: 0.1),
+                                      backgroundImage: (userData[
+                                                      'profilePic'] !=
+                                                  null &&
+                                              userData['profilePic'] != '' &&
+                                              Uri.tryParse(userData[
+                                                          'profilePic'])
+                                                      ?.host
+                                                      .isNotEmpty ==
+                                                  true)
+                                          ? NetworkImage(userData['profilePic'])
+                                          : null,
+                                      child: (userData['profilePic'] == null ||
+                                              userData['profilePic'] == '' ||
+                                              Uri.tryParse(userData[
+                                                              'profilePic'] ??
+                                                          '')
+                                                      ?.host
+                                                      .isEmpty ==
+                                                  true)
+                                          ? Text(
+                                              userData['name']
+                                                      ?.substring(0, 1)
+                                                      .toUpperCase() ??
+                                                  'U',
+                                              style: const TextStyle(
+                                                  color: Colors.amber))
+                                          : null,
+                                    ),
+                                    title: _buildAutoScaleText(
+                                        userData['name'] ?? 'مستخدم',
+                                        const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                        maxFontSize: 16,
+                                        minFontSize: 10),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                            'ID: ${userData['shortId'] ?? userData['royalId'] ?? (memberUid.length > 8 ? memberUid.substring(0, 8) : memberUid)}',
                                             style: const TextStyle(
-                                                color: Colors.amber))
-                                        : null,
+                                                color: Colors.amber,
+                                                fontSize: 11)),
+                                        Text(
+                                            'انضم في: ${memberData['joinedAt'] != null ? (memberData['joinedAt'] as Timestamp).toDate().toString().split(' ')[0] : ''}',
+                                            style: const TextStyle(
+                                                color: Colors.white38,
+                                                fontSize: 10)),
+                                      ],
+                                    ),
+                                    trailing: const Icon(Icons.favorite,
+                                        color: Colors.redAccent, size: 18),
                                   ),
-                                  title: _buildAutoScaleText(
-                                      userData['name'] ?? 'مستخدم',
-                                      const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                      maxFontSize: 16,
-                                      minFontSize: 10),
-                                  subtitle: Text(
-                                      'انضم في: ${memberData['joinedAt'] != null ? (memberData['joinedAt'] as Timestamp).toDate().toString().split(' ')[0] : ''}',
-                                      style: const TextStyle(
-                                          color: Colors.white38, fontSize: 10)),
-                                  trailing: const Icon(Icons.favorite,
-                                      color: Colors.redAccent, size: 18),
                                 ),
                               );
                             });
@@ -1897,191 +3103,51 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (c, setS) => Container(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 25,
-            bottom: MediaQuery.of(c).padding.bottom + 15,
-          ),
-          decoration: const BoxDecoration(
-            color: Color(0xFF0F1B25),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-            border: Border(top: BorderSide(color: Colors.amber, width: 0.5)),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                        color: Colors.white12,
-                        borderRadius: BorderRadius.circular(2)),
-                    margin: const EdgeInsets.only(bottom: 20)),
-                const Text('مشغل الموسيقى الملكي 🎵',
-                    style: TextStyle(
-                        color: Colors.amber,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
-                const SizedBox(height: 10),
-                Text(_currentMusicName,
-                    style: const TextStyle(color: Colors.white70, fontSize: 13),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 30),
-                if (_musicDuration <= 0 && !_isMusicPlaying)
-                  Center(
-                    child: GestureDetector(
-                      onTap: () async {
-                        await _pickAndPlayMusic();
-                        if (mounted) setS(() {});
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(30),
-                        decoration: BoxDecoration(
-                            color: Colors.amber.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: Colors.amber.withValues(alpha: 0.3))),
-                        child: const Icon(Icons.library_music_rounded,
-                            color: Colors.amber, size: 50),
-                      ),
-                    ),
-                  )
-                else ...[
-                  Column(
-                    children: [
-                      Slider(
-                        value: _parseDouble(_musicPosition).clamp(
-                            0,
-                            _parseDouble(_musicDuration) > 0
-                                ? _parseDouble(_musicDuration)
-                                : 1),
-                        max: _parseDouble(_musicDuration) > 0
-                            ? _parseDouble(_musicDuration)
-                            : 1,
-                        onChanged: (v) {
-                          _agoraService.seekMusic(v.toInt());
-                          if (mounted) setS(() => _musicPosition = v.toInt());
-                        },
-                        activeColor: Colors.amber,
-                        inactiveColor: Colors.white10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(_formatDuration(_musicPosition),
-                                style: const TextStyle(
-                                    color: Colors.white38, fontSize: 10)),
-                            Text(_formatDuration(_musicDuration),
-                                style: const TextStyle(
-                                    color: Colors.white38, fontSize: 10)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                          icon: const Icon(Icons.replay_10,
-                              size: 30, color: Colors.white),
-                          onPressed: () {
-                            int newPos = _musicPosition - 10000;
-                            if (newPos < 0) newPos = 0;
-                            _agoraService.seekMusic(newPos);
-                            if (mounted) setS(() => _musicPosition = newPos);
-                          }),
-                      const SizedBox(width: 20),
-                      GestureDetector(
-                        onTap: () {
-                          _toggleMusic();
-                          if (mounted) setS(() {});
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(15),
-                          decoration: const BoxDecoration(
-                              color: Colors.amber, shape: BoxShape.circle),
-                          child: Icon(
-                              _isMusicPlaying
-                                  ? Icons.pause_rounded
-                                  : Icons.play_arrow_rounded,
-                              size: 40,
-                              color: Colors.black),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      IconButton(
-                          icon: const Icon(Icons.forward_10,
-                              size: 30, color: Colors.white),
-                          onPressed: () {
-                            int newPos = _musicPosition + 10000;
-                            if (newPos > _musicDuration) {
-                              newPos = _musicDuration;
-                            }
-                            _agoraService.seekMusic(newPos);
-                            if (mounted) setS(() => _musicPosition = newPos);
-                          }),
-                    ],
-                  ),
-                  const SizedBox(height: 30),
-                  Row(
-                    children: [
-                      const Icon(Icons.volume_down,
-                          color: Colors.white54, size: 18),
-                      Expanded(
-                        child: Slider(
-                          value: _musicVolume,
-                          max: 100,
-                          onChanged: (v) {
-                            if (mounted) setState(() => _musicVolume = v);
-                            _agoraService.adjustMusicVolume(v.toInt());
-                            if (mounted) setS(() {});
-                          },
-                          activeColor: Colors.cyanAccent,
-                        ),
-                      ),
-                      const Icon(Icons.volume_up,
-                          color: Colors.white54, size: 18),
-                    ],
-                  ),
-                ],
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton.icon(
-                        onPressed: () async {
-                          await _pickAndPlayMusic();
-                          if (mounted) setS(() {});
-                        },
-                        icon:
-                            const Icon(Icons.folder_open, color: Colors.amber),
-                        label: const Text("تغيير الملف",
-                            style: TextStyle(color: Colors.white70))),
-                    TextButton.icon(
-                        onPressed: () {
-                          _agoraService.stopMusic();
-                          _stopMusicLocally();
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(Icons.stop_circle_outlined,
-                            color: Colors.redAccent),
-                        label: const Text("إيقاف نهائي",
-                            style: TextStyle(color: Colors.redAccent))),
-                  ],
-                ),
-                const SizedBox(height: 10),
-              ],
-            ),
+      builder: (ctx) => RoyalMusicPlayerSheet(
+        roomId: widget.roomId,
+        agoraService: _agoraService,
+        currentMusicName: _currentMusicName,
+        isMusicPlaying: _isMusicPlaying,
+        musicDuration: _musicDuration,
+        musicPosition: _musicPosition,
+        musicVolume: _musicVolume,
+        onMusicUpdate: (name, playing, duration, pos) {
+          setState(() {
+            _currentMusicName = name;
+            _isMusicPlaying = playing;
+            _musicDuration = duration;
+            _musicPosition = pos;
+          });
+        },
+        onVolumeChanged: (v) => setState(() => _musicVolume = v),
+        onPickMusic: _pickAndPlayMusic,
+        onToggleMusic: _toggleMusic,
+      ),
+    );
+  }
+
+  Widget _buildPickerBtn(Function setS) {
+    return Center(
+      child: GestureDetector(
+        onTap: () async {
+          await _pickAndPlayMusic();
+          if (mounted) setS(() {});
+        },
+        child: Container(
+          padding: const EdgeInsets.all(40),
+          decoration: BoxDecoration(
+              color: AppTheme.royalGold.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+              border: Border.all(
+                  color: AppTheme.royalGold.withValues(alpha: 0.2), width: 2)),
+          child: const Column(
+            children: [
+              Icon(Icons.library_music_rounded,
+                  color: AppTheme.royalGold, size: 60),
+              SizedBox(height: 10),
+              Text('اختر ملف MP3',
+                  style: TextStyle(color: Colors.white54, fontSize: 12)),
+            ],
           ),
         ),
       ),
@@ -2160,7 +3226,8 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
       await _db.runTransaction((transaction) async {
         final userSnap = await transaction.get(userRef);
         final roomSnap = await transaction.get(roomRef);
-        final int currentGems = userSnap.data()?['gems'] ?? 0;
+        final dynamic gemsValue = userSnap.data()?['gems'] ?? 0;
+        final int currentGems = gemsValue is int ? gemsValue : gemsValue.toInt();
 
         if (currentGems < membershipFee) {
           throw "عذراً، رصيدك من الجواهر غير كافٍ 💰";
@@ -2185,8 +3252,10 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
         });
 
         if (roomSnap.exists) {
-          int currentExp = roomSnap.data()?['exp'] ?? 0;
-          int currentLevel = roomSnap.data()?['level'] ?? 1;
+          final dynamic expValue = roomSnap.data()?['exp'] ?? 0;
+          final int currentExp = expValue is int ? expValue : expValue.toInt();
+          final dynamic levelValue = roomSnap.data()?['level'] ?? 1;
+          final int currentLevel = levelValue is int ? levelValue : levelValue.toInt();
           int pointsToAdd = 100; // زيادة الخبرة عند الانضمام
           int newExp = currentExp + pointsToAdd;
           int nextLevelThreshold = currentLevel * 10000;
@@ -2223,14 +3292,19 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
     bool isMuted = seatData?['isMuted'] ?? false;
     String? micFrame = seatData?['micFrame'];
 
+    // لون المايك الافتراضي (ذهبي ملكي) أو لون الفريق
+    Color seatThemeColor = teamColor ?? AppTheme.royalGold;
+
     return StreamBuilder<List<AudioVolumeInfo>>(
         stream: _agoraService.volumeStream,
         builder: (context, volSnap) {
           bool isSpeaking = false;
-          if (isOccupied && volSnap.hasData) {
+          if (isOccupied && !isMuted && volSnap.hasData) {
             for (var speaker in volSnap.data!) {
               if ((isMe && speaker.uid == 0) ||
-                  (speaker.uid == seatData['agoraUid'])) {
+                  (!isMe &&
+                      speaker.uid != 0 &&
+                      speaker.uid == seatData['agoraUid'])) {
                 if (speaker.volume! > 20) {
                   isSpeaking = true;
                   break;
@@ -2242,101 +3316,114 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
           return GestureDetector(
               onTap: () => _showMicMenu(number),
               child: SizedBox(
-                  width: 65,
+                  width: 75,
                   child: Column(children: [
-                    Stack(alignment: Alignment.center, children: [
-                      if (teamColor != null)
+                    SizedBox(
+                      height: 80,
+                      child: Stack(alignment: Alignment.center, children: [
+                        // 1. هالة خارجية "نيون" تجعل المايك بارزاً جداً ضد أي خلفية
+                        Container(
+                          width: 66,
+                          height: 66,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: seatThemeColor.withValues(alpha: 0.4),
+                              width: 1.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: seatThemeColor.withValues(alpha: 0.2),
+                                blurRadius: 12,
+                                spreadRadius: 2,
+                              )
+                            ],
+                          ),
+                        ),
+
+                        // 2. هالة التحدث (تظهر فقط عند الكلام)
+                        if (isSpeaking) _MicSpeakingGlow(color: seatThemeColor),
+
+                        // 3. جسم المايك الرئيسي
                         Container(
                             width: 58,
                             height: 58,
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      teamColor.withValues(alpha: 0.8),
-                                      teamColor.withValues(alpha: 0.2)
-                                    ]),
-                                border:
-                                    Border.all(color: teamColor, width: 2))),
-                      if (isSpeaking)
-                        ScaleTransition(
-                            scale: _speakingAnimController,
-                            child: Container(
-                                width: 58,
-                                height: 58,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: Colors.greenAccent, width: 2)))),
-                      Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: isLocked
-                                ? Colors.red.withValues(alpha: 0.3)
-                                : Colors.white.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                            border: isLocked
-                                ? Border.all(
-                                    color:
-                                        Colors.redAccent.withValues(alpha: 0.5),
-                                    width: 1)
-                                : null,
-                          ),
-                          child: isLocked
-                              ? const Icon(Icons.lock,
-                                  color: Colors.amber, size: 18)
-                              : (isOccupied
-                                  ? CircleAvatar(
-                                      backgroundColor: Colors.transparent,
-                                      backgroundImage: (seatData['photoUrl'] != null &&
-                                              seatData['photoUrl']
-                                                  .toString()
-                                                  .isNotEmpty &&
-                                              Uri.tryParse(seatData['photoUrl'].toString())
-                                                      ?.host
-                                                      .isNotEmpty ==
-                                                  true)
-                                          ? CachedNetworkImageProvider(
-                                              seatData['photoUrl'].toString())
-                                          : null,
-                                      child: (seatData['photoUrl'] == null ||
-                                              seatData['photoUrl']
-                                                  .toString()
-                                                  .isEmpty ||
-                                              Uri.tryParse(seatData['photoUrl']?.toString() ?? '')
-                                                      ?.host
-                                                      .isEmpty ==
-                                                  true)
-                                          ? const Icon(Icons.person,
-                                              color: Colors.white)
-                                          : null)
-                                  : const Icon(Icons.mic,
-                                      color: Colors.white54, size: 20))),
-                      if (isOccupied &&
-                          micFrame != null &&
-                          micFrame.isNotEmpty &&
-                          Uri.tryParse(micFrame)?.host.isNotEmpty == true)
-                        Positioned.fill(
+                              color: isLocked
+                                  ? Colors.red.withValues(alpha: 0.2)
+                                  : (isOccupied
+                                      ? Colors.black.withValues(alpha: 0.4)
+                                      : Colors.white.withValues(alpha: 0.08)),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isLocked
+                                    ? Colors.redAccent.withValues(alpha: 0.5)
+                                    : seatThemeColor.withValues(alpha: 0.3),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: isLocked
+                                ? const Icon(Icons.lock,
+                                    color: Colors.amber, size: 22)
+                                : (isOccupied
+                                    ? CircleAvatar(
+                                        radius: 29,
+                                        backgroundColor: Colors.transparent,
+                                        backgroundImage: (seatData['photoUrl'] != null &&
+                                                seatData['photoUrl']
+                                                    .toString()
+                                                    .isNotEmpty &&
+                                                Uri.tryParse(seatData['photoUrl'].toString())
+                                                        ?.host
+                                                        .isNotEmpty ==
+                                                    true)
+                                            ? CachedNetworkImageProvider(
+                                                seatData['photoUrl'].toString())
+                                            : null,
+                                        child: (seatData['photoUrl'] == null ||
+                                                seatData['photoUrl']
+                                                    .toString()
+                                                    .isEmpty ||
+                                                Uri.tryParse(seatData['photoUrl']?.toString() ?? '')?.host.isEmpty ==
+                                                    true)
+                                            ? const Icon(Icons.person,
+                                                color: Colors.white, size: 30)
+                                            : null)
+                                    : Icon(Icons.mic,
+                                        color: seatThemeColor.withValues(alpha: 0.6),
+                                        size: 24))),
+
+                        // 4. إطار المايك (إذا وجد)
+                        if (isOccupied &&
+                            micFrame != null &&
+                            micFrame.isNotEmpty &&
+                            Uri.tryParse(micFrame)?.host.isNotEmpty == true)
+                          SizedBox(
+                            width: 82,
+                            height: 82,
                             child: IgnorePointer(
-                                child: CachedNetworkImage(
-                          imageUrl: micFrame,
-                          fit: BoxFit.contain,
-                          errorWidget: (context, url, error) =>
-                              const SizedBox.shrink(),
-                        ))),
-                      if (isOccupied && isMuted)
-                        Container(
-                            width: 48,
-                            height: 48,
-                            decoration: const BoxDecoration(
-                                color: Colors.black54, shape: BoxShape.circle),
-                            child: const Icon(Icons.mic_off,
-                                color: Colors.redAccent, size: 24))
-                    ]),
-                    const SizedBox(height: 6),
+                              child: CachedNetworkImage(
+                                imageUrl: micFrame,
+                                fit: BoxFit.contain,
+                                errorWidget: (context, url, error) =>
+                                    const SizedBox.shrink(),
+                              ),
+                            ),
+                          ),
+
+                        // 5. علامة الكتم
+                        if (isOccupied && isMuted)
+                          Container(
+                              width: 58,
+                              height: 58,
+                              decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.6),
+                                  shape: BoxShape.circle),
+                              child: const Icon(Icons.mic_off,
+                                  color: Colors.redAccent, size: 26))
+                      ]),
+                    ),
+                    const SizedBox(height: 4),
                     Text(
                         isOccupied
                             ? (isMe ? 'أنا' : seatData['name'])
@@ -2344,9 +3431,12 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                         style: TextStyle(
                             color: isMe
                                 ? Colors.greenAccent
-                                : (isLocked ? Colors.amber : Colors.white),
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold),
+                                : (isLocked ? Colors.redAccent : Colors.white),
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            shadows: const [
+                              Shadow(color: Colors.black, blurRadius: 4)
+                            ]),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis)
                   ])));
@@ -2359,109 +3449,195 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
     bool isMe = _mySeat == seatNumber;
     bool isLocked = _lockedSeats.contains(seatNumber);
     String? targetUserId = seatData?['userId'];
+
     showDialog(
       context: context,
       builder: (context) => Center(
         child: Container(
-          width: 280,
-          padding: const EdgeInsets.all(20),
+          width: 300,
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
           decoration: BoxDecoration(
-              color: const Color(0xFF1A242F).withValues(alpha: 0.95),
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                  color: AppTheme.royalGold.withValues(alpha: 0.3), width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5), blurRadius: 20)
-              ]),
+            color: const Color(0xFF0F1B25),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+                color: AppTheme.royalGold.withValues(alpha: 0.3), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.6),
+                blurRadius: 30,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                  width: 50,
-                  height: 5,
-                  margin: const EdgeInsets.only(bottom: 15),
+              if (isOccupied) ...[
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 95,
+                      height: 95,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppTheme.royalGold, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.royalGold.withValues(alpha: 0.2),
+                            blurRadius: 15,
+                            spreadRadius: 2,
+                          )
+                        ],
+                      ),
+                    ),
+                    CircleAvatar(
+                      radius: 42,
+                      backgroundColor: Colors.black12,
+                      backgroundImage: (seatData['photoUrl'] != null &&
+                              seatData['photoUrl'].toString().isNotEmpty)
+                          ? CachedNetworkImageProvider(seatData['photoUrl'])
+                          : null,
+                      child: (seatData['photoUrl'] == null ||
+                              seatData['photoUrl'].toString().isEmpty)
+                          ? const Icon(Icons.person,
+                              size: 45, color: Colors.white24)
+                          : null,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  seatData['name'] ?? 'مستخدم رويال',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    decoration: TextDecoration.none,
+                    fontFamily: 'Tajawal', // Assuming professional font
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ] else ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                      color: Colors.white12,
-                      borderRadius: BorderRadius.circular(10))),
-              const Text("لوحة تحكم المايك 🎤",
+                    color: AppTheme.royalGold.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.mic_none_rounded,
+                      color: AppTheme.royalGold, size: 40),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  "تحكم المايك 🎤",
                   style: TextStyle(
-                      color: AppTheme.royalGold,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.none)),
-              const SizedBox(height: 25),
+                    color: AppTheme.royalGold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.none,
+                    fontFamily: 'Tajawal',
+                  ),
+                ),
+                const SizedBox(height: 30),
+              ],
               if (isMe) ...[
                 _buildModernMenuItem(
-                    'اترك المايك', Icons.logout_rounded, Colors.redAccent, () {
-                  Navigator.pop(context);
-                  _leaveMic();
-                }),
+                  'اترك المايك',
+                  Icons.logout_rounded,
+                  Colors.redAccent,
+                  () {
+                    Navigator.pop(context);
+                    _leaveMic();
+                  },
+                ),
                 _buildModernMenuItem(
-                    _isMicMuted ? 'تفعيل المايك' : 'كتم المايك',
-                    _isMicMuted ? Icons.mic_rounded : Icons.mic_off_rounded,
-                    Colors.orangeAccent, () {
-                  Navigator.pop(context);
-                  _toggleMicMute();
-                }),
+                  _isMicMuted ? 'تفعيل المايك' : 'كتم المايك',
+                  _isMicMuted ? Icons.mic_rounded : Icons.mic_off_rounded,
+                  Colors.orangeAccent,
+                  () {
+                    Navigator.pop(context);
+                    _toggleMicMute();
+                  },
+                ),
                 _buildModernMenuItem(
-                    'ملفي الشخصي', Icons.person_pin_rounded, Colors.blueAccent,
-                    () {
-                  Navigator.pop(context);
-                  _showUserCard(_currentUserId);
-                }),
+                  'الملف الشخصي',
+                  Icons.person_pin_rounded,
+                  Colors.blueAccent,
+                  () {
+                    Navigator.pop(context);
+                    _showUserCard(_currentUserId);
+                  },
+                ),
               ] else if (isOccupied) ...[
-                _buildModernMenuItem('الملف الشخصي',
-                    Icons.person_search_rounded, Colors.blueAccent, () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => UserProfilePage(
-                          userId: targetUserId!, roomId: widget.roomId),
-                    ),
-                  );
-                }),
-                if (_hasPower) ...[
-                  const Divider(color: Colors.white10, height: 20),
-                  _buildModernMenuItem('إنزال العضو',
-                      Icons.arrow_downward_rounded, Colors.orange, () {
+                _buildModernMenuItem(
+                  'الملف الشخصي',
+                  Icons.person_search_rounded,
+                  Colors.blueAccent,
+                  () {
                     Navigator.pop(context);
-                    _adminKickFromMic(seatNumber);
-                  }),
+                    _showUserProfileBottomSheet(targetUserId!);
+                  },
+                ),
+                if (_hasPermission('canManageMic')) ...[
                   _buildModernMenuItem(
-                      'طرد نهائي', Icons.gavel_rounded, Colors.red, () {
-                    Navigator.pop(context);
-                    _adminKickFromRoom(targetUserId!);
-                  })
-                ]
+                    'إنزال من المايك',
+                    Icons.arrow_downward_rounded,
+                    Colors.orange,
+                    () {
+                      Navigator.pop(context);
+                      _adminKickFromMic(seatNumber);
+                    },
+                  ),
+                ],
               ] else ...[
                 if (!isLocked || _hasPower)
-                  _buildModernMenuItem('الصعود للمايك',
-                      Icons.mic_external_on_rounded, Colors.greenAccent, () {
-                    Navigator.pop(context);
-                    _takeMic(seatNumber);
-                  }),
-                if (_hasPower) ...[
                   _buildModernMenuItem(
-                      isLocked ? 'فتح القفل' : 'قفل المايك',
-                      isLocked ? Icons.lock_open_rounded : Icons.lock_rounded,
-                      AppTheme.royalGold, () {
-                    Navigator.pop(context);
-                    _toggleLockSeat(seatNumber);
-                  }),
-                  _buildModernMenuItem('دعوة صديق',
-                      Icons.person_add_alt_1_rounded, Colors.cyanAccent, () {
-                    Navigator.pop(context);
-                    _showInviteList(seatNumber);
-                  })
+                    (_requireMicApproval && !_hasPower) ? 'طلب صعود للمايك' : 'الصعود للمايك',
+                    (_requireMicApproval && !_hasPower) ? Icons.hourglass_top : Icons.mic_external_on_rounded,
+                    (_requireMicApproval && !_hasPower) ? Colors.amberAccent : Colors.greenAccent,
+                    () {
+                      Navigator.pop(context);
+                      if (_requireMicApproval && !_hasPower) {
+                        _requestMic();
+                      } else {
+                        _takeMic(seatNumber);
+                      }
+                    },
+                  ),
+                if (_hasPermission('canManageMic')) ...[
+                  _buildModernMenuItem(
+                    isLocked ? 'فتح المايك' : 'قفل المايك',
+                    isLocked ? Icons.lock_open_rounded : Icons.lock_rounded,
+                    AppTheme.royalGold,
+                    () {
+                      Navigator.pop(context);
+                      _toggleLockSeat(seatNumber);
+                    },
+                  ),
+                  _buildModernMenuItem(
+                    'دعوة صديق',
+                    Icons.person_add_alt_1_rounded,
+                    Colors.cyanAccent,
+                    () {
+                      Navigator.pop(context);
+                      _showInviteList(seatNumber);
+                    },
+                  ),
                 ]
               ],
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('إغلاق',
-                      style: TextStyle(color: Colors.white38)))
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white38,
+                  textStyle: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                child: const Text('إغلاق'),
+              ),
             ],
           ),
         ),
@@ -2471,31 +3647,7 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
 
   Widget _buildModernMenuItem(
       String title, IconData icon, Color color, VoidCallback onTap) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      child: Material(
-        color: Colors.white.withValues(alpha: 0.03),
-        borderRadius: BorderRadius.circular(15),
-        child: ListTile(
-          onTap: onTap,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          leading: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: Icon(icon, color: color, size: 22),
-          ),
-          title: Text(title,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600)),
-          trailing: const Icon(Icons.arrow_forward_ios_rounded,
-              color: Colors.white10, size: 14),
-        ),
-      ),
-    );
+    return VoiceRoomUIWidgets.buildModernMenuItem(title, icon, color, onTap);
   }
 
   void _showUserCard(String userId) async {
@@ -2743,37 +3895,95 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   }
 
   void _showBattleResult(int red, int blue) {
+    final redColor = Color(_battleData?['redColor'] ?? Colors.red.value);
+    final blueColor = Color(_battleData?['blueColor'] ?? Colors.blue.value);
+    final redName = _battleData?['redName'] ?? 'الفريق الأول';
+    final blueName = _battleData?['blueName'] ?? 'الفريق الثاني';
+
     showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) =>
-            BattleResultDialog(redPoints: red, bluePoints: blue));
+        builder: (context) => BattleResultDialog(
+              redPoints: red,
+              bluePoints: blue,
+              redColor: redColor,
+              blueColor: blueColor,
+              redName: redName,
+              blueName: blueName,
+            ));
   }
 
   void _startBattleCountdown() {
-    _battleTimer?.cancel();
-    _battleTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_battleData == null || _battleData!['active'] == false) {
-        timer.cancel();
-        return;
-      }
-      final endDateTime = (_battleData!['endTime'] as Timestamp).toDate();
-      if (DateTime.now().isAfter(endDateTime)) {
-        timer.cancel();
-        _endBattle();
-      } else {
-        if (mounted) setState(() {});
-      }
-    });
+    _battleLogic.setBattleData(_battleData);
   }
 
-  void _endBattle() async {
-    if (_currentUserId == widget.ownerId) {
-      await _db
-          .collection('rooms')
-          .doc(widget.roomId)
-          .update({'battle.active': false});
+  void _endBattle({String? reason}) async {
+    // توزيع المكافآت قبل إغلاق المعركة رسمياً
+    if (_battleData != null && _battleData!['active'] == true) {
+      final redPoints = _battleData!['redPoints'] ?? 0;
+      final bluePoints = _battleData!['bluePoints'] ?? 0;
+      final mode = _battleData!['mode'] ?? 'team';
+
+      if (reason == 'red_escaped') {
+        _onSendPressed(
+            customText: '🚩 انتهت المعركة بانسحاب الطرف الأول!', isSystem: true);
+        if (mode == 'individual') {
+          FirestoreService.earnBattleWinXP(widget.roomId); // الفائز هو الأزرق
+        }
+      } else if (reason == 'blue_escaped') {
+        _onSendPressed(
+            customText: '🚩 انتهت المعركة بانسحاب الطرف الثاني!', isSystem: true);
+        if (mode == 'individual') {
+          FirestoreService.earnBattleWinXP(widget.roomId); // الفائز هو الأحمر
+        }
+      } else {
+        // فوز طبيعي بالنقاط
+        if (redPoints > bluePoints) {
+          _onSendPressed(
+              customText: '🏆 مبروك للفريق الأحمر الفوز بالمعركة!',
+              isSystem: true);
+          if (mode == 'individual') {
+            final redId = _battleData!['redId'];
+            if (redId == _currentUserId) {
+              FirestoreService.earnBattleWinXP(widget.roomId);
+            }
+          }
+        } else if (bluePoints > redPoints) {
+          _onSendPressed(
+              customText: '🏆 مبروك للفريق الأزرق الفوز بالمعركة!',
+              isSystem: true);
+          if (mode == 'individual') {
+            final blueId = _battleData!['blueId'];
+            if (blueId == _currentUserId) {
+              FirestoreService.earnBattleWinXP(widget.roomId);
+            }
+          }
+        } else {
+          _onSendPressed(
+              customText: '🤝 انتهت المعركة بالتعادل!', isSystem: true);
+        }
+      }
     }
+
+    await _battleLogic.endBattle(reason: reason);
+
+    // حذف رسائل المعركة وإشعار الفوز بعد فترة قصيرة بناءً على الطلب رقم 2
+    Future.delayed(const Duration(seconds: 7), () async {
+      try {
+        final chatSnap = await _db
+            .collection('rooms')
+            .doc(widget.roomId)
+            .collection('chat')
+            .get();
+        final batch = _db.batch();
+        for (var doc in chatSnap.docs) {
+          batch.delete(doc.reference);
+        }
+        await batch.commit();
+      } catch (e) {
+        debugPrint("Error clearing chat after battle: $e");
+      }
+    });
   }
 
   void _showLuckyBox() async {
@@ -2961,70 +4171,35 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
   }
 
   void _triggerGlobalAnimation(Map<String, dynamic> data) {
-    if (_dataSaverMode) return;
-
-    _giftQueue.add(data);
-    _playNextGift();
-  }
-
-  void _playNextGift() {
-    if (_isGiftPlaying || _giftQueue.isEmpty) return;
-
-    _isGiftPlaying = true;
-    final data = _giftQueue.removeAt(0);
-
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        barrierColor: Colors.transparent,
-        builder: (ctx) => RoyalGiftAnimation(
-            giftName: data['giftName'] ?? '',
-            giftImageUrl: data['giftImageUrl'] ?? '',
-            giftVideoUrl: data['giftVideoUrl'],
-            senderName: data['senderName'] ?? '',
-            receiverName: data['receiverName'] ?? '',
-            count: data['count'] ?? 1,
-            giftType: data['giftType'],
-            soundUrl: data['soundUrl'],
-            onComplete: () {
-              if (ctx.mounted) Navigator.pop(ctx);
-              _isGiftPlaying = false;
-              _triggerCapsule(data);
-              _playNextGift();
-            }));
+    // تأخير بسيط لضمان انغلاق أي نوافذ منبثقة (مثل متجر الهدايا)
+    // ولتجنب تداخل الحركات
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) {
+        if (_roomNotificationPrefs.shouldShow('gift')) {
+          _playRoomEventFeedback('gift');
+          final receiverName =
+              (data['receiverName'] as String?)?.trim().isNotEmpty == true
+                  ? data['receiverName']
+                  : 'الجميع';
+          _showRoomEventToast(
+            'هدية جديدة',
+            '${data['senderName'] ?? 'مستخدم'} أرسل ${data['giftName'] ?? 'هدية'} إلى $receiverName',
+            AppTheme.royalGold,
+          );
+        }
+        _giftLogic.queueGift(data);
+      }
+    });
   }
 
   Widget _buildBackground() {
-    final bool hasValidBg = _dynamicBgImage != null &&
-        _dynamicBgImage!.isNotEmpty &&
-        Uri.tryParse(_dynamicBgImage!)?.host.isNotEmpty == true;
-    return SizedBox.expand(
-        child: hasValidBg
-            ? Image.network(_dynamicBgImage!,
-                fit: BoxFit.cover,
-                errorBuilder: (c, e, s) => Image.asset(
-                    'assets/images/room_global.jpg',
-                    fit: BoxFit.cover))
-            : Image.asset('assets/images/room_global.jpg', fit: BoxFit.cover));
+    return VoiceRoomUIWidgets.buildBackground(_dynamicBgImage);
   }
 
-  Widget _buildRoomNotice() => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-          decoration: BoxDecoration(
-              color: Colors.black12, borderRadius: BorderRadius.circular(8)),
-          child: Row(children: [
-            const Icon(Icons.campaign, color: Colors.amber, size: 16),
-            const SizedBox(width: 6),
-            Expanded(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Text(' $_roomNoticeText',
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 12),
-                        textAlign: TextAlign.right)))
-          ])));
+  Widget _buildRoomNotice() {
+    return VoiceRoomUIWidgets.buildRoomNotice(_roomNoticeText);
+  }
+
   void _showInviteList(int seatNumber) async {
     final usersSnap = await _db
         .collection('rooms')
@@ -3113,26 +4288,91 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
     );
   }
 
+  Future<void> _performMinimizeExit() async {
+    // حفظ البيانات الضرورية قبل إغلاق الواجهة
+    final String rId = widget.roomId;
+    final String rName = widget.roomName;
+    final String? rImg = _dynamicRoomImage ?? widget.roomImage;
+    final String? oId = widget.ownerId;
+
+    // تفعيل وضع الخلفية لضمان استمرار الصوت
+    await _agoraService.setBackgroundMode(true);
+
+    // إذا كان المستخدم على المايك، يفضل النزول عند الاحتفاظ لتوفير التكلفة (اختياري حسب سياسة التطبيق)
+    // في رويال دور، سنبقي المستخدم على المايك إذا أراد ذلك، لكن نضمن استقرار الصوت
+
+    if (!mounted) return;
+
+    RoomPresenceService().minimizeRoom(
+      context, // استخدام سياق الصفحة الرئيسي
+      rId,
+      rName,
+      rImg,
+      onRoomTap: () {
+        // عند العودة للغرفة، نفتح الصفحة مجدداً
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VoiceRoomPage(
+              roomId: rId,
+              roomName: rName,
+              roomImage: rImg,
+              ownerId: oId,
+            ),
+          ),
+        );
+      },
+    );
+
+    // الخروج من الصفحة الحالية (تصغير)
+    Navigator.pop(context);
+  }
+
+  Future<void> _performFinalExit() async {
+    final chatSnap = await _db
+        .collection('rooms')
+        .doc(widget.roomId)
+        .collection('chat')
+        .where('senderId', isEqualTo: _currentUserId)
+        .get();
+    final batch = _db.batch();
+    for (var doc in chatSnap.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
+
+    // مغادرة المايك
+    HapticFeedback.mediumImpact();
+    await _micLogic.leaveMic(_mySeat);
+
+    // تحديث الوجود
+    if (_currentUserId.isNotEmpty) {
+      final roomRef = _db.collection('rooms').doc(widget.roomId);
+      await roomRef.update({
+        'onlineUsers': FieldValue.arrayRemove([_currentUserId])
+      });
+    }
+
+    // إيقاف الصوت والمغادرة
+    await _agoraService.stopMusic();
+    await _agoraService.leave();
+    RoomPresenceService().closeMinimized();
+
+    if (mounted) {
+      Navigator.pop(context); // الخروج من الغرفة
+    }
+  }
+
   void _showExitOptions() {
     showDialog(
         context: context,
         barrierColor: Colors.black.withAlpha(204),
-        builder: (context) => Center(
+        builder: (dialogCtx) => Center(
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
               GestureDetector(
                   onTap: () async {
-                    final ctx = context;
-                    if (Navigator.canPop(ctx)) Navigator.pop(ctx);
-                    // عند الاحتفاظ، نضمن أن المستخدم مستمع فقط لتوفير التكلفة
-                    if (_mySeat != null) {
-                      _leaveMic();
-                    } else {
-                      await _agoraService.updateClientRole(false);
-                    }
-                    if (!ctx.mounted) return;
-                    RoomPresenceService().minimizeRoom(ctx, widget.roomId,
-                        widget.roomName, _dynamicRoomImage ?? widget.roomImage);
-                    if (Navigator.canPop(ctx)) Navigator.pop(ctx);
+                    Navigator.pop(dialogCtx);
+                    await _performMinimizeExit();
                   },
                   child: Column(children: [
                     Container(
@@ -3156,26 +4396,8 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
               const SizedBox(height: 60),
               GestureDetector(
                   onTap: () async {
-                    final ctx = context;
-                    final chatSnap = await _db
-                        .collection('rooms')
-                        .doc(widget.roomId)
-                        .collection('chat')
-                        .where('senderId', isEqualTo: _currentUserId)
-                        .get();
-                    final batch = _db.batch();
-                    for (var doc in chatSnap.docs) {
-                      batch.delete(doc.reference);
-                    }
-                    await batch.commit();
-                    _leaveMic();
-                    _updatePresence(false);
-                    _agoraService.stopMusic();
-                    _agoraService.leave();
-                    RoomPresenceService().closeMinimized();
-                    if (!ctx.mounted) return;
-                    if (Navigator.canPop(ctx)) Navigator.pop(ctx);
-                    if (Navigator.canPop(ctx)) Navigator.pop(ctx);
+                    Navigator.pop(dialogCtx);
+                    await _performFinalExit();
                   },
                   child: Column(children: [
                     Container(
@@ -3195,6 +4417,65 @@ class _VoiceRoomPageState extends State<VoiceRoomPage>
                             decoration: TextDecoration.none))
                   ])),
             ])));
+  }
+}
+
+/// وجبة مخصصة لعرض هالة التحدث بشكل مستقل
+class _MicSpeakingGlow extends StatefulWidget {
+  final Color? color;
+  const _MicSpeakingGlow({this.color});
+
+  @override
+  State<_MicSpeakingGlow> createState() => _MicSpeakingGlowState();
+}
+
+class _MicSpeakingGlowState extends State<_MicSpeakingGlow>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Color glowColor = widget.color ?? Colors.greenAccent;
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Container(
+          width: 68 + (12 * _controller.value),
+          height: 68 + (12 * _controller.value),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color:
+                  glowColor.withValues(alpha: 0.8 - (0.6 * _controller.value)),
+              width: 2.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: glowColor.withValues(
+                    alpha: 0.3 * (1.0 - _controller.value)),
+                blurRadius: 15,
+                spreadRadius: 5 * _controller.value,
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -3249,5 +4530,416 @@ class _FloatingHeartState extends State<_FloatingHeart>
                   opacity: _opacityAnim.value,
                   child: Icon(Icons.favorite, color: widget.color, size: 30)));
         });
+  }
+}
+
+class RoyalMusicPlayerSheet extends StatefulWidget {
+  final String roomId;
+  final AgoraService agoraService;
+  final String currentMusicName;
+  final bool isMusicPlaying;
+  final int musicDuration;
+  final int musicPosition;
+  final double musicVolume;
+  final Function(String, bool, int, int) onMusicUpdate;
+  final Function(double) onVolumeChanged;
+  final Future<void> Function() onPickMusic;
+  final VoidCallback onToggleMusic;
+
+  const RoyalMusicPlayerSheet({
+    super.key,
+    required this.roomId,
+    required this.agoraService,
+    required this.currentMusicName,
+    required this.isMusicPlaying,
+    required this.musicDuration,
+    required this.musicPosition,
+    required this.musicVolume,
+    required this.onMusicUpdate,
+    required this.onVolumeChanged,
+    required this.onPickMusic,
+    required this.onToggleMusic,
+  });
+
+  @override
+  State<RoyalMusicPlayerSheet> createState() => _RoyalMusicPlayerSheetState();
+}
+
+class _RoyalMusicPlayerSheetState extends State<RoyalMusicPlayerSheet>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _rotationController;
+  late double _localVolume;
+  int _localPos = 0;
+  bool _localPlaying = false;
+  StreamSubscription? _posSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _localVolume = widget.musicVolume;
+    _localPos = widget.musicPosition;
+    _localPlaying = widget.isMusicPlaying;
+    _rotationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 15));
+
+    if (_localPlaying) _rotationController.repeat();
+
+    _posSub = widget.agoraService.musicPositionStream.listen((pos) {
+      if (mounted) {
+        setState(() => _localPos = pos);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _posSub?.cancel();
+    _rotationController.dispose();
+    super.dispose();
+  }
+
+  String _formatDuration(int msec) {
+    final d = Duration(milliseconds: msec);
+    return "${d.inMinutes}:${(d.inSeconds % 60).toString().padLeft(2, '0')}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 25,
+        bottom: MediaQuery.of(context).padding.bottom + 15,
+      ),
+      decoration: const BoxDecoration(
+        color: Color(0xFF0A121A),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(35)),
+        border: Border(top: BorderSide(color: AppTheme.royalGold, width: 0.5)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+              width: 45,
+              height: 5,
+              decoration: BoxDecoration(
+                  color: Colors.white12,
+                  borderRadius: BorderRadius.circular(10)),
+              margin: const EdgeInsets.only(bottom: 25)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Icon(Icons.equalizer, color: AppTheme.royalGold),
+              const Text('مشغل الوسائط الملكي',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5)),
+              IconButton(
+                icon: const Icon(Icons.close, color: Colors.white54, size: 20),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+          const SizedBox(height: 30),
+          // ديسك الموسيقى المتحرك
+          RotationTransition(
+            turns: _rotationController,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: SweepGradient(colors: [
+                    AppTheme.royalGold.withValues(alpha: 0.1),
+                    AppTheme.royalGold,
+                    AppTheme.royalGold.withValues(alpha: 0.1),
+                  ])),
+              child: Container(
+                padding: const EdgeInsets.all(35),
+                decoration: const BoxDecoration(
+                    color: Color(0xFF0F1B25), shape: BoxShape.circle),
+                child: Icon(
+                    _localPlaying
+                        ? Icons.music_note_rounded
+                        : Icons.music_off_rounded,
+                    color: _localPlaying ? AppTheme.royalGold : Colors.white10,
+                    size: 50),
+              ),
+            ),
+          ),
+          const SizedBox(height: 35),
+          Text(widget.currentMusicName,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 10),
+          const Text('بث مباشر عالي الجودة 🎙️',
+              style: TextStyle(color: AppTheme.royalGold, fontSize: 11)),
+          const SizedBox(height: 30),
+          if (widget.musicDuration <= 0 && !_localPlaying)
+            Center(
+              child: GestureDetector(
+                onTap: () async {
+                  await widget.onPickMusic();
+                  if (mounted) setState(() => _localPlaying = true);
+                  _rotationController.repeat();
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(40),
+                  decoration: BoxDecoration(
+                      color: AppTheme.royalGold.withValues(alpha: 0.05),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: AppTheme.royalGold.withValues(alpha: 0.2),
+                          width: 2)),
+                  child: const Column(
+                    children: [
+                      Icon(Icons.library_music_rounded,
+                          color: AppTheme.royalGold, size: 60),
+                      SizedBox(height: 10),
+                      Text('اختر ملف MP3',
+                          style:
+                              TextStyle(color: Colors.white54, fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          else ...[
+            Column(
+              children: [
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 4,
+                    thumbShape:
+                        const RoundSliderThumbShape(enabledThumbRadius: 7),
+                    overlayShape:
+                        const RoundSliderOverlayShape(overlayRadius: 15),
+                  ),
+                  child: Slider(
+                    value: _localPos.toDouble().clamp(
+                        0,
+                        widget.musicDuration > 0
+                            ? widget.musicDuration.toDouble()
+                            : 1),
+                    max: widget.musicDuration > 0
+                        ? widget.musicDuration.toDouble()
+                        : 1,
+                    onChanged: (v) {
+                      widget.agoraService.seekMusic(v.toInt());
+                      setState(() => _localPos = v.toInt());
+                    },
+                    activeColor: AppTheme.royalGold,
+                    inactiveColor: Colors.white10,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(_formatDuration(_localPos),
+                          style: const TextStyle(
+                              color: Colors.white38,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold)),
+                      Text(_formatDuration(widget.musicDuration),
+                          style: const TextStyle(
+                              color: Colors.white38,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                    icon: const Icon(Icons.replay_10,
+                        size: 32, color: Colors.white70),
+                    onPressed: () {
+                      int newPos = _localPos - 10000;
+                      if (newPos < 0) newPos = 0;
+                      widget.agoraService.seekMusic(newPos);
+                      setState(() => _localPos = newPos);
+                    }),
+                const SizedBox(width: 25),
+                GestureDetector(
+                  onTap: () {
+                    widget.onToggleMusic();
+                    setState(() {
+                      _localPlaying = !_localPlaying;
+                      if (_localPlaying) {
+                        _rotationController.repeat();
+                      } else {
+                        _rotationController.stop();
+                      }
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: const BoxDecoration(
+                        color: AppTheme.royalGold, shape: BoxShape.circle),
+                    child: Icon(
+                        _localPlaying
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        size: 45,
+                        color: Colors.black),
+                  ),
+                ),
+                const SizedBox(width: 25),
+                IconButton(
+                    icon: const Icon(Icons.forward_10,
+                        size: 32, color: Colors.white70),
+                    onPressed: () {
+                      int newPos = _localPos + 10000;
+                      if (newPos > widget.musicDuration) {
+                        newPos = widget.musicDuration;
+                      }
+                      widget.agoraService.seekMusic(newPos);
+                      setState(() => _localPos = newPos);
+                    }),
+              ],
+            ),
+            const SizedBox(height: 35),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.03),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.volume_down_rounded,
+                      color: AppTheme.royalGold, size: 20),
+                  Expanded(
+                    child: Slider(
+                      value: _localVolume,
+                      max: 100,
+                      onChanged: (v) {
+                        setState(() => _localVolume = v);
+                        widget.agoraService.adjustMusicVolume(v.toInt());
+                        widget.onVolumeChanged(v);
+                      },
+                      activeColor: AppTheme.royalGold,
+                      inactiveColor: Colors.white10,
+                    ),
+                  ),
+                  const Icon(Icons.volume_up_rounded,
+                      color: AppTheme.royalGold, size: 20),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 35),
+          Row(
+            children: [
+              Expanded(
+                child: TextButton.icon(
+                    onPressed: () async {
+                      await widget.onPickMusic();
+                      setState(() {
+                        _localPlaying = true;
+                        _rotationController.repeat();
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        backgroundColor: Colors.white.withValues(alpha: 0.05),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15))),
+                    icon: const Icon(Icons.folder_open_rounded,
+                        color: AppTheme.royalGold, size: 20),
+                    label: const Text("تغيير الملف",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold))),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: TextButton.icon(
+                    onPressed: () {
+                      widget.agoraService.stopMusic();
+                      setState(() {
+                        _localPlaying = false;
+                        _localPos = 0;
+                        _rotationController.stop();
+                      });
+                      Navigator.pop(context);
+                    },
+                    style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        backgroundColor:
+                            Colors.redAccent.withValues(alpha: 0.1),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15))),
+                    icon: const Icon(Icons.stop_circle_rounded,
+                        color: Colors.redAccent, size: 20),
+                    label: const Text("إيقاف نهائي",
+                        style: TextStyle(
+                            color: Colors.redAccent,
+                            fontWeight: FontWeight.bold))),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+        ],
+      ),
+    );
+  }
+}
+
+class _UserProfileBottomSheet extends StatelessWidget {
+  final String userId;
+  final String? roomId;
+  final String currentUserId;
+
+  const _UserProfileBottomSheet({
+    required this.userId,
+    this.roomId,
+    required this.currentUserId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      decoration: const BoxDecoration(
+        color: Color(0xFF0F1B25),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding + 20),
+      child: Column(
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: UserProfilePage(
+              userId: userId,
+              roomId: roomId,
+              useScaffold: false,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
