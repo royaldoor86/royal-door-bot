@@ -15,8 +15,9 @@ class PenaltyUserSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding + 20),
       decoration: const BoxDecoration(
           color: Color(0xFF1A242F),
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
@@ -61,9 +62,22 @@ class PenaltyUserSheet extends StatelessWidget {
               // Apply penalty
               final userRef =
                   FirebaseFirestore.instance.collection('users').doc(userId);
-              transaction.update(userRef, {
-                field: FieldValue.increment(-amount),
-              });
+              
+              // تحديد الحقول الصحيحة للخصم
+              Map<String, dynamic> updates = {};
+              if (field == 'coins') {
+                // خصم من النجوم
+                updates['rewardStars'] = FieldValue.increment(-amount);
+                updates['harvest_stars_wallet'] = FieldValue.increment(-amount);
+                updates['starsHarvestWallet'] = FieldValue.increment(-amount);
+              } else if (field == 'gems') {
+                // خصم من الجواهر
+                updates['rewardGems'] = FieldValue.increment(-amount);
+                updates['harvest_wallet'] = FieldValue.increment(-amount);
+                updates['harvestWallet'] = FieldValue.increment(-amount);
+              }
+              
+              transaction.update(userRef, updates);
 
               // Log the penalty
               final logRef = FirebaseFirestore.instance
