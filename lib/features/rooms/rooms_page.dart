@@ -13,6 +13,7 @@ import '../../theme/reusable_widgets.dart';
 import '../voice_room_page.dart';
 import '../profile/profile_page.dart';
 import '../../widgets/feature_lock_wrapper.dart';
+import '../../services/room_navigation_service.dart';
 
 class VoiceRoomsPage extends StatefulWidget {
   const VoiceRoomsPage({super.key});
@@ -284,7 +285,7 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
         child: Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           floatingActionButton:
-              (_activeTabIndex == 2) ? _buildAnimatedCreateButton(trans) : null,
+              (_activeTabIndex == 3) ? _buildAnimatedCreateButton(trans) : null,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           body: AppTheme.background(
@@ -323,8 +324,8 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
 
   Widget _buildTopTabs(Translations trans) {
     final tabs = trans.locale.languageCode == 'ar'
-        ? ["اكتشاف", "شائعة", "غرفتي"]
-        : ["Discover", "Popular", "My Room"];
+        ? ["اكتشاف", "شائعة", "الأصدقاء", "غرفتي"]
+        : ["Discover", "Popular", "Friends", "My Room"];
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -346,7 +347,8 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
         _activeTabIndex = index;
         // عند تغيير التبويب العلوي، قد نرغب في إعادة الفلتر الافتراضي
         if (index == 1) _activeFilter = "Popular";
-        if (index == 2) _activeFilter = "My";
+        if (index == 2) _activeFilter = "Friends";
+        if (index == 3) _activeFilter = "My";
       }),
       child: AnimatedContainer(
         duration: DesignTokens.durationBase,
@@ -437,8 +439,15 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
           final List following = List.from(userData['following'] ?? []);
           final List friends = List.from(userData['friends'] ?? []);
 
+          final visitedRoomIds =
+              FirestoreService.normalizeVisitedRoomIds(userData);
+
           return StreamBuilder<QuerySnapshot>(
-            stream: _getFilteredQuery(),
+            stream: _getFilteredQuery(
+              following: following,
+              friends: friends,
+              visitedRoomIds: visitedRoomIds,
+            ),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Center(
@@ -460,8 +469,53 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
                       {...doc.data() as Map<String, dynamic>, 'id': doc.id})
                   .toList();
 
+              // تحقق من انتهاء صلاحية التثبيت (فلترة برمجية إضافية لضمان الدقة)
+              if (_activeTabIndex == 1) {
+                final now = DateTime.now();
+                for (var room in rooms) {
+                  if (room['isPinned'] == true) {
+                    final expiry = room['pinExpiry'] as Timestamp?;
+                    if (expiry != null && expiry.toDate().isBefore(now)) {
+                      // تحديث قاعدة البيانات لإزالة التثبيت المنتهي (Async)
+                      FirebaseFirestore.instance
+                          .collection('rooms')
+                          .doc(room['id'])
+                          .update({'isPinned': false});
+                      room['isPinned'] = false;
+                    }
+                  }
+                }
+                // إعادة الترتيب بعد التحقق من الصلاحية
+                // نعرض الغرف المثبتة أولاً، ثم نرتب المثبتة بحسب تاريخ انتهاء التثبيت (الأطول زمنياً أولاً)،
+                // ثم بحسب عدد الأعضاء كعامل ثانوي. الغرف غير المثبتة تُرتب بحسب عدد الأعضاء.
+                rooms.sort((a, b) {
+                  bool aPinned = a['isPinned'] ?? false;
+                  bool bPinned = b['isPinned'] ?? false;
+                  if (aPinned && !bPinned) return -1; // a قبل b
+                  if (!aPinned && bPinned) return 1; // b قبل a
+
+                  if (aPinned && bPinned) {
+                    final aExpiry = (a['pinExpiry'] as Timestamp?)?.toDate();
+                    final bExpiry = (b['pinExpiry'] as Timestamp?)?.toDate();
+                    if (aExpiry != null && bExpiry != null) {
+                      // الغرفة التي لديها صلاحية أطول تظهر أولاً
+                      final cmp = bExpiry.compareTo(aExpiry);
+                      if (cmp != 0) return cmp;
+                    } else if (aExpiry != null) {
+                      return -1;
+                    } else if (bExpiry != null) {
+                      return 1;
+                    }
+                  }
+
+                  int aMembers = a['membersCount'] ?? 0;
+                  int bMembers = b['membersCount'] ?? 0;
+                  return bMembers.compareTo(aMembers);
+                });
+              }
+
               // ترتيب يدوي لتبويب "غرفتي" لأننا أزلنا orderBy من الاستعلام لتجنب خطأ الـ Index
-              if (_activeTabIndex == 2) {
+              if (_activeTabIndex == 3) {
                 rooms.sort((a, b) {
                   final aTime = a['createdAt'] as Timestamp?;
                   final bTime = b['createdAt'] as Timestamp?;
@@ -472,29 +526,35 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
 
               // تطبيق الفلاتر التي تتطلب معالجة جانب العميل (بسبب قيود Firestore في الاستعلامات المركبة)
               if (_activeFilter == "تم المتابعة" ||
-                  _activeFilter == "Following") {
+                  _activeFilter == "Following" ||
+                  _activeFilter == "تم المتابعه") {
                 rooms = rooms
                     .where((r) => following.contains(r['ownerId']))
                     .toList();
               } else if (_activeFilter == "الأصدقاء" ||
-                  _activeFilter == "Friends") {
+                  _activeFilter == "Friends" ||
+                  _activeFilter == "الاصدقاء") {
                 rooms =
                     rooms.where((r) => friends.contains(r['ownerId'])).toList();
               } else if (_activeFilter == "تم الانضمام" ||
                   _activeFilter == "Joined") {
-                // عرض الغرف التي زارها المستخدم (يمكن تحسينها بسجل دخول الغرف)
                 rooms = rooms
-                    .where((r) => r['ownerId'] != currentUser.uid)
+                    .where((r) => visitedRoomIds.contains(r['id'].toString()))
                     .toList();
               }
 
               if (_searchQuery.isNotEmpty) {
-                rooms = rooms
-                    .where((r) => (r['name'] ?? '')
-                        .toString()
-                        .toLowerCase()
-                        .contains(_searchQuery))
-                    .toList();
+                rooms = rooms.where((r) {
+                  final name = (r['name'] ?? '').toString().toLowerCase();
+                  final shortId = (r['shortId'] ?? '').toString().toLowerCase();
+                  final royalId = (r['royalId'] ?? '').toString().toLowerCase();
+                  final fullId = (r['id'] ?? '').toString().toLowerCase();
+
+                  return name.contains(_searchQuery) ||
+                      shortId.contains(_searchQuery) ||
+                      royalId.contains(_searchQuery) ||
+                      fullId.contains(_searchQuery);
+                }).toList();
               }
 
               if (rooms.isEmpty) {
@@ -520,26 +580,74 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
         });
   }
 
-  Stream<QuerySnapshot> _getFilteredQuery() {
+  Stream<QuerySnapshot> _getFilteredQuery({
+    List<dynamic>? following,
+    List<dynamic>? friends,
+    List<String>? visitedRoomIds,
+  }) {
     CollectionReference roomsRef =
         FirebaseFirestore.instance.collection('rooms');
     final currentUser = FirebaseAuth.instance.currentUser;
 
-    // تبويب "غرفتي"
+    // تبويب "الأصدقاء"
     if (_activeTabIndex == 2) {
-      // إزالة orderBy لتجنب الحاجة إلى Index فوري، وسنقوم بالترتيب برمجياً في Dart
+      if (friends == null || friends.isEmpty) {
+        return roomsRef.where('ownerId', isEqualTo: '___NONE___').snapshots();
+      }
+      return roomsRef
+          .where('ownerId', whereIn: friends.take(30).toList())
+          .snapshots();
+    }
+
+    // تبويب "غرفتي"
+    if (_activeTabIndex == 3) {
       return roomsRef.where('ownerId', isEqualTo: currentUser?.uid).snapshots();
     }
 
-    // تبويب "شائعة"
+    // تبويب "شائعة" (يدعم التثبيت)
     if (_activeTabIndex == 1) {
+      // جلب الغرف المثبتة أولاً برمجياً لتجنب مشاكل الـ Index المركب
       return roomsRef
-          .orderBy('membersCount', descending: true)
+          .orderBy('isPinned', descending: true)
           .limit(50)
           .snapshots();
     }
 
     // الفلاتر في تبويب "اكتشاف"
+    if (_activeFilter == "تم المتابعة" ||
+        _activeFilter == "Following" ||
+        _activeFilter == "تم المتابعه") {
+      if (following == null || following.isEmpty) {
+        return roomsRef.where('ownerId', isEqualTo: '___NONE___').snapshots();
+      }
+      return roomsRef
+          .where('ownerId', whereIn: following.take(30).toList())
+          .snapshots();
+    }
+
+    if (_activeFilter == "الأصدقاء" ||
+        _activeFilter == "Friends" ||
+        _activeFilter == "الاصدقاء") {
+      if (friends == null || friends.isEmpty) {
+        return roomsRef.where('ownerId', isEqualTo: '___NONE___').snapshots();
+      }
+      return roomsRef
+          .where('ownerId', whereIn: friends.take(30).toList())
+          .snapshots();
+    }
+
+    if (_activeFilter == "تم الانضمام" || _activeFilter == "Joined") {
+      if (visitedRoomIds == null || visitedRoomIds.isEmpty) {
+        return roomsRef
+            .where(FieldPath.documentId, isEqualTo: '___NONE___')
+            .snapshots();
+      }
+      return roomsRef
+          .where(FieldPath.documentId,
+              whereIn: visitedRoomIds.take(30).toList())
+          .snapshots();
+    }
+
     if (_activeFilter == "حديثاً" || _activeFilter == "New") {
       return roomsRef
           .orderBy('createdAt', descending: true)
@@ -552,6 +660,20 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
         .orderBy('createdAt', descending: true)
         .limit(50)
         .snapshots();
+  }
+
+  void _joinRoom(Map<String, dynamic> room) {
+    final roomId = room['id']?.toString();
+    if (roomId != null && roomId.isNotEmpty) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser?.uid)
+          .set({
+        'visitedRooms': FieldValue.arrayUnion([roomId]),
+        'lastRoomVisitAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    }
+    RoomNavigationService.joinRoom(context, room);
   }
 
   ImageProvider _getRoomImageProvider(String? imagePath) {
@@ -571,18 +693,12 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
 
   Widget _buildRoomCard(Map<String, dynamic> room) {
     final String? displayImage = room['roomImage'] ?? room['image'];
+    final bool isLocked =
+        room['password'] != null && room['password'].toString().isNotEmpty;
 
     return GlassCard(
       padding: EdgeInsets.zero,
-      onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => VoiceRoomPage(
-                    roomId: room['id'],
-                    roomName: room['name'],
-                    roomImage: displayImage,
-                    ownerId: room['ownerId'],
-                  ))),
+      onTap: () => _joinRoom(room),
       child: Column(
         children: [
           Expanded(
@@ -603,22 +719,54 @@ class _VoiceRoomsPageState extends State<VoiceRoomsPage>
                 Positioned(
                   top: DesignTokens.spacingSm,
                   left: DesignTokens.spacingSm,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: DesignTokens.spacingSm, vertical: 2),
-                    decoration: BoxDecoration(
-                        color:
-                            DesignTokens.neutralBlack.withValues(alpha: 0.54),
-                        borderRadius:
-                            BorderRadius.circular(DesignTokens.borderRadiusMd)),
-                    child: Row(children: [
-                      const Icon(Icons.people,
-                          color: DesignTokens.primaryGold, size: 10),
-                      const SizedBox(width: 4),
-                      Text("${room['membersCount'] ?? 0}",
-                          style: const TextStyle(
-                              color: DesignTokens.neutralWhite, fontSize: 9)),
-                    ]),
+                  child: Row(
+                    children: [
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('rooms')
+                            .doc(room['id'])
+                            .collection('online_users')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          int onlineCount = 0;
+                          if (snapshot.hasData) {
+                            onlineCount = snapshot.data!.docs.length;
+                          }
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: DesignTokens.spacingSm,
+                                vertical: 2),
+                            decoration: BoxDecoration(
+                                color: DesignTokens.neutralBlack
+                                    .withValues(alpha: 0.54),
+                                borderRadius: BorderRadius.circular(
+                                    DesignTokens.borderRadiusMd)),
+                            child: Row(children: [
+                              const Icon(Icons.people,
+                                  color: DesignTokens.primaryGold, size: 10),
+                              const SizedBox(width: 4),
+                              Text("$onlineCount",
+                                  style: const TextStyle(
+                                      color: DesignTokens.neutralWhite,
+                                      fontSize: 9)),
+                            ]),
+                          );
+                        },
+                      ),
+                      if (isLocked) ...[
+                        const SizedBox(width: 5),
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(
+                                DesignTokens.borderRadiusMd),
+                          ),
+                          child: const Icon(Icons.lock,
+                              color: Colors.amber, size: 10),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ],
