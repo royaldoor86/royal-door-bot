@@ -22,7 +22,7 @@ class RoomMoreMenuSheet extends StatefulWidget {
   final String? roomImage;
   final String? ownerId;
   final bool hasPower;
-  final Map<String, dynamic> moderatorPermissions;
+  final Map<String, dynamic>? moderatorPermissions;
   final bool isBattleActive;
   final String micMode;
   final bool noiseReduction;
@@ -34,8 +34,6 @@ class RoomMoreMenuSheet extends StatefulWidget {
   final VoidCallback? onShowGames;
   final List<Widget>? extraWidgets;
   final VoidCallback? onShowLeaderboard; // إضافة الكولباك هنا
-  final VoidCallback? onShowGames;
-  final Map<String, dynamic>? moderatorPermissions;
 
   const RoomMoreMenuSheet({
     super.key,
@@ -44,7 +42,7 @@ class RoomMoreMenuSheet extends StatefulWidget {
     this.roomImage,
     this.ownerId,
     required this.hasPower,
-    required this.moderatorPermissions,
+    this.moderatorPermissions,
     required this.isBattleActive,
     required this.micMode,
     required this.noiseReduction,
@@ -56,8 +54,6 @@ class RoomMoreMenuSheet extends StatefulWidget {
     this.onShowGames,
     this.extraWidgets,
     this.onShowLeaderboard, // إضافة الكولباك هنا
-    this.onShowGames,
-    this.moderatorPermissions,
   });
 
   @override
@@ -72,7 +68,7 @@ class _RoomMoreMenuSheetState extends State<RoomMoreMenuSheet> {
 
   bool _can(String key) {
     if (widget.ownerId == FirebaseAuth.instance.currentUser?.uid) return true;
-    return widget.moderatorPermissions[key] ?? false;
+    return widget.moderatorPermissions?[key] ?? false;
   }
 
   @override
