@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
+import '../../../../theme/design_tokens.dart';
 
 class BombGame extends StatefulWidget {
   final String roomId;
@@ -37,7 +40,10 @@ class _BombGameState extends State<BombGame> with SingleTickerProviderStateMixin
     _explosionTimer?.cancel();
     _explosionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return;
-      final startTime = (widget.gameData['startTime'] as Timestamp).toDate();
+      final startTimeData = widget.gameData['startTime'];
+      if (startTimeData == null) return;
+      
+      final startTime = (startTimeData as Timestamp).toDate();
       final duration = widget.gameData['duration'] ?? 20;
       final diff = DateTime.now().difference(startTime).inSeconds;
       final remaining = duration - diff;
@@ -67,37 +73,89 @@ class _BombGameState extends State<BombGame> with SingleTickerProviderStateMixin
     String? loserName = widget.gameData['loserName'];
     bool isHoldingBomb = currentHolderId == _myUid;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A).withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3), width: 2),
-        boxShadow: [BoxShadow(color: Colors.redAccent.withValues(alpha: 0.1), blurRadius: 20)],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildHeader(status),
-          const SizedBox(height: 20),
-          if (status == 'playing') _buildBombUI(isHoldingBomb, currentHolderName),
-          if (status == 'exploded') _buildExplosionUI(loserName),
-          const SizedBox(height: 20),
-          _buildFooter(status),
-        ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.black.withValues(alpha: 0.7),
+                const Color(0xFF1A0505).withValues(alpha: 0.8),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(
+              color: isHoldingBomb 
+                  ? Colors.redAccent.withValues(alpha: 0.5) 
+                  : DesignTokens.primaryGold.withValues(alpha: 0.3),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: (isHoldingBomb ? Colors.redAccent : Colors.black).withValues(alpha: 0.2),
+                blurRadius: 15,
+                spreadRadius: 2,
+              )
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(status),
+              const SizedBox(height: 12),
+              if (status == 'playing') _buildBombUI(isHoldingBomb, currentHolderName),
+              if (status == 'exploded') _buildExplosionUI(loserName),
+              const SizedBox(height: 12),
+              _buildFooter(status),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildHeader(String status) {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text("تحدي القنبلة الموقوتة 💣🔥",
-            style: TextStyle(color: Colors.redAccent, fontSize: 18, fontWeight: FontWeight.bold)),
+        Row(
+          children: [
+            const Icon(Icons.timer_outlined, color: Colors.redAccent, size: 18),
+            const SizedBox(width: 8),
+            Text(status == 'playing' ? "القنبلة الموقوتة" : "انتهى التحدي",
+                style: const TextStyle(
+                  color: Colors.white, 
+                  fontSize: 15, 
+                  fontWeight: FontWeight.bold,
+                  fontFamily: DesignTokens.primaryFont,
+                )),
+          ],
+        ),
         if (status == 'playing')
-          Text("الوقت يمر... $_secondsLeft ثانية",
-              style: const TextStyle(color: Colors.white70, fontSize: 12)),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.redAccent.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.redAccent.withValues(alpha: 0.4)),
+            ),
+            child: Text(
+              "$_secondsLeft ثانية",
+              style: const TextStyle(
+                color: Colors.redAccent, 
+                fontSize: 12, 
+                fontWeight: FontWeight.w900,
+                fontFamily: DesignTokens.primaryFont,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -105,56 +163,124 @@ class _BombGameState extends State<BombGame> with SingleTickerProviderStateMixin
   Widget _buildBombUI(bool isHoldingBomb, String? holderName) {
     return Column(
       children: [
+        const SizedBox(height: 8),
         AnimatedBuilder(
           animation: _shakeController,
           builder: (context, child) {
+            double shake = isHoldingBomb ? 5.0 : 1.0;
             return Transform.translate(
-              offset: Offset(sin(_shakeController.value * pi * 10) * 2, 0),
-              child: const Icon(Icons.error, color: Colors.redAccent, size: 80),
+              offset: Offset(sin(_shakeController.value * pi * 8) * shake, 0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (isHoldingBomb)
+                    const Icon(Icons.error_outline, color: Colors.redAccent, size: 80),
+                  const Icon(Icons.bolt, color: Colors.redAccent, size: 60),
+                ],
+              ),
             );
           },
         ),
-        const SizedBox(height: 20),
-        Text(isHoldingBomb ? "القنبلة معك! انقلها بسرعة! 😱" : "القنبلة مع: ${holderName ?? 'مجهول'}",
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: RichText(
             textAlign: TextAlign.center,
-            style: TextStyle(
-                color: isHoldingBomb ? Colors.redAccent : Colors.white,
-                fontSize: 16,
-                fontWeight: isHoldingBomb ? FontWeight.bold : FontWeight.normal)),
-        const SizedBox(height: 15),
-        if (isHoldingBomb) _buildTransferControls(),
+            text: TextSpan(
+              style: const TextStyle(fontFamily: DesignTokens.primaryFont, fontSize: 14),
+              children: [
+                const TextSpan(text: "القنبلة مع: ", style: TextStyle(color: Colors.white70)),
+                TextSpan(
+                  text: holderName ?? '...', 
+                  style: const TextStyle(color: DesignTokens.primaryGold, fontWeight: FontWeight.bold)
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (isHoldingBomb) ...[
+          const SizedBox(height: 20),
+          const Text("مرر القنبلة بسرعة! 🔥", 
+            style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 13)),
+          const SizedBox(height: 12),
+          _buildTransferControls(),
+        ],
       ],
     );
   }
 
   Widget _buildTransferControls() {
-    return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('rooms').doc(widget.roomId).get(),
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection('rooms').doc(widget.roomId).snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const CircularProgressIndicator();
-        final roomData = snapshot.data!.data() as Map<String, dynamic>;
-        final seats = roomData['micSeats'] as List<dynamic>? ?? [];
+        if (!snapshot.hasData) return const SizedBox(height: 40, child: Center(child: CircularProgressIndicator(strokeWidth: 2)));
         
-        List<Map<String, dynamic>> otherSpeakers = [];
-        for (var seat in seats) {
-          if (seat['uid'] != null && seat['uid'] != _myUid) {
-            otherSpeakers.add({'uid': seat['uid'], 'name': seat['name'] ?? 'مستخدم'});
-          }
-        }
+        final roomData = snapshot.data!.data() as Map<String, dynamic>;
+        
+        // جلب المتحدثين من مجموعة فرعية mic_seats
+        return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('rooms').doc(widget.roomId).collection('mic_seats').snapshots(),
+          builder: (context, micSnap) {
+            if (!micSnap.hasData) return const SizedBox();
+            
+            List<Map<String, dynamic>> otherSpeakers = [];
+            for (var doc in micSnap.data!.docs) {
+              final seat = doc.data() as Map<String, dynamic>;
+              if (seat['userId'] != null && seat['userId'] != _myUid) {
+                otherSpeakers.add({'uid': seat['userId'], 'name': seat['name'] ?? 'مستخدم'});
+              }
+            }
 
-        if (otherSpeakers.isEmpty) {
-          return const Text("لا يوجد أحد لنقل القنبلة إليه!", style: TextStyle(color: Colors.white54, fontSize: 12));
-        }
+            if (otherSpeakers.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(12),
+                child: const Text("لا يوجد متحدثون آخرون لنقل القنبلة!", 
+                  style: TextStyle(color: Colors.white38, fontSize: 12, fontStyle: FontStyle.italic)),
+              );
+            }
 
-        return Wrap(
-          spacing: 10,
-          children: otherSpeakers.map((s) {
-            return ActionChip(
-              backgroundColor: Colors.redAccent.withValues(alpha: 0.2),
-              label: Text(s['name'], style: const TextStyle(color: Colors.white, fontSize: 10)),
-              onPressed: () => _transferBomb(s['uid'], s['name']),
+            return SizedBox(
+              height: 100,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: otherSpeakers.length,
+                itemBuilder: (context, index) {
+                  final s = otherSpeakers[index];
+                  return GestureDetector(
+                    onTap: () => _transferBomb(s['uid'], s['name']),
+                    child: Container(
+                      width: 80,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: Colors.white10),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.white10,
+                            child: Icon(Icons.person, color: Colors.white38),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(s['name'], 
+                            maxLines: 1, 
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             );
-          }).toList(),
+          },
         );
       },
     );
@@ -163,12 +289,27 @@ class _BombGameState extends State<BombGame> with SingleTickerProviderStateMixin
   Widget _buildExplosionUI(String? loserName) {
     return Column(
       children: [
-        const Icon(Icons.flash_on, color: Colors.yellow, size: 100),
-        const SizedBox(height: 15),
-        const Text("بوم! 💥 انفجرت القنبلة في:", style: TextStyle(color: Colors.white70)),
-        const SizedBox(height: 5),
-        Text(loserName ?? "مستخدم سيء الحظ",
-            style: const TextStyle(color: Colors.redAccent, fontSize: 22, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 10),
+        const Icon(Icons.flash_on, color: Colors.amber, size: 70),
+        const SizedBox(height: 16),
+        const Text("انفجرت القنبلة في:", 
+          style: TextStyle(color: Colors.white70, fontSize: 14, fontFamily: DesignTokens.primaryFont)),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.redAccent.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
+          ),
+          child: Text(loserName ?? "أحدهم",
+              style: const TextStyle(
+                color: Colors.redAccent, 
+                fontSize: 22, 
+                fontWeight: FontWeight.w900,
+                fontFamily: DesignTokens.primaryFont,
+              )),
+        ),
       ],
     );
   }
@@ -178,15 +319,18 @@ class _BombGameState extends State<BombGame> with SingleTickerProviderStateMixin
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (widget.hasPower)
-          TextButton(
+          TextButton.icon(
             onPressed: _closeGame,
-            child: const Text("إغلاق اللعبة", style: TextStyle(color: Colors.white38)),
+            icon: const Icon(Icons.close_rounded, size: 16, color: Colors.white38),
+            label: const Text("إغلاق اللعبة", 
+              style: TextStyle(color: Colors.white38, fontSize: 12, fontWeight: FontWeight.bold)),
           ),
       ],
     );
   }
 
   void _transferBomb(String targetUid, String targetName) async {
+    HapticFeedback.mediumImpact();
     await FirebaseFirestore.instance.collection('rooms').doc(widget.roomId).update({
       'activeGame.currentHolderId': targetUid,
       'activeGame.currentHolderName': targetName,
@@ -210,3 +354,4 @@ class _BombGameState extends State<BombGame> with SingleTickerProviderStateMixin
     });
   }
 }
+

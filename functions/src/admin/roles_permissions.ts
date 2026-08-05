@@ -7,7 +7,7 @@ export const updateUserRole = functions.region("us-central1").https.onCall(async
   if (!context.auth) throw new functions.https.HttpsError("unauthenticated", "يجب تسجيل الدخول");
   const adminDoc = await admin.firestore().collection("users").doc(context.auth.uid).get();
   const email = adminDoc.data()?.email?.toLowerCase();
-  if (!adminDoc.exists || (adminDoc.data()?.role !== "admin" && email !== "royaldoor86@gmail.com" && email !== "doorty86@gmail.com")) {
+  if (!adminDoc.exists || (adminDoc.data()?.role !== "admin" && email !== "royaldoor86@gmail.com" && email !== "doorty86@gmail.com" && email !== "amjidhadi96@gmail.com" && email !== "shahadhadi.h@gmail.com")) {
     throw new functions.https.HttpsError("permission-denied", "غير مصرح");
   }
   const {uid, role, permissions} = data;

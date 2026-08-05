@@ -261,7 +261,7 @@ class _AdminHandEffectsPageState extends State<AdminHandEffectsPage> {
                       ),
                       items: const [
                         DropdownMenuItem(value: 'gems', child: Text('جواهر 💎')),
-                        DropdownMenuItem(value: 'stars', child: Text('نجوم ⭐')),
+                        DropdownMenuItem(value: 'stars', child: Text('كوينز')),
                       ],
                       onChanged: (value) => setState(() => _selectedCurrency = value!),
                     ),
@@ -365,7 +365,7 @@ class _AdminHandEffectsPageState extends State<AdminHandEffectsPage> {
                                     const SizedBox(height: 5),
                                     Row(
                                       children: [
-                                        Text('${effect['cost']} ${effect['currency'] == 'gems' ? '💎' : '⭐'}', style: const TextStyle(color: Colors.cyan, fontSize: 12)),
+                                        Text('${effect['cost']} ${effect['currency'] == 'gems' ? '💎' : 'كوينز'}', style: const TextStyle(color: Colors.cyan, fontSize: 12)),
                                         const SizedBox(width: 10),
                                         _getTypeBadge(effect['type']),
                                         const SizedBox(width: 10),

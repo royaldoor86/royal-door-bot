@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../services/firestore_service.dart';
 import '../../services/localization_service.dart';
+import '../../services/telegram_web_app_service.dart';
 import '../../models/chat_model.dart';
 import '../../models/user_model.dart';
 import '../../app_theme.dart';
@@ -12,6 +13,10 @@ import '../../theme/reusable_widgets.dart';
 import 'individual_chat_page.dart';
 import 'group_chat_page.dart';
 import '../profile/user_details_view_page.dart';
+import '../../services/facebook_friend_sync_service.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/foundation.dart';
 
 class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});
@@ -30,7 +35,7 @@ class _ChatsPageState extends State<ChatsPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -92,6 +97,8 @@ class _ChatsPageState extends State<ChatsPage>
             tabs: [
               Tab(text: trans.get('chats')),
               const Tab(text: 'Requests'),
+              const Tab(text: 'الأصدقاء'),
+              const Tab(text: 'Facebook'),
             ],
           ),
         ),
@@ -106,6 +113,8 @@ class _ChatsPageState extends State<ChatsPage>
                   children: [
                     _buildChatList(),
                     const _FriendRequestsList(),
+                    const _FriendsList(),
+                    const _FacebookFriendsTab(),
                   ],
                 ),
               ),
@@ -516,6 +525,632 @@ class _FriendRequestsList extends StatelessWidget {
                     ),
                   ),
                 );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _FriendsList extends StatelessWidget {
+  const _FriendsList();
+
+  @override
+  Widget build(BuildContext context) {
+    final firestoreService = FirestoreService();
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return const Center(
+          child:
+              Text('يرجى تسجيل الدخول', style: TextStyle(color: Colors.white)));
+    }
+
+    return StreamBuilder<UserModel>(
+      stream: firestoreService.streamUserData(user.uid),
+      builder: (context, snapshot) {
+        final userData = snapshot.data;
+
+        return DefaultTabController(
+          length: 3,
+          child: Column(
+            children: [
+              const TabBar(
+                labelColor: AppTheme.royalGold,
+                unselectedLabelColor: Colors.white38,
+                indicatorColor: AppTheme.royalGold,
+                tabs: [
+                  Tab(text: 'أصدقاء'),
+                  Tab(text: 'متابعة'),
+                  Tab(text: 'معجبون'),
+                ],
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _UserListStream(
+                      stream: firestoreService.streamFriends(user.uid),
+                      emptyMessage: 'لا يوجد أصدقاء حالياً',
+                    ),
+                    _UserListStream(
+                      stream: firestoreService
+                          .streamUsersFromList(userData?.following ?? []),
+                      emptyMessage: 'لم تقم بمتابعة أحد بعد',
+                    ),
+                    _UserListStream(
+                      stream: firestoreService
+                          .streamUsersFromList(userData?.followers ?? []),
+                      emptyMessage: 'لا يوجد معجبون حالياً',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _FacebookFriendsTab extends StatefulWidget {
+  const _FacebookFriendsTab();
+
+  @override
+  State<_FacebookFriendsTab> createState() => _FacebookFriendsTabState();
+}
+
+class _FacebookFriendsTabState extends State<_FacebookFriendsTab> {
+  String _filter = 'all';
+
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return const Center(
+          child:
+              Text('يرجى تسجيل الدخول', style: TextStyle(color: Colors.white)));
+    }
+
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        final data = snapshot.data?.data();
+        final facebookLinked = (data?['facebookLinked'] as bool?) ?? false;
+        final friendIds = (data?['facebookFriendIds'] as List?)
+                ?.whereType<String>()
+                .toList() ??
+            <String>[];
+        final facebookFriends = (data?['facebookFriendsData'] as List?)
+                ?.whereType<Map>()
+                .map((item) => Map<String, dynamic>.from(item))
+                .toList() ??
+            <Map<String, dynamic>>[];
+
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              if (!facebookLinked)
+                Card(
+                  color: Colors.white.withValues(alpha: 0.08),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        const Icon(Icons.facebook,
+                            color: AppTheme.royalGold, size: 36),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'ربط حساب فيسبوك يسمح لك بعرض أصدقاءك داخل المحادثات وإرسال طلبات صداقة مباشرة.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            await _connectFacebookAndSync(context);
+                          },
+                          icon: const Icon(Icons.link),
+                          label: const Text('ربط ومزامنة فيسبوك'),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.royalGold),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else ...[
+                Row(
+                  children: [
+                    const Icon(Icons.check_circle, color: Colors.greenAccent),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'تم ربط فيسبوك ومزامنة ${friendIds.length} صديقًا.',
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                    ),
+                    TextButton.icon(
+                      onPressed: () async {
+                        await FacebookFriendSyncService.clearFacebookSync();
+                        await FacebookAuth.instance.logOut();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('تم حذف ربط فيسبوك')),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.link_off, color: Colors.redAccent),
+                      label: const Text('إلغاء الربط',
+                          style: TextStyle(color: Colors.redAccent)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    FilterChip(
+                      label: const Text('الكل'),
+                      selected: _filter == 'all',
+                      selectedColor: AppTheme.royalGold.withValues(alpha: 0.2),
+                      checkmarkColor: AppTheme.royalGold,
+                      labelStyle: TextStyle(
+                        color: _filter == 'all' ? Colors.white : Colors.white70,
+                      ),
+                      onSelected: (_) => setState(() => _filter = 'all'),
+                    ),
+                    FilterChip(
+                      label: const Text('مسجلون'),
+                      selected: _filter == 'registered',
+                      selectedColor: AppTheme.royalGold.withValues(alpha: 0.2),
+                      checkmarkColor: AppTheme.royalGold,
+                      labelStyle: TextStyle(
+                        color: _filter == 'registered'
+                            ? Colors.white
+                            : Colors.white70,
+                      ),
+                      onSelected: (_) => setState(() => _filter = 'registered'),
+                    ),
+                    FilterChip(
+                      label: const Text('غير مسجلين'),
+                      selected: _filter == 'unregistered',
+                      selectedColor: AppTheme.royalGold.withValues(alpha: 0.2),
+                      checkmarkColor: AppTheme.royalGold,
+                      labelStyle: TextStyle(
+                        color: _filter == 'unregistered'
+                            ? Colors.white
+                            : Colors.white70,
+                      ),
+                      onSelected: (_) =>
+                          setState(() => _filter = 'unregistered'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: friendIds.isEmpty && facebookFriends.isEmpty
+                      ? const Center(
+                          child: Text('لا يوجد أصدقاء متاحون حاليًا من فيسبوك',
+                              style: TextStyle(color: Colors.white24)))
+                      : FutureBuilder<List<Map<String, dynamic>>>(
+                          future: FacebookFriendSyncService
+                              .getRegisteredFacebookFriendsInApp(friendIds),
+                          builder: (context, userSnapshot) {
+                            if (!userSnapshot.hasData) {
+                              return const Center(
+                                  child: CircularProgressIndicator(
+                                      color: AppTheme.royalGold));
+                            }
+
+                            final registeredUsers =
+                                <String, Map<String, dynamic>>{};
+                            for (final appUser in userSnapshot.data ?? []) {
+                              final facebookId =
+                                  appUser['facebookId']?.toString();
+                              if (facebookId != null && facebookId.isNotEmpty) {
+                                registeredUsers[facebookId] = appUser;
+                              }
+                            }
+
+                            final displayItems = facebookFriends.isEmpty
+                                ? (userSnapshot.data ?? [])
+                                    .whereType<Map<String, dynamic>>()
+                                    .map((appUser) => {
+                                          'facebookId': appUser['facebookId']
+                                                  ?.toString() ??
+                                              '',
+                                          'name': appUser['name']?.toString() ??
+                                              'Facebook Friend',
+                                          'pictureUrl': '',
+                                          'appUser': appUser,
+                                        })
+                                    .toList()
+                                : facebookFriends.map((friend) {
+                                    final facebookId =
+                                        friend['facebookId']?.toString() ?? '';
+                                    final appUser = registeredUsers[facebookId];
+                                    return {
+                                      'facebookId': facebookId,
+                                      'name': friend['name']?.toString() ??
+                                          'Facebook Friend',
+                                      'pictureUrl':
+                                          friend['pictureUrl']?.toString() ??
+                                              '',
+                                      'appUser': appUser,
+                                    };
+                                  }).toList();
+
+                            final filteredItems = displayItems.where((item) {
+                              final hasAppAccount =
+                                  (item['appUser'] as Map<String, dynamic>?) !=
+                                      null;
+                              switch (_filter) {
+                                case 'registered':
+                                  return hasAppAccount;
+                                case 'unregistered':
+                                  return !hasAppAccount;
+                                default:
+                                  return true;
+                              }
+                            }).toList();
+
+                            if (filteredItems.isEmpty) {
+                              return const Center(
+                                  child: Text(
+                                      'لا توجد عناصر تطابق هذا الفلتر حالياً',
+                                      style: TextStyle(color: Colors.white24)));
+                            }
+
+                            return ListView.separated(
+                              itemCount: filteredItems.length,
+                              separatorBuilder: (_, __) => const Divider(
+                                  color: Colors.white10, height: 20),
+                              itemBuilder: (context, index) {
+                                final item = filteredItems[index];
+                                final appUser =
+                                    item['appUser'] as Map<String, dynamic>?;
+                                final friendName = item['name']?.toString() ??
+                                    'Facebook Friend';
+                                final friendPicture =
+                                    item['pictureUrl']?.toString() ?? '';
+                                final friendId =
+                                    item['facebookId']?.toString() ?? '';
+
+                                if (appUser == null) {
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundColor: Colors.white10,
+                                      backgroundImage: friendPicture.isNotEmpty
+                                          ? CachedNetworkImageProvider(
+                                              friendPicture)
+                                          : null,
+                                      child: friendPicture.isEmpty
+                                          ? Text(friendName.isNotEmpty
+                                              ? friendName[0].toUpperCase()
+                                              : 'F')
+                                          : null,
+                                    ),
+                                    title: Text(friendName,
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                    subtitle: const Text(
+                                        'ليس لديه حساب في التطبيق بعد',
+                                        style:
+                                            TextStyle(color: Colors.white38)),
+                                    trailing: TextButton.icon(
+                                      onPressed: () async {
+                                        await _shareAppInvite(
+                                            context, friendName);
+                                      },
+                                      icon: const Icon(Icons.share,
+                                          color: AppTheme.royalGold),
+                                      label: const Text('دعوة',
+                                          style: TextStyle(
+                                              color: AppTheme.royalGold)),
+                                    ),
+                                  );
+                                }
+
+                                final friend = UserModel.fromMap(
+                                  Map<String, dynamic>.from(appUser),
+                                  appUser['uid']?.toString() ?? '',
+                                );
+                                return FutureBuilder<Map<String, dynamic>>(
+                                  future: FirestoreService()
+                                      .getFriendshipState(user.uid, friend.uid),
+                                  builder: (context, stateSnapshot) {
+                                    final state =
+                                        stateSnapshot.data?['status'] ?? 'none';
+                                    final requestId = stateSnapshot
+                                        .data?['requestId']
+                                        ?.toString();
+                                    return ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: Colors.white10,
+                                        backgroundImage:
+                                            friend.profilePic.isNotEmpty
+                                                ? CachedNetworkImageProvider(
+                                                    friend.profilePic)
+                                                : null,
+                                        child: friend.profilePic.isEmpty
+                                            ? const Icon(Icons.person)
+                                            : null,
+                                      ),
+                                      title: Text(friend.name,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      subtitle: Text(friend.royalId,
+                                          style: const TextStyle(
+                                              color: Colors.white38)),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          if (state == 'friends')
+                                            TextButton.icon(
+                                              onPressed: () async {
+                                                final roomId =
+                                                    await FirestoreService()
+                                                        .ensureChatRoomExists(
+                                                            user.uid,
+                                                            friend.uid);
+                                                if (!context.mounted) return;
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        IndividualChatPage(
+                                                      otherUser: friend,
+                                                      roomId: roomId,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              icon: const Icon(Icons.chat,
+                                                  color: AppTheme.royalGold),
+                                              label: const Text('دردشة',
+                                                  style: TextStyle(
+                                                      color:
+                                                          AppTheme.royalGold)),
+                                            )
+                                          else if (state == 'pending')
+                                            Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Chip(
+                                                  label: Text('طلب مرسل',
+                                                      style: TextStyle(
+                                                          fontSize: 12)),
+                                                  backgroundColor:
+                                                      Colors.orangeAccent,
+                                                ),
+                                                const SizedBox(width: 6),
+                                                TextButton.icon(
+                                                  onPressed: () async {
+                                                    if (requestId == null ||
+                                                        requestId.isEmpty) {
+                                                      return;
+                                                    }
+                                                    await FirestoreService()
+                                                        .cancelFriendRequest(
+                                                            requestId);
+                                                    if (context.mounted) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                            content: Text(
+                                                                'تم إلغاء طلب الصداقة إلى ${friend.name}')),
+                                                      );
+                                                    }
+                                                  },
+                                                  icon: const Icon(Icons.undo,
+                                                      color: Colors.redAccent),
+                                                  label: const Text('إلغاء',
+                                                      style: TextStyle(
+                                                          color: Colors
+                                                              .redAccent)),
+                                                ),
+                                              ],
+                                            )
+                                          else if (state == 'incoming')
+                                            TextButton.icon(
+                                              onPressed: () async {
+                                                await FirestoreService()
+                                                    .acceptFriendRequest(
+                                                  requestId ?? '',
+                                                  friend.uid,
+                                                  user.uid,
+                                                );
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        content: Text(
+                                                            'تمت إضافة ${friend.name} إلى قائمة الأصدقاء')),
+                                                  );
+                                                }
+                                              },
+                                              icon: const Icon(
+                                                  Icons.check_circle,
+                                                  color: Colors.greenAccent),
+                                              label: const Text('قبول',
+                                                  style: TextStyle(
+                                                      color:
+                                                          Colors.greenAccent)),
+                                            )
+                                          else
+                                            TextButton.icon(
+                                              onPressed: () async {
+                                                if (user.uid == friend.uid) {
+                                                  return;
+                                                }
+                                                await FirestoreService()
+                                                    .sendFriendRequest(
+                                                        user.uid, friend.uid);
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        content: Text(
+                                                            'تم إرسال طلب صداقة إلى ${friend.name}')),
+                                                  );
+                                                }
+                                              },
+                                              icon: const Icon(
+                                                  Icons.person_add_alt_1,
+                                                  color: AppTheme.royalGold),
+                                              label: const Text('إضافة',
+                                                  style: TextStyle(
+                                                      color:
+                                                          AppTheme.royalGold)),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+Future<void> _shareAppInvite(BuildContext context, String friendName) async {
+  final currentUser = FirebaseAuth.instance.currentUser;
+  final inviterName = currentUser?.displayName ?? currentUser?.email ?? 'صديق';
+  final message =
+      'أدعوك للانضمام إلى تطبيق رويال دور $inviterName\nhttps://royaldoor.app';
+
+  if (kIsWeb && TelegramWebAppService.isTelegramWebApp()) {
+    TelegramWebAppService.shareText(message);
+  } else {
+    await Share.share(message, subject: 'دعوة إلى رويال دور');
+  }
+
+  if (context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('تم إرسال دعوة إلى $friendName')),
+    );
+  }
+}
+
+Future<void> _connectFacebookAndSync(BuildContext context) async {
+  try {
+    final result = await FacebookAuth.instance.login(
+      permissions: const ['public_profile', 'email'],
+    );
+
+    if (result.status != LoginStatus.success || result.accessToken == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم إلغاء ربط فيسبوك أو فشل الإذن')),
+        );
+      }
+      return;
+    }
+
+    await FacebookFriendSyncService.syncFacebookFriendsToApp(
+        result.accessToken!.token);
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم ربط ومزامنة أصدقاء فيسبوك بنجاح')),
+      );
+    }
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('فشل ربط فيسبوك: $e')),
+      );
+    }
+  }
+}
+
+class _UserListStream extends StatelessWidget {
+  final Stream<List<UserModel>> stream;
+  final String emptyMessage;
+
+  const _UserListStream({
+    required this.stream,
+    required this.emptyMessage,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<UserModel>>(
+      stream: stream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+              child: CircularProgressIndicator(color: AppTheme.royalGold));
+        }
+
+        final users = snapshot.data ?? [];
+
+        if (users.isEmpty) {
+          return Center(
+              child: Text(emptyMessage,
+                  style: const TextStyle(color: Colors.white24)));
+        }
+
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: users.length,
+          separatorBuilder: (context, index) =>
+              const Divider(color: Colors.white10, height: 20),
+          itemBuilder: (context, index) {
+            final user = users[index];
+            return ListTile(
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              leading: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: AppTheme.royalGold.withValues(alpha: 0.3),
+                      width: 1.5),
+                ),
+                child: CircleAvatar(
+                  radius: 28,
+                  backgroundColor: Colors.white10,
+                  backgroundImage: user.profilePic.isNotEmpty
+                      ? NetworkImage(user.profilePic)
+                      : null,
+                  child: user.profilePic.isEmpty
+                      ? const Icon(Icons.person, color: Colors.white38)
+                      : null,
+                ),
+              ),
+              title: Text(user.name,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16)),
+              trailing: const Icon(Icons.arrow_forward_ios,
+                  size: 14, color: Colors.white24),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => UserDetailsViewPage(user: user)));
               },
             );
           },

@@ -23,17 +23,29 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
 
   bool _isUploading = false;
 
-  void _showVehicleDialog({String? id, Map<String, dynamic>? existingData}) async {
-    final nameController = TextEditingController(text: existingData?['name'] ?? "");
-    final priceController = TextEditingController(text: (existingData?['price'] ?? 0).toString());
-    final lottieUrlController = TextEditingController(text: existingData?['url'] ?? "");
-    
-    String type = existingData?['type'] ?? "gif"; 
+  void _showVehicleDialog(
+      {String? id, Map<String, dynamic>? existingData}) async {
+    final nameController =
+        TextEditingController(text: existingData?['name'] ?? "");
+    final priceController =
+        TextEditingController(text: (existingData?['price'] ?? 0).toString());
+    final lottieUrlController =
+        TextEditingController(text: existingData?['url'] ?? "");
+    final carTypeController =
+        TextEditingController(text: existingData?['carType'] ?? "");
+    final requiredLevelController = TextEditingController(
+        text: (existingData?['requiredLevel'] ?? 19).toString());
+
+    String type = existingData?['type'] ?? "gif";
+    bool isCustomCar = existingData?['isCustomCar'] ?? false;
     File? selectedFile;
     VideoPlayerController? videoController;
 
-    if (type == "video" && lottieUrlController.text.isNotEmpty && lottieUrlController.text.startsWith('http')) {
-      videoController = VideoPlayerController.networkUrl(Uri.parse(lottieUrlController.text));
+    if (type == "video" &&
+        lottieUrlController.text.isNotEmpty &&
+        lottieUrlController.text.startsWith('http')) {
+      videoController =
+          VideoPlayerController.networkUrl(Uri.parse(lottieUrlController.text));
       await videoController.initialize();
       if (mounted) setState(() {});
     }
@@ -42,13 +54,17 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
       context: context,
       barrierDismissible: false,
       builder: (context) => StatefulBuilder(
-          builder: (context, setS) => AlertDialog(
+        builder: (context, setS) => AlertDialog(
           backgroundColor: DesignTokens.backgroundDarkMedium,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl), 
-            side: BorderSide(color: DesignTokens.primaryGold.withValues(alpha: 0.3)),
+            borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl),
+            side: BorderSide(
+                color: DesignTokens.primaryGold.withValues(alpha: 0.3)),
           ),
-          title: HeadingText(id == null ? "صناعة مركبة ملكية جديدة" : "تعديل المركبة الملكية", color: DesignTokens.primaryGold, fontSize: DesignTokens.fontSizeLg),
+          title: HeadingText(
+              id == null ? "صناعة مركبة ملكية جديدة" : "تعديل المركبة الملكية",
+              color: DesignTokens.primaryGold,
+              fontSize: DesignTokens.fontSizeLg),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -61,18 +77,45 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
                 const SizedBox(height: DesignTokens.spacingMd),
                 RoyalTextField(
                   controller: priceController,
-                  labelText: "السعر (نجوم ⭐)",
+                  labelText: "السعر (كوينز)",
                   keyboardType: TextInputType.number,
                   hintText: "أدخل السعر",
+                ),
+                const SizedBox(height: DesignTokens.spacingLg),
+                RoyalTextField(
+                  controller: carTypeController,
+                  labelText: "نوع المركبة (مثال: sports_car)",
+                  hintText: "أدخل نوع المركبة",
+                ),
+                const SizedBox(height: DesignTokens.spacingMd),
+                RoyalTextField(
+                  controller: requiredLevelController,
+                  labelText: "المستوى المطلوب",
+                  keyboardType: TextInputType.number,
+                  hintText: "أدخل المستوى المطلوب (مثال: 19)",
+                ),
+                const SizedBox(height: DesignTokens.spacingMd),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: isCustomCar,
+                      onChanged: (v) => setS(() => isCustomCar = v ?? false),
+                      activeColor: DesignTokens.primaryGold,
+                    ),
+                    const SizedBox(width: 8),
+                    const BodyText("مركبة مخصصة VIP"),
+                  ],
                 ),
                 const SizedBox(height: DesignTokens.spacingLg),
                 const BodyText("نوع الملف:"),
                 const SizedBox(height: DesignTokens.spacingSm),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: DesignTokens.spacingMd),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: DesignTokens.spacingMd),
                   decoration: BoxDecoration(
                     color: DesignTokens.backgroundDarkLight,
-                    borderRadius: BorderRadius.circular(DesignTokens.borderRadiusLg),
+                    borderRadius:
+                        BorderRadius.circular(DesignTokens.borderRadiusLg),
                   ),
                   child: DropdownButton<String>(
                     value: type,
@@ -80,9 +123,13 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
                     dropdownColor: DesignTokens.backgroundDarkMedium,
                     underline: const SizedBox(),
                     items: const [
-                      DropdownMenuItem(value: "gif", child: BodyText("صورة متحركة GIF")),
-                      DropdownMenuItem(value: "video", child: BodyText("مقطع فيديو (MP4)")),
-                      DropdownMenuItem(value: "lottie", child: BodyText("رابط Lottie (JSON)")),
+                      DropdownMenuItem(
+                          value: "gif", child: BodyText("صورة متحركة GIF")),
+                      DropdownMenuItem(
+                          value: "video", child: BodyText("مقطع فيديو (MP4)")),
+                      DropdownMenuItem(
+                          value: "lottie",
+                          child: BodyText("رابط Lottie (JSON)")),
                     ],
                     onChanged: (v) {
                       setS(() {
@@ -105,49 +152,59 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
                 else
                   RoyalButton(
                     onPressed: () async {
-                      final XFile? file = type == "video" 
-                        ? await _picker.pickVideo(source: ImageSource.gallery)
-                        : await _picker.pickImage(source: ImageSource.gallery);
-                        
+                      final XFile? file = type == "video"
+                          ? await _picker.pickVideo(source: ImageSource.gallery)
+                          : await _picker.pickImage(
+                              source: ImageSource.gallery);
+
                       if (file != null) {
                         setS(() {
                           selectedFile = File(file.path);
                           if (type == "video") {
                             videoController?.dispose();
-                            videoController = VideoPlayerController.file(selectedFile!)
-                              ..initialize().then((_) => setS(() {}));
+                            videoController =
+                                VideoPlayerController.file(selectedFile!)
+                                  ..initialize().then((_) => setS(() {}));
                           }
                         });
                       }
                     },
                     icon: Icons.upload_file,
-                    label: selectedFile == null && id != null ? "تغيير الملف الحالي" : (selectedFile == null ? "اختيار ملف" : "تم اختيار الملف ✅"),
+                    label: selectedFile == null && id != null
+                        ? "تغيير الملف الحالي"
+                        : (selectedFile == null
+                            ? "اختيار ملف"
+                            : "تم اختيار الملف ✅"),
                     height: 40,
                   ),
-                if (type == "video" && videoController != null && videoController!.value.isInitialized)
+                if (type == "video" &&
+                    videoController != null &&
+                    videoController!.value.isInitialized)
                   Container(
-                    margin: const EdgeInsets.only(top: DesignTokens.spacingMd),
-                    height: 150, 
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(DesignTokens.borderRadiusLg), 
-                      child: VideoPlayer(videoController!)
-                    )
-                  ),
+                      margin:
+                          const EdgeInsets.only(top: DesignTokens.spacingMd),
+                      height: 150,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                              DesignTokens.borderRadiusLg),
+                          child: VideoPlayer(videoController!))),
               ],
             ),
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                videoController?.dispose();
-                Navigator.pop(context);
-              }, 
-              child: const CaptionText("إلغاء", color: DesignTokens.neutralGray400)
-            ),
+                onPressed: () {
+                  videoController?.dispose();
+                  if (mounted) Navigator.pop(context);
+                },
+                child: const CaptionText("إلغاء",
+                    color: DesignTokens.neutralGray400)),
             SizedBox(
               width: 100,
               child: RoyalButton(
-                onPressed: () => Navigator.pop(context, true),
+                onPressed: () async {
+                  if (mounted) Navigator.pop(context, true);
+                },
                 label: id == null ? "حفظ" : "تحديث",
                 height: 36,
               ),
@@ -159,10 +216,14 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
 
     if (confirmed == true && nameController.text.isNotEmpty) {
       setState(() => _isUploading = true);
-      String finalUrl = type == "lottie" ? lottieUrlController.text : (existingData?['url'] ?? "");
+      String finalUrl = type == "lottie"
+          ? lottieUrlController.text
+          : (existingData?['url'] ?? "");
 
       if (type != "lottie" && selectedFile != null) {
-        final ref = _storage.ref().child('vehicles/${DateTime.now().millisecondsSinceEpoch}');
+        final ref = _storage
+            .ref()
+            .child('vehicles/${DateTime.now().millisecondsSinceEpoch}');
         await ref.putFile(selectedFile!);
         finalUrl = await ref.getDownloadURL();
       }
@@ -172,6 +233,9 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
         'price': int.tryParse(priceController.text) ?? 0,
         'url': finalUrl,
         'type': type,
+        'carType': carTypeController.text,
+        'requiredLevel': int.tryParse(requiredLevelController.text) ?? 19,
+        'isCustomCar': isCustomCar,
         'isActive': true,
         'updatedAt': FieldValue.serverTimestamp(),
       };
@@ -205,7 +269,9 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
     if (confirm == true) {
       await _db.collection('vehicles').doc(id).delete();
       if (url != null && url.contains('firebasestorage')) {
-        try { await FirebaseStorage.instance.refFromURL(url).delete(); } catch (_) {}
+        try {
+          await FirebaseStorage.instance.refFromURL(url).delete();
+        } catch (_) {}
       }
     }
   }
@@ -214,48 +280,75 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const HeadingText("مصنع المركبات الملكي", fontSize: DesignTokens.fontSizeLg),
-        flexibleSpace: Container(decoration: BoxDecoration(gradient: AppTheme.createBackgroundGradient())),
-        actions: [IconButton(icon: const Icon(Icons.add_circle, color: DesignTokens.primaryGold), onPressed: () => _showVehicleDialog())],
+        title: const HeadingText("مصنع المركبات الملكي",
+            fontSize: DesignTokens.fontSizeLg),
+        flexibleSpace: Container(
+            decoration:
+                BoxDecoration(gradient: AppTheme.createBackgroundGradient())),
+        actions: [
+          IconButton(
+              icon:
+                  const Icon(Icons.add_circle, color: DesignTokens.primaryGold),
+              onPressed: () => _showVehicleDialog())
+        ],
       ),
       body: AppTheme.background(
-        child: _isUploading 
-          ? const RoyalLoadingIndicator(message: "جاري الرفع...")
-          : StreamBuilder<QuerySnapshot>(
-              stream: _db.collection('vehicles').orderBy('createdAt', descending: true).snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) return Center(child: BodyText("خطأ: ${snapshot.error}", color: DesignTokens.semanticError));
-                if (!snapshot.hasData) return const RoyalLoadingIndicator();
-                
-                final docs = snapshot.data!.docs;
-                if (docs.isEmpty) return const EmptyStateWidget(icon: Icons.directions_car, title: "لا توجد مركبات حالياً", subtitle: "ابدأ بإضافة أول مركبة ملكية");
+        child: _isUploading
+            ? const RoyalLoadingIndicator(message: "جاري الرفع...")
+            : StreamBuilder<QuerySnapshot>(
+                stream: _db
+                    .collection('vehicles')
+                    .orderBy('createdAt', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                        child: BodyText("خطأ: ${snapshot.error}",
+                            color: DesignTokens.semanticError));
+                  }
+                  if (!snapshot.hasData) return const RoyalLoadingIndicator();
 
-                return GridView.builder(
-                  padding: const EdgeInsets.all(DesignTokens.spacingMd),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, 
-                    childAspectRatio: 0.75, 
-                    crossAxisSpacing: DesignTokens.spacingMd, 
-                    mainAxisSpacing: DesignTokens.spacingMd
-                  ),
-                  itemCount: docs.length,
-                  itemBuilder: (context, index) {
-                    final data = docs[index].data() as Map<String, dynamic>;
-                    return _buildVehicleCard(docs[index].id, data);
-                  },
-                );
-              },
-            ),
+                  final docs = snapshot.data!.docs;
+                  if (docs.isEmpty) {
+                    return const EmptyStateWidget(
+                        icon: Icons.directions_car,
+                        title: "لا توجد مركبات حالياً",
+                        subtitle: "ابدأ بإضافة أول مركبة ملكية");
+                  }
+
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(DesignTokens.spacingMd),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.75,
+                            crossAxisSpacing: DesignTokens.spacingMd,
+                            mainAxisSpacing: DesignTokens.spacingMd),
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final data = docs[index].data() as Map<String, dynamic>;
+                      return _buildVehicleCard(docs[index].id, data);
+                    },
+                  );
+                },
+              ),
       ),
     );
   }
 
   Widget _buildVehicleCard(String id, Map<String, dynamic> data) {
+    final isCustomCar = data['isCustomCar'] ?? false;
+
     return Container(
       decoration: BoxDecoration(
         color: DesignTokens.neutralWhite.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl2),
-        border: Border.all(color: DesignTokens.primaryGold.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: isCustomCar
+              ? DesignTokens.primaryGold.withValues(alpha: 0.3)
+              : DesignTokens.primaryGold.withValues(alpha: 0.1),
+          width: isCustomCar ? 2 : 1,
+        ),
         boxShadow: DesignTokens.shadowSm,
       ),
       child: Column(
@@ -264,38 +357,46 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
             child: Container(
               padding: const EdgeInsets.all(DesignTokens.spacingXs),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl),
-                child: AnimatedVehiclePreview(type: data['type'], url: data['url'])
-              ),
+                  borderRadius:
+                      BorderRadius.circular(DesignTokens.borderRadiusXl),
+                  child: AnimatedVehiclePreview(
+                      type: data['type'], url: data['url'])),
             ),
           ),
           Container(
             padding: const EdgeInsets.all(DesignTokens.spacingMd),
             decoration: BoxDecoration(
-              color: DesignTokens.neutralBlack.withValues(alpha: 0.2), 
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(DesignTokens.borderRadiusXl2))
-            ),
+                color: DesignTokens.neutralBlack.withValues(alpha: 0.2),
+                borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(DesignTokens.borderRadiusXl2))),
             child: Column(
               children: [
-                BodyText(data['name'], fontWeight: DesignTokens.fontWeightBold, fontSize: DesignTokens.fontSizeXs, maxLines: 1, overflow: TextOverflow.ellipsis),
+                BodyText(data['name'],
+                    fontWeight: DesignTokens.fontWeightBold,
+                    fontSize: DesignTokens.fontSizeXs,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
                 const SizedBox(height: DesignTokens.spacingXs),
-                CaptionText("${data['price']} 🪙", color: DesignTokens.primaryGold, fontWeight: DesignTokens.fontWeightBold),
+                CaptionText("${data['price']} 🪙",
+                    color: DesignTokens.primaryGold,
+                    fontWeight: DesignTokens.fontWeightBold),
                 const SizedBox(height: DesignTokens.spacingSm),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
-                      constraints: const BoxConstraints(),
-                      padding: EdgeInsets.zero,
-                      icon: const Icon(Icons.edit, color: DesignTokens.primarySapphire, size: 20), 
-                      onPressed: () => _showVehicleDialog(id: id, existingData: data)
-                    ),
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.edit,
+                            color: DesignTokens.primarySapphire, size: 20),
+                        onPressed: () =>
+                            _showVehicleDialog(id: id, existingData: data)),
                     IconButton(
-                      constraints: const BoxConstraints(),
-                      padding: EdgeInsets.zero,
-                      icon: const Icon(Icons.delete, color: DesignTokens.semanticError, size: 20),
-                      onPressed: () => _deleteVehicle(id, data['url'])
-                    ),
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.delete,
+                            color: DesignTokens.semanticError, size: 20),
+                        onPressed: () => _deleteVehicle(id, data['url'])),
                   ],
                 )
               ],
@@ -310,7 +411,8 @@ class _AdminVehiclesMgmtPageState extends State<AdminVehiclesMgmtPage> {
 class AnimatedVehiclePreview extends StatefulWidget {
   final String type;
   final String url;
-  const AnimatedVehiclePreview({required this.type, required this.url, super.key});
+  const AnimatedVehiclePreview(
+      {required this.type, required this.url, super.key});
 
   @override
   State<AnimatedVehiclePreview> createState() => _AnimatedVehiclePreviewState();
@@ -330,7 +432,7 @@ class _AnimatedVehiclePreviewState extends State<AnimatedVehiclePreview> {
       _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
         ..initialize().then((_) {
           _controller!.setLooping(true);
-          _controller!.setVolume(0); 
+          _controller!.setVolume(0);
           _controller!.play();
           if (mounted) setState(() {});
         });
@@ -357,19 +459,23 @@ class _AnimatedVehiclePreviewState extends State<AnimatedVehiclePreview> {
   Widget build(BuildContext context) {
     if (widget.type == "lottie") {
       return Lottie.network(
-        widget.url, 
+        widget.url,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error, color: Colors.red),
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.error, color: Colors.red),
       );
     }
     if (widget.type == "gif") {
       return Image.network(
-        widget.url, 
+        widget.url,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, color: Colors.white10),
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.broken_image, color: Colors.white10),
       );
     }
-    if (widget.type == "video" && _controller != null && _controller!.value.isInitialized) {
+    if (widget.type == "video" &&
+        _controller != null &&
+        _controller!.value.isInitialized) {
       return SizedBox.expand(
         child: FittedBox(
           fit: BoxFit.cover,
@@ -381,6 +487,7 @@ class _AnimatedVehiclePreviewState extends State<AnimatedVehiclePreview> {
         ),
       );
     }
-    return const Center(child: Icon(Icons.directions_car, color: Colors.white10, size: 50));
+    return const Center(
+        child: Icon(Icons.directions_car, color: Colors.white10, size: 50));
   }
 }

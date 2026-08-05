@@ -87,30 +87,9 @@ class _FamilyChatPageState extends State<FamilyChatPage> {
 
   @override
   void dispose() {
-    _deleteMyMessagesOnExit();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  Future<void> _deleteMyMessagesOnExit() async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return;
-    try {
-      final myMsgs = await _db
-          .collection('families')
-          .doc(widget.familyId)
-          .collection('messages')
-          .where('senderId', isEqualTo: currentUser.uid)
-          .get();
-      if (myMsgs.docs.isNotEmpty) {
-        final batch = _db.batch();
-        for (var doc in myMsgs.docs) {
-          batch.delete(doc.reference);
-        }
-        await batch.commit();
-      }
-    } catch (e) {}
   }
 
   void _sendMessage(UserModel user) async {
@@ -171,9 +150,10 @@ class _FamilyChatPageState extends State<FamilyChatPage> {
               ? _firestoreService.streamUserData(userAuth.uid)
               : null,
           builder: (context, userSnap) {
-            if (!userSnap.hasData)
+            if (!userSnap.hasData) {
               return const Scaffold(
                   body: Center(child: CircularProgressIndicator()));
+            }
             final user = userSnap.data!;
             return Scaffold(
               backgroundColor: const Color(0xFF1A050E),
@@ -279,8 +259,9 @@ class _FamilyChatPageState extends State<FamilyChatPage> {
           .orderBy('timestamp', descending: false)
           .snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData)
+        if (!snap.hasData) {
           return const Center(child: CircularProgressIndicator());
+        }
         final docs = snap.data!.docs;
         return ListView.builder(
           controller: _scrollController,

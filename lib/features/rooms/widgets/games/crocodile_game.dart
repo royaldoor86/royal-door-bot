@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
+import 'dart:ui';
+import '../../../../theme/design_tokens.dart';
 
 class CrocodileGame extends StatefulWidget {
   final String roomId;
@@ -29,63 +32,128 @@ class _CrocodileGameState extends State<CrocodileGame> {
     String? loserId = widget.gameData['loserId'];
     String? loserName = widget.gameData['loserName'];
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1B5E20).withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.5), width: 2),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text("طبيب أسنان التمساح 🐊🦷",
-              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-          const Text("احذر من السن المصاب!", style: TextStyle(color: Colors.white70, fontSize: 12)),
-          const SizedBox(height: 20),
-          _buildTeethGrid(status, pickedTeeth, loserId),
-          if (status == 'bitten') ...[
-            const SizedBox(height: 20),
-            Text("آخ! عض التمساح ${loserName ?? 'أحدهم'}! 😵",
-                style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-          ],
-          const SizedBox(height: 20),
-          _buildFooter(status),
-        ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color(0xFF1B5E20).withValues(alpha: 0.8),
+                const Color(0xFF0D3310).withValues(alpha: 0.9),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.3), width: 1.5),
+            boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 15)],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.sentiment_very_satisfied_rounded, color: Colors.greenAccent, size: 20),
+                  SizedBox(width: 8),
+                  Text("طبيب أسنان التمساح الملكي 🐊",
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 15, 
+                        fontWeight: FontWeight.bold,
+                        fontFamily: DesignTokens.primaryFont,
+                      )),
+                ],
+              ),
+              const SizedBox(height: 20),
+              _buildTeethGrid(status, pickedTeeth, loserId),
+              if (status == 'bitten') ...[
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 20),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Text("عض التمساح ${loserName ?? '...'}! 😵",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white, 
+                              fontWeight: FontWeight.bold, 
+                              fontSize: 13,
+                              fontFamily: DesignTokens.primaryFont,
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else ...[
+                const SizedBox(height: 20),
+                const Text("اختر سنّاً واحذر من العضة! 🦷", 
+                  style: TextStyle(color: Colors.white38, fontSize: 12, fontStyle: FontStyle.italic)),
+              ],
+              const SizedBox(height: 20),
+              _buildFooter(status),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildTeethGrid(String status, List<dynamic> picked, String? loserId) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-      ),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        bool isPicked = picked.contains(index);
-        bool isLoserTooth = status == 'bitten' && index == widget.gameData['soreTooth'];
+    return SizedBox(
+      width: 250,
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 5,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 1.0,
+        ),
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          bool isPicked = picked.contains(index);
+          bool isLoserTooth = status == 'bitten' && index == widget.gameData['soreTooth'];
 
-        return GestureDetector(
-          onTap: (status == 'playing' && !isPicked) ? () => _pickTooth(index) : null,
-          child: Container(
-            decoration: BoxDecoration(
-              color: isLoserTooth ? Colors.red : (isPicked ? Colors.black26 : Colors.white),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.black12),
+          return GestureDetector(
+            onTap: (status == 'playing' && !isPicked) ? () => _pickTooth(index) : null,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              decoration: BoxDecoration(
+                color: isLoserTooth 
+                    ? Colors.redAccent 
+                    : (isPicked ? Colors.black38 : Colors.white),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: isLoserTooth ? Colors.white : (isPicked ? Colors.white10 : Colors.greenAccent.withValues(alpha: 0.2)),
+                  width: isLoserTooth ? 2.0 : 1.0,
+                ),
+                boxShadow: isLoserTooth ? [
+                  BoxShadow(color: Colors.redAccent.withValues(alpha: 0.5), blurRadius: 10)
+                ] : null,
+              ),
+              child: isLoserTooth
+                  ? const Icon(Icons.close_rounded, color: Colors.white, size: 24)
+                  : (isPicked ? null : Center(child: Container(width: 12, height: 12, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4))))),
             ),
-            child: isLoserTooth
-                ? const Icon(Icons.close, color: Colors.white)
-                : (isPicked ? null : Container(margin: const EdgeInsets.all(4), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4)))),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -94,26 +162,34 @@ class _CrocodileGameState extends State<CrocodileGame> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (status == 'bitten' && widget.hasPower)
-          ElevatedButton(
+          ElevatedButton.icon(
             onPressed: _resetGame,
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
-            child: const Text("محاولة جديدة", style: TextStyle(color: Colors.black)),
+            icon: const Icon(Icons.refresh_rounded, size: 16),
+            label: const Text("جولة جديدة", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.greenAccent,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
           ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 12),
         TextButton(
           onPressed: _closeGame,
-          child: const Text("إغلاق", style: TextStyle(color: Colors.white54)),
+          child: const Text("إغلاق اللعبة", 
+            style: TextStyle(color: Colors.white24, fontSize: 12, fontWeight: FontWeight.bold)),
         ),
       ],
     );
   }
 
   void _pickTooth(int index) async {
+    HapticFeedback.selectionClick();
     final soreTooth = widget.gameData['soreTooth'] as int;
     final docRef = FirebaseFirestore.instance.collection('rooms').doc(widget.roomId);
 
     if (index == soreTooth) {
-      // Bitten!
+      HapticFeedback.vibrate();
       final userSnap = await FirebaseFirestore.instance.collection('users').doc(_myUid).get();
       final name = userSnap.data()?['name'] ?? 'مستخدم';
       
@@ -146,3 +222,4 @@ class _CrocodileGameState extends State<CrocodileGame> {
     });
   }
 }
+

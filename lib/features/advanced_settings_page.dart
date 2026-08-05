@@ -64,6 +64,10 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage>
                 data['giftNotificationsEnabled'] ?? true,
             'badgeNotificationsEnabled':
                 data['badgeNotificationsEnabled'] ?? true,
+            'battleNotificationsEnabled':
+                data['battleNotificationsEnabled'] ?? true,
+            'rewardNotificationsEnabled':
+                data['rewardNotificationsEnabled'] ?? true,
             'friendRequestNotificationsEnabled':
                 data['friendRequestNotificationsEnabled'] ?? true,
             'chatNotificationsEnabled':
@@ -181,18 +185,20 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage>
             ],
           ),
         ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _buildNotificationSettingsTab(),
-            _buildPrivacySettingsTab(),
-            _buildAppearanceSettingsTab(),
-            _buildVoiceRoomSettingsTab(),
-            _buildStatisticsTab(),
-            _buildTwoFactorAuthTab(),
-            _buildSessionsTab(),
-            _buildSocialAccountsTab(),
-          ],
+        body: SafeArea(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildNotificationSettingsTab(),
+              _buildPrivacySettingsTab(),
+              _buildAppearanceSettingsTab(),
+              _buildVoiceRoomSettingsTab(),
+              _buildStatisticsTab(),
+              _buildTwoFactorAuthTab(),
+              _buildSessionsTab(),
+              _buildSocialAccountsTab(),
+            ],
+          ),
         ),
       ),
     );
@@ -268,6 +274,24 @@ class _AdvancedSettingsPageState extends State<AdvancedSettingsPage>
             onChanged: (val) {
               setState(() =>
                   _notificationSettings['badgeNotificationsEnabled'] = val);
+            },
+          ),
+          _buildSwitchCard(
+            icon: Icons.military_tech,
+            title: 'إشعارات المعارك',
+            value: _notificationSettings['battleNotificationsEnabled'] ?? true,
+            onChanged: (val) {
+              setState(() =>
+                  _notificationSettings['battleNotificationsEnabled'] = val);
+            },
+          ),
+          _buildSwitchCard(
+            icon: Icons.emoji_events,
+            title: 'إشعارات المكافآت',
+            value: _notificationSettings['rewardNotificationsEnabled'] ?? true,
+            onChanged: (val) {
+              setState(() =>
+                  _notificationSettings['rewardNotificationsEnabled'] = val);
             },
           ),
           _buildSwitchCard(

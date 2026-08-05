@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import '../../services/firestore_service.dart';
 import '../../models/user_model.dart';
 import '../../app_theme.dart';
@@ -31,6 +32,8 @@ import '../rewards/royal_task_center_page.dart';
 import 'royal_level_page.dart';
 import 'user_details_view_page.dart';
 import '../user_challenges_page.dart';
+import '../games/royal_quest/royal_quest_game.dart';
+import '../games/royal_quest/providers/game_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -81,6 +84,11 @@ class _ProfilePageState extends State<ProfilePage> {
               Text('$message ✅', style: const TextStyle(color: Colors.black)),
           backgroundColor: DesignTokens.primaryGold),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -312,9 +320,9 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(width: 15),
           Expanded(
               child: _buildBalanceCard(
-                  userData.stars.toString(),
+                  userData.coins.toString(),
                   trans.get('كوينزاتك'),
-                  Icons.stars,
+                  Icons.stars_rounded,
                   DesignTokens.primaryGold,
                   () => Navigator.push(
                       context,
@@ -458,7 +466,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         children: [
           _listOption(
-              2,
+              1,
               trans.get('daily_tasks'),
               Icons.task_alt,
               Colors.greenAccent,
@@ -466,7 +474,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   MaterialPageRoute(builder: (_) => const DailyTasksPage())),
               info: 'احصل على مكافآت 🏆'),
           _listOption(
-              3,
+              2,
               trans.get('daily_rewards'),
               Icons.event_available,
               Colors.orange,
@@ -474,7 +482,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   MaterialPageRoute(builder: (_) => const DailyRewardsPage())),
               info: 'استلم جائزتك 🎁'),
           _listOption(
-              1,
+              3,
               'المكافآت الملكية',
               Icons.stars_rounded,
               const Color(0xFF00F2FE),
@@ -499,7 +507,7 @@ class _ProfilePageState extends State<ProfilePage> {
               info: 'كن ملكياً 🔥'),
           if (userData.isAgent)
             _listOption(
-                7,
+                6,
                 trans.get('agent_panel'),
                 Icons.admin_panel_settings_outlined,
                 Colors.cyan,
@@ -507,9 +515,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     context,
                     MaterialPageRoute(
                         builder: (_) => const AgentControlPanel())),
-                info: 'إدارة شؤون الدعم والفعاليات ⚡'),
+                info: '⚡'),
           _listOption(
-              8,
+              7,
               trans.get('agency_create'),
               Icons.castle_outlined,
               Colors.blueAccent,
@@ -518,14 +526,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   MaterialPageRoute(
                       builder: (_) => const AgentDashboardPage()))),
           _listOption(
-              9,
+              8,
               trans.get('friendly_points'),
               Icons.favorite_outline,
               Colors.orange,
               () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const PointsPage()))),
           _listOption(
-              10,
+              9,
               trans.get('challenges'),
               Icons.rocket_launch_outlined,
               Colors.redAccent,
@@ -535,7 +543,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       builder: (_) => const UserChallengesPage())),
               info: 'شارك واجمع مكافآت!'),
           _listOption(
-              11,
+              10,
               trans.get('invite_center'),
               Icons.mail_outline,
               Colors.purpleAccent,
@@ -543,14 +551,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   MaterialPageRoute(builder: (_) => const InvitesPage())),
               info: 'ادعُ واحصل على مكافأة 🚀'),
           _listOption(
-              12,
+              11,
               trans.get('store'),
               Icons.store_mall_directory_outlined,
               Colors.pink,
               () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const StorePage()))),
           _listOption(
-              13,
+              12,
               'مركز المهام الملكي',
               Icons.stars_rounded,
               DesignTokens.primaryGold,
@@ -560,7 +568,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       builder: (_) => const RoyalTaskCenterPage())),
               info: 'اربح عملات ذهبية 💰'),
           _listOption(
-              14,
+              13,
               trans.get('support'),
               Icons.help_outline,
               Colors.deepPurpleAccent,

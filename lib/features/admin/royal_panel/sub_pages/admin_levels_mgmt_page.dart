@@ -21,14 +21,20 @@ class _AdminLevelsMgmtPageState extends State<AdminLevelsMgmtPage> {
         backgroundColor: primaryDark,
         appBar: AppBar(
           backgroundColor: const Color(0xFF051211),
-          title: Text('إدارة مراتب الرعية', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
+          title: Text('إدارة مراتب الرعية',
+              style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
           centerTitle: true,
         ),
         body: StreamBuilder<QuerySnapshot>(
-          stream: _db.collection('users').orderBy('userLevel', descending: true).limit(50).snapshots(),
+          stream: _db
+              .collection('users')
+              .orderBy('userLevel', descending: true)
+              .limit(50)
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator(color: Colors.amber));
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.amber));
             }
             final docs = snapshot.data?.docs ?? [];
 
@@ -61,24 +67,34 @@ class _AdminLevelsMgmtPageState extends State<AdminLevelsMgmtPage> {
         child: ListTile(
           leading: CircleAvatar(
             backgroundColor: accentGold.withValues(alpha: 0.1),
-            backgroundImage: (data['profilePic'] != null && data['profilePic'].toString().isNotEmpty)
+            backgroundImage: (data['profilePic'] != null &&
+                    data['profilePic'].toString().isNotEmpty)
                 ? NetworkImage(data['profilePic'])
                 : null,
-            child: (data['profilePic'] ?? '').isEmpty ? Icon(Icons.person, color: accentGold) : null,
+            child: (data['profilePic'] ?? '').isEmpty
+                ? Icon(Icons.person, color: accentGold)
+                : null,
           ),
-          title: Text(data['name'] ?? 'مستخدم ملكي', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          subtitle: Text('المستوى الحالي: ROYAL $currentLevel', style: TextStyle(color: accentGold.withValues(alpha: 0.6), fontSize: 12)),
+          title: Text(data['name'] ?? 'مستخدم ملكي',
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold)),
+          subtitle: Text('المستوى الحالي: ROYAL $currentLevel',
+              style: TextStyle(
+                  color: accentGold.withValues(alpha: 0.6), fontSize: 12)),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.keyboard_double_arrow_up_rounded, color: Colors.greenAccent),
+                icon: const Icon(Icons.keyboard_double_arrow_up_rounded,
+                    color: Colors.greenAccent),
                 onPressed: () => _updateUserLevel(uid, currentLevel + 1),
                 tooltip: 'ترفيع ملكي',
               ),
               IconButton(
-                icon: const Icon(Icons.keyboard_double_arrow_down_rounded, color: Colors.redAccent),
-                onPressed: () => _updateUserLevel(uid, currentLevel > 1 ? currentLevel - 1 : 1),
+                icon: const Icon(Icons.keyboard_double_arrow_down_rounded,
+                    color: Colors.redAccent),
+                onPressed: () => _updateUserLevel(
+                    uid, currentLevel > 1 ? currentLevel - 1 : 1),
                 tooltip: 'تخفيض الرتبة',
               ),
             ],
@@ -90,6 +106,8 @@ class _AdminLevelsMgmtPageState extends State<AdminLevelsMgmtPage> {
 
   Future<void> _updateUserLevel(String uid, int newLevel) async {
     await _db.collection('users').doc(uid).update({'userLevel': newLevel});
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم تحديث الرتبة الملكية بنجاح ✅')));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('تم تحديث الرتبة الملكية بنجاح ✅')));
   }
 }

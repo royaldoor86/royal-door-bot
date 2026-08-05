@@ -15,6 +15,43 @@ class OnlineUsersSheet extends StatefulWidget {
 
 class _OnlineUsersSheetState extends State<OnlineUsersSheet> {
   static const int _pageSize = 20;
+  Map<String, dynamic> _micSeats = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _listenToMicSeats();
+  }
+
+  void _listenToMicSeats() {
+    FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(widget.roomId)
+        .collection('mic_seats')
+        .snapshots()
+        .listen((snap) {
+      Map<String, dynamic> seats = {};
+      for (var doc in snap.docs) {
+        final data = doc.data();
+        final userId = data['userId'];
+        if (userId != null) {
+          seats[userId] = data;
+        }
+      }
+      if (mounted) {
+        setState(() => _micSeats = seats);
+      }
+    });
+  }
+
+  bool _isUserOnMic(String uid) {
+    return _micSeats.containsKey(uid);
+  }
+
+  bool _isUserMuted(String uid) {
+    final seatData = _micSeats[uid];
+    return seatData != null && (seatData['isMuted'] == true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,6 +248,41 @@ class _OnlineUsersSheetState extends State<OnlineUsersSheet> {
                                           fontFamily: 'monospace',
                                         ),
                                       ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      if (_isUserOnMic(uid)) ...[
+                                        Icon(
+                                          _isUserMuted(uid)
+                                              ? Icons.mic_off
+                                              : Icons.mic,
+                                          color: _isUserMuted(uid)
+                                              ? Colors.red
+                                              : Colors.greenAccent,
+                                          size: 12,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          _isUserMuted(uid)
+                                              ? 'مايك مكتوم'
+                                              : 'على المايك',
+                                          style: TextStyle(
+                                            color: _isUserMuted(uid)
+                                                ? Colors.red
+                                                : Colors.greenAccent,
+                                            fontSize: 10,
+                                          ),
+                                        ),
+                                      ] else
+                                        const Text(
+                                          'مستمع',
+                                          style: TextStyle(
+                                            color: Colors.white38,
+                                            fontSize: 10,
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ],

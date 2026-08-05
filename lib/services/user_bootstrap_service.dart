@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'dart:math';
 
 class UserBootstrapService {
@@ -13,7 +13,7 @@ class UserBootstrapService {
     if (user == null) return;
 
     final uid = user.uid;
-    print('🚀 UserBootstrapService: Starting bootstrap for $uid');
+    debugPrint('🚀 UserBootstrapService: Starting bootstrap for $uid');
 
     try {
       await Future.wait([
@@ -24,25 +24,31 @@ class UserBootstrapService {
         _createFollowsIfNotExists(uid),
         _recordCurrentSession(uid),
       ]);
-      print('✅ UserBootstrapService: Bootstrap completed for $uid');
+      debugPrint('✅ UserBootstrapService: Bootstrap completed for $uid');
     } catch (e) {
-      print('❌ UserBootstrapService: Bootstrap failed for $uid - $e');
+      debugPrint('❌ UserBootstrapService: Bootstrap failed for $uid - $e');
     }
   }
 
   static Future<void> _recordCurrentSession(String uid) async {
     final deviceInfo = DeviceInfoPlugin();
     String deviceName = "Unknown Device";
-    String deviceType = "mobile";
+    String deviceType = "web";
 
-    if (Platform.isAndroid) {
-      final androidInfo = await deviceInfo.androidInfo;
-      deviceName = "${androidInfo.manufacturer} ${androidInfo.model}";
-      deviceType = "android";
-    } else if (Platform.isIOS) {
-      final iosInfo = await deviceInfo.iosInfo;
-      deviceName = iosInfo.name;
-      deviceType = "ios";
+    if (kIsWeb) {
+      final webInfo = await deviceInfo.webBrowserInfo;
+      deviceName = webInfo.browserName.name;
+      deviceType = "web";
+    } else {
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        final androidInfo = await deviceInfo.androidInfo;
+        deviceName = "${androidInfo.manufacturer} ${androidInfo.model}";
+        deviceType = "android";
+      } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        deviceName = iosInfo.name;
+        deviceType = "ios";
+      }
     }
 
     // استخدام الـ UID كمعرف للجلسة الحالية لضمان تحديثها بدلاً من التكرار اللانهائي

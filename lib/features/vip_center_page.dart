@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../services/ad_manager.dart';
 import '../services/firestore_service.dart';
+import '../services/vip_privilege_service.dart';
 import '../models/user_model.dart';
 
 class VipCenterPage extends StatefulWidget {
@@ -15,7 +15,6 @@ class VipCenterPage extends StatefulWidget {
 
 class _VipCenterPageState extends State<VipCenterPage> {
   final FirestoreService _firestoreService = FirestoreService();
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
   BannerAd? _bannerAd;
   bool _isAdLoaded = false;
 
@@ -43,17 +42,118 @@ class _VipCenterPageState extends State<VipCenterPage> {
   }
 
   Future<void> _toggleIncognito(bool currentStatus, String uid) async {
-    await _db
-        .collection('users')
-        .doc(uid)
-        .update({'isIncognito': !currentStatus});
+    final success = await VIPPrivilegeService.toggleVIPIncognito(uid);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(!currentStatus
-                ? 'تم تفعيل وضع التخفي الملكي 👤'
-                : 'تم إيقاف وضع التخفي'),
-            backgroundColor: Colors.amber),
+            content: Text(success
+                ? (!currentStatus
+                    ? 'تم تفعيل وضع التخفي الملكي 👤'
+                    : 'تم إيقاف وضع التخفي')
+                : 'لا يمكن استخدام وضع التخفي - يجب أن تكون VIP فضي أو أعلى'),
+            backgroundColor: success ? Colors.amber : Colors.red),
+      );
+    }
+  }
+
+  Future<void> _activateVerification(String uid) async {
+    final success = await VIPPrivilegeService.activateVIPVerification(uid);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(success
+                ? 'تم تفعيل توثيق الحساب الملكي ✅'
+                : 'لا يمكن تفعيل التوثيق - يجب أن تكون VIP برونزي أو أعلى'),
+            backgroundColor: success ? Colors.green : Colors.red),
+      );
+    }
+  }
+
+  Future<void> _checkAnimatedFrame(String uid) async {
+    final hasFrame = await VIPPrivilegeService.hasAnimatedFrame(uid);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(hasFrame
+                ? 'لديك إطار متحرك ملكي ✨'
+                : 'لا يوجد إطار متحرك - يجب أن تكون VIP فضي أو أعلى'),
+            backgroundColor: hasFrame ? Colors.purple : Colors.grey),
+      );
+    }
+  }
+
+  Future<void> _checkKickProtection(String uid) async {
+    final hasProtection = await VIPPrivilegeService.hasVIPKickProtection(uid);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(hasProtection
+                ? 'لديك حماية الطرد الملكية 🛡️'
+                : 'لا يوجد حماية الطرد - يجب أن تكون VIP برونزي أو أعلى'),
+            backgroundColor: hasProtection ? Colors.blue : Colors.grey),
+      );
+    }
+  }
+
+  Future<void> _checkXPBoost(String uid) async {
+    final multiplier = await VIPPrivilegeService.getXPMultiplier(uid);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'مضاعف الخبرة الحالي: ${multiplier}x ${multiplier > 1 ? '✨' : ''}'),
+            backgroundColor: multiplier > 1 ? Colors.orange : Colors.grey),
+      );
+    }
+  }
+
+  Future<void> _checkPrioritySupport(String uid) async {
+    final hasSupport = await VIPPrivilegeService.hasPrioritySupport(uid);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(hasSupport
+                ? 'لديك دعم أولوية VIP 🎯'
+                : 'لا يوجد دعم أولوية - يجب أن تكون VIP بلاتيني'),
+            backgroundColor: hasSupport ? Colors.green : Colors.grey),
+      );
+    }
+  }
+
+  Future<void> _checkStoreDiscount(String uid) async {
+    final discount = await VIPPrivilegeService.getStoreDiscount(uid);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'خصم المتجر الحالي: ${(discount * 100).toInt()}% ${discount > 0 ? '🏷️' : ''}'),
+            backgroundColor: discount > 0 ? Colors.redAccent : Colors.grey),
+      );
+    }
+  }
+
+  Future<void> _claimDailyGifts(String uid) async {
+    final success = await VIPPrivilegeService.sendVIPDailyGifts(uid);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(success
+                ? 'تم إرسال هدايا VIP اليومية 🎁'
+                : 'لا يمكن إرسال الهدايا - يجب أن تكون VIP ذهبي أو أعلى'),
+            backgroundColor: success ? Colors.pink : Colors.grey),
+      );
+    }
+  }
+
+  Future<void> _checkEntryEffect(String uid) async {
+    final hasEffect = await VIPPrivilegeService.hasRoyalEntryEffect(uid);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(hasEffect
+                ? 'لديك تأثير الدخول الملكي ✨'
+                : 'لا يوجد تأثير الدخول - يجب أن تكون VIP بلاتيني'),
+            backgroundColor: hasEffect ? Colors.cyanAccent : Colors.grey),
       );
     }
   }
@@ -271,19 +371,22 @@ class _VipCenterPageState extends State<VipCenterPage> {
         'icon': Icons.verified,
         'title': 'توثيق الحساب',
         'color': Colors.amber,
-        'desc': 'شارة ملكية 👑'
+        'desc': 'شارة ملكية 👑',
+        'onTap': () => _activateVerification(user.uid)
       },
       {
         'icon': Icons.animation,
         'title': 'إطار متحرك',
         'color': Colors.purpleAccent,
-        'desc': 'حصري للنخبة'
+        'desc': 'حصري للنخبة',
+        'onTap': () => _checkAnimatedFrame(user.uid)
       },
       {
         'icon': Icons.security,
         'title': 'حماية الطرد',
         'color': Colors.blue,
-        'desc': 'درع ملكي 🛡️'
+        'desc': 'درع ملكي 🛡️',
+        'onTap': () => _checkKickProtection(user.uid)
       },
       {
         'icon': Icons.visibility_off,
@@ -296,31 +399,36 @@ class _VipCenterPageState extends State<VipCenterPage> {
         'icon': Icons.rocket_launch,
         'title': 'تسريع المستوى',
         'color': Colors.orange,
-        'desc': 'X2 خبرة ✨'
+        'desc': 'X2 خبرة ✨',
+        'onTap': () => _checkXPBoost(user.uid)
       },
       {
         'icon': Icons.support_agent,
         'title': 'دعم أولوية',
         'color': Colors.green,
-        'desc': 'استجابة فورية'
+        'desc': 'استجابة فورية',
+        'onTap': () => _checkPrioritySupport(user.uid)
       },
       {
         'icon': Icons.local_offer,
         'title': 'خصومات',
         'color': Colors.redAccent,
-        'desc': '20% للمتجر'
+        'desc': '20% للمتجر',
+        'onTap': () => _checkStoreDiscount(user.uid)
       },
       {
         'icon': Icons.card_giftcard,
         'title': 'هدايا حصرية',
         'color': Colors.pink,
-        'desc': 'يومياً 🎁'
+        'desc': 'يومياً 🎁',
+        'onTap': () => _claimDailyGifts(user.uid)
       },
       {
         'icon': Icons.auto_awesome,
         'title': 'تأثير دخول',
         'color': Colors.cyanAccent,
-        'desc': 'بروتوكول ملكي'
+        'desc': 'بروتوكول ملكي',
+        'onTap': () => _checkEntryEffect(user.uid)
       },
     ];
 

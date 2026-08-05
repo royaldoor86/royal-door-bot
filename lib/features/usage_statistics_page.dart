@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../app_theme.dart';
+import '../services/user_bootstrap_service.dart';
 
 class UsageStatisticsPage extends StatefulWidget {
   const UsageStatisticsPage({super.key});
@@ -25,10 +26,16 @@ class _UsageStatisticsPageState extends State<UsageStatisticsPage> {
 
   Future<void> _loadStatistics() async {
     try {
+      // تحديث بيانات المستخدم لضمان وجود تاريخ الانضمام
+      await UserBootstrapService.bootstrapUser();
+
       final userDoc = await _db.collection('users').doc(_currentUserId).get();
-      
+
       // جلب عدد المنشورات والإعجابات والتعليقات
-      final postsSnap = await _db.collection('posts').where('authorId', isEqualTo: _currentUserId).get();
+      final postsSnap = await _db
+          .collection('posts')
+          .where('authorId', isEqualTo: _currentUserId)
+          .get();
       int totalLikes = 0;
       int totalComments = 0;
       for (var doc in postsSnap.docs) {
@@ -38,10 +45,17 @@ class _UsageStatisticsPageState extends State<UsageStatisticsPage> {
       }
 
       // جلب عدد الغرف المملوكة
-      final roomsSnap = await _db.collection('rooms').where('ownerId', isEqualTo: _currentUserId).get();
+      final roomsSnap = await _db
+          .collection('rooms')
+          .where('ownerId', isEqualTo: _currentUserId)
+          .get();
 
       // جلب عدد الأوسمة من المجموعة الفرعية inventory
-      final badgesSnap = await _db.collection('users').doc(_currentUserId).collection('inventory').get();
+      final badgesSnap = await _db
+          .collection('users')
+          .doc(_currentUserId)
+          .collection('inventory')
+          .get();
 
       if (userDoc.exists) {
         final data = userDoc.data() as Map<String, dynamic>;
@@ -76,6 +90,9 @@ class _UsageStatisticsPageState extends State<UsageStatisticsPage> {
     if (date is Timestamp) {
       final dateTime = date.toDate();
       return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+    }
+    if (date is DateTime) {
+      return '${date.day}/${date.month}/${date.year}';
     }
     return 'غير متوفر';
   }

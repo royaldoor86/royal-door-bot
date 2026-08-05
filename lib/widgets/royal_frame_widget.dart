@@ -16,12 +16,15 @@ class RoyalFrameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (frameUrl == null || frameUrl!.isEmpty) return SizedBox(width: size, height: size, child: Center(child: child));
+    if (frameUrl == null || frameUrl!.isEmpty) {
+      return SizedBox(width: size, height: size, child: Center(child: child));
+    }
 
     final String url = frameUrl!.toLowerCase();
     final bool isLottie = url.contains('.json');
     final bool isLocal = !url.startsWith('http');
-    final bool isValidRemote = !isLocal && Uri.tryParse(frameUrl!)?.host.isNotEmpty == true;
+    final bool isValidRemote =
+        !isLocal && Uri.tryParse(frameUrl!)?.host.isNotEmpty == true;
 
     return SizedBox(
       width: size,
@@ -41,26 +44,41 @@ class RoyalFrameWidget extends StatelessWidget {
           // الطبقة الثانية: الإطار الملكي الاحترافي
           Positioned.fill(
             child: OverflowBox(
+              // تحديد قيم دنيا صفرية لتجنّب "non-normalized" constraints
+              minWidth: 0,
+              minHeight: 0,
               // تم تصحيح النسبة من 512% إلى 110% لتناسب حجم الصورة ومنع انهيار الذاكرة
               maxWidth: size * 1.10,
               maxHeight: size * 1.10,
-              child: IgnorePointer(
-                child: isLottie
-                    ? (isLocal
-                        ? Lottie.asset(frameUrl!, fit: BoxFit.contain, repeat: true)
-                        : (isValidRemote 
-                            ? Lottie.network(frameUrl!, fit: BoxFit.contain, repeat: true)
-                            : const SizedBox.shrink()))
-                    : (isLocal
-                        ? Image.asset(frameUrl!, fit: BoxFit.contain)
-                        : (isValidRemote 
-                            ? CachedNetworkImage(
-                                imageUrl: frameUrl!,
-                                fit: BoxFit.contain,
-                                placeholder: (context, url) => const SizedBox.shrink(),
-                                errorWidget: (context, url, error) => const SizedBox.shrink(),
-                              )
-                            : const SizedBox.shrink())),
+              child: SizedBox(
+                width: size * 1.10,
+                height: size * 1.10,
+                child: IgnorePointer(
+                  child: isLottie
+                      ? (isLocal
+                          ? Lottie.asset(frameUrl!,
+                              fit: BoxFit.contain,
+                              animate: false,
+                              repeat: false)
+                          : (isValidRemote
+                              ? Lottie.network(frameUrl!,
+                                  fit: BoxFit.contain,
+                                  animate: false,
+                                  repeat: false)
+                              : const SizedBox.shrink()))
+                      : (isLocal
+                          ? Image.asset(frameUrl!, fit: BoxFit.contain)
+                          : (isValidRemote
+                              ? CachedNetworkImage(
+                                  imageUrl: frameUrl!,
+                                  fit: BoxFit.contain,
+                                  placeholder: (context, url) =>
+                                      const SizedBox.shrink(),
+                                  errorWidget: (context, url, error) =>
+                                      const SizedBox.shrink(),
+                                )
+                              : const SizedBox.shrink())),
+                ),
               ),
             ),
           ),

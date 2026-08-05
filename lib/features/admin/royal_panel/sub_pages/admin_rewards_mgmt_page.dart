@@ -7,8 +7,7 @@ class AdminRewardsMgmtPage extends StatefulWidget {
   const AdminRewardsMgmtPage({super.key, required this.type});
 
   @override
-  State<AdminRewardsMgmtPage> createState() =>
-      _AdminRewardsMgmtPageState();
+  State<AdminRewardsMgmtPage> createState() => _AdminRewardsMgmtPageState();
 }
 
 class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
@@ -23,7 +22,7 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
         : (widget.type == 'gems'
             ? 'إدارة مزايا الجواهر'
             : (widget.type == 'rewards'
-                ? 'الحصاد الملكي'
+                ? 'المكافآت الملكية'
                 : 'إدارة المزايا (نجوم)'));
 
     return Directionality(
@@ -65,8 +64,7 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
             final packages = snapshot.data!.docs;
             if (packages.isEmpty) {
               return const Center(
-                  child: Text(
-                      'لا توجد باقات حالياً. اضغط على النجمة لتوليدها!',
+                  child: Text('لا توجد باقات حالياً. اضغط على النجمة لتوليدها!',
                       style: TextStyle(color: Colors.white54)));
             }
 
@@ -86,17 +84,21 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
                   ),
                   child: ListTile(
                     leading: Icon(Icons.inventory_2_outlined, color: goldColor),
-                    title: Text(pkg[RewardsConstants.fieldTitle] ?? pkg['title'] ?? 'بدون عنوان',
+                    title: Text(
+                        pkg[RewardsConstants.fieldTitle] ??
+                            pkg['title'] ??
+                            'بدون عنوان',
                         style: const TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold)),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                            'التكلفة: ${pkg[RewardsConstants.fieldCost] ?? pkg['cost']} | النمو اليومي: ${pkg[RewardsConstants.fieldDailyReward] ?? pkg['dailyReward'] ?? pkg['dailyProfit'] ?? pkg['weeklyProfit']}',
+                            'التكلفة: ${pkg[RewardsConstants.fieldCost] ?? pkg['cost']} | النمو اليومي: ${pkg[RewardsConstants.fieldDailyReward] ?? pkg['dailyReward']}',
                             style: const TextStyle(
                                 color: Colors.white70, fontSize: 11)),
-                        Text('إجمالي المزايا: ${pkg[RewardsConstants.fieldTotalReward] ?? pkg['totalReward'] ?? pkg['totalProfit']}',
+                        Text(
+                            'إجمالي المزايا: ${pkg[RewardsConstants.fieldTotalReward] ?? pkg['totalReward']}',
                             style: const TextStyle(
                                 color: Colors.greenAccent,
                                 fontSize: 11,
@@ -171,8 +173,8 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
           await _db.collection(RewardsConstants.collectionPackages).add({
             RewardsConstants.fieldTitle: 'باقة ملكية $cost',
             RewardsConstants.fieldCost: cost,
-            RewardsConstants.fieldDailyReward: '$startDr%',
-            RewardsConstants.fieldTotalReward: '${startDr * 30}%',
+            RewardsConstants.fieldDailyReward: startDr,
+            RewardsConstants.fieldTotalReward: startDr * 30,
             RewardsConstants.fieldDurationDays: 30,
             'type': widget.type,
             'createdAt': FieldValue.serverTimestamp(),
@@ -193,21 +195,32 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
 
   void _showAddPackageDialog(
       {String? docId, Map<String, dynamic>? existingData}) {
-    final titleController = TextEditingController(text: existingData?[RewardsConstants.fieldTitle] ?? existingData?['title']);
-    final costController =
-        TextEditingController(text: (existingData?[RewardsConstants.fieldCost] ?? existingData?['cost'])?.toString());
-    final dailyRewardController =
-        TextEditingController(text: existingData?[RewardsConstants.fieldDailyReward] ?? existingData?['dailyReward'] ?? existingData?['dailyProfit'] ?? existingData?['weeklyProfit']);
-    final totalRewardController =
-        TextEditingController(text: existingData?[RewardsConstants.fieldTotalReward] ?? existingData?['totalReward'] ?? existingData?['totalProfit']);
-    final daysController =
-        TextEditingController(text: (existingData?[RewardsConstants.fieldDurationDays] ?? existingData?['days'])?.toString() ?? '30');
+    final titleController = TextEditingController(
+        text: existingData?[RewardsConstants.fieldTitle] ??
+            existingData?['title']);
+    final costController = TextEditingController(
+        text:
+            (existingData?[RewardsConstants.fieldCost] ?? existingData?['cost'])
+                ?.toString());
+    final dailyRewardController = TextEditingController(
+        text: existingData?[RewardsConstants.fieldDailyReward] ??
+            existingData?['dailyReward']);
+    final totalRewardController = TextEditingController(
+        text: existingData?[RewardsConstants.fieldTotalReward] ??
+            existingData?['totalReward']);
+    final daysController = TextEditingController(
+        text: (existingData?[RewardsConstants.fieldDurationDays] ??
+                    existingData?['days'])
+                ?.toString() ??
+            '30');
+    final conversionStarsController = TextEditingController(
+        text: (existingData?['conversion_stars'])?.toString() ?? '');
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF051211),
-        title: Text(docId == null ? 'إضافة باقة حصاد' : 'تعديل باقة',
+        title: Text(docId == null ? 'إضافة باقة مكافأة' : 'تعديل باقة',
             style: TextStyle(color: goldColor)),
         content: SingleChildScrollView(
           child: Column(
@@ -216,9 +229,12 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
               _buildField(titleController, 'اسم الباقة'),
               _buildField(costController, 'التكلفة',
                   keyboardType: TextInputType.number),
-              _buildField(dailyRewardController, 'النمو اليومي (مثلاً 0.5%)'),
-              _buildField(totalRewardController, 'إجمالي المزايا (مثلاً 15%)'),
+              _buildField(dailyRewardController, 'النمو اليومي (مثلاً 0.5)'),
+              _buildField(totalRewardController, 'إجمالي المزايا (مثلاً 15)'),
               _buildField(daysController, 'عدد الأيام',
+                  keyboardType: TextInputType.number),
+              _buildField(
+                  conversionStarsController, 'النجوم عند التحويل (اختياري)',
                   keyboardType: TextInputType.number),
               const Padding(
                 padding: EdgeInsets.only(top: 10),
@@ -240,15 +256,23 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
             onPressed: () async {
               final data = {
                 RewardsConstants.fieldTitle: titleController.text,
-                RewardsConstants.fieldCost: num.tryParse(costController.text) ?? 0,
-                RewardsConstants.fieldDailyReward: dailyRewardController.text,
-                RewardsConstants.fieldTotalReward: totalRewardController.text,
-                RewardsConstants.fieldDurationDays: int.tryParse(daysController.text) ?? 30,
+                RewardsConstants.fieldCost:
+                    num.tryParse(costController.text) ?? 0,
+                RewardsConstants.fieldDailyReward:
+                    num.tryParse(dailyRewardController.text) ?? 0,
+                RewardsConstants.fieldTotalReward:
+                    num.tryParse(totalRewardController.text) ?? 0,
+                RewardsConstants.fieldDurationDays:
+                    int.tryParse(daysController.text) ?? 30,
+                'conversion_stars':
+                    num.tryParse(conversionStarsController.text),
                 'type': widget.type,
                 'updatedAt': FieldValue.serverTimestamp(),
               };
               if (docId == null) {
-                await _db.collection(RewardsConstants.collectionPackages).add(data);
+                await _db
+                    .collection(RewardsConstants.collectionPackages)
+                    .add(data);
               } else {
                 await _db
                     .collection(RewardsConstants.collectionPackages)
@@ -315,16 +339,18 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
                           ? RewardsConstants.walletGemsField
                           : RewardsConstants.walletStarsField));
 
-              await _db
-                  .collection('users')
-                  .doc(userDoc.id)
-                  .update({
-                    walletField: FieldValue.increment(amount),
-                    if (walletField == RewardsConstants.walletGemsField) 'rewards_wallet_gems': FieldValue.increment(amount), // Sync
-                    if (walletField == RewardsConstants.walletStarsField) 'rewards_wallet_stars': FieldValue.increment(amount), // Sync
-                    if (walletField == 'rewards_wallet_stars') 'rewards_wallet_stars_legacy': FieldValue.increment(amount), // Legacy Sync if needed
-                    'harvest_wallet': FieldValue.increment(amount), // Backward compatibility
-                  });
+              await _db.collection('users').doc(userDoc.id).update({
+                walletField: FieldValue.increment(amount),
+                if (walletField == RewardsConstants.walletGemsField)
+                  'rewards_wallet_gems': FieldValue.increment(amount), // Sync
+                if (walletField == RewardsConstants.walletStarsField)
+                  'rewards_wallet_stars': FieldValue.increment(amount), // Sync
+                if (walletField == 'rewards_wallet_stars')
+                  'rewards_wallet_stars_legacy':
+                      FieldValue.increment(amount), // Legacy Sync if needed
+                'harvest_wallet':
+                    FieldValue.increment(amount), // Backward compatibility
+              });
               if (!ctx.mounted) return;
               Navigator.pop(ctx);
               if (!context.mounted) return;
@@ -349,7 +375,7 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
         backgroundColor: bgColor,
         title:
             const Text('حذف الباقة', style: TextStyle(color: Colors.redAccent)),
-        content: const Text('هل أنت متأكد من حذف باقة الحصاد هذه؟'),
+        content: const Text('هل أنت متأكد من حذف باقة المكافأة هذه؟'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
@@ -363,7 +389,10 @@ class _AdminRewardsMgmtPageState extends State<AdminRewardsMgmtPage> {
       ),
     );
     if (confirm == true) {
-      await _db.collection(RewardsConstants.collectionPackages).doc(id).delete();
+      await _db
+          .collection(RewardsConstants.collectionPackages)
+          .doc(id)
+          .delete();
     }
   }
 

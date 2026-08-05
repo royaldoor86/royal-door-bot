@@ -1139,6 +1139,7 @@ class RewardPackage {
   final String? iconUrl;
   final Map<String, dynamic>? features;
   final Map<String, dynamic>? metadata;
+  final double? conversionStars; // عدد النجوم عند تحويل الباقة بعد 30 يوم
 
   RewardPackage({
     required this.id,
@@ -1154,6 +1155,7 @@ class RewardPackage {
     this.iconUrl,
     this.features,
     this.metadata,
+    this.conversionStars,
   });
 
   factory RewardPackage.fromMap(Map<String, dynamic> data, String id) {
@@ -1180,6 +1182,7 @@ class RewardPackage {
       iconUrl: data['iconUrl'],
       features: data['features'],
       metadata: data['metadata'],
+      conversionStars: parseDouble(data['conversion_stars']),
     );
   }
 
@@ -1197,6 +1200,7 @@ class RewardPackage {
       'iconUrl': iconUrl,
       'features': features,
       'metadata': metadata,
+      'conversion_stars': conversionStars,
       'lastUpdated': FieldValue.serverTimestamp(),
     };
   }

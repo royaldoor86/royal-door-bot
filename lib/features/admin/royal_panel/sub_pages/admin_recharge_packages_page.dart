@@ -6,10 +6,12 @@ class AdminRechargePackagesPage extends StatefulWidget {
   const AdminRechargePackagesPage({super.key, required this.initialType});
 
   @override
-  State<AdminRechargePackagesPage> createState() => _AdminRechargePackagesPageState();
+  State<AdminRechargePackagesPage> createState() =>
+      _AdminRechargePackagesPageState();
 }
 
-class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> with SingleTickerProviderStateMixin {
+class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final Color primaryDark = const Color(0xFF0A1F1C);
@@ -18,7 +20,10 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this, initialIndex: widget.initialType == 'coins' ? 0 : 1);
+    _tabController = TabController(
+        length: 2,
+        vsync: this,
+        initialIndex: widget.initialType == 'coins' ? 0 : 1);
   }
 
   @override
@@ -36,7 +41,8 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
         appBar: AppBar(
           backgroundColor: const Color(0xFF051211),
           elevation: 0,
-          title: Text('إدارة باقات الشحن', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
+          title: Text('إدارة باقات الشحن',
+              style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
           centerTitle: true,
           bottom: TabBar(
             controller: _tabController,
@@ -44,7 +50,7 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
             labelColor: accentGold,
             unselectedLabelColor: Colors.white38,
             tabs: const [
-              Tab(text: 'باقات النجوم ⭐'),
+              Tab(text: 'باقات الكوينز'),
               Tab(text: 'باقات الجواهر 💎'),
             ],
           ),
@@ -58,7 +64,8 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: accentGold,
-          onPressed: () => _showAddPackageDialog(_tabController.index == 0 ? 'coins' : 'gems'),
+          onPressed: () => _showAddPackageDialog(
+              _tabController.index == 0 ? 'coins' : 'gems'),
           child: const Icon(Icons.add, color: Colors.black),
         ),
       ),
@@ -67,13 +74,21 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
 
   Widget _buildPackagesList(String type) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _db.collection('recharge_packages').where('type', isEqualTo: type).snapshots(),
+      stream: _db
+          .collection('recharge_packages')
+          .where('type', isEqualTo: type)
+          .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
         final docs = snapshot.data!.docs;
-        
+
         if (docs.isEmpty) {
-          return Center(child: Text('لا توجد باقات مضافة حالياً', style: TextStyle(color: Colors.white.withValues(alpha: 0.3))));
+          return Center(
+              child: Text('لا توجد باقات مضافة حالياً',
+                  style:
+                      TextStyle(color: Colors.white.withValues(alpha: 0.3))));
         }
 
         return ListView.builder(
@@ -99,29 +114,43 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
         border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: ListTile(
-        leading: Icon(type == 'coins' ? Icons.stars_rounded : Icons.diamond, color: color, size: 30),
-        title: Text('${data['amount']} ${type == 'coins' ? 'نجمة ⭐' : 'جوهرة'}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text('السعر: ${data['price']} نجوم رويال', style: const TextStyle(color: Colors.greenAccent)),
+        leading: Icon(type == 'coins' ? Icons.stars_rounded : Icons.diamond,
+            color: color, size: 30),
+        title: Text('${data['amount']} ${type == 'coins' ? 'كوينز' : 'جوهرة'}',
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+        subtitle: Text('السعر: ${data['price']} كوينز رويال',
+            style: const TextStyle(color: Colors.greenAccent)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(icon: const Icon(Icons.edit, color: Colors.white54), onPressed: () => _showAddPackageDialog(type, packageId: id, existingData: data)),
-            IconButton(icon: const Icon(Icons.delete_outline, color: Colors.redAccent), onPressed: () => _db.collection('recharge_packages').doc(id).delete()),
+            IconButton(
+                icon: const Icon(Icons.edit, color: Colors.white54),
+                onPressed: () => _showAddPackageDialog(type,
+                    packageId: id, existingData: data)),
+            IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                onPressed: () =>
+                    _db.collection('recharge_packages').doc(id).delete()),
           ],
         ),
       ),
     );
   }
 
-  void _showAddPackageDialog(String type, {String? packageId, Map<String, dynamic>? existingData}) {
-    final amountCtrl = TextEditingController(text: existingData?['amount']?.toString() ?? '');
-    final priceCtrl = TextEditingController(text: existingData?['price']?.toString() ?? '');
+  void _showAddPackageDialog(String type,
+      {String? packageId, Map<String, dynamic>? existingData}) {
+    final amountCtrl =
+        TextEditingController(text: existingData?['amount']?.toString() ?? '');
+    final priceCtrl =
+        TextEditingController(text: existingData?['price']?.toString() ?? '');
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
-        title: Text(packageId == null ? 'إضافة باقة جديدة' : 'تعديل الباقة', style: TextStyle(color: accentGold)),
+        title: Text(packageId == null ? 'إضافة باقة جديدة' : 'تعديل الباقة',
+            style: TextStyle(color: accentGold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -129,32 +158,43 @@ class _AdminRechargePackagesPageState extends State<AdminRechargePackagesPage> w
               controller: amountCtrl,
               keyboardType: TextInputType.number,
               style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(labelText: 'الكمية (${type == 'coins' ? 'نجمة' : 'جواهر'})', labelStyle: const TextStyle(color: Colors.white54)),
+              decoration: InputDecoration(
+                  labelText: 'الكمية (${type == 'coins' ? 'كوينز' : 'جواهر'})',
+                  labelStyle: const TextStyle(color: Colors.white54)),
             ),
             TextField(
               controller: priceCtrl,
               keyboardType: TextInputType.number,
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(labelText: 'السعر (بالنجوم الملكية)', labelStyle: TextStyle(color: Colors.white54)),
+              decoration: const InputDecoration(
+                  labelText: 'السعر (بالكوينز الملكية)',
+                  labelStyle: TextStyle(color: Colors.white54)),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             onPressed: () async {
               if (amountCtrl.text.isNotEmpty && priceCtrl.text.isNotEmpty) {
                 final data = {
                   'amount': int.parse(amountCtrl.text),
                   'price': double.parse(priceCtrl.text),
-                  'type': type.endsWith('s') ? type : '${type}s', // توحيد النوع إلى الجمع (coins/gems)
+                  'type': type.endsWith('s')
+                      ? type
+                      : '${type}s', // توحيد النوع إلى الجمع (coins/gems)
                   'updatedAt': FieldValue.serverTimestamp(),
                 };
                 if (packageId == null) {
                   await _db.collection('recharge_packages').add(data);
                 } else {
-                  await _db.collection('recharge_packages').doc(packageId).update(data);
+                  await _db
+                      .collection('recharge_packages')
+                      .doc(packageId)
+                      .update(data);
                 }
+                if (!mounted) return;
                 Navigator.pop(ctx);
               }
             },

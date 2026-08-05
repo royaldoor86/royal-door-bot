@@ -23,6 +23,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
   bool _commentNotificationsEnabled = true;
   bool _giftNotificationsEnabled = true;
   bool _badgeNotificationsEnabled = true;
+  bool _battleNotificationsEnabled = true;
+  bool _rewardNotificationsEnabled = true;
   bool _friendRequestNotificationsEnabled = true;
   bool _chatNotificationsEnabled = true;
   bool _systemNotificationsEnabled = true;
@@ -50,6 +52,10 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           _giftNotificationsEnabled = data['giftNotificationsEnabled'] ?? true;
           _badgeNotificationsEnabled =
               data['badgeNotificationsEnabled'] ?? true;
+          _battleNotificationsEnabled =
+              data['battleNotificationsEnabled'] ?? true;
+          _rewardNotificationsEnabled =
+              data['rewardNotificationsEnabled'] ?? true;
           _friendRequestNotificationsEnabled =
               data['friendRequestNotificationsEnabled'] ?? true;
           _chatNotificationsEnabled = data['chatNotificationsEnabled'] ?? true;
@@ -178,6 +184,26 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 onChanged: (val) {
                   setState(() => _badgeNotificationsEnabled = val);
                   _updateSetting('badgeNotificationsEnabled', val);
+                },
+              ),
+              _buildSwitchCard(
+                icon: Icons.military_tech,
+                title: 'المعارك',
+                subtitle: 'إشعارات المعارك والتحديات',
+                value: _battleNotificationsEnabled,
+                onChanged: (val) {
+                  setState(() => _battleNotificationsEnabled = val);
+                  _updateSetting('battleNotificationsEnabled', val);
+                },
+              ),
+              _buildSwitchCard(
+                icon: Icons.emoji_events,
+                title: 'المكافآت',
+                subtitle: 'إشعارات المكافآت والجوائز',
+                value: _rewardNotificationsEnabled,
+                onChanged: (val) {
+                  setState(() => _rewardNotificationsEnabled = val);
+                  _updateSetting('rewardNotificationsEnabled', val);
                 },
               ),
               const SizedBox(height: 30),
@@ -323,6 +349,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       _commentNotificationsEnabled = true;
       _giftNotificationsEnabled = true;
       _badgeNotificationsEnabled = true;
+      _battleNotificationsEnabled = true;
+      _rewardNotificationsEnabled = true;
       _friendRequestNotificationsEnabled = true;
       _chatNotificationsEnabled = true;
       _systemNotificationsEnabled = true;
@@ -336,6 +364,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       'commentNotificationsEnabled': true,
       'giftNotificationsEnabled': true,
       'badgeNotificationsEnabled': true,
+      'battleNotificationsEnabled': true,
+      'rewardNotificationsEnabled': true,
       'friendRequestNotificationsEnabled': true,
       'chatNotificationsEnabled': true,
       'systemNotificationsEnabled': true,

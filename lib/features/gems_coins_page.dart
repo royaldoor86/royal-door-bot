@@ -80,7 +80,7 @@ class _GemsCoinsPageState extends State<GemsCoinsPage>
             unselectedLabelColor:
                 DesignTokens.neutralWhite.withValues(alpha: 0.54),
             tabs: const [
-              Tab(text: 'شحن كوينز 🪙'),
+              Tab(text: 'شحن كوينز'),
               Tab(text: 'شحن جواهر 💎'),
             ],
           ),
@@ -130,8 +130,11 @@ class _GemsCoinsPageState extends State<GemsCoinsPage>
         children: [
           GestureDetector(
             onTap: () => _tabController.animateTo(0),
-            child: _buildBalanceItem('كوينز', user?.stars.toString() ?? '0',
-                const RoyalCoinIcon(size: DesignTokens.iconSizeLg), DesignTokens.primaryGold),
+            child: _buildBalanceItem(
+                'كوينز',
+                user?.coins.toString() ?? '0',
+                const RoyalCoinIcon(size: DesignTokens.iconSizeLg),
+                DesignTokens.primaryGold),
           ),
           Container(
               width: 1,
@@ -139,8 +142,13 @@ class _GemsCoinsPageState extends State<GemsCoinsPage>
               color: DesignTokens.neutralWhite.withValues(alpha: 0.1)),
           GestureDetector(
             onTap: () => _tabController.animateTo(1),
-            child: _buildBalanceItem('جواهر', user?.gems.toString() ?? '0',
-                const Icon(Icons.diamond, color: DesignTokens.primarySapphireLight, size: DesignTokens.iconSizeLg), DesignTokens.primarySapphireLight),
+            child: _buildBalanceItem(
+                'جواهر',
+                user?.gems.toString() ?? '0',
+                const Icon(Icons.diamond,
+                    color: DesignTokens.primarySapphireLight,
+                    size: DesignTokens.iconSizeLg),
+                DesignTokens.primarySapphireLight),
           ),
         ],
       ),
@@ -162,7 +170,7 @@ class _GemsCoinsPageState extends State<GemsCoinsPage>
   Widget _buildPackagesList(String type) {
     // دعم كلا الصيغتين (المفرد والجمع) لضمان عدم اختفاء الباقات
     final types = type == 'coins' ? ['coins', 'coin'] : ['gems', 'gem'];
-    
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('recharge_packages')
@@ -172,9 +180,12 @@ class _GemsCoinsPageState extends State<GemsCoinsPage>
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: RoyalLoadingIndicator());
         }
-        
+
         if (snapshot.hasError) {
-          return Center(child: Text('حدث خطأ أثناء تحميل الباقات', style: TextStyle(color: Colors.white.withValues(alpha: 0.5))));
+          return Center(
+              child: Text('حدث خطأ أثناء تحميل الباقات',
+                  style:
+                      TextStyle(color: Colors.white.withValues(alpha: 0.5))));
         }
 
         final docs = snapshot.data?.docs ?? [];
@@ -229,7 +240,7 @@ class _GemsCoinsPageState extends State<GemsCoinsPage>
           const SizedBox(height: DesignTokens.spacingMd),
           BodyText('${data['amount']} ${type == 'coins' ? 'كوينز' : 'جوهرة'}',
               fontWeight: DesignTokens.fontWeightBold),
-          HeadingText('${data['price']} نجمة ⭐',
+          HeadingText('${data['price']} كوينز',
               color: DesignTokens.primaryEmerald,
               fontSize: DesignTokens.fontSizeSm),
           const SizedBox(height: DesignTokens.spacingMd),
@@ -249,9 +260,12 @@ class _GemsCoinsPageState extends State<GemsCoinsPage>
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تعذر فتح البوابه الملكية حالياً، يرجى المحاولة لاحقاً')),
+          const SnackBar(
+              content: Text(
+                  'تعذر فتح البوابه الملكية حالياً، يرجى المحاولة لاحقاً')),
         );
       }
     }
   }
+
 }

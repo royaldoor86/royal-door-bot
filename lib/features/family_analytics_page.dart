@@ -128,7 +128,7 @@ class _FamilyAnalyticsPageState extends State<FamilyAnalyticsPage> {
                 Expanded(
                   child: _StatCard(
                     title: 'خزينة النجوم',
-                    value: '${family['familyStars'] ?? 0}',
+                    value: '${family['familyCoins'] ?? 0}',
                     icon: Icons.stars_rounded,
                     color: Colors.orangeAccent,
                   ),
@@ -435,7 +435,7 @@ class _FamilyAnalyticsPageState extends State<FamilyAnalyticsPage> {
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               );
             },
@@ -495,9 +495,9 @@ class _FamilyAnalyticsPageState extends State<FamilyAnalyticsPage> {
                       _ComparisonCard('نقاط الخبرة', '$currentExp', Icons.star,
                           Colors.orangeAccent),
                       const SizedBox(height: 15),
-                      Text('أفضل 5 عوائل',
-                          style: const TextStyle(
-                              color: Colors.white70, fontSize: 14)),
+                      const Text('أفضل 5 عوائل',
+                          style:
+                              TextStyle(color: Colors.white70, fontSize: 14)),
                       const SizedBox(height: 10),
                       ...topFamilies.take(5).map((doc) {
                         final data = doc.data() as Map<String, dynamic>;
@@ -514,7 +514,7 @@ class _FamilyAnalyticsPageState extends State<FamilyAnalyticsPage> {
                               style: const TextStyle(
                                   color: Colors.white38, fontSize: 11)),
                         );
-                      }).toList(),
+                      }),
                     ],
                   );
                 },

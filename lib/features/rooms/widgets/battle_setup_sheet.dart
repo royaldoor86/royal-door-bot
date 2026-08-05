@@ -17,6 +17,19 @@ class _BattleSetupSheetState extends State<BattleSetupSheet> {
   String? _selectedRivalId;
   String? _selectedRivalName;
   String? _selectedRivalImage;
+  Color _redColor = Colors.red;
+  Color _blueColor = Colors.blue;
+
+  final List<Color> _availableColors = [
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.purple,
+    Colors.orange,
+    Colors.pink,
+    Colors.cyan,
+    Colors.amber,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +70,10 @@ class _BattleSetupSheetState extends State<BattleSetupSheet> {
                     const SizedBox(height: 20),
                     _buildRivalSelection(),
                   ],
+                  const SizedBox(height: 30),
+                  _buildSectionTitle('اختر لون فريقك'),
+                  const SizedBox(height: 15),
+                  _buildColorSelection(),
                   const SizedBox(height: 30),
                   _buildSectionTitle('الوقت لكل جولة'),
                   const SizedBox(height: 15),
@@ -401,6 +418,55 @@ class _BattleSetupSheetState extends State<BattleSetupSheet> {
     );
   }
 
+  Widget _buildColorSelection() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: _colorPickerTile('الفريق الأول', _redColor, (c) => setState(() => _redColor = c))),
+            const SizedBox(width: 10),
+            Expanded(child: _colorPickerTile('الفريق الثاني', _blueColor, (c) => setState(() => _blueColor = c))),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _colorPickerTile(String title, Color selectedColor, Function(Color) onSelected) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 40,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _availableColors.length,
+            itemBuilder: (context, index) {
+              final color = _availableColors[index];
+              bool isSelected = selectedColor.toARGB32() == color.toARGB32();
+              return GestureDetector(
+                onTap: () => onSelected(color),
+                child: Container(
+                  width: 30,
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: isSelected ? Colors.white : Colors.transparent, width: 2),
+                    boxShadow: isSelected ? [BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 5)] : [],
+                  ),
+                  child: isSelected ? const Icon(Icons.check, size: 16, color: Colors.white) : null,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   void _startBattle() async {
     if (_battleMode == 'individual' && _selectedRivalId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -413,6 +479,22 @@ class _BattleSetupSheetState extends State<BattleSetupSheet> {
 
     final startTime = DateTime.now();
     final endTime = startTime.add(Duration(minutes: _selectedDuration));
+
+    // حذف كافة الرسائل السابقة قبل بدء المعركة بناءً على الطلب رقم 2
+    try {
+      final chatSnap = await FirebaseFirestore.instance
+          .collection('rooms')
+          .doc(widget.roomId)
+          .collection('chat')
+          .get();
+      final batch = FirebaseFirestore.instance.batch();
+      for (var doc in chatSnap.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    } catch (e) {
+      debugPrint("Error clearing chat before battle: $e");
+    }
 
     await FirebaseFirestore.instance
         .collection('rooms')
@@ -427,6 +509,8 @@ class _BattleSetupSheetState extends State<BattleSetupSheet> {
         'bluePoints': 0,
         'redPool': 0,
         'bluePool': 0,
+        'redColor': _redColor.toARGB32(),
+        'blueColor': _blueColor.toARGB32(),
         'duration': _selectedDuration,
         'rounds': _selectedRounds,
         'currentRound': 1,
@@ -453,6 +537,17 @@ class _BattleSetupSheetState extends State<BattleSetupSheet> {
           '⚔️ بدأت الآن معركة ${_battleMode == 'team' ? 'الفريق' : 'التحدي الفردي'}! ${_battleMode == 'individual' ? 'بين ${currentUser.displayName} و $_selectedRivalName' : ''}',
       'isSystem': true,
       'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    // إرسال إعلان عالمي ليظهر في الغرف الأخرى (الكبسولة)
+    await FirebaseFirestore.instance.collection('global_announcements').add({
+      'senderName': currentUser.displayName ?? 'مستخدم ملكي',
+      'giftName': 'تحدي PK ⚔️', // نستخدم هذا الحقل لتتوافق مع منطق الكبسولة الحالي
+      'roomName': 'غرفة ملكية', // سيتم جلب الاسم الفعلي في الواجهة
+      'roomId': widget.roomId,
+      'receiverName': _battleMode == 'individual' ? _selectedRivalName : 'الجميع',
+      'timestamp': FieldValue.serverTimestamp(),
+      'type': 'battle_start'
     });
 
     if (mounted) Navigator.pop(context);

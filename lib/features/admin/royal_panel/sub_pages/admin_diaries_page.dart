@@ -25,7 +25,8 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
         backgroundColor: primaryDark,
         appBar: AppBar(
           backgroundColor: const Color(0xFF051211),
-          title: Text('إدارة اليوميات الملكية', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
+          title: Text('إدارة اليوميات الملكية',
+              style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
           centerTitle: true,
         ),
         body: Column(
@@ -33,28 +34,37 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
             _buildSearchBar(),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _db.collection('posts').orderBy('createdAt', descending: true).snapshots(),
+                stream: _db
+                    .collection('posts')
+                    .orderBy('createdAt', descending: true)
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator(color: Colors.amber));
+                    return const Center(
+                        child: CircularProgressIndicator(color: Colors.amber));
                   }
 
                   final docs = snapshot.data?.docs ?? [];
                   final filteredDocs = docs.where((doc) {
                     final data = doc.data() as Map<String, dynamic>;
-                    final name = (data['authorName'] ?? '').toString().toLowerCase();
+                    final name =
+                        (data['authorName'] ?? '').toString().toLowerCase();
                     return name.contains(_searchText.toLowerCase());
                   }).toList();
 
                   if (filteredDocs.isEmpty) {
-                    return const Center(child: Text('لا توجد منشورات تطابق بحثك', style: TextStyle(color: Colors.white24)));
+                    return const Center(
+                        child: Text('لا توجد منشورات تطابق بحثك',
+                            style: TextStyle(color: Colors.white24)));
                   }
 
                   return ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: filteredDocs.length,
                     itemBuilder: (context, index) {
-                      final post = PostModel.fromMap(filteredDocs[index].data() as Map<String, dynamic>, filteredDocs[index].id);
+                      final post = PostModel.fromMap(
+                          filteredDocs[index].data() as Map<String, dynamic>,
+                          filteredDocs[index].id);
                       return _buildAdminPostCard(post);
                     },
                   );
@@ -78,8 +88,11 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
           hintText: 'ابحث عن منشورات مستخدم...',
           hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
           prefixIcon: Icon(Icons.search, color: accentGold),
-          filled: true, fillColor: Colors.white.withValues(alpha: 0.05),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+          filled: true,
+          fillColor: Colors.white.withValues(alpha: 0.05),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide.none),
         ),
         onChanged: (v) => setState(() => _searchText = v),
       ),
@@ -98,22 +111,29 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
-            leading: CircleAvatar(radius: 25, backgroundImage: NetworkImage(post.authorPic)),
-            title: Text(post.authorName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-            subtitle: Text('نُشر في: ${post.createdAt.toString().substring(0, 16)}', style: const TextStyle(color: Colors.white24, fontSize: 10)),
+            leading: CircleAvatar(
+                radius: 25, backgroundImage: NetworkImage(post.authorPic)),
+            title: Text(post.authorName,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14)),
+            subtitle: Text(
+                'نُشر في: ${post.createdAt.toString().substring(0, 16)}',
+                style: const TextStyle(color: Colors.white24, fontSize: 10)),
             trailing: IconButton(
-              icon: const Icon(Icons.delete_forever_rounded, color: Colors.redAccent, size: 22),
+              icon: const Icon(Icons.delete_forever_rounded,
+                  color: Colors.redAccent, size: 22),
               onPressed: () => _deletePost(post.id),
             ),
           ),
           if (post.content.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(post.content, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+              child: Text(post.content,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13)),
             ),
-          
           _buildMediaPreview(post),
-
           const Divider(color: Colors.white10, indent: 16, endIndent: 16),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -122,15 +142,18 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
               children: [
                 Row(
                   children: [
-                    _statItem(Icons.favorite, '${post.likes.length}', Colors.redAccent),
+                    _statItem(Icons.favorite, '${post.likes.length}',
+                        Colors.redAccent),
                     const SizedBox(width: 15),
-                    _statItem(Icons.comment, '${post.commentCount}', Colors.blueAccent),
+                    _statItem(Icons.comment, '${post.commentCount}',
+                        Colors.blueAccent),
                   ],
                 ),
                 TextButton.icon(
                   onPressed: () => _showCommentsManager(post.id),
                   icon: const Icon(Icons.forum_rounded, size: 16),
-                  label: const Text('إدارة التعليقات', style: TextStyle(fontSize: 12)),
+                  label: const Text('إدارة التعليقات',
+                      style: TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(foregroundColor: accentGold),
                 ),
               ],
@@ -142,27 +165,49 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
   }
 
   Widget _buildMediaPreview(PostModel post) {
+    if (post.imageUrls != null && post.imageUrls!.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(12),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: Image.network(post.imageUrls!.first,
+              height: 180, width: double.infinity, fit: BoxFit.cover),
+        ),
+      );
+    }
     if (post.imageUrl != null) {
       return Padding(
         padding: const EdgeInsets.all(12),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15),
-          child: Image.network(post.imageUrl!, height: 180, width: double.infinity, fit: BoxFit.cover),
+          child: Image.network(post.imageUrl!,
+              height: 180, width: double.infinity, fit: BoxFit.cover),
         ),
       );
     }
     if (post.videoUrl != null) {
       return Container(
-        height: 60, margin: const EdgeInsets.all(12),
-        decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(12)),
-        child: const Center(child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.play_circle_fill, color: Colors.amber), SizedBox(width: 10), Text('فيديو مرفق', style: TextStyle(color: Colors.white70))])),
+        height: 60,
+        margin: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+            color: Colors.white10, borderRadius: BorderRadius.circular(12)),
+        child: const Center(
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Icon(Icons.play_circle_fill, color: Colors.amber),
+          SizedBox(width: 10),
+          Text('فيديو مرفق', style: TextStyle(color: Colors.white70))
+        ])),
       );
     }
     return const SizedBox.shrink();
   }
 
   Widget _statItem(IconData icon, String val, Color color) {
-    return Row(children: [Icon(icon, size: 14, color: color), const SizedBox(width: 4), Text(val, style: const TextStyle(color: Colors.white54, fontSize: 12))]);
+    return Row(children: [
+      Icon(icon, size: 14, color: color),
+      const SizedBox(width: 4),
+      Text(val, style: const TextStyle(color: Colors.white54, fontSize: 12))
+    ]);
   }
 
   void _showCommentsManager(String postId) {
@@ -171,33 +216,65 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
         height: MediaQuery.of(context).size.height * 0.7,
-        decoration: BoxDecoration(color: primaryDark, borderRadius: const BorderRadius.vertical(top: Radius.circular(30))),
+        decoration: BoxDecoration(
+            color: primaryDark,
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(30))),
         child: Column(
           children: [
             const SizedBox(height: 15),
-            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(10))),
+            Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(10))),
             const Padding(
               padding: EdgeInsets.all(20.0),
-              child: Text('الرقابة على التعليقات', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+              child: Text('الرقابة على التعليقات',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16)),
             ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _db.collection('posts').doc(postId).collection('comments').orderBy('createdAt', descending: true).snapshots(),
+                stream: _db
+                    .collection('posts')
+                    .doc(postId)
+                    .collection('comments')
+                    .orderBy('createdAt', descending: true)
+                    .snapshots(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
                   final comments = snapshot.data!.docs;
-                  if (comments.isEmpty) return const Center(child: Text('لا توجد تعليقات بعد', style: TextStyle(color: Colors.white24)));
+                  if (comments.isEmpty) {
+                    return const Center(
+                        child: Text('لا توجد تعليقات بعد',
+                            style: TextStyle(color: Colors.white24)));
+                  }
 
                   return ListView.builder(
                     itemCount: comments.length,
                     itemBuilder: (context, i) {
                       final c = comments[i].data() as Map<String, dynamic>;
                       return ListTile(
-                        leading: CircleAvatar(radius: 15, backgroundImage: NetworkImage(c['userPic'] ?? '')),
-                        title: Text(c['userName'] ?? '', style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
-                        subtitle: Text(c['text'] ?? '', style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                        leading: CircleAvatar(
+                            radius: 15,
+                            backgroundImage: NetworkImage(c['userPic'] ?? '')),
+                        title: Text(c['userName'] ?? '',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold)),
+                        subtitle: Text(c['text'] ?? '',
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 12)),
                         trailing: IconButton(
-                          icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent, size: 18),
+                          icon: const Icon(Icons.remove_circle_outline,
+                              color: Colors.redAccent, size: 18),
                           onPressed: () => comments[i].reference.delete(),
                         ),
                       );
@@ -217,11 +294,18 @@ class _AdminDiariesPageState extends State<AdminDiariesPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
-        title: const Text("تأكيد الحذف", style: TextStyle(color: Colors.redAccent)),
-        content: const Text("هل تريد إزالة هذا المنشور وكافة تعليقاته نهائياً؟"),
+        title: const Text("تأكيد الحذف",
+            style: TextStyle(color: Colors.redAccent)),
+        content:
+            const Text("هل تريد إزالة هذا المنشور وكافة تعليقاته نهائياً؟"),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("تراجع")),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: const Text("حذف الآن")),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text("تراجع")),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text("حذف الآن")),
         ],
       ),
     );

@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +7,8 @@ import 'package:uuid/uuid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionTrackingService {
-  static final SessionTrackingService _instance = SessionTrackingService._internal();
+  static final SessionTrackingService _instance =
+      SessionTrackingService._internal();
   factory SessionTrackingService() => _instance;
   SessionTrackingService._internal();
 
@@ -24,7 +26,7 @@ class SessionTrackingService {
     try {
       final prefs = await SharedPreferences.getInstance();
       _deviceId = prefs.getString('device_id');
-      
+
       if (_deviceId == null) {
         _deviceId = _uuid.v4();
         await prefs.setString('device_id', _deviceId!);
@@ -39,22 +41,25 @@ class SessionTrackingService {
 
   Future<void> _loadDeviceInfo() async {
     try {
-      if (Theme.of(_getContext()).platform == TargetPlatform.android) {
+      if (Platform.isAndroid) {
         final androidInfo = await _deviceInfo.androidInfo;
         _deviceType = 'android';
         _deviceName = '${androidInfo.brand} ${androidInfo.model}';
-      } else if (Theme.of(_getContext()).platform == TargetPlatform.iOS) {
+      } else if (Platform.isIOS) {
         final iosInfo = await _deviceInfo.iosInfo;
         _deviceType = 'ios';
         _deviceName = '${iosInfo.model} iOS ${iosInfo.systemVersion}';
-      } else if (Theme.of(_getContext()).platform == TargetPlatform.windows) {
+      } else if (Platform.isWindows) {
         final windowsInfo = await _deviceInfo.windowsInfo;
         _deviceType = 'windows';
         _deviceName = 'Windows ${windowsInfo.productName}';
-      } else if (Theme.of(_getContext()).platform == TargetPlatform.macOS) {
+      } else if (Platform.isMacOS) {
         final macOsInfo = await _deviceInfo.macOsInfo;
         _deviceType = 'mac';
         _deviceName = 'Mac ${macOsInfo.model}';
+      } else if (Platform.isLinux) {
+        _deviceType = 'linux';
+        _deviceName = 'Linux';
       } else {
         _deviceType = 'web';
         _deviceName = 'Web Browser';
@@ -64,11 +69,6 @@ class SessionTrackingService {
       _deviceType = 'unknown';
       _deviceName = 'Unknown Device';
     }
-  }
-
-  BuildContext _getContext() {
-    // This is a placeholder - in real implementation, pass context from caller
-    throw UnimplementedError('Context must be passed from caller');
   }
 
   Future<void> _trackSession() async {
@@ -155,7 +155,7 @@ class SessionTrackingService {
 
       // Delete sessions older than 30 days
       final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
-      
+
       final oldSessions = await _db
           .collection('users')
           .doc(user.uid)

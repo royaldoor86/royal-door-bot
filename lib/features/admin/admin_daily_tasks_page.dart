@@ -30,8 +30,10 @@ class _AdminDailyTasksPageState extends State<AdminDailyTasksPage> {
     final email = user.email?.toLowerCase();
     final isOwner = data['isOwner'] == true;
     final isAdmin = data['role'] == 'admin';
-    final isRoyalEmail =
-        email == 'royaldoor86@gmail.com' || email == 'doorty86@gmail.com';
+    final isRoyalEmail = email == 'royaldoor86@gmail.com' ||
+        email == 'doorty86@gmail.com' ||
+        email == 'amjidhadi96@gmail.com' ||
+        email == 'shahadhadi.h@gmail.com';
     setState(() {
       _isAdminOrOwner = isAdmin || isOwner || isRoyalEmail;
     });

@@ -651,7 +651,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           const SizedBox(width: 6),
           Text(
             amount.toString(),
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 14,
@@ -671,7 +671,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  int _parseCurrencyValue(int? primary, dynamic? secondary) {
+  int _parseCurrencyValue(int? primary, dynamic secondary) {
     if (primary != null && primary > 0) return primary;
     if (secondary != null) {
       if (secondary is int) return secondary;

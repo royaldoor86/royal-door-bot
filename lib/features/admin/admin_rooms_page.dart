@@ -18,11 +18,11 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
   bool _isSeeding = false;
 
   final Map<String, int> vipMicCounts = {
-    "ROYALDOOR 👑": 100,
-    "الياقوت 💎": 75,
-    "اللؤلؤ 💎": 50,
-    "الزمرد 🛡️": 40,
-    "الفيروز ⚔️": 30,
+    "ROYALDOOR 👑": 40,
+    "الياقوت 💎": 30,
+    "اللؤلؤ 💎": 25,
+    "الزمرد 🛡️": 20,
+    "الفيروز ⚔️": 15,
   };
 
   Future<void> _createVipRoomDialog() async {
@@ -36,11 +36,14 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
         builder: (modalCtx, setModalState) => AlertDialog(
           backgroundColor: AppTheme.backgroundBlack,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl2), 
-            side: BorderSide(color: DesignTokens.primaryGold.withValues(alpha: 0.3))
-          ),
+              borderRadius: BorderRadius.circular(DesignTokens.borderRadiusXl2),
+              side: BorderSide(
+                  color: DesignTokens.primaryGold.withValues(alpha: 0.3))),
           title: const Text("إنشاء غرفة VIP ملكية 👑",
-              style: TextStyle(color: DesignTokens.primaryGold, fontSize: DesignTokens.fontSizeBase, fontWeight: DesignTokens.fontWeightBold)),
+              style: TextStyle(
+                  color: DesignTokens.primaryGold,
+                  fontSize: DesignTokens.fontSizeBase,
+                  fontWeight: DesignTokens.fontWeightBold)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -62,7 +65,8 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                 ),
                 const SizedBox(height: 20),
                 const Text("اختر الرتبة الملكية (عدد المايكات):",
-                    style: TextStyle(color: DesignTokens.primaryGold, fontSize: 12)),
+                    style: TextStyle(
+                        color: DesignTokens.primaryGold, fontSize: 12)),
                 DropdownButton<String>(
                   value: selectedRank,
                   dropdownColor: AppTheme.primaryWarm,
@@ -104,7 +108,7 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                     'isVerified': true,
                     'isPrivate': false,
                     'micsCount': mics,
-                    'micLayoutPattern': mics >= 100 ? '10x10' : 'standard',
+                    'micLayoutPattern': mics >= 40 ? '10x10' : 'standard',
                     'vipRank': selectedRank,
                     'image': 'assets/rooms/room_party.jpg',
                     'createdAt': FieldValue.serverTimestamp(),
@@ -112,8 +116,8 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                   if (!modalCtx.mounted) return;
                   Navigator.of(modalCtx).pop();
                   if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("تم إنشاء غرفة بنجاح ✅")));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("تم إنشاء غرفة بنجاح ✅")));
                 } catch (e) {
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -121,7 +125,8 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                  backgroundColor: DesignTokens.primaryGold, foregroundColor: Colors.black),
+                  backgroundColor: DesignTokens.primaryGold,
+                  foregroundColor: Colors.black),
               child: const Text("تفعيل وإنشاء"),
             ),
           ],
@@ -207,8 +212,9 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
         content: TextField(
             controller: passController,
             style: const TextStyle(color: Colors.white),
-            decoration:
-                const InputDecoration(hintText: "اتركه فارغاً لإلغاء القفل", hintStyle: TextStyle(color: Colors.white24))),
+            decoration: const InputDecoration(
+                hintText: "اتركه فارغاً لإلغاء القفل",
+                hintStyle: TextStyle(color: Colors.white24))),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx), child: const Text("إلغاء")),
@@ -238,8 +244,8 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.backgroundBlack,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title:
-            const Text("إدارة المايكات", style: TextStyle(color: DesignTokens.primaryGold)),
+        title: const Text("إدارة المايكات",
+            style: TextStyle(color: DesignTokens.primaryGold)),
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -289,7 +295,8 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
         builder: (ctx) => StatefulBuilder(
             builder: (c, setModal) => AlertDialog(
                   backgroundColor: AppTheme.backgroundBlack,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
                   title: const Text('إدارة رتب VIP',
                       style: TextStyle(color: DesignTokens.primaryGold)),
                   content: SingleChildScrollView(
@@ -371,7 +378,8 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundBlack,
       appBar: AppBar(
-        title: const Text('إدارة الغرف الملكية', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text('إدارة الغرف الملكية',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -390,11 +398,14 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                     decoration: InputDecoration(
                       hintText: "بحث عن غرفة...",
                       hintStyle: const TextStyle(color: Colors.white24),
-                      prefixIcon: const Icon(Icons.search, color: DesignTokens.primaryGold),
+                      prefixIcon: const Icon(Icons.search,
+                          color: DesignTokens.primaryGold),
                       filled: true,
-                      fillColor: DesignTokens.neutralWhite.withValues(alpha: DesignTokens.opacityGlass),
+                      fillColor: DesignTokens.neutralWhite
+                          .withValues(alpha: DesignTokens.opacityGlass),
                       border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(DesignTokens.borderRadiusLg)),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(DesignTokens.borderRadiusLg)),
                           borderSide: BorderSide.none),
                     ),
                     onChanged: (v) =>
@@ -404,12 +415,14 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: _createVipRoomDialog,
-                  icon: const Icon(Icons.stars, color: DesignTokens.primaryGold, size: 28),
+                  icon: const Icon(Icons.stars,
+                      color: DesignTokens.primaryGold, size: 28),
                   tooltip: "إنشاء غرفة VIP ملكية",
                 ),
                 IconButton(
                     onPressed: _manageVipRanksDialog,
-                    icon: const Icon(Icons.rule_folder, color: DesignTokens.primaryGold),
+                    icon: const Icon(Icons.rule_folder,
+                        color: DesignTokens.primaryGold),
                     tooltip: 'إدارة رتب VIP'),
                 _isSeeding
                     ? const SizedBox(
@@ -419,21 +432,25 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                             strokeWidth: 2, color: DesignTokens.primaryGold))
                     : IconButton(
                         onPressed: _seedTenRooms,
-                        icon: const Icon(Icons.auto_awesome, color: DesignTokens.primaryGold),
+                        icon: const Icon(Icons.auto_awesome,
+                            color: DesignTokens.primaryGold),
                         tooltip: "إنشاء 10 غرف تلقائية"),
               ],
             ),
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('rooms').snapshots(),
+              stream:
+                  FirebaseFirestore.instance.collection('rooms').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const RoyalLoadingIndicator();
                 }
-                
+
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text("لا توجد غرف حالياً", style: TextStyle(color: Colors.white54)));
+                  return const Center(
+                      child: Text("لا توجد غرف حالياً",
+                          style: TextStyle(color: Colors.white54)));
                 }
 
                 var docs = snapshot.data!.docs;
@@ -459,19 +476,25 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                     final String? rank = data['vipRank'];
 
                     return Container(
-                      margin: const EdgeInsets.only(bottom: DesignTokens.spacingSm),
+                      margin:
+                          const EdgeInsets.only(bottom: DesignTokens.spacingSm),
                       decoration: BoxDecoration(
-                        color: DesignTokens.neutralWhite.withValues(alpha: DesignTokens.opacityGlass),
-                        borderRadius: BorderRadius.circular(DesignTokens.borderRadiusLg),
+                        color: DesignTokens.neutralWhite
+                            .withValues(alpha: DesignTokens.opacityGlass),
+                        borderRadius:
+                            BorderRadius.circular(DesignTokens.borderRadiusLg),
                         border: rank != null
                             ? Border.all(
-                                color: DesignTokens.primaryGold.withValues(alpha: 0.3), width: 1)
+                                color: DesignTokens.primaryGold
+                                    .withValues(alpha: 0.3),
+                                width: 1)
                             : null,
                       ),
                       child: Column(
                         children: [
                           ListTile(
-                            leading: Icon(rank != null ? Icons.stars : Icons.mic,
+                            leading: Icon(
+                                rank != null ? Icons.stars : Icons.mic,
                                 color: DesignTokens.primaryGold),
                             title: Text(data['name'] ?? "غرفة",
                                 style: const TextStyle(
@@ -489,8 +512,9 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                                 IconButton(
                                     icon: Icon(
                                         isClosed ? Icons.lock : Icons.lock_open,
-                                        color:
-                                            isClosed ? Colors.red : Colors.green),
+                                        color: isClosed
+                                            ? Colors.red
+                                            : Colors.green),
                                     onPressed: () => FirebaseFirestore.instance
                                         .collection('rooms')
                                         .doc(id)
@@ -510,14 +534,22 @@ class _AdminRoomsPageState extends State<AdminRoomsPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 TextButton.icon(
-                                    icon: const Icon(Icons.password, size: 16, color: DesignTokens.primaryGold),
+                                    icon: const Icon(Icons.password,
+                                        size: 16,
+                                        color: DesignTokens.primaryGold),
                                     label: const Text("رقم سري",
-                                        style: TextStyle(fontSize: 12, color: Colors.white70)),
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.white70)),
                                     onPressed: () => _setRoomPassword(id)),
                                 TextButton.icon(
-                                    icon: const Icon(Icons.add_task, size: 16, color: DesignTokens.primaryGold),
+                                    icon: const Icon(Icons.add_task,
+                                        size: 16,
+                                        color: DesignTokens.primaryGold),
                                     label: const Text("المايكات",
-                                        style: TextStyle(fontSize: 12, color: Colors.white70)),
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.white70)),
                                     onPressed: () => _manageMics(id, mics)),
                               ],
                             ),

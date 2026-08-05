@@ -20,7 +20,9 @@ class RoomSettingsSheet extends StatefulWidget {
 class _RoomSettingsSheetState extends State<RoomSettingsSheet> {
   bool _noiseReduction = true;
   bool _muteChat = false;
+  bool _showRoomMessage = true;
   bool _adminOnlyMic = false;
+  bool _requireMicApproval = false;
   int _membershipFee = 0;
   bool _mutePublic = false;
   int _minLevelRequired = 1;
@@ -48,6 +50,8 @@ class _RoomSettingsSheetState extends State<RoomSettingsSheet> {
       setState(() {
         _muteChat = data['muteChat'] ?? false;
         _adminOnlyMic = data['adminOnlyMic'] ?? false;
+        _requireMicApproval = data['requireMicApproval'] ?? false;
+        _showRoomMessage = data['showRoomMessage'] ?? true;
         _membershipFee = data['membershipFee'] ?? 0;
         _mutePublic = data['mutePublic'] ?? false;
         _minLevelRequired = data['minLevelRequired'] ?? 1;
@@ -55,7 +59,8 @@ class _RoomSettingsSheetState extends State<RoomSettingsSheet> {
         _isLockPurchased = data['isLockPurchased'] ?? false;
         _micMode = data['micMode'] ?? 'normal';
 
-        if (currentUser == ownerId) {
+        if (currentUser == ownerId ||
+            (data['admins'] as List?)?.contains(currentUser) == true) {
           _canLockRoom = true;
         } else {
           final perms = data['moderatorPermissions'] as Map<String, dynamic>?;
@@ -117,18 +122,31 @@ class _RoomSettingsSheetState extends State<RoomSettingsSheet> {
               Icons.report_problem_outlined, "مشكلات الصوت", Colors.cyan),
           _buildToggleItem(Icons.waves, "تقليل الضوضاء", _noiseReduction,
               (v) => setState(() => _noiseReduction = v)),
-          _buildActionItem(Icons.card_giftcard, "إعدادات الهدايا", Colors.cyan),
+          _buildToggleItem(Icons.celebration, "رسائل الغرفة", _showRoomMessage,
+              (v) async {
+            setState(() => _showRoomMessage = v);
+            await FirebaseFirestore.instance
+                .collection('rooms')
+                .doc(widget.roomId)
+                .update({
+              'showRoomMessage': v,
+            });
+          }),
         ],
       ),
     );
   }
 
-  Widget _buildActionItem(IconData icon, String label, Color color) {
-    return Column(children: [
-      Icon(icon, color: color, size: 28),
-      const SizedBox(height: 6),
-      Text(label, style: const TextStyle(color: Colors.white70, fontSize: 10))
-    ]);
+  Widget _buildActionItem(IconData icon, String label, Color color,
+      {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(children: [
+        Icon(icon, color: color, size: 28),
+        const SizedBox(height: 6),
+        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 10))
+      ]),
+    );
   }
 
   Widget _buildToggleItem(
@@ -184,6 +202,9 @@ class _RoomSettingsSheetState extends State<RoomSettingsSheet> {
         _buildGridItem(Icons.mic_off, "إذن المايك",
             _adminOnlyMic ? Colors.red : Colors.green,
             onTap: _showMicPermissionUI),
+        _buildGridItem(Icons.hourglass_empty, "قائمة الانتظار",
+            _requireMicApproval ? Colors.amber : Colors.blueGrey,
+            onTap: _showMicApprovalUI),
         _buildGridItem(Icons.chat_bubble_outline, "قيود المراسلة",
             _muteChat || _mutePublic ? Colors.red : Colors.blue,
             onTap: _showMessagingRestrictionsUI),
@@ -267,6 +288,15 @@ class _RoomSettingsSheetState extends State<RoomSettingsSheet> {
             roomId: widget.roomId,
             initialValue: _adminOnlyMic,
             onChanged: (val) => setState(() => _adminOnlyMic = val)));
+  }
+
+  void _showMicApprovalUI() {
+    showDialog(
+        context: context,
+        builder: (context) => _MicApprovalDialog(
+            roomId: widget.roomId,
+            initialValue: _requireMicApproval,
+            onChanged: (val) => setState(() => _requireMicApproval = val)));
   }
 
   void _showMessagingRestrictionsUI() {
@@ -626,15 +656,12 @@ class _RemoveMembersScreenState extends State<_RemoveMembersScreen> {
                         final level = userData['accountLevel'] ?? 1;
                         final gender = userData['gender'] ?? 'ذكر';
                         bool isSelected = _selectedUids.contains(uid);
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          decoration: BoxDecoration(
-                              color: isSelected
-                                  ? Colors.teal.withValues(alpha: 0.1)
-                                  : Colors.white.withValues(alpha: 0.8),
-                              borderRadius: BorderRadius.circular(12)),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
                           child: Material(
-                            color: Colors.transparent,
+                            color: Colors.teal.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            clipBehavior: Clip.antiAlias,
                             child: ListTile(
                               onTap: () => setState(() => isSelected
                                   ? _selectedUids.remove(uid)
@@ -875,13 +902,12 @@ class _BanListScreenState extends State<_BanListScreen> {
                             !name.contains(_searchQuery)) {
                           return const SizedBox.shrink();
                         }
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 2),
-                          decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.5),
-                              borderRadius: BorderRadius.circular(5)),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
                           child: Material(
-                            color: Colors.transparent,
+                            color: Colors.white.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(5),
+                            clipBehavior: Clip.antiAlias,
                             child: ListTile(
                               leading: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -1090,6 +1116,152 @@ class _MicPermissionDialogState extends State<_MicPermissionDialog> {
           .doc(widget.roomId)
           .update({'adminOnlyMic': _tempAdminOnly});
       widget.onChanged(_tempAdminOnly);
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('فشل في حفظ التغييرات ❌')));
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+}
+
+class _MicApprovalDialog extends StatefulWidget {
+  final String roomId;
+  final bool initialValue;
+  final ValueChanged<bool> onChanged;
+  const _MicApprovalDialog(
+      {required this.roomId,
+      required this.initialValue,
+      required this.onChanged});
+  @override
+  State<_MicApprovalDialog> createState() => _MicApprovalDialogState();
+}
+
+class _MicApprovalDialogState extends State<_MicApprovalDialog> {
+  late bool _tempApproval;
+  bool _isSaving = false;
+  @override
+  void initState() {
+    super.initState();
+    _tempApproval = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Container(
+            decoration: BoxDecoration(
+                color: const Color(0xFFE0F2F1),
+                borderRadius: BorderRadius.circular(20)),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                  decoration: const BoxDecoration(
+                      color: Color(0xFF4DB6AC),
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20))),
+                  child: Stack(alignment: Alignment.center, children: [
+                    const Text('قائمة الانتظار',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold)),
+                    Positioned(
+                        left: 0,
+                        child: IconButton(
+                            icon: const Icon(Icons.close,
+                                color: Colors.white, size: 24),
+                            onPressed: () => Navigator.pop(context)))
+                  ])),
+              const SizedBox(height: 20),
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Column(children: [
+                    _buildOption('مغلق (دخول مباشر)', !_tempApproval,
+                        () => setState(() => _tempApproval = false)),
+                    const SizedBox(height: 12),
+                    _buildOption('مفعل (يتطلب موافقة)', _tempApproval,
+                        () => setState(() => _tempApproval = true))
+                  ])),
+              const SizedBox(height: 25),
+              Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                  child: InkWell(
+                      onTap: _isSaving ? null : _saveApproval,
+                      child: Container(
+                          height: 45,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFFD54F),
+                                    Color(0xFFFFA000)
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter),
+                              borderRadius: BorderRadius.circular(25),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.15),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 4))
+                              ]),
+                          alignment: Alignment.center,
+                          child: _isSaving
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                      color: Colors.white, strokeWidth: 2))
+                              : const Text('تأكيد',
+                                  style: TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)))))
+            ])));
+  }
+
+  Widget _buildOption(String label, bool isSelected, VoidCallback onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            height: 50,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                color: isSelected
+                    ? const Color(0xFFB2DFDB)
+                    : Colors.white.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                    color: isSelected
+                        ? const Color(0xFF4DB6AC)
+                        : Colors.transparent,
+                    width: 1)),
+            alignment: Alignment.center,
+            child: Text(label,
+                style: TextStyle(
+                    color:
+                        isSelected ? const Color(0xFF00695C) : Colors.black54,
+                    fontSize: 15,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal))));
+  }
+
+  void _saveApproval() async {
+    setState(() => _isSaving = true);
+    try {
+      await FirebaseFirestore.instance
+          .collection('rooms')
+          .doc(widget.roomId)
+          .update({'requireMicApproval': _tempApproval});
+      widget.onChanged(_tempApproval);
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
@@ -1660,14 +1832,12 @@ class _PenaltyLogsScreenState extends State<_PenaltyLogsScreen>
               return const SizedBox.shrink();
             }
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(10)),
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
               child: Material(
-                color: Colors.transparent,
+                color: Colors.white.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(10),
+                clipBehavior: Clip.antiAlias,
                 child: ListTile(
                   leading: CircleAvatar(
                       backgroundColor: _getColorForType(type),
@@ -1956,3 +2126,4 @@ class _ModeratorPermissionsScreenState
     }, SetOptions(merge: true));
   }
 }
+

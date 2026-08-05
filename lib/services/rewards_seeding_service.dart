@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants/rewards_constants.dart';
 
@@ -110,8 +111,10 @@ class RewardsSeedingService {
 
     final batch = _firestore.batch();
     for (var data in packagesData) {
-      final docRef = _firestore.collection(RewardsConstants.collectionPackages).doc(data['id']);
-      
+      final docRef = _firestore
+          .collection(RewardsConstants.collectionPackages)
+          .doc(data['id']);
+
       // حساب الربح اليومي: الإجمالي / 30 يوم
       double dailyGems = (data['total_gems'] as num) / 30;
 
@@ -133,6 +136,6 @@ class RewardsSeedingService {
     }
 
     await batch.commit();
-    print('✅ تم تحديث كافة الباقات الملكية بنجاح');
+    debugPrint('✅ تم تحديث كافة الباقات الملكية بنجاح');
   }
 }

@@ -151,6 +151,7 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage>
     final currencyColor = (data['currencyType'] ?? 'coins') == 'gems'
         ? Colors.cyanAccent
         : Colors.amber;
+    final royalId = data['royalId'] ?? data['value'] ?? '---';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -161,7 +162,7 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage>
       ),
       child: ListTile(
         leading: Icon(Icons.tag, color: goldColor, size: 30),
-        title: Text(data['royalId'] ?? '---',
+        title: Text(royalId,
             style: const TextStyle(
                 color: Colors.white,
                 fontSize: 22,
@@ -218,7 +219,7 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage>
                 Row(
                   children: [
                     Expanded(
-                        child: _buildChoiceChip('نجوم ⭐', 'coins', currencyType,
+                        child: _buildChoiceChip('كوينز', 'coins', currencyType,
                             (val) => setModalState(() => currencyType = val))),
                     const SizedBox(width: 10),
                     Expanded(
@@ -248,7 +249,14 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage>
                       value: category,
                       dropdownColor: const Color(0xFF1A1A2E),
                       isExpanded: true,
-                      items: ['ذهبي', 'ملكي', 'أسطوري']
+                      items: [
+                        'مقترح',
+                        'الأفضل',
+                        'ملحمي',
+                        'نادر',
+                        'شائع',
+                        'ملكي'
+                      ]
                           .map((e) => DropdownMenuItem(
                               value: e,
                               child: Text(e,
@@ -480,12 +488,14 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage>
           _foundUserId = snap.docs.first.id;
         });
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content:
                 Text('عذراً، لم يتم العثور على مستخدم بهذا المعرف أو الاسم ❌'),
             backgroundColor: Colors.redAccent));
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('خطأ في البحث: $e')));
     } finally {
@@ -545,7 +555,7 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage>
       'royalId': '777',
       'price': 5000,
       'currencyType': 'coins',
-      'category': 'ذهبي',
+      'category': 'شائع',
       'showInStore': true,
       'createdAt': FieldValue.serverTimestamp()
     });
@@ -553,7 +563,7 @@ class _AdminSpecialIdsPageState extends State<AdminSpecialIdsPage>
       'royalId': 'ROYAL',
       'price': 20000,
       'currencyType': 'gems',
-      'category': 'أسطوري',
+      'category': 'ملكي',
       'showInStore': true,
       'createdAt': FieldValue.serverTimestamp()
     });

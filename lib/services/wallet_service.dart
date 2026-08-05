@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/wallet_model.dart';
@@ -26,7 +27,7 @@ class WalletService {
         return await _createWallet(userId, walletType);
       }
     } catch (e) {
-      print('Error getting wallet: $e');
+      debugPrint('Error getting wallet: $e');
       return null;
     }
   }
@@ -52,7 +53,7 @@ class WalletService {
     return wallet;
   }
 
-  /// تحديث الرصيد بعد الصفقة
+  /// تحديث الرصيد بعد المكافآة
   Future<void> updateWalletAfterTrade({
     required String walletType,
     required double profitLoss,
@@ -147,7 +148,7 @@ class WalletService {
           .map((doc) => Wallet.fromMap(doc.data(), doc.id))
           .toList();
     } catch (e) {
-      print('Error getting all wallets: $e');
+      debugPrint('Error getting all wallets: $e');
       return [];
     }
   }

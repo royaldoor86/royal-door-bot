@@ -243,7 +243,7 @@ class _StorePageState extends State<StorePage>
     int coinsPrice = (data['coinsPrice'] ?? price).toInt();
     String url = data['url'] ?? data['imageUrl'] ?? '';
     // جعل جميع العناصر قيد التطوير مؤقتاً
-    final bool inDevelopment = true;
+    const bool inDevelopment = true;
 
     return StreamBuilder<QuerySnapshot>(
         stream: userData != null
@@ -437,9 +437,9 @@ class _StorePageState extends State<StorePage>
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
         title: const Text('قيد التطوير', style: TextStyle(color: Colors.white)),
-        content: Text(
+        content: const Text(
             'قريباً سيتم فتحها. نعمل حالياً على تطويرها وتحسينها',
-            style: const TextStyle(color: Colors.white70)),
+            style: TextStyle(color: Colors.white70)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -819,7 +819,7 @@ class _StorePageState extends State<StorePage>
               final dataMap = docSnap.data() ?? <String, dynamic>{};
               final frame = FrameModel.fromFirestore(docSnap);
               // جعل جميع الإطارات قيد التطوير مؤقتاً
-              final bool inDevelopment = true;
+              const bool inDevelopment = true;
               return _buildFrameStoreCard(frame, userData, inDevelopment);
             },
           );

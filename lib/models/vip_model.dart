@@ -156,20 +156,9 @@ class VIPStatus {
     }
   }
 
-  // Calculate required points for next level
+  // Calculate required points for next level (ملاحظة: الترقية التلقائية معطلة - هذه الدالة لم تعد مستخدمة)
   int get pointsToNextLevel {
-    switch (level) {
-      case VIPLevel.none:
-        return 10000;
-      case VIPLevel.bronze:
-        return 50000;
-      case VIPLevel.silver:
-        return 100000;
-      case VIPLevel.gold:
-        return 250000;
-      case VIPLevel.platinum:
-        return 0; // Max level
-    }
+    return 0; // الترقية التلقائية معطلة - VIP فقط بالشراء
   }
 
   VIPStatus copyWith({

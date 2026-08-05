@@ -48,6 +48,19 @@ service cloud.firestore {
       allow create: if isSignedIn();
       allow update: if isOwner(userId) || isAdmin();
 
+      // إعدادات الإشعارات والخصوصية - يمكن للمستخدم تحديث إعداداته الخاصة
+      match /settings/{all=**} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) || isAdmin();
+      }
+
+      // قائمة المحظورين - يمكن للمستخدم إدارة قائمته الخاصة
+      match /blockedUsers/{blockedUserId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+
       match /{allSub=**} {
         allow read: if isOwner(userId) || isAdmin() || isSignedIn();
         allow write: if isOwner(userId) || isAdmin();
@@ -98,18 +111,45 @@ service cloud.firestore {
       allow create: if isSignedIn();
       allow update, delete: if isSignedIn() && (
         request.auth.uid == resource.data.ownerId ||
-        request.auth.uid in resource.data.moderators ||
+        (resource.data.admins != null && request.auth.uid in resource.data.admins) ||
+        (resource.data.moderators != null && request.auth.uid in resource.data.moderators) ||
         isAdmin()
       );
       
-      // Subcollections with proper security
+      // السماح للمستخدمين بتحديث تواجدهم الخاص
+      match /online_users/{userId} {
+        allow read: if isSignedIn();
+        allow write: if isSignedIn() && request.auth.uid == userId;
+      }
+
+      // السماح للجميع بإرسال رسائل وحذف رسائلهم الخاصة
+      match /chat/{messageId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn();
+        allow delete: if isSignedIn() && (
+          request.auth.uid == resource.data.senderId ||
+          isRoomManager(roomId)
+        );
+      }
+
+      // السماح بإدارة المايكات
+      match /mic_seats/{seatId} {
+        allow read: if isSignedIn();
+        allow write: if isSignedIn(); // التطبيق يتحكم في المنطق، القواعد تسمح تقنياً
+      }
+
+      // Subcollections general fallback
       match /{all=**} {
         allow read: if isSignedIn();
-        allow write: if isSignedIn() && (
-          request.auth.uid == resource.data.ownerId ||
-          request.auth.uid in resource.data.moderators ||
-          isAdmin()
-        );
+        allow write: if isSignedIn() && isRoomManager(roomId);
+      }
+
+      function isRoomManager(rId) {
+        let room = get(/databases/$(database)/documents/rooms/$(rId)).data;
+        return request.auth.uid == room.ownerId ||
+               (room.admins != null && request.auth.uid in room.admins) ||
+               (room.moderators != null && request.auth.uid in room.moderators) ||
+               isAdmin();
       }
     }
 
@@ -148,6 +188,43 @@ service cloud.firestore {
     match /reports/{id} { allow read: if isAdmin(); allow create: if isSignedIn(); }
     match /banned_users/{id} { allow read: if isSignedIn(); allow write: if isAdmin(); }
     match /agencies/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    // --- 9.1 إدارة الأمان المتقدم ---
+    match /user_devices/{id} { allow read, write: if isAdmin(); }
+    match /banned_devices/{id} { allow read, write: if isAdmin(); }
+    match /ban_logs/{id} { allow read, write: if isAdmin(); }
+    match /banned_passwords/{id} { allow read, write: if isAdmin(); }
+    match /banned_ips/{id} { allow read, write: if isAdmin(); }
+
+    // --- 9.2 إدارة الإشعارات ---
+    match /notification_templates/{id} { allow read, write: if isAdmin(); }
+    match /notification_logs/{id} { allow read, write: if isAdmin(); }
+    match /promotions/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    // --- 9.3 إدارة الدعم الفني ---
+    match /support_tickets/{id} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+    match /faq/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /auto_responses/{id} { allow read, write: if isAdmin(); }
+    match /bug_reports/{id} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // --- 9.4 إدارة النسخ الاحتياطي ---
+    match /backups/{id} { allow read, write: if isAdmin(); }
+    match /restore_logs/{id} { allow read, write: if isAdmin(); }
+    match /export_logs/{id} { allow read, write: if isAdmin(); }
+
+    // --- 9.5 إدارة الأتمتة ---
+    match /scheduled_tasks/{id} { allow read, write: if isAdmin(); }
+    match /auto_rules/{id} { allow read, write: if isAdmin(); }
+    match /auto_events/{id} { allow read, write: if isAdmin(); }
+    match /auto_alerts/{id} { allow read, write: if isAdmin(); }
 
     // --- 10. الإشعارات والمهام اليومية ---
     match /notifications/{id} {

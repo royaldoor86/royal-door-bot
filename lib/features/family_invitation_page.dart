@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter/foundation.dart';
 import '../services/family_service.dart';
+import '../services/telegram_web_app_service.dart';
 import '../app_theme.dart';
 import '../models/family_invitation_model.dart';
 
@@ -101,10 +103,16 @@ class _FamilyInvitationPageState extends State<FamilyInvitationPage> {
     if (_invitationLink == null) return;
 
     try {
-      await Share.share(
-        'انضم إلى عائلتي الملكية! 🏰\n\nاستخدم كود الدعوة: $_invitationCode\n\nأو انقر على الرابط: $_invitationLink',
-        subject: 'دعوة للانضمام إلى عائلة ملكية',
-      );
+      final message = 'انضم إلى عائلتي الملكية! 🏰\n\nاستخدم كود الدعوة: $_invitationCode\n\nأو انقر على الرابط: $_invitationLink';
+      
+      if (kIsWeb && TelegramWebAppService.isTelegramWebApp()) {
+        TelegramWebAppService.shareText(message);
+      } else {
+        await Share.share(
+          message,
+          subject: 'دعوة للانضمام إلى عائلة ملكية',
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -346,6 +354,9 @@ class _FamilyInvitationPageState extends State<FamilyInvitationPage> {
   }
 
   Widget _buildInvitationCard(FamilyInvitationModel invitation) {
+    final user = FirebaseAuth.instance.currentUser;
+    final bool isOwner = invitation.inviterId == user?.uid;
+
     return AppTheme.glassContainer(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(15),
@@ -386,9 +397,57 @@ class _FamilyInvitationPageState extends State<FamilyInvitationPage> {
           ),
           const SizedBox(width: 10),
           _getStatusBadge(invitation.isActive),
+          if (isOwner && invitation.isActive) ...[
+            const SizedBox(width: 5),
+            IconButton(
+              onPressed: () => _confirmDeleteInvitation(invitation.id),
+              icon: const Icon(Icons.delete, color: Colors.red),
+              tooltip: 'حذف الدعوة',
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  Future<void> _confirmDeleteInvitation(String invitationId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        title: const Text('حذف الدعوة', style: TextStyle(color: Colors.white)),
+        content: const Text('هل أنت متأكد من حذف هذه الدعوة؟',
+            style: TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('إلغاء', style: TextStyle(color: Colors.white24)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('حذف', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await _familyService.deleteFamilyInvitation(invitationId);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('تم حذف الدعوة بنجاح ✅')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('فشل الحذف: $e')),
+          );
+        }
+      }
+    }
   }
 
   Widget _getStatusBadge(bool isActive) {

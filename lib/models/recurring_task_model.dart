@@ -84,13 +84,15 @@ class RecurringTaskModel {
   }
 
   // حساب نسبة الإنجاز
-  double get progress => targetValue > 0 ? (currentValue / targetValue).clamp(0.0, 1.0) : 0.0;
+  double get progress =>
+      targetValue > 0 ? (currentValue / targetValue).clamp(0.0, 1.0) : 0.0;
 
   // هل المهمة مكتملة؟
   bool get isCompleted => currentValue >= targetValue;
 
   // هل المهمة منتهية؟
-  bool get isExpired => nextDueAt != null && nextDueAt!.compareTo(Timestamp.now()) < 0;
+  bool get isExpired =>
+      nextDueAt != null && nextDueAt!.compareTo(Timestamp.now()) < 0;
 
   // المكافآت الافتراضية لكل تكرار
   static Map<String, dynamic> getDefaultRewards(String frequency) {
@@ -98,30 +100,30 @@ class RecurringTaskModel {
       case 'daily':
         return {
           'familyGems': 50,
-          'familyStars': 100,
+          'familyCoins': 100,
           'participantGems': 10,
-          'participantStars': 20,
+          'participantCoins': 20,
         };
       case 'weekly':
         return {
           'familyGems': 300,
-          'familyStars': 600,
+          'familyCoins': 600,
           'participantGems': 50,
-          'participantStars': 100,
+          'participantCoins': 100,
         };
       case 'monthly':
         return {
           'familyGems': 1000,
-          'familyStars': 2000,
+          'familyCoins': 2000,
           'participantGems': 150,
-          'participantStars': 300,
+          'participantCoins': 300,
         };
       default:
         return {
           'familyGems': 50,
-          'familyStars': 100,
+          'familyCoins': 100,
           'participantGems': 10,
-          'participantStars': 20,
+          'participantCoins': 20,
         };
     }
   }
@@ -135,7 +137,8 @@ class RecurringTaskModel {
       case 'weekly':
         return Timestamp.fromDate(date.add(const Duration(days: 7)));
       case 'monthly':
-        return Timestamp.fromDate(DateTime(date.year, date.month + 1, date.day));
+        return Timestamp.fromDate(
+            DateTime(date.year, date.month + 1, date.day));
       default:
         return Timestamp.fromDate(date.add(const Duration(days: 1)));
     }

@@ -31,7 +31,7 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 7, vsync: this);
   }
 
   @override
@@ -62,11 +62,15 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
           ),
           bottom: TabBar(
             controller: _tabController,
+            isScrollable: true,
             tabs: const [
               Tab(text: 'حربي الحالية'),
               Tab(text: 'إعلان حرب'),
               Tab(text: 'التحديات'),
               Tab(text: 'سجل الحروب'),
+              Tab(text: 'التحكيم'),
+              Tab(text: 'المصالحة'),
+              Tab(text: 'تفاصيل المعارك'),
             ],
             labelColor: Colors.amber,
             unselectedLabelColor: Colors.white54,
@@ -80,6 +84,9 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
             _buildDeclareWarTab(),
             _buildChallengesTab(),
             _buildWarHistoryTab(),
+            _buildArbitrationTab(),
+            _buildReconciliationTab(),
+            _buildBattleDetailsTab(),
           ],
         ),
       ),
@@ -87,43 +94,45 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
   }
 
   Widget _buildCurrentWarTab() {
-    return FutureBuilder<FamilyWarModel?>(
-      future: _familyService.getCurrentWar(widget.familyId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: Colors.amber),
-          );
-        }
+    return SafeArea(
+      child: FutureBuilder<FamilyWarModel?>(
+        future: _familyService.getCurrentWar(widget.familyId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.amber),
+            );
+          }
 
-        final currentWar = snapshot.data;
-        if (currentWar == null) {
-          return Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.shield_outlined,
-                      size: 80, color: Colors.white.withValues(alpha: 0.2)),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'لا توجد حرب نشطة حالياً',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'انتقل إلى تبويب "إعلان حرب" للبدء',
-                    style: TextStyle(color: Colors.white38, fontSize: 12),
-                  ),
-                ],
+          final currentWar = snapshot.data;
+          if (currentWar == null) {
+            return Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.shield_outlined,
+                        size: 80, color: Colors.white.withValues(alpha: 0.2)),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'لا توجد حرب نشطة حالياً',
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'انتقل إلى تبويب "إعلان حرب" للبدء',
+                      style: TextStyle(color: Colors.white38, fontSize: 12),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }
+            );
+          }
 
-        return _buildActiveWarCard(currentWar);
-      },
+          return _buildActiveWarCard(currentWar);
+        },
+      ),
     );
   }
 
@@ -134,148 +143,195 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
     final enemyName = isChallenger ? war.targetName : war.challengerName;
     final enemyLogo = isChallenger ? war.targetLogo : war.challengerLogo;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          // نوع الحرب
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: _getWarTypeColor(war.warType ?? 'normal')
-                  .withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: _getWarTypeColor(war.warType ?? 'normal')
-                    .withValues(alpha: 0.5),
-              ),
-            ),
-            child: Text(
-              _getWarTypeText(war.warType ?? 'normal'),
-              style: TextStyle(
-                color: _getWarTypeColor(war.warType ?? 'normal'),
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWideScreen = constraints.maxWidth > 600;
 
-          // بطاقة الحرب
-          AppTheme.glassContainer(
-            padding: const EdgeInsets.all(20),
-            borderGlow: true,
-            child: Column(
-              children: [
-                // العنوان
-                const Text(
-                  '⚔️ الحرب جارية ⚔️',
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // نوع الحرب
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _getWarTypeColor(war.warType ?? 'normal')
+                      .withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: _getWarTypeColor(war.warType ?? 'normal')
+                        .withValues(alpha: 0.5),
+                  ),
+                ),
+                child: Text(
+                  _getWarTypeText(war.warType ?? 'normal'),
                   style: TextStyle(
-                    color: Colors.amber,
-                    fontSize: 24,
+                    color: _getWarTypeColor(war.warType ?? 'normal'),
                     fontWeight: FontWeight.bold,
+                    fontSize: 12,
                   ),
                 ),
-                const SizedBox(height: 20),
+              ),
+              const SizedBox(height: 20),
 
-                // شريط التقدم
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: LinearProgressIndicator(
-                    value: war.progress,
-                    backgroundColor: Colors.white10,
-                    color: Colors.amber,
-                    minHeight: 12,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '${(war.progress * 100).toInt()}% مكتمل',
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
-                ),
-                const SizedBox(height: 20),
-
-                // الوقت المتبقي
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              // بطاقة الحرب
+              AppTheme.glassContainer(
+                padding: const EdgeInsets.all(20),
+                borderGlow: true,
+                child: Column(
                   children: [
-                    const Icon(Icons.access_time,
-                        color: Colors.amber, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      _formatDuration(war.remainingTime),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // نقاط الطرفين
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildTeamScore(
-                      widget.familyName,
-                      myPoints,
-                      Colors.amber,
-                      isChallenger,
-                      null,
-                    ),
+                    // العنوان
                     const Text(
-                      'VS',
+                      '⚔️ الحرب جارية ⚔️',
                       style: TextStyle(
-                        color: Colors.white38,
+                        color: Colors.amber,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    _buildTeamScore(
-                      enemyName,
-                      enemyPoints,
-                      Colors.redAccent,
-                      !isChallenger,
-                      enemyLogo,
+                    const SizedBox(height: 20),
+
+                    // شريط التقدم
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: LinearProgressIndicator(
+                        value: war.progress,
+                        backgroundColor: Colors.white10,
+                        color: Colors.amber,
+                        minHeight: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${(war.progress * 100).toInt()}% مكتمل',
+                      style:
+                          const TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // الوقت المتبقي
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.access_time,
+                            color: Colors.amber, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          _formatDuration(war.remainingTime),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // نقاط الطرفين
+                    isWideScreen
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Expanded(
+                                child: _buildTeamScore(
+                                  widget.familyName,
+                                  myPoints,
+                                  Colors.amber,
+                                  isChallenger,
+                                  null,
+                                ),
+                              ),
+                              const Text(
+                                'VS',
+                                style: TextStyle(
+                                  color: Colors.white38,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Expanded(
+                                child: _buildTeamScore(
+                                  enemyName,
+                                  enemyPoints,
+                                  Colors.redAccent,
+                                  !isChallenger,
+                                  enemyLogo,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              _buildTeamScore(
+                                widget.familyName,
+                                myPoints,
+                                Colors.amber,
+                                isChallenger,
+                                null,
+                              ),
+                              const SizedBox(height: 16),
+                              const Text(
+                                'VS',
+                                style: TextStyle(
+                                  color: Colors.white38,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              _buildTeamScore(
+                                enemyName,
+                                enemyPoints,
+                                Colors.redAccent,
+                                !isChallenger,
+                                enemyLogo,
+                              ),
+                            ],
+                          ),
+                    const SizedBox(height: 24),
+
+                    // زر إضافة نقاط
+                    SizedBox(
+                      width: double.infinity,
+                      child: AppTheme.gradientButton(
+                        text: 'إضافة نقاط للحرب',
+                        onPressed: () => _showAddPointsDialog(war),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // زر إنهاء الحرب (للمدير فقط)
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () => _showEndWarDialog(war),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.redAccent,
+                          side: const BorderSide(color: Colors.redAccent),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: const Text(
+                          'إنهاء الحرب يدوياً',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+              ),
+              const SizedBox(height: 20),
 
-                // زر إضافة نقاط
-                AppTheme.gradientButton(
-                  text: 'إضافة نقاط للحرب',
-                  onPressed: () => _showAddPointsDialog(war),
-                ),
-                const SizedBox(height: 12),
-
-                // زر إنهاء الحرب (للمدير فقط)
-                OutlinedButton(
-                  onPressed: () => _showEndWarDialog(war),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.redAccent,
-                    side: const BorderSide(color: Colors.redAccent),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: const Text(
-                    'إنهاء الحرب يدوياً',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
+              // إحصائيات الحرب
+              _buildWarStatisticsCard(war),
+            ],
           ),
-          const SizedBox(height: 20),
-
-          // إحصائيات الحرب
-          _buildWarStatisticsCard(war),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -521,44 +577,53 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
   }
 
   Widget _buildDeclareWarTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          AppTheme.glassContainer(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '⚔️ إعلان حرب جديدة',
-                  style: TextStyle(
-                    color: Colors.amber,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWideScreen = constraints.maxWidth > 600;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              AppTheme.glassContainer(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '⚔️ إعلان حرب جديدة',
+                      style: TextStyle(
+                        color: Colors.amber,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'اختر عائلة للتحدي وحدد نوع الحرب',
+                      style: TextStyle(color: Colors.white70, fontSize: 13),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: AppTheme.gradientButton(
+                        text: 'اختر عائلة للتحدي',
+                        onPressed: () => _showFamilySelectionDialog(),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                const Text(
-                  'اختر عائلة للتحدي وحدد نوع الحرب',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
-                ),
-                const SizedBox(height: 20),
-                AppTheme.gradientButton(
-                  text: 'اختر عائلة للتحدي',
-                  onPressed: () => _showFamilySelectionDialog(),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+              _buildWarTypesInfo(isWideScreen),
+            ],
           ),
-          const SizedBox(height: 20),
-          _buildWarTypesInfo(),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildWarTypesInfo() {
+  Widget _buildWarTypesInfo(bool isWideScreen) {
     return AppTheme.glassContainer(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -573,14 +638,39 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
             ),
           ),
           const SizedBox(height: 16),
-          _buildWarTypeInfo(
-              'عادية', 'حرب عادية مع مكافآت أساسية', Colors.amber),
-          const SizedBox(height: 12),
-          _buildWarTypeInfo(
-              'بطولة', 'حرب بطولة مع مكافآت كبيرة وشارة حصرية', Colors.orange),
-          const SizedBox(height: 12),
-          _buildWarTypeInfo(
-              'تحالف', 'حرب تحالفية مع أعلى المكافآت', Colors.red),
+          isWideScreen
+              ? Row(
+                  children: [
+                    Expanded(
+                      child: _buildWarTypeInfo(
+                          'عادية', 'حرب عادية مع مكافآت أساسية', Colors.amber),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildWarTypeInfo(
+                          'بطولة',
+                          'حرب بطولة مع مكافآت كبيرة وشارة حصرية',
+                          Colors.orange),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildWarTypeInfo(
+                          'تحالف', 'حرب تحالفية مع أعلى المكافآت', Colors.red),
+                    ),
+                  ],
+                )
+              : Column(
+                  children: [
+                    _buildWarTypeInfo(
+                        'عادية', 'حرب عادية مع مكافآت أساسية', Colors.amber),
+                    const SizedBox(height: 12),
+                    _buildWarTypeInfo('بطولة',
+                        'حرب بطولة مع مكافآت كبيرة وشارة حصرية', Colors.orange),
+                    const SizedBox(height: 12),
+                    _buildWarTypeInfo(
+                        'تحالف', 'حرب تحالفية مع أعلى المكافآت', Colors.red),
+                  ],
+                ),
         ],
       ),
     );
@@ -631,52 +721,73 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
   }
 
   Widget _buildChallengesTab() {
-    return FutureBuilder<FamilyWarModel?>(
-      future: _familyService.getCurrentWar(widget.familyId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: Colors.amber),
-          );
-        }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWideScreen = constraints.maxWidth > 600;
 
-        final currentWar = snapshot.data;
-        if (currentWar == null) {
-          return Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.emoji_events_outlined,
-                      size: 80, color: Colors.white.withValues(alpha: 0.2)),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'لا توجد حرب نشطة للتحديات',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
+        return FutureBuilder<FamilyWarModel?>(
+          future: _familyService.getCurrentWar(widget.familyId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.amber),
+              );
+            }
+
+            final currentWar = snapshot.data;
+            if (currentWar == null) {
+              return Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.emoji_events_outlined,
+                          size: 80, color: Colors.white.withValues(alpha: 0.2)),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'لا توجد حرب نشطة للتحديات',
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'ابدأ حرباً لتفعيل التحديات',
+                        style: TextStyle(color: Colors.white38, fontSize: 12),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'ابدأ حرباً لتفعيل التحديات',
-                    style: TextStyle(color: Colors.white38, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
+                ),
+              );
+            }
 
-        final challenges = WarChallengeModel.getDefaultChallenges(
-          currentWar.id,
-          widget.familyId,
-          widget.familyName,
-        );
+            final challenges = WarChallengeModel.getDefaultChallenges(
+              currentWar.id,
+              widget.familyId,
+              widget.familyName,
+            );
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: challenges.length,
-          itemBuilder: (context, index) {
-            return _buildChallengeCard(challenges[index], currentWar);
+            return isWideScreen
+                ? GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 2.5,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    itemCount: challenges.length,
+                    itemBuilder: (context, index) {
+                      return _buildChallengeCard(challenges[index], currentWar);
+                    },
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: challenges.length,
+                    itemBuilder: (context, index) {
+                      return _buildChallengeCard(challenges[index], currentWar);
+                    },
+                  );
           },
         );
       },
@@ -794,37 +905,58 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
   }
 
   Widget _buildWarHistoryTab() {
-    return StreamBuilder<List<FamilyWarModel>>(
-      stream: _familyService.getFamilyWars(widget.familyId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-              child: CircularProgressIndicator(color: Colors.amber));
-        }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWideScreen = constraints.maxWidth > 600;
 
-        final wars = snapshot.data ?? [];
-        if (wars.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.history,
-                    size: 80, color: Colors.white.withValues(alpha: 0.2)),
-                const SizedBox(height: 16),
-                const Text(
-                  'لا يوجد سجل حروب',
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
+        return StreamBuilder<List<FamilyWarModel>>(
+          stream: _familyService.getFamilyWars(widget.familyId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.amber));
+            }
+
+            final wars = snapshot.data ?? [];
+            if (wars.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.history,
+                        size: 80, color: Colors.white.withValues(alpha: 0.2)),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'لا يوجد سجل حروب',
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }
+              );
+            }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: wars.length,
-          itemBuilder: (context, index) {
-            return _buildWarHistoryCard(wars[index]);
+            return isWideScreen
+                ? GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 2.0,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    itemCount: wars.length,
+                    itemBuilder: (context, index) {
+                      return _buildWarHistoryCard(wars[index]);
+                    },
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: wars.length,
+                    itemBuilder: (context, index) {
+                      return _buildWarHistoryCard(wars[index]);
+                    },
+                  );
           },
         );
       },
@@ -954,71 +1086,75 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
             'إضافة نقاط للحرب',
             style: TextStyle(color: Colors.amber),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // عرض رصيد المستخدم
-              FutureBuilder<DocumentSnapshot>(
-                future: _db
-                    .collection('users')
-                    .doc(FirebaseAuth.instance.currentUser?.uid)
-                    .get(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const SizedBox();
-                  }
-                  final userData =
-                      snapshot.data!.data() as Map<String, dynamic>?;
-                  final coins = (userData?['coins'] ?? 0).toInt();
-                  final gems = (userData?['gems'] ?? 0).toInt();
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // عرض رصيد المستخدم
+                FutureBuilder<DocumentSnapshot>(
+                  future: _db
+                      .collection('users')
+                      .doc(FirebaseAuth.instance.currentUser?.uid)
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const SizedBox();
+                    }
+                    final userData =
+                        snapshot.data!.data() as Map<String, dynamic>?;
+                    final coins = (userData?['coins'] ?? 0).toInt();
+                    final gems = (userData?['gems'] ?? 0).toInt();
 
-                  return Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            const Text('كوينز 💰',
-                                style: TextStyle(
-                                    color: Colors.amber, fontSize: 12)),
-                            Text('$coins',
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            const Text('جواهر 💎',
-                                style: TextStyle(
-                                    color: Colors.cyan, fontSize: 12)),
-                            Text('$gems',
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              // اختيار العملة
-              const Text(
-                'اختر العملة:',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<String>(
+                    return Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Flexible(
+                            child: Column(
+                              children: [
+                                const Text('كوينز 💰',
+                                    style: TextStyle(
+                                        color: Colors.amber, fontSize: 12)),
+                                Text('$coins',
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                          Flexible(
+                            child: Column(
+                              children: [
+                                const Text('جواهر 💎',
+                                    style: TextStyle(
+                                        color: Colors.cyan, fontSize: 12)),
+                                Text('$gems',
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                // اختيار العملة
+                const Text(
+                  'اختر العملة:',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                Column(
+                  children: [
+                    RadioListTile<String>(
                       title: const Text('كوينز 💰',
                           style: TextStyle(color: Colors.white)),
                       subtitle: const Text('ضعيفة (5 كوينز = 1 نقطة)',
@@ -1030,10 +1166,9 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
                           setDialogState(() => selectedCurrency = value!),
                       activeColor: Colors.amber,
                       contentPadding: EdgeInsets.zero,
+                      dense: true,
                     ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<String>(
+                    RadioListTile<String>(
                       title: const Text('جواهر 💎',
                           style: TextStyle(color: Colors.white)),
                       subtitle: const Text('قوية (1 جوهرة = 1 نقطة)',
@@ -1045,55 +1180,58 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
                           setDialogState(() => selectedCurrency = value!),
                       activeColor: Colors.cyan,
                       contentPadding: EdgeInsets.zero,
+                      dense: true,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: pointsController,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: selectedCurrency == 'coins'
+                        ? 'عدد الكوينز'
+                        : 'عدد الجواهر',
+                    labelStyle: const TextStyle(color: Colors.amber),
+                    filled: true,
+                    fillColor: Colors.white.withValues(alpha: 0.05),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.amber),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: pointsController,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: selectedCurrency == 'coins'
-                      ? 'عدد الكوينز'
-                      : 'عدد الجواهر',
-                  labelStyle: const TextStyle(color: Colors.amber),
-                  filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
-                  border: OutlineInputBorder(
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: selectedCurrency == 'gems'
+                        ? Colors.cyan.withValues(alpha: 0.1)
+                        : Colors.amber.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.amber),
+                    border: Border.all(
+                      color: selectedCurrency == 'gems'
+                          ? Colors.cyan
+                          : Colors.amber,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    selectedCurrency == 'gems'
+                        ? 'قوة النقاط: 1 جوهرة = 1 نقطة حرب'
+                        : 'قوة النقاط: 5 كوينز = 1 نقطة حرب',
+                    style: TextStyle(
+                      color: selectedCurrency == 'gems'
+                          ? Colors.cyan
+                          : Colors.amber,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: selectedCurrency == 'gems'
-                      ? Colors.cyan.withValues(alpha: 0.1)
-                      : Colors.amber.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color:
-                        selectedCurrency == 'gems' ? Colors.cyan : Colors.amber,
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  selectedCurrency == 'gems'
-                      ? 'قوة النقاط: 1 جوهرة = 1 نقطة حرب'
-                      : 'قوة النقاط: 5 كوينز = 1 نقطة حرب',
-                  style: TextStyle(
-                    color:
-                        selectedCurrency == 'gems' ? Colors.cyan : Colors.amber,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -1406,5 +1544,630 @@ class _FamilyWarsManagementPageState extends State<FamilyWarsManagementPage>
       default:
         return 'حرب عادية ⚔️';
     }
+  }
+
+  // --- تبويب التحكيم ---
+  Widget _buildArbitrationTab() {
+    return SafeArea(
+      child: FutureBuilder<FamilyWarModel?>(
+        future: _familyService.getCurrentWar(widget.familyId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.amber));
+          }
+
+          final currentWar = snapshot.data;
+          if (currentWar == null) {
+            return const Center(
+              child: Text('لا توجد حرب نشطة حالياً',
+                  style: TextStyle(color: Colors.white38)),
+            );
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: AppTheme.gradientButton(
+                  text: 'طلب تحكيم في النزاع ⚖️',
+                  onPressed: () => _showArbitrationDialog(currentWar.id),
+                ),
+              ),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _familyService.getArbitrationRequests(currentWar.id),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final requests = snapshot.data!.docs;
+                    if (requests.isEmpty) {
+                      return const Center(
+                        child: Text('لا توجد طلبات تحكيم',
+                            style: TextStyle(color: Colors.white38)),
+                      );
+                    }
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: requests.length,
+                      itemBuilder: (context, index) {
+                        final req =
+                            requests[index].data() as Map<String, dynamic>;
+                        final reqId = requests[index].id;
+                        return _buildArbitrationRequestCard(
+                            req, reqId, currentWar.id);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildArbitrationRequestCard(
+      Map<String, dynamic> req, String reqId, String warId) {
+    final status = req['status'] ?? 'pending';
+    return AppTheme.glassContainer(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                req['reason'] ?? 'بدون سبب',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: status == 'pending'
+                      ? Colors.orange.withValues(alpha: 0.3)
+                      : Colors.green.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  status == 'pending' ? 'قيد الانتظار' : 'تم الحل',
+                  style: TextStyle(
+                    color: status == 'pending' ? Colors.orange : Colors.green,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            req['description'] ?? '',
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+          if (status == 'pending') ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: AppTheme.gradientButton(
+                    text: 'قبول وحل',
+                    onPressed: () =>
+                        _showArbitrationDecisionDialog(warId, reqId),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showArbitrationDialog(String warId) {
+    final reasonController = TextEditingController();
+    final descriptionController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A050E),
+        title:
+            const Text('طلب تحكيم ⚖️', style: TextStyle(color: Colors.amber)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: reasonController,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'سبب النزاع',
+                labelStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: descriptionController,
+              maxLines: 3,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'التفاصيل',
+                labelStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء', style: TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await _familyService.requestWarArbitration(
+                  warId: warId,
+                  familyId: widget.familyId,
+                  reason: reasonController.text,
+                  description: descriptionController.text,
+                );
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('تم إرسال طلب التحكيم'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('فشل: $e')),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+            child: const Text('إرسال'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showArbitrationDecisionDialog(String warId, String requestId) {
+    final decisionController = TextEditingController();
+    final notesController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A050E),
+        title:
+            const Text('حكم التحكيم ⚖️', style: TextStyle(color: Colors.amber)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: decisionController,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'الحكم',
+                labelStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: notesController,
+              maxLines: 3,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'ملاحظات',
+                labelStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء', style: TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await _familyService.acceptArbitrationRequest(
+                  warId: warId,
+                  requestId: requestId,
+                  decision: decisionController.text,
+                  notes: notesController.text,
+                );
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('تم حل النزاع'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('فشل: $e')),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+            child: const Text('تطبيق الحكم'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- تبويب المصالحة ---
+  Widget _buildReconciliationTab() {
+    return SafeArea(
+      child: FutureBuilder<FamilyWarModel?>(
+        future: _familyService.getCurrentWar(widget.familyId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.amber));
+          }
+
+          final currentWar = snapshot.data;
+          if (currentWar == null) {
+            return const Center(
+              child: Text('لا توجد حرب نشطة حالياً',
+                  style: TextStyle(color: Colors.white38)),
+            );
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: AppTheme.gradientButton(
+                  text: 'طلب مصالحة تلقائية 🤝',
+                  onPressed: () => _showReconciliationDialog(currentWar.id),
+                ),
+              ),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream:
+                      _familyService.getReconciliationRequests(currentWar.id),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final requests = snapshot.data!.docs;
+                    if (requests.isEmpty) {
+                      return const Center(
+                        child: Text('لا توجد طلبات مصالحة',
+                            style: TextStyle(color: Colors.white38)),
+                      );
+                    }
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: requests.length,
+                      itemBuilder: (context, index) {
+                        final req =
+                            requests[index].data() as Map<String, dynamic>;
+                        final reqId = requests[index].id;
+                        return _buildReconciliationRequestCard(
+                            req, reqId, currentWar.id);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildReconciliationRequestCard(
+      Map<String, dynamic> req, String reqId, String warId) {
+    final status = req['status'] ?? 'pending';
+    return AppTheme.glassContainer(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'طلب مصالحة',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: status == 'pending'
+                      ? Colors.orange.withValues(alpha: 0.3)
+                      : Colors.green.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  status == 'pending' ? 'قيد الانتظار' : 'تم القبول',
+                  style: TextStyle(
+                    color: status == 'pending' ? Colors.orange : Colors.green,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            req['reason'] ?? '',
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+          if (status == 'pending') ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: AppTheme.gradientButton(
+                    text: 'قبول المصالحة',
+                    onPressed: () =>
+                        _showReconciliationTermsDialog(warId, reqId),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showReconciliationDialog(String warId) {
+    final reasonController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A050E),
+        title:
+            const Text('طلب مصالحة 🤝', style: TextStyle(color: Colors.amber)),
+        content: TextField(
+          controller: reasonController,
+          maxLines: 3,
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
+            labelText: 'سبب المصالحة',
+            labelStyle: TextStyle(color: Colors.white70),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء', style: TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await _familyService.requestAutoReconciliation(
+                  warId: warId,
+                  familyId: widget.familyId,
+                  reason: reasonController.text,
+                );
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('تم إرسال طلب المصالحة'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('فشل: $e')),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+            child: const Text('إرسال'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showReconciliationTermsDialog(String warId, String requestId) {
+    final termsController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A050E),
+        title: const Text('شروط المصالحة 🤝',
+            style: TextStyle(color: Colors.amber)),
+        content: TextField(
+          controller: termsController,
+          maxLines: 3,
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
+            labelText: 'شروط المصالحة',
+            labelStyle: TextStyle(color: Colors.white70),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء', style: TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await _familyService.acceptReconciliation(
+                  warId: warId,
+                  requestId: requestId,
+                  terms: termsController.text,
+                );
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('تم قبول المصالحة وإنهاء الحرب'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('فشل: $e')),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+            child: const Text('قبول وإنهاء الحرب'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- تبويب تفاصيل المعارك ---
+  Widget _buildBattleDetailsTab() {
+    return SafeArea(
+      child: FutureBuilder<FamilyWarModel?>(
+        future: _familyService.getCurrentWar(widget.familyId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.amber));
+          }
+
+          final currentWar = snapshot.data;
+          if (currentWar == null) {
+            return const Center(
+              child: Text('لا توجد حرب نشطة حالياً',
+                  style: TextStyle(color: Colors.white38)),
+            );
+          }
+
+          return StreamBuilder<QuerySnapshot>(
+            stream: _familyService.getBattleDetails(currentWar.id),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final battles = snapshot.data!.docs;
+              if (battles.isEmpty) {
+                return const Center(
+                  child: Text('لا توجد تفاصيل معارك مسجلة',
+                      style: TextStyle(color: Colors.white38)),
+                );
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: battles.length,
+                itemBuilder: (context, index) {
+                  final battle = battles[index].data() as Map<String, dynamic>;
+                  return _buildBattleDetailCard(battle);
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBattleDetailCard(Map<String, dynamic> battle) {
+    final battleData = battle['battleData'] as Map<String, dynamic>?;
+    final loggedAt = battle['loggedAt'] as Timestamp?;
+
+    return AppTheme.glassContainer(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'تفاصيل المعركة',
+                style: TextStyle(
+                  color: Colors.amber,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              if (loggedAt != null)
+                Text(
+                  _formatTimestamp(loggedAt),
+                  style: const TextStyle(color: Colors.white38, fontSize: 12),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (battleData != null) ...[
+            _buildBattleDetailRow(
+                'الفائز', battleData['winner']?.toString() ?? '-'),
+            _buildBattleDetailRow(
+                'النقاط', battleData['points']?.toString() ?? '-'),
+            _buildBattleDetailRow(
+                'المشاركون', battleData['participants']?.toString() ?? '-'),
+            _buildBattleDetailRow(
+                'المدة', battleData['duration']?.toString() ?? '-'),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBattleDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Text(
+            '$label: ',
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
   }
 }

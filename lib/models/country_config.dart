@@ -73,7 +73,7 @@ class CountryConfig {
     }
 
     // الآن نركب الرقم النهائي: كود الدولة + الرقم الصافي
-    return dialCodeNoPlus + cleaned;
+    return "+$dialCodeNoPlus$cleaned";
   }
 
   /// التحقق من صحة رقم الهاتف

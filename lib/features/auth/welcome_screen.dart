@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import '../../app_theme.dart';
 import '../../services/user_bootstrap_service.dart';
+import '../../services/telegram_web_app_service.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -22,6 +24,28 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     await Future.delayed(const Duration(seconds: 5));
     
     if (!mounted) return;
+
+    // Check for Telegram Web App login if on web
+    if (kIsWeb) {
+      try {
+        debugPrint('🔍 WelcomeScreen: Checking Telegram Web App...');
+        await TelegramWebAppService.init();
+        
+        if (TelegramWebAppService.isTelegramWebApp()) {
+          debugPrint('🚀 WelcomeScreen: Running in Telegram, attempting login...');
+          final loginResult = await TelegramWebAppService.loginWithTelegram();
+          
+          if (loginResult == null) {
+            debugPrint('✅ WelcomeScreen: Telegram login successful');
+          } else {
+            debugPrint('⚠️ WelcomeScreen: Telegram login failed: $loginResult');
+            // If telegram login fails, we'll fall back to standard auth check
+          }
+        }
+      } catch (e) {
+        debugPrint('❌ WelcomeScreen: Telegram initialization error: $e');
+      }
+    }
 
     final user = FirebaseAuth.instance.currentUser;
     

@@ -161,84 +161,190 @@ class SectionHeader extends StatelessWidget {
 class BattleStatsWidget extends StatelessWidget {
   final int battleWins;
   final int battleLosses;
+  final int voiceRoomWins;
+  final int voiceRoomLosses;
 
   const BattleStatsWidget({
     super.key,
     required this.battleWins,
     required this.battleLosses,
+    this.voiceRoomWins = 0,
+    this.voiceRoomLosses = 0,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
-              ),
-              child: Column(
-                children: [
-                  const Icon(Icons.emoji_events, color: Colors.green, size: 32),
-                  const SizedBox(height: 8),
-                  Text(
-                    battleWins.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'عدد مرات الفوز',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
+          // معارك العوائل
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Text(
+              'معارك العوائل',
+              style: TextStyle(
+                color: Colors.amber,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(15),
+                    border:
+                        Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.emoji_events,
+                          color: Colors.green, size: 32),
+                      const SizedBox(height: 8),
+                      Text(
+                        battleWins.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'عدد مرات الفوز',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              child: Column(
-                children: [
-                  const Icon(Icons.close, color: Colors.red, size: 32),
-                  const SizedBox(height: 8),
-                  Text(
-                    battleLosses.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(15),
+                    border:
+                        Border.all(color: Colors.red.withValues(alpha: 0.3)),
                   ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'عدد مرات الخسارة في الحروب والمعارك',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 11,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Column(
+                    children: [
+                      const Icon(Icons.close, color: Colors.red, size: 32),
+                      const SizedBox(height: 8),
+                      Text(
+                        battleLosses.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'عدد مرات الخسارة',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // معارك الغرف الصوتية
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Text(
+              'معارك الغرف الصوتية',
+              style: TextStyle(
+                color: Colors.cyan,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
             ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(15),
+                    border:
+                        Border.all(color: Colors.cyan.withValues(alpha: 0.3)),
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.mic, color: Colors.cyan, size: 32),
+                      const SizedBox(height: 8),
+                      Text(
+                        voiceRoomWins.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'عدد مرات الفوز',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(15),
+                    border:
+                        Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.mic_off, color: Colors.orange, size: 32),
+                      const SizedBox(height: 8),
+                      Text(
+                        voiceRoomLosses.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'عدد مرات الخسارة',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

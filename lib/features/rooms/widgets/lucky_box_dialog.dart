@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../app_theme.dart';
+import '../../../../theme/design_tokens.dart';
 
 class LuckyBoxDialog extends StatefulWidget {
   final String roomId;
@@ -29,46 +30,57 @@ class _LuckyBoxDialogState extends State<LuckyBoxDialog>
   late AnimationController _shakeController;
   late AnimationController _openingController;
   late AnimationController _glowController;
+  late AnimationController _floatController;
   late PageController _pageController;
 
   int _currentPage = 1;
   bool _isOpening = false;
+  bool _isRevealed = false;
   Map<String, dynamic>? _wonGift;
 
   final List<Map<String, dynamic>> _boxes = [
     {
-      'type': 'برونزي',
+      'type': 'صندوق برونزي',
       'cost': 100,
       'currency': 'stars',
-      'color': Colors.brown,
-      'image': 'assets/images/box_bronze.png'
+      'color': const Color(0xFFCD7F32),
+      'image': 'assets/images/box_bronze.png',
+      'icon': Icons.inventory_2_outlined,
+      'gradient': [const Color(0xFF8B4513), const Color(0xFFCD7F32)],
     },
     {
-      'type': 'فضي',
+      'type': 'صندوق فضي',
       'cost': 500,
       'currency': 'stars',
-      'color': Colors.blueGrey,
-      'image': 'assets/images/box_silver.png'
+      'color': const Color(0xFFC0C0C0),
+      'image': 'assets/images/box_silver.png',
+      'icon': Icons.inventory_2_rounded,
+      'gradient': [const Color(0xFF708090), const Color(0xFFC0C0C0)],
     },
     {
-      'type': 'ذهبي',
+      'type': 'صندوق ذهبي',
       'cost': 1000,
       'currency': 'stars',
-      'color': Colors.amber,
-      'image': 'assets/images/box_gold.png'
+      'color': const Color(0xFFFFD700),
+      'image': 'assets/images/box_gold.png',
+      'icon': Icons.auto_awesome,
+      'gradient': [const Color(0xFFDAA520), const Color(0xFFFFD700)],
     },
   ];
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: 1, viewportFraction: 0.7);
+    _pageController = PageController(initialPage: 1, viewportFraction: 0.75);
     _shakeController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 100));
     _openingController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1500));
+        vsync: this, duration: const Duration(milliseconds: 2000));
     _glowController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..repeat(reverse: true);
+    _floatController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 3))
           ..repeat(reverse: true);
   }
 
@@ -78,10 +90,10 @@ class _LuckyBoxDialogState extends State<LuckyBoxDialog>
     _shakeController.dispose();
     _openingController.dispose();
     _glowController.dispose();
+    _floatController.dispose();
     super.dispose();
   }
 
-  // خوارزمية اختيار هدية عشوائية باحترافية
   Future<Map<String, dynamic>?> _pickRandomGift(int boxCost) async {
     try {
       final giftsSnap = await FirebaseFirestore.instance
@@ -91,11 +103,9 @@ class _LuckyBoxDialogState extends State<LuckyBoxDialog>
 
       if (giftsSnap.docs.isEmpty) return null;
 
-      // تصفية الهدايا وتحويلها لقائمة
       List<Map<String, dynamic>> possibleGifts =
           giftsSnap.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();
 
-      // خلط الهدايا واختيار واحدة عشوائياً
       possibleGifts.shuffle();
       return possibleGifts.first;
     } catch (e) {
@@ -108,42 +118,50 @@ class _LuckyBoxDialogState extends State<LuckyBoxDialog>
     final String currency = box['currency'];
 
     if (currency == 'gems' && widget.userGems < cost) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('رصيد الجواهر غير كافٍ لفتح هذا الصندوق 💎'),
-          backgroundColor: Colors.redAccent));
+      _showError('رصيد الجواهر غير كافٍ 💎');
       return;
     } else if (currency == 'stars' && widget.userStars < cost) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('رصيد النجوم غير كافٍ لفتح هذا الصندوق ⭐'),
-          backgroundColor: Colors.redAccent));
+      _showError('رصيد الكوينز غير كافٍ ⭐');
       return;
     }
 
+    HapticFeedback.heavyImpact();
     _wonGift = await _pickRandomGift(box['cost']);
     if (_wonGift == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('عذراً، الصناديق فارغة حالياً!')));
+      _showError('حدث خطأ في السحب، حاول لاحقاً');
       return;
     }
 
     _startOpening(box);
   }
 
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(msg, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, fontFamily: DesignTokens.primaryFont)),
+        backgroundColor: Colors.redAccent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))));
+  }
+
   void _startOpening(Map<String, dynamic> box) async {
     setState(() => _isOpening = true);
 
     _shakeController.repeat(reverse: true);
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     _shakeController.stop();
 
     _openingController.forward();
+    
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (mounted) {
+      setState(() => _isRevealed = true);
+      HapticFeedback.vibrate();
+    }
 
-    // تنفيذ عملية الشراء والخصم في الواجهة الخلفية
     widget.onPurchase(box['type'], box['currency'], box['cost'], _wonGift!);
 
-    Future.delayed(const Duration(seconds: 4), () {
-      if (mounted) Navigator.pop(context);
-    });
+    await Future.delayed(const Duration(seconds: 4));
+    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -152,7 +170,8 @@ class _LuckyBoxDialogState extends State<LuckyBoxDialog>
       filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
       child: Center(
         child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 600),
+          switchInCurve: Curves.easeInOutBack,
           child: _isOpening ? _buildOpeningSequence() : _buildSelectionScreen(),
         ),
       ),
@@ -163,23 +182,20 @@ class _LuckyBoxDialogState extends State<LuckyBoxDialog>
     return Material(
       color: Colors.transparent,
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.85,
-        padding: const EdgeInsets.symmetric(vertical: 25),
+        width: MediaQuery.of(context).size.width * 0.92,
+        padding: const EdgeInsets.symmetric(vertical: 30),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              const Color(0xFF0F1B25),
-              const Color(0xFF0A121A).withValues(alpha: 0.9)
-            ],
+            colors: [Color(0xFF0F1B25), Color(0xFF051211)],
           ),
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(35),
           border: Border.all(
-              color: AppTheme.royalGold.withValues(alpha: 0.3), width: 1.5),
+              color: DesignTokens.primaryGold.withValues(alpha: 0.4), width: 1.5),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: Colors.black.withValues(alpha: 0.7),
                 blurRadius: 30,
                 spreadRadius: 5)
           ],
@@ -187,76 +203,56 @@ class _LuckyBoxDialogState extends State<LuckyBoxDialog>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('صندوق المفاجآت الملكي 👑',
-                style: TextStyle(
-                    color: AppTheme.royalGold,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Stack(
+              alignment: Alignment.center,
               children: [
-                const Text('رصيدك: ',
-                    style: TextStyle(color: Colors.white54, fontSize: 13)),
-                Text('${widget.userStars}',
-                    style: const TextStyle(
-                        color: Colors.amber,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14)),
-                const Icon(Icons.stars_rounded, color: Colors.amber, size: 14),
-                const SizedBox(width: 10),
-                Text('${widget.userGems}',
-                    style: const TextStyle(
-                        color: Colors.cyanAccent,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14)),
-                const Icon(Icons.diamond, color: Colors.cyanAccent, size: 14),
+                const Opacity(
+                  opacity: 0.05,
+                  child: Icon(Icons.stars,
+                      color: DesignTokens.primaryGold, size: 100),
+                ),
+                Column(
+                  children: [
+                    const Text('صندوق الحظ الملكي',
+                        style: TextStyle(
+                            color: DesignTokens.primaryGold,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: DesignTokens.primaryFont,
+                            letterSpacing: 0.5)),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: 60,
+                      height: 2,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [Colors.transparent, DesignTokens.primaryGold, Colors.transparent]),
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 20),
+            _buildBalanceHeader(),
+            const SizedBox(height: 30),
             SizedBox(
-              height: 220,
+              height: 300,
               child: PageView.builder(
                 controller: _pageController,
                 itemCount: _boxes.length,
                 onPageChanged: (idx) => setState(() => _currentPage = idx),
                 itemBuilder: (context, index) {
-                  bool isSelected = _currentPage == index;
-                  return _buildBoxItem(_boxes[index], isSelected);
+                  return _buildBoxItem(_boxes[index], _currentPage == index);
                 },
               ),
             ),
-            const SizedBox(height: 25),
-            ElevatedButton(
-              onPressed: () => _confirmPurchase(_boxes[_currentPage]),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _boxes[_currentPage]['color'],
-                foregroundColor: Colors.black,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-                elevation: 10,
-                shadowColor:
-                    _boxes[_currentPage]['color'].withValues(alpha: 0.5),
-              ),
-              child: const Text('افتح الصندوق الآن',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            ),
+            const SizedBox(height: 30),
+            _buildActionButtons(),
             const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'نسب الفوز: هدايا عادية (%80)، هدايا نادرة (%15)، هدايا ملكية (%5).',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white24, fontSize: 10),
-              ),
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: const Text('ربما لاحقاً',
-                  style: TextStyle(color: Colors.white24, fontSize: 14)),
+            const Text(
+              'افتح الصندوق واكتشف الهدايا الملكية النادرة 🎁✨',
+              style: TextStyle(color: Colors.white24, fontSize: 10, fontFamily: DesignTokens.primaryFont),
             ),
           ],
         ),
@@ -264,143 +260,322 @@ class _LuckyBoxDialogState extends State<LuckyBoxDialog>
     );
   }
 
-  Widget _buildBoxItem(Map<String, dynamic> box, bool isSelected) {
-    return AnimatedScale(
-      duration: const Duration(milliseconds: 300),
-      scale: isSelected ? 1.1 : 0.8,
-      child: Column(
+  Widget _buildBalanceHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              if (isSelected)
-                AnimatedBuilder(
-                  animation: _glowController,
-                  builder: (context, _) => Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                            color: box['color'].withValues(
-                                alpha: (0.4 * _glowController.value)
-                                    .clamp(0.0, 1.0)),
-                            blurRadius: 20,
-                            spreadRadius: 10),
-                      ],
-                    ),
-                  ),
-                ),
-              const Icon(Icons.inventory_2_rounded,
-                  size: 120, color: Colors.white10),
-              Image.asset(
-                box['image'],
-                width: 140,
-                height: 140,
-                errorBuilder: (c, e, s) => Icon(Icons.auto_awesome_motion,
-                    color: box['color'], size: 100),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Text(box['type'],
-              style: TextStyle(
-                  color: box['color'],
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${box['cost']}',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold)),
-                  const SizedBox(width: 4),
-                  Icon(
-                      box['currency'] == 'gems'
-                          ? Icons.diamond
-                          : Icons.stars_rounded,
-                      color: box['currency'] == 'gems'
-                          ? Colors.cyanAccent
-                          : Colors.amber,
-                      size: 14),
-                ],
-              ),
+          _balanceItem(widget.userStars, Icons.stars_rounded, DesignTokens.primaryGold),
+          Container(width: 1, height: 15, color: Colors.white10, margin: const EdgeInsets.symmetric(horizontal: 12)),
+          _balanceItem(widget.userGems, Icons.diamond, Colors.cyanAccent),
         ],
       ),
     );
   }
 
-  Widget _buildOpeningSequence() {
+  Widget _balanceItem(int val, IconData icon, Color color) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 16),
+        const SizedBox(width: 6),
+        Text('$val', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+      ],
+    );
+  }
+
+  Widget _buildBoxItem(Map<String, dynamic> box, bool isSelected) {
     return AnimatedBuilder(
-        animation: _openingController,
-        builder: (context, _) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedBuilder(
-                animation: _shakeController,
-                builder: (context, child) {
-                  final double offset =
-                      math.sin(_shakeController.value * math.pi * 15) * 10;
-                  return Transform.translate(
-                    offset: Offset(offset, 0),
-                    child: child,
-                  );
-                },
-                child: Image.asset(_boxes[_currentPage]['image'],
-                    width: 180,
-                    height: 180,
-                    errorBuilder: (c, e, s) => const Icon(Icons.card_giftcard,
-                        color: Colors.amber, size: 100)),
-              ),
-              const SizedBox(height: 40),
-              if (_openingController.value > 0.1)
-                FadeTransition(
-                  opacity: _openingController,
-                  child: Column(
-                    children: [
-                      const Text('جاري سحب جائزتك...',
-                          style: TextStyle(
-                              color: Colors.amber,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.none)),
-                      const SizedBox(height: 20),
-                      if (_wonGift != null) ...[
-                        Container(
-                          padding: const EdgeInsets.all(15),
+      animation: _floatController,
+      builder: (context, child) {
+        double float = isSelected ? math.sin(_floatController.value * math.pi * 2) * 10 : 0;
+        return Transform.translate(
+          offset: Offset(0, float),
+          child: AnimatedScale(
+            duration: const Duration(milliseconds: 600),
+            scale: isSelected ? 1.0 : 0.75,
+            curve: Curves.easeOutBack,
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    if (isSelected)
+                      AnimatedBuilder(
+                        animation: _glowController,
+                        builder: (context, _) => Container(
+                          width: 160,
+                          height: 160,
                           decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.1),
-                              shape: BoxShape.circle),
-                          child: CachedNetworkImage(
-                            imageUrl: _wonGift!['imageUrl'],
-                            width: 100,
-                            height: 100,
-                            placeholder: (c, u) =>
-                                const CircularProgressIndicator(
-                                    color: AppTheme.royalGold),
-                            errorWidget: (c, u, e) => const Icon(
-                                Icons.broken_image,
-                                color: Colors.white24,
-                                size: 50),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: box['color'].withValues(alpha: 0.25 * _glowController.value),
+                                  blurRadius: 40,
+                                  spreadRadius: 15),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 15),
-                        Text('لقد فزت بـ ${_wonGift!['name']}',
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.none)),
-                      ],
+                      ),
+                    Container(
+                      width: 140,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          colors: [box['color'].withValues(alpha: 0.15), Colors.transparent]
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    Image.asset(
+                      box['image'],
+                      width: 130,
+                      height: 130,
+                      errorBuilder: (c, e, s) => Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: box['color'].withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: box['color'].withValues(alpha: 0.3)),
+                        ),
+                        child: Icon(box['icon'], color: box['color'], size: 70),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Text(box['type'],
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: DesignTokens.primaryFont,
+                        shadows: [Shadow(color: box['color'], blurRadius: 10)])),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: box['color'].withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('${box['cost']}',
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)),
+                      const SizedBox(width: 6),
+                      Icon(box['currency'] == 'gems' ? Icons.diamond : Icons.stars_rounded,
+                          color: box['currency'] == 'gems' ? Colors.cyanAccent : DesignTokens.primaryGold, size: 14),
                     ],
                   ),
                 ),
-            ],
-          );
-        });
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
+  Widget _buildActionButtons() {
+    final box = _boxes[_currentPage];
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () => _confirmPurchase(box),
+          child: AnimatedBuilder(
+            animation: _glowController,
+            builder: (context, child) {
+              return Container(
+                width: 260,
+                height: 58,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: box['gradient'] as List<Color>,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: box['color'].withValues(alpha: 0.4 * _glowController.value),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    )
+                  ],
+                ),
+                child: const Center(
+                  child: Text('افتح الآن 🗝️',
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 18, fontFamily: DesignTokens.primaryFont)),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 15),
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('ربما لاحقاً', style: TextStyle(color: Colors.white24, fontSize: 15, fontFamily: DesignTokens.primaryFont)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOpeningSequence() {
+    final box = _boxes[_currentPage];
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: Colors.black.withValues(alpha: 0.95),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (_isRevealed)
+            TweenAnimationBuilder<double>(
+              duration: const Duration(seconds: 2),
+              tween: Tween(begin: 0.0, end: 1.0),
+              builder: (context, value, child) {
+                return Container(
+                  width: MediaQuery.of(context).size.width * 2 * value,
+                  height: MediaQuery.of(context).size.width * 2 * value,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        box['color'].withValues(alpha: 0.5 * (1 - value)),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+
+          if (!_isRevealed)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedBuilder(
+                  animation: _shakeController,
+                  builder: (context, child) {
+                    final double offset = math.sin(_shakeController.value * math.pi * 15) * 15;
+                    return Transform.translate(
+                      offset: Offset(offset, 0),
+                      child: child,
+                    );
+                  },
+                  child: Image.asset(box['image'],
+                      width: 240,
+                      height: 240,
+                      errorBuilder: (c, e, s) =>
+                          Icon(box['icon'], color: box['color'], size: 160)),
+                ),
+                const SizedBox(height: 40),
+                const Text('جاري فتح الصندوق الملكي...',
+                    style: TextStyle(
+                        color: DesignTokens.primaryGold,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: DesignTokens.primaryFont,
+                        decoration: TextDecoration.none)),
+              ],
+            ),
+
+          if (_isRevealed && _wonGift != null)
+            TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 1500),
+              tween: Tween(begin: 0.0, end: 1.0),
+              curve: Curves.elasticOut,
+              builder: (context, value, child) {
+                return Opacity(
+                  opacity: value.clamp(0, 1),
+                  child: Transform.scale(
+                    scale: 0.3 + (0.7 * value),
+                    child: child,
+                  ),
+                );
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Center(
+                    child: CachedNetworkImage(
+                      imageUrl: _wonGift!['imageUrl'],
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      fit: BoxFit.contain,
+                      placeholder: (c, u) => const CircularProgressIndicator(color: DesignTokens.primaryGold),
+                    ),
+                  ),
+                  const Positioned(
+                    top: 100,
+                    child: Column(
+                      children: [
+                        Text('تهانينا! 🎉',
+                            style: TextStyle(
+                                color: DesignTokens.primaryGold,
+                                fontSize: 48,
+                                fontWeight: FontWeight.w900,
+                                fontFamily: DesignTokens.primaryFont,
+                                decoration: TextDecoration.none,
+                                shadows: [Shadow(color: Colors.black, blurRadius: 20)])),
+                        SizedBox(height: 8),
+                        Text('لقد حصلت على هدية ملكية فخمة',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: DesignTokens.primaryFont,
+                                decoration: TextDecoration.none)),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 120,
+                    child: Column(
+                      children: [
+                        Text(_wonGift!['name'] ?? 'هدية ملكية',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: DesignTokens.primaryFont,
+                                decoration: TextDecoration.none)),
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(colors: [DesignTokens.primaryGold, DesignTokens.primaryGoldLight]),
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 10)],
+                          ),
+                          child: const Text('تمت الإضافة لحقيبتك 🎒',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: DesignTokens.primaryFont,
+                                  decoration: TextDecoration.none)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  static Shader _goldGradient(Rect bounds) {
+    return const LinearGradient(
+      colors: [Color(0xFFFFD700), Color(0xFFFFA500), Color(0xFFFFD700)],
+    ).createShader(bounds);
   }
 }

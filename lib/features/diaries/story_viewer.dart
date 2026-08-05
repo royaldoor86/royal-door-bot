@@ -54,6 +54,7 @@ class _StoryViewerState extends State<StoryViewer> {
   bool _showHeart = false;
   Timer? _heartTimer;
   bool _isClosing = false;
+  final TextEditingController _messageController = TextEditingController();
 
   @override
   void initState() {
@@ -268,6 +269,7 @@ class _StoryViewerState extends State<StoryViewer> {
     _disposeVideo();
     _heartTimer?.cancel();
     _pageController.dispose();
+    _messageController.dispose();
     super.dispose();
   }
 
@@ -524,9 +526,11 @@ class _StoryViewerState extends State<StoryViewer> {
                         border: Border.all(color: Colors.white30),
                       ),
                       child: TextField(
+                        controller: _messageController,
                         onTap: _pause,
                         onSubmitted: (val) {
                           _sendReply(val);
+                          _messageController.clear();
                           FocusScope.of(context).unfocus();
                         },
                         style:
@@ -552,8 +556,17 @@ class _StoryViewerState extends State<StoryViewer> {
                     ),
                   ),
                   const SizedBox(width: 15),
-                  const Icon(Icons.send_outlined,
-                      color: Colors.white, size: 26),
+                  GestureDetector(
+                    onTap: () {
+                      final text = _messageController.text;
+                      if (text.trim().isNotEmpty) {
+                        _sendReply(text);
+                        _messageController.clear();
+                      }
+                    },
+                    child: const Icon(Icons.send_outlined,
+                        color: Colors.white, size: 26),
+                  ),
                 ],
               ),
             ),
@@ -764,12 +777,39 @@ class _StoryViewerState extends State<StoryViewer> {
   Future<void> _toggleLike() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-    HapticFeedback.mediumImpact();
 
     final bool wasLiked = _currentStory.likes.contains(uid);
-    await _fs.toggleStoryLike(_currentStory.id, uid);
+
+    // تحديث فوري للواجهة
+    if (mounted && !_isClosing) {
+      setState(() {
+        if (wasLiked) {
+          _currentStory.likes.remove(uid);
+        } else {
+          _currentStory.likes.add(uid);
+        }
+      });
+    }
+
+    // هزة خفيفة فورية
+    HapticFeedback.lightImpact();
+
+    // تنفيذ العمليات في الخلفية
+    _fs.toggleStoryLike(_currentStory.id, uid).catchError((e) {
+      debugPrint('Error toggling like: $e');
+    });
 
     if (!wasLiked) {
+      if (mounted && !_isClosing) {
+        setState(() {
+          _showHeart = true;
+          _heartTimer?.cancel();
+          _heartTimer = Timer(const Duration(milliseconds: 800),
+              () => setState(() => _showHeart = false));
+        });
+      }
+
+      // إرسال رسالة الاعجاب في الخلفية
       try {
         final roomId =
             await _fs.ensureChatRoomExists(uid, _currentStory.userId);
@@ -784,36 +824,18 @@ class _StoryViewerState extends State<StoryViewer> {
       } catch (e) {
         debugPrint('Error sending like message: $e');
       }
-
-      if (mounted && !_isClosing) {
-        setState(() {
-          _showHeart = true;
-          _heartTimer?.cancel();
-          _heartTimer = Timer(const Duration(milliseconds: 800),
-              () => setState(() => _showHeart = false));
-        });
-      }
-    }
-
-    if (mounted && !_isClosing) {
-      setState(() {
-        if (wasLiked) {
-          _currentStory.likes.remove(uid);
-        } else {
-          _currentStory.likes.add(uid);
-        }
-      });
     }
   }
 
   Future<void> _sendReply(String text) async {
     if (text.trim().isEmpty) return;
     final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    final userSnap = await _fs.streamUserData(uid).first;
+    final userData = await _fs.getUserData(uid);
+    if (userData == null) return;
 
     // تسجيل الرد في نظام الستوري (اختياري)
     await _fs.addStoryReply(
-        _currentStory.id, uid, userSnap.name, userSnap.profilePic, text);
+        _currentStory.id, uid, userData['name'] ?? '', userData['profilePic'] ?? '', text);
 
     // إرسال الرسالة للمحادثة الحقيقية (بناءً على طلب المستخدم)
     try {

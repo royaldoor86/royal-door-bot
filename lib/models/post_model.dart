@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'privacy_model.dart';
 
 class PostModel {
   final String id;
@@ -16,6 +17,7 @@ class PostModel {
   final int commentCount;
   final bool isVip;
   final bool isPinned; // دعم المنشور المثبت
+  final PrivacyLevel privacy; // إعدادات الخصوصية
 
   PostModel({
     required this.id,
@@ -33,6 +35,7 @@ class PostModel {
     this.commentCount = 0,
     this.isVip = false,
     this.isPinned = false,
+    this.privacy = PrivacyLevel.public,
   });
 
   factory PostModel.fromMap(Map<String, dynamic> data, String documentId) {
@@ -52,6 +55,9 @@ class PostModel {
       commentCount: data['commentCount'] ?? 0,
       isVip: data['isVip'] ?? false,
       isPinned: data['isPinned'] ?? false,
+      privacy: data['privacy'] != null
+          ? PrivacyLevelExtension.fromString(data['privacy'] as String)
+          : PrivacyLevel.public,
     );
   }
 
@@ -71,6 +77,7 @@ class PostModel {
       'commentCount': commentCount,
       'isVip': isVip,
       'isPinned': isPinned,
+      'privacy': privacy.value,
     };
   }
 }

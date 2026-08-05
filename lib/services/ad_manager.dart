@@ -13,23 +13,23 @@ class AdManager {
   bool _isLoading = false;
   bool _isInterstitialLoading = false;
   bool _isAppOpenAdLoading = false;
-  DateTime? _appOpenLoadTime;
 
   // معرف إعلان Native
-  final String _nativeAdUnitId = kDebugMode 
-      ? 'ca-app-pub-3940256099942544/2247696110' 
+  final String _nativeAdUnitId = kDebugMode
+      ? 'ca-app-pub-3940256099942544/2247696110'
       : 'ca-app-pub-3609643361862120/5465942371';
-  
+
   // معرفات الإعلانات
-  final String _rewardedAdUnitId = kDebugMode 
-      ? 'ca-app-pub-3940256099942544/5224354917' 
+  final String _rewardedAdUnitId = kDebugMode
+      ? 'ca-app-pub-3940256099942544/5224354917'
       : 'ca-app-pub-3609643361862120/3056897690';
 
   final String _bannerAdUnitId = kDebugMode
       ? 'ca-app-pub-3940256099942544/6300978111'
       : 'ca-app-pub-3609643361862120/4739033429';
-  
-  final StreamController<bool> _adStatusController = StreamController<bool>.broadcast();
+
+  final StreamController<bool> _adStatusController =
+      StreamController<bool>.broadcast();
   Stream<bool> get adStatusStream => _adStatusController.stream;
 
   int _loadAttempts = 0;
@@ -42,7 +42,7 @@ class AdManager {
 
   Future<void> init() async {
     await MobileAds.instance.initialize();
-    
+
     // إضافة معرفات الأجهزة التجريبية لمنع تقييد الحساب أثناء التطوير
     await MobileAds.instance.updateRequestConfiguration(
       RequestConfiguration(testDeviceIds: ["66B9E8C083888B763F1032AB23B18102"]),
@@ -58,15 +58,14 @@ class AdManager {
     _isAppOpenAdLoading = true;
 
     AppOpenAd.load(
-      adUnitId: kDebugMode 
-          ? 'ca-app-pub-3940256099942544/9257395921' 
+      adUnitId: kDebugMode
+          ? 'ca-app-pub-3940256099942544/9257395921'
           : 'ca-app-pub-3609643361862120/1908233772',
       request: const AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
           _appOpenAd = ad;
           _isAppOpenAdLoading = false;
-          _appOpenLoadTime = DateTime.now();
         },
         onAdFailedToLoad: (error) {
           _isAppOpenAdLoading = false;
@@ -86,15 +85,16 @@ class AdManager {
     _isInterstitialLoading = true;
 
     InterstitialAd.load(
-      adUnitId: kDebugMode 
-          ? 'ca-app-pub-3940256099942544/1033173712' 
+      adUnitId: kDebugMode
+          ? 'ca-app-pub-3940256099942544/1033173712'
           : 'ca-app-pub-3609643361862120/4636906232',
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           _interstitialAd = ad;
           _isInterstitialLoading = false;
-          _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+          _interstitialAd!.fullScreenContentCallback =
+              FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
               _interstitialAd = null;
@@ -128,12 +128,14 @@ class AdManager {
   }
 
   // دالة لجلب إعلان Native مدمج
-  NativeAd getNativeAd({required void Function() onAdLoaded, required void Function(LoadAdError) onAdFailed}) {
+  NativeAd getNativeAd(
+      {required void Function() onAdLoaded,
+      required void Function(LoadAdError) onAdFailed}) {
     // ملاحظة: الـ factoryId 'listTile' يجب أن يكون مسجلاً في MainActivity.kt في الجانب الأصلي (Native)
     // إذا كنت تواجه أخطاء Permission Denied أو Factory not found، يرجى التحقق من التسجيل.
     return NativeAd(
       adUnitId: _nativeAdUnitId,
-      factoryId: 'listTile', 
+      factoryId: 'listTile',
       request: const AdRequest(),
       listener: NativeAdListener(
         onAdLoaded: (ad) => onAdLoaded(),
@@ -170,7 +172,8 @@ class AdManager {
     _isLoading = true;
     _adStatusController.add(false);
 
-    debugPrint("AdManager: Starting to load ad... Attempt: ${_loadAttempts + 1}");
+    debugPrint(
+        "AdManager: Starting to load ad... Attempt: ${_loadAttempts + 1}");
 
     RewardedAd.load(
       adUnitId: _rewardedAdUnitId,
@@ -183,7 +186,7 @@ class AdManager {
           _loadAttempts = 0; // Reset attempts on success
           _fallbackEnabled = false;
           _adStatusController.add(true);
-          
+
           _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               debugPrint("AdManager: Ad dismissed");
@@ -209,20 +212,24 @@ class AdManager {
           _adStatusController.add(false);
 
           if (_loadAttempts >= _maxAttemptsBeforeFallback) {
-             debugPrint("AdManager: Max attempts reached. Enabling fallback.");
-             _fallbackEnabled = true;
-             _adStatusController.add(true); // Signal "Ready" even if it's fallback
+            debugPrint("AdManager: Max attempts reached. Enabling fallback.");
+            _fallbackEnabled = true;
+            _adStatusController
+                .add(true); // Signal "Ready" even if it's fallback
           } else {
-             // محاولة ذكية: زيادة وقت الانتظار تدريجياً
-             int retrySeconds = _loadAttempts * 5; 
-             Future.delayed(Duration(seconds: retrySeconds), () => loadRewardedAd());
+            // محاولة ذكية: زيادة وقت الانتظار تدريجياً
+            int retrySeconds = _loadAttempts * 5;
+            Future.delayed(
+                Duration(seconds: retrySeconds), () => loadRewardedAd());
           }
         },
       ),
     );
   }
 
-  void showRewardedAd({required Function(RewardItem?) onUserEarnedReward, VoidCallback? onAdFailed}) {
+  void showRewardedAd(
+      {required Function(RewardItem?) onUserEarnedReward,
+      VoidCallback? onAdFailed}) {
     if (_rewardedAd != null) {
       _rewardedAd!.show(onUserEarnedReward: (ad, reward) {
         onUserEarnedReward(reward);

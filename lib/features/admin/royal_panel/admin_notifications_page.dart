@@ -26,15 +26,17 @@ class _AdminNotificationsPageState extends State<AdminNotificationsPage> {
       _resultMsg = null;
     });
     try {
-      final res = await NotificationsService.sendPushNotification({
-        'targetUid': _uidController.text.trim(),
-        'title': _titleController.text.trim(),
-        'body': _bodyController.text.trim(),
-        'type': _type ?? 'general',
-      });
+      // استخدام الميزة الموسعة الجديدة
+      await NotificationsService.sendExtendedNotification(
+        userId: _uidController.text.trim(),
+        type: _getNotificationType(_type),
+        title: _titleController.text.trim(),
+        body: _bodyController.text.trim(),
+        enablePush: true,
+        enableEmail: _type == 'system' || _type == 'security',
+      );
       setState(() {
-        _resultMsg =
-            res['success'] == true ? 'تم الإرسال بنجاح' : 'فشل الإرسال';
+        _resultMsg = 'تم الإرسال بنجاح';
       });
     } catch (e) {
       setState(() {
@@ -44,6 +46,19 @@ class _AdminNotificationsPageState extends State<AdminNotificationsPage> {
       setState(() {
         _loading = false;
       });
+    }
+  }
+
+  NotificationType _getNotificationType(String? type) {
+    switch (type) {
+      case 'system':
+        return NotificationType.systemMaintenance;
+      case 'security':
+        return NotificationType.securityAlert;
+      case 'promo':
+        return NotificationType.general;
+      default:
+        return NotificationType.general;
     }
   }
 
@@ -83,6 +98,7 @@ class _AdminNotificationsPageState extends State<AdminNotificationsPage> {
                     items: const [
                       DropdownMenuItem(value: 'general', child: Text('عام')),
                       DropdownMenuItem(value: 'system', child: Text('نظام')),
+                      DropdownMenuItem(value: 'security', child: Text('أمني')),
                       DropdownMenuItem(value: 'promo', child: Text('تسويقي')),
                     ],
                     onChanged: (v) => setState(() => _type = v),
@@ -97,7 +113,8 @@ class _AdminNotificationsPageState extends State<AdminNotificationsPage> {
                   ),
                   if (_resultMsg != null) ...[
                     const SizedBox(height: 8),
-                    Text(_resultMsg!, style: const TextStyle(color: Colors.green)),
+                    Text(_resultMsg!,
+                        style: const TextStyle(color: Colors.green)),
                   ]
                 ],
               ),

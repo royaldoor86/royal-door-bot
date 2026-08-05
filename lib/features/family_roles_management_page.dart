@@ -51,6 +51,20 @@ class _FamilyRolesManagementPageState extends State<FamilyRolesManagementPage> {
     'member': [],
   };
 
+  // الأدوار المخصصة
+  final Map<String, String> _permissionLabels = {
+    'create_votes': 'إنشاء التصويتات',
+    'manage_archive': 'إدارة الأرشيف',
+    'manage_members': 'إدارة الأعضاء',
+    'manage_roles': 'إدارة الأدوار',
+    'create_events': 'إنشاء الأحداث',
+    'manage_wars': 'إدارة الحروب',
+    'manage_alliances': 'إدارة التحالفات',
+    'manage_settings': 'إدارة الإعدادات',
+    'invite_members': 'دعوة الأعضاء',
+    'manage_requests': 'إدارة الطلبات',
+  };
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -77,6 +91,8 @@ class _FamilyRolesManagementPageState extends State<FamilyRolesManagementPage> {
             child: Column(
               children: [
                 _buildRolesOverview(),
+                const SizedBox(height: 20),
+                _buildCustomRolesSection(),
                 const SizedBox(height: 20),
                 _buildPermissionsMatrix(),
                 const SizedBox(height: 20),
@@ -139,10 +155,282 @@ class _FamilyRolesManagementPageState extends State<FamilyRolesManagementPage> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
+  }
+
+  Widget _buildCustomRolesSection() {
+    return AppTheme.glassContainer(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('الأدوار المخصصة',
+                  style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+              ElevatedButton.icon(
+                onPressed: () => _showCreateCustomRoleDialog(),
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('إنشاء دور مخصص'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  foregroundColor: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          StreamBuilder<QuerySnapshot>(
+            stream: _db
+                .collection('families')
+                .doc(widget.familyId)
+                .collection('custom_roles')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(
+                    child: CircularProgressIndicator(color: Colors.amber));
+              }
+              final customRoles = snapshot.data!.docs;
+              if (customRoles.isEmpty) {
+                return const Center(
+                  child: Text('لا توجد أدوار مخصصة',
+                      style: TextStyle(color: Colors.white38)),
+                );
+              }
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: customRoles.length,
+                itemBuilder: (context, index) {
+                  final role =
+                      customRoles[index].data() as Map<String, dynamic>;
+                  final roleId = customRoles[index].id;
+                  return _buildCustomRoleCard(role, roleId);
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomRoleCard(Map<String, dynamic> role, String roleId) {
+    final permissions = role['permissions'] as List<dynamic>? ?? [];
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.star, color: Colors.amber, size: 20),
+                  const SizedBox(width: 10),
+                  Text(
+                    role['name'] ?? 'بدون اسم',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                onPressed: () => _deleteCustomRole(roleId),
+              ),
+            ],
+          ),
+          if (role['description'] != null &&
+              role['description'].toString().isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                role['description'],
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
+              ),
+            ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: permissions.map((perm) {
+              final permKey = perm.toString();
+              return Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border:
+                      Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  _permissionLabels[permKey] ?? permKey,
+                  style: const TextStyle(color: Colors.amber, fontSize: 12),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCreateCustomRoleDialog() {
+    final nameController = TextEditingController();
+    final descriptionController = TextEditingController();
+    final Set<String> selectedPermissions = <String>{};
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: const Color(0xFF1A050E),
+          title: const Text('إنشاء دور مخصص',
+              style: TextStyle(color: Colors.amber)),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      labelText: 'اسم الدور',
+                      labelStyle: TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: descriptionController,
+                    maxLines: 2,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      labelText: 'وصف الدور',
+                      labelStyle: TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('الصلاحيات:',
+                      style: TextStyle(color: Colors.amber, fontSize: 16)),
+                  const SizedBox(height: 10),
+                  ..._permissionLabels.entries.map((entry) {
+                    return CheckboxListTile(
+                      title: Text(
+                        entry.value,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      value: selectedPermissions.contains(entry.key),
+                      onChanged: (value) {
+                        setDialogState(() {
+                          if (value == true) {
+                            selectedPermissions.add(entry.key);
+                          } else {
+                            selectedPermissions.remove(entry.key);
+                          }
+                        });
+                      },
+                      activeColor: Colors.amber,
+                      checkColor: Colors.black,
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child:
+                  const Text('إلغاء', style: TextStyle(color: Colors.white54)),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (nameController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('يرجى إدخال اسم الدور')),
+                  );
+                  return;
+                }
+                try {
+                  await _db
+                      .collection('families')
+                      .doc(widget.familyId)
+                      .collection('custom_roles')
+                      .add({
+                    'name': nameController.text.trim(),
+                    'description': descriptionController.text.trim(),
+                    'permissions': selectedPermissions.toList(),
+                    'createdAt': FieldValue.serverTimestamp(),
+                  });
+                  if (mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('تم إنشاء الدور المخصص بنجاح'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('فشل: $e')),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+              child: const Text('إنشاء'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _deleteCustomRole(String roleId) async {
+    try {
+      await _db
+          .collection('families')
+          .doc(widget.familyId)
+          .collection('custom_roles')
+          .doc(roleId)
+          .delete();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم حذف الدور المخصص')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('فشل: $e')),
+        );
+      }
+    }
   }
 
   Widget _buildPermissionsMatrix() {

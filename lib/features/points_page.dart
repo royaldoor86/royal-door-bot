@@ -54,7 +54,7 @@ class _PointsPageState extends State<PointsPage> {
                   body: Center(child: CircularProgressIndicator()));
             }
 
-            int points = userData.agentData?['friendlyPoints'] ??
+            int points = userData.agentData?['friendlyCoins'] ??
                 (userData.userLevel * 125);
 
             return Scaffold(
@@ -192,7 +192,7 @@ class _PointsPageState extends State<PointsPage> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db
           .collection('users')
-          .orderBy('agentData.friendlyPoints', descending: true)
+          .orderBy('agentData.friendlyCoins', descending: true)
           .limit(3)
           .snapshots(),
       builder: (context, snapshot) {
@@ -502,7 +502,7 @@ class _PointsPageState extends State<PointsPage> {
         'stars': FieldValue.increment(coinsToReceive),
         'coins': FieldValue.increment(coinsToReceive),
         'royalXP': FieldValue.increment(xpToReceive),
-        'agentData.friendlyPoints': 0,
+        'agentData.friendlyCoins': 0,
       });
     });
 

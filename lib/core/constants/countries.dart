@@ -7,10 +7,10 @@ class CountriesDatabase {
       countryCode: 'IQ',
       countryName: 'العراق',
       dialCode: '+964',
-      phoneNumberFormat: r'^[7][3-9][0-9]{8}$',
+      phoneNumberFormat: r'^[0-9]{10,11}$', // تنسيق أكثر مرونة
       phoneNumberLength: 10,
       smsProviders: ['twilio', 'firebase'],
-      defaultProvider: 'twilio',
+      defaultProvider: 'firebase', // الاعتماد على فايربيس كافتراضي
       currencyCode: 'IQD',
       timezone: 'Asia/Baghdad',
       languages: ['ar', 'ku', 'en'],

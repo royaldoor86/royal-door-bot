@@ -4,9 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:twitter_login/twitter_login.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import '../app_theme.dart';
 
@@ -25,8 +24,9 @@ class _SocialAccountsPageState extends State<SocialAccountsPage> {
 
   bool _googleLinked = false;
   bool _facebookLinked = false;
-  bool _twitterLinked = false;
   bool _appleLinked = false;
+  bool _telegramLinked = false;
+  String _telegramId = "";
   bool _isLoading = false;
 
   @override
@@ -39,20 +39,72 @@ class _SocialAccountsPageState extends State<SocialAccountsPage> {
     try {
       final doc = await _db.collection('users').doc(_currentUserId).get();
       if (doc.exists) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data()!;
         final providerData = _auth.currentUser?.providerData ?? [];
 
         setState(() {
           _googleLinked = providerData.any((p) => p.providerId == 'google.com');
           _facebookLinked =
               providerData.any((p) => p.providerId == 'facebook.com');
-          _twitterLinked =
-              providerData.any((p) => p.providerId == 'twitter.com');
           _appleLinked = providerData.any((p) => p.providerId == 'apple.com');
+          
+          _telegramId = data['telegram_id']?.toString() ?? "";
+          _telegramLinked = _telegramId.isNotEmpty;
         });
       }
     } catch (e) {
       debugPrint('Error loading linked accounts: $e');
+    }
+  }
+
+  Future<void> _linkTelegram() async {
+    final uri = Uri.parse("https://t.me/royaldoor_bot?start=link_$_currentUserId");
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('يرجى الضغط على START في تلغرام لإتمام الربط'),
+              backgroundColor: Colors.blue,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error linking Telegram: $e');
+    }
+  }
+
+  Future<void> _unlinkTelegram() async {
+    setState(() => _isLoading = true);
+    try {
+      // 1. Remove telegram_id from App User
+      await _db.collection('users').doc(_currentUserId).update({
+        'telegram_id': FieldValue.delete(),
+      });
+
+      // 2. Remove app_uid from Telegram User
+      if (_telegramId.isNotEmpty) {
+        await _db.collection('telegram_users').doc(_telegramId).update({
+          'app_uid': FieldValue.delete(),
+        });
+      }
+
+      setState(() {
+        _telegramLinked = false;
+        _telegramId = "";
+        _isLoading = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم فك ربط حساب تلغرام')),
+        );
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -191,100 +243,6 @@ class _SocialAccountsPageState extends State<SocialAccountsPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('فشل فك ربط حساب Facebook: $e')),
-        );
-      }
-    }
-  }
-
-  Future<void> _linkTwitter() async {
-    setState(() => _isLoading = true);
-    try {
-      final twitterLogin = TwitterLogin(
-        apiKey: dotenv.env['TWITTER_API_KEY'] ??
-            "2058550979801288704-TtRVNWoQtvZ8yEZUKRZNQrldxbJjpQ",
-        apiSecretKey: dotenv.env['TWITTER_API_SECRET_KEY'] ??
-            "qAf6BLUNMCfKvNpOljVyVn6oTfSvncNlOWxNNw1ZlPUsz",
-        redirectURI: dotenv.env['TWITTER_REDIRECT_URI'] ?? "royaldoor://",
-      );
-
-      final authResult = await twitterLogin.login();
-      switch (authResult.status) {
-        case TwitterLoginStatus.loggedIn:
-          if (authResult.authToken != null &&
-              authResult.authTokenSecret != null) {
-            final credential = TwitterAuthProvider.credential(
-              accessToken: authResult.authToken!,
-              secret: authResult.authTokenSecret!,
-            );
-            await _auth.currentUser?.linkWithCredential(credential);
-          }
-
-          setState(() {
-            _twitterLinked = true;
-            _isLoading = false;
-          });
-
-          if (mounted) {
-            HapticFeedback.mediumImpact();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('تم ربط حساب Twitter بنجاح'),
-                backgroundColor: AppTheme.royalGold,
-              ),
-            );
-          }
-          break;
-        case TwitterLoginStatus.cancelledByUser:
-          setState(() => _isLoading = false);
-          break;
-        case TwitterLoginStatus.error:
-          setState(() => _isLoading = false);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content:
-                      Text('فشل ربط حساب Twitter: ${authResult.errorMessage}')),
-            );
-          }
-          break;
-        default:
-          setState(() => _isLoading = false);
-          break;
-      }
-    } catch (e) {
-      setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('فشل ربط حساب Twitter: $e')),
-        );
-      }
-    }
-  }
-
-  Future<void> _unlinkTwitter() async {
-    setState(() => _isLoading = true);
-    try {
-      await _auth.currentUser?.unlink('twitter.com');
-
-      setState(() {
-        _twitterLinked = false;
-        _isLoading = false;
-      });
-
-      if (mounted) {
-        HapticFeedback.lightImpact();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم فك ربط حساب Twitter'),
-            backgroundColor: AppTheme.royalGold,
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('فشل فك ربط حساب Twitter: $e')),
         );
       }
     }
@@ -433,15 +391,15 @@ class _SocialAccountsPageState extends State<SocialAccountsPage> {
               ),
               const SizedBox(height: 15),
 
-              // Twitter
+              // Telegram
               _buildSocialCard(
-                icon: Icons.flutter_dash,
-                title: 'Twitter / X',
-                subtitle: 'ربط حساب Twitter',
-                color: Colors.lightBlue,
-                isLinked: _twitterLinked,
-                onLink: _linkTwitter,
-                onUnlink: _unlinkTwitter,
+                icon: Icons.send,
+                title: 'تلغرام',
+                subtitle: 'ربط حساب تلغرام بالبوت',
+                color: Colors.blueAccent,
+                isLinked: _telegramLinked,
+                onLink: _linkTelegram,
+                onUnlink: _unlinkTelegram,
               ),
               const SizedBox(height: 15),
 

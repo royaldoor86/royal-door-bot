@@ -13,6 +13,7 @@ import 'services/localization_service.dart';
 import 'widgets/profile_with_frame.dart';
 import 'services/fcm_service.dart';
 import 'services/notifications_service.dart';
+import 'services/notification_router_service.dart';
 import 'services/daily_login_service.dart';
 import 'widgets/daily_reward_popup.dart';
 import 'widgets/id_change_request_dialog.dart';
@@ -28,12 +29,21 @@ import 'features/auth/auth_page.dart';
 import 'features/auth/login_page.dart';
 import 'features/auth/signup_page.dart';
 import 'features/auth/forgot_password_page.dart';
+import 'features/store_page.dart';
+import 'features/gems_coins_page.dart';
+import 'features/agent_dashboard_page.dart';
+import 'features/admin/royal_panel/royal_admin_panel_page.dart';
+import 'features/admin/royal_admin_panel_entry.dart';
 
 // Services
 import 'services/auth_service.dart';
 import 'services/rewards_service.dart';
 import 'services/task_tracking_service.dart';
-import 'services/preload_service.dart';
+import 'services/vip_expiry_service.dart';
+import 'services/family_service.dart';
+import 'services/telegram_bot_service.dart';
+import 'services/telegram_web_app_service.dart';
+// import 'widgets/banned_user_wrapper.dart'; // File not found
 
 import 'package:firebase_database/firebase_database.dart';
 import 'firebase_options.dart';
@@ -51,39 +61,62 @@ void main() async {
 
   // تحميل متغيرات البيئة (اختياري)
   try {
-    await dotenv.load(fileName: ".env");
-    debugPrint('✅ Environment variables loaded');
+    // محاولة تحميل assets/.env أولاً
+    try {
+      await dotenv.load(fileName: "assets/.env");
+      debugPrint('✅ Environment variables loaded from assets/.env');
+      debugPrint(
+          '🔍 AGORA_APP_ID: ${dotenv.env['AGORA_APP_ID']?.substring(0, 8) ?? "NOT FOUND"}...');
+    } catch (e) {
+      // إذا فشل، حاول تحميل .env القديم
+      await dotenv.load(fileName: ".env");
+
+      debugPrint('✅ Environment variables loaded from .env');
+    }
   } catch (e) {
-    debugPrint('⚠️ .env file not found, using default values');
+    debugPrint('⚠️ Environment file not found, using default values: $e');
   }
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // تفعيل App Check
-  // في بيئة التطوير: يستخدم Debug Provider
-  // في بيئة الإنتاج: يستخدم Play Integrity (Android) و App Attest (iOS)
+  // Set Firebase Auth persistence for web to handle OAuth redirects
+  if (kIsWeb) {
+    try {
+      await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+      debugPrint('✅ Firebase Auth persistence set to LOCAL for web');
+    } catch (e) {
+      debugPrint('⚠️ Error setting Firebase Auth persistence: $e');
+    }
+  }
+
+  // تهيئة Telegram Web App - CRITICAL: Must be done before any routing
+  debugPrint('🚀 Initializing Telegram Web App BEFORE routing...');
+  await TelegramWebAppService.init();
+  debugPrint('✅ Telegram Web App initialization completed');
+
+  // تهيئة Firebase App Check
   try {
-    if (kDebugMode) {
-      // وضع التطوير - يستخدم Debug Provider
-      await FirebaseAppCheck.instance.activate(
-        androidProvider: AndroidProvider.debug,
-        appleProvider: AppleProvider.debug,
-      );
-      debugPrint('✅ App Check initialized in Debug Mode');
-    } else {
-      // وضع الإنتاج - يستخدم Providers الحقيقية
-      final recaptchaSiteKey = dotenv.env['RECAPTCHA_V3_SITE_KEY'] ?? '';
-      await FirebaseAppCheck.instance.activate(
-        androidProvider: AndroidProvider.playIntegrity,
-        appleProvider: AppleProvider.appAttest,
-        webProvider: recaptchaSiteKey.isNotEmpty
-            ? ReCaptchaV3Provider(recaptchaSiteKey)
-            : null,
-      );
-      debugPrint('✅ App Check initialized in Production Mode');
+    if (!kIsWeb) {
+      if (kReleaseMode) {
+        await FirebaseAppCheck.instance.activate(
+          providerAndroid: const AndroidPlayIntegrityProvider(),
+          providerApple: const AppleAppAttestProvider(),
+        );
+      } else {
+        final appCheckDebugToken =
+            dotenv.env['FIREBASE_APP_CHECK_DEBUG_TOKEN'] ??
+                '7EC16B69-02F8-4CC3-AF7F-CB818336D552';
+        await FirebaseAppCheck.instance.activate(
+          providerAndroid: AndroidDebugProvider(debugToken: appCheckDebugToken),
+          providerApple: AppleDebugProvider(debugToken: appCheckDebugToken),
+        );
+        debugPrint('🛡️ App Check activated in Debug mode');
+        debugPrint('🚀 App Check Debug Token: $appCheckDebugToken');
+      }
+      await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
     }
   } catch (e) {
-    debugPrint('❌ App Check initialization failed: $e');
+    debugPrint('❌ App Check Activation Error: $e');
   }
 
   // تفعيل خاصية التخزين المحلي لـ Firestore
@@ -93,14 +126,16 @@ void main() async {
   );
 
   // تفعيل خاصية التخزين المحلي لقاعدة البيانات الآنية (للمباريات والدردشة)
-  FirebaseDatabase.instance.setPersistenceEnabled(true);
-  FirebaseDatabase.instance
-      .setPersistenceCacheSizeBytes(100 * 1024 * 1024); // 100MB
+  if (!kIsWeb) {
+    FirebaseDatabase.instance.setPersistenceEnabled(true);
+    FirebaseDatabase.instance
+        .setPersistenceCacheSizeBytes(100 * 1024 * 1024); // 100MB
+  }
 
   await initializeDateFormatting('ar', null);
 
   // استخراج الـ Key Hash لفيسبوك
-  if (Platform.isAndroid) {
+  if (!kIsWeb && Platform.isAndroid) {
     debugPrint(
         "💡 ملاحظة: إذا لم يظهر الـ Key Hash هنا، حاول تسجيل الدخول وسيظهر في الـ Logcat كرسالة خطأ من الفيسبوك.");
   }
@@ -108,6 +143,9 @@ void main() async {
   unawaited(FcmService.initialize());
 
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  // Initialize Telegram Bot
+  unawaited(TelegramBotService.instance.initialize());
 
   runApp(const MyApp());
 }
@@ -170,8 +208,30 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     TaskTrackingService().startTracking();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // CRITICAL: Ensure Telegram data is captured BEFORE any routing
+      if (kIsWeb) {
+        debugPrint('🚀🚀🚀 Post-frame callback: Re-initializing Telegram Web App to capture data');
+        await TelegramWebAppService.init();
+        debugPrint('✅ Telegram Web App re-initialized in post-frame callback');
+      }
+
+      // Handle OAuth redirect result on app startup for web
+      if (kIsWeb) {
+        try {
+          final auth = FirebaseAuth.instance;
+          final result = await auth.getRedirectResult();
+          if (result.user != null) {
+            debugPrint('✅ OAuth redirect result found on startup: ${result.user?.email}');
+            // User is already signed in from redirect, no action needed
+          }
+        } catch (e) {
+          debugPrint('⚠️ No OAuth redirect result on startup: $e');
+        }
+      }
+
       // بدء التحميل المسبق للأصول في الخلفية فور تشغيل التطبيق
-      if (mounted) PreloadService().init(context);
+      // تعطيل مؤقت لتجنب crash
+      // if (mounted) PreloadService().init(context);
 
       await NotificationsService.initLocalNotifications();
       if (!mounted) return;
@@ -187,6 +247,12 @@ class _MyAppState extends State<MyApp> {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
         try {
+          // التحقق من انتهاء اشتراك VIP
+          await VIPExpiryService.scheduleExpiryCheck();
+
+          // حذف الدعوات المنتهية تلقائياً
+          await FamilyService().cleanupExpiredInvitations();
+
           // تحميل إعدادات المظهر من Firestore
           final userDoc = await FirebaseFirestore.instance
               .collection('users')
@@ -221,7 +287,7 @@ class _MyAppState extends State<MyApp> {
     return Provider<AuthService>(
       create: (_) => AuthService(),
       child: MaterialApp(
-        navigatorKey: NotificationsService.navigatorKey,
+        navigatorKey: NotificationRouterService.navigatorKey,
         title: 'Royale Dur',
         debugShowCheckedModeBanner: false,
         locale: _locale,
@@ -243,15 +309,27 @@ class _MyAppState extends State<MyApp> {
           '/login': (context) => const LoginPage(),
           '/signup': (context) => const SignupPage(),
           '/forgot-password': (context) => const ForgotPasswordPage(),
-          '/home': (context) =>
-              const MaintenanceWrapper(child: MainNavigation()),
+          '/home': (context) => const MaintenanceWrapper(child: MainNavigation()),
           '/preview_frame': (context) =>
               const Scaffold(body: Center(child: ProfileWithFrame())),
+          // صفحات إضافية (بدون معاملات)
+          '/store': (context) => const StorePage(),
+          '/gems-coins': (context) => const GemsCoinsPage(),
+          '/agent-dashboard': (context) => const AgentDashboardPage(),
+          '/admin-panel': (context) => const RoyalAdminPanelEntry(),
         },
         builder: (context, child) {
+          final originalPadding = MediaQuery.of(context).padding;
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(
               textScaler: TextScaler.linear(_useLargeFont ? 1.12 : 1.0),
+              padding: EdgeInsets.only(
+                top: originalPadding.top,
+                bottom: originalPadding.bottom,
+                left: originalPadding.left,
+                right: (originalPadding.right - 11)
+                    .clamp(0.0, originalPadding.right),
+              ),
             ),
             child: child!,
           );
@@ -280,19 +358,37 @@ class MaintenanceWrapper extends StatelessWidget {
 
         final String message =
             data['maintenanceMessage'] ?? "نحن في صيانة دورية، نعود قريباً 👑";
+        final List<String> allowedEmails =
+            List<String>.from(data['maintenanceAllowedEmails'] ?? []);
 
-        return FutureBuilder<DocumentSnapshot>(
-          future: FirebaseFirestore.instance
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser == null) return _maintenanceScreen(message);
+
+        return StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
               .collection('users')
-              .doc(FirebaseAuth.instance.currentUser?.uid)
-              .get(),
+              .doc(currentUser.uid)
+              .snapshots(),
           builder: (context, userSnap) {
+            // Check if user is the app owner by email
+            if (currentUser.email == 'royaldoor86@gmail.com' ||
+                currentUser.email == 'amjidhadi96@gmail.com' ||
+                currentUser.email == 'shahadhadi.h@gmail.com') {
+              return child;
+            }
+
+            // Check if user email is in allowed list
+            if (currentUser.email != null &&
+                allowedEmails.contains(currentUser.email)) {
+              return child;
+            }
+
             if (userSnap.hasData &&
                 userSnap.data != null &&
                 userSnap.data!.exists) {
               final userData = userSnap.data!.data() as Map<String, dynamic>?;
               final role = userData?['role'] ?? 'user';
-              bool isAdmin =
+              final bool isAdmin =
                   (role == 'admin' || role == 'owner' || role == 'developer');
               if (isAdmin) return child;
             }
@@ -400,12 +496,12 @@ class _MainNavigationState extends State<MainNavigation> {
 
         // جلب بيانات المكافأة التالية
         final List<Map<String, dynamic>> rewards = [
-          {'day': '1', 'val': '500', 'type': 'coin'},
-          {'day': '2', 'val': '800', 'type': 'coin'},
+          {'day': '1', 'val': '500', 'type': 'star'},
+          {'day': '2', 'val': '800', 'type': 'star'},
           {'day': '3', 'val': '5', 'type': 'gem'},
-          {'day': '4', 'val': '1000', 'type': 'coin'},
-          {'day': '5', 'val': '1500', 'type': 'coin'},
-          {'day': '6', 'val': '2000', 'type': 'coin'},
+          {'day': '4', 'val': '1000', 'type': 'star'},
+          {'day': '5', 'val': '1500', 'type': 'star'},
+          {'day': '6', 'val': '2000', 'type': 'star'},
           {'day': '7', 'val': '2000 كوينز 🪙 + 10 جواهر', 'type': 'mixed'},
         ];
 

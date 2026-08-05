@@ -41,6 +41,7 @@ class _RoyalGiftAnimationState extends State<RoyalGiftAnimation>
   final AudioPlayer _audioPlayer = AudioPlayer();
   Timer? _displayTimer;
   bool _isClosing = false;
+  bool _timerStarted = false;
 
   String get _effectiveMediaUrl {
     if (widget.giftVideoUrl != null && widget.giftVideoUrl!.isNotEmpty) {
@@ -71,6 +72,9 @@ class _RoyalGiftAnimationState extends State<RoyalGiftAnimation>
     final mediaUrl = _effectiveMediaUrl;
     final isVideo = widget.giftType == 'video' || _isVideo(mediaUrl);
 
+    // تايمر أمان عام لضمان اختفاء الهدية مهما حدث في التحميل
+    _startDisplayTimer(const Duration(seconds: 20));
+
     if (isVideo && mediaUrl.isNotEmpty) {
       _videoController = VideoPlayerController.networkUrl(Uri.parse(mediaUrl))
         ..initialize().then((_) {
@@ -81,20 +85,27 @@ class _RoyalGiftAnimationState extends State<RoyalGiftAnimation>
           _videoController?.setLooping(false);
           _videoController?.play();
 
-          final rawDuration =
-              _videoController?.value.duration ?? const Duration(seconds: 8);
-          final videoDuration = rawDuration > Duration.zero
-              ? rawDuration
-              : const Duration(seconds: 8);
+          // نبدأ التايمر فقط بعد تشغيل الفيديو بنجاح
+          if (!_isClosing) {
+            _timerStarted = true;
+            final rawDuration =
+                _videoController?.value.duration ?? const Duration(seconds: 8);
+            final videoDuration = rawDuration > Duration.zero
+                ? rawDuration
+                : const Duration(seconds: 8);
 
-          final displayDuration = videoDuration + const Duration(seconds: 1);
-          _startDisplayTimer(displayDuration);
-
-          _videoController?.addListener(_handleVideoStatus);
+            // وقت عرض الفيديو + 3 ثواني
+            _startDisplayTimer(videoDuration + const Duration(seconds: 3));
+          }
+        }).catchError((error) {
+          debugPrint("Video initialization error: $error");
+          if (mounted && !_timerStarted) {
+            _startDisplayTimer(const Duration(seconds: 8));
+          }
         });
     } else {
       _playGiftSound();
-      // للصور والـ GIF، التايمر سيبدأ بعد تحميل الصورة في imageBuilder
+      // للصور والـ GIF، سيتم تحديث التايمر في imageBuilder
     }
 
     _mainController.forward();
@@ -106,21 +117,6 @@ class _RoyalGiftAnimationState extends State<RoyalGiftAnimation>
     _displayTimer?.cancel();
     if (mounted) {
       _mainController.reverse().then((_) => widget.onComplete());
-    }
-  }
-
-  void _handleVideoStatus() {
-    if (_videoController == null ||
-        !_videoController!.value.isInitialized ||
-        _isClosing) {
-      return;
-    }
-
-    final value = _videoController!.value;
-    if (!value.isPlaying &&
-        value.duration > Duration.zero &&
-        value.position >= value.duration - const Duration(milliseconds: 200)) {
-      _finishAnimation();
     }
   }
 
@@ -159,12 +155,33 @@ class _RoyalGiftAnimationState extends State<RoyalGiftAnimation>
       child: Stack(
         fit: StackFit.expand,
         children: [
+          // خلفية داكنة مع تأثير ضبابي
           Positioned.fill(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-              child: Container(color: Colors.black.withValues(alpha: 0.2)),
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: Container(
+                color: Colors.black.withValues(alpha: 0.85),
+              ),
             ),
           ),
+          // تأثيرات إضاءة خلفية
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.center,
+                    radius: 1.0,
+                    colors: [
+                      Colors.amber.withValues(alpha: 0.1),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // المحتوى الرئيسي
           Center(
             child: AnimatedBuilder(
               animation: _mainController,
@@ -193,34 +210,36 @@ class _RoyalGiftAnimationState extends State<RoyalGiftAnimation>
                       : Center(
                           child: CachedNetworkImage(
                             imageUrl: mediaUrl,
-                            width: MediaQuery.of(context).size.width * 0.9,
-                            height: MediaQuery.of(context).size.height * 0.7,
+                            width: MediaQuery.of(context).size.width * 0.95,
+                            height: MediaQuery.of(context).size.height * 0.75,
                             fit: BoxFit.contain,
-                            placeholder: (context, url) =>
-                                const CircularProgressIndicator(
-                                    color: Colors.pinkAccent),
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(
+                                  color: Colors.pinkAccent),
+                            ),
                             errorWidget: (context, url, error) =>
                                 const SizedBox(),
-                            fadeInDuration: const Duration(milliseconds: 300),
-                            fadeOutDuration: const Duration(milliseconds: 300),
-                            memCacheWidth: 1000,
-                            memCacheHeight: 1000,
+                            fadeInDuration: const Duration(milliseconds: 500),
+                            fadeOutDuration: const Duration(milliseconds: 500),
+                            memCacheWidth: 1200,
+                            memCacheHeight: 1200,
                             imageBuilder: (context, imageProvider) {
-                              // نبدأ التايمر فقط بعد تحميل الصورة بالكامل
+                              // نبدأ التايمر الحقيقي بعد تحميل الصورة
                               WidgetsBinding.instance.addPostFrameCallback((_) {
-                                if (!_isClosing && _displayTimer == null) {
+                                if (!_isClosing && !_timerStarted) {
+                                  _timerStarted = true;
                                   final isGif = widget.giftType == 'gif' ||
                                       _isGif(mediaUrl);
                                   _startDisplayTimer(isGif
-                                      ? const Duration(seconds: 20)
-                                      : const Duration(seconds: 15));
+                                      ? const Duration(seconds: 15)
+                                      : const Duration(seconds: 8));
                                 }
                               });
                               return Image(
                                 image: imageProvider,
-                                width: MediaQuery.of(context).size.width * 0.9,
+                                width: MediaQuery.of(context).size.width * 0.95,
                                 height:
-                                    MediaQuery.of(context).size.height * 0.7,
+                                    MediaQuery.of(context).size.height * 0.75,
                                 fit: BoxFit.contain,
                               );
                             },
@@ -230,48 +249,92 @@ class _RoyalGiftAnimationState extends State<RoyalGiftAnimation>
               },
             ),
           ),
+          // معلومات الهدية بتصميم ناعم وعصري
           Positioned(
-            bottom: 100,
-            left: 0,
-            right: 0,
+            bottom: 50,
+            left: 20,
+            right: 20,
             child: FadeTransition(
               opacity: _opacityAnimation,
-              child: Column(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    "${widget.senderName} أهدى ${widget.receiverName}",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        shadows: [Shadow(blurRadius: 10, color: Colors.black)]),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "${widget.giftName} x${widget.count}",
-                    style: const TextStyle(
-                        color: Colors.amber,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w900,
-                        shadows: [Shadow(blurRadius: 10, color: Colors.black)]),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _finishAnimation,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.withValues(alpha: 0.8),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
+                  // تفاصيل الهدية (جهة اليسار)
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "${widget.senderName} أهدى ${widget.receiverName}",
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withValues(alpha: 0.5),
+                                blurRadius: 4,
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [Colors.amber, Colors.orangeAccent],
+                          ).createShader(bounds),
+                          child: Text(
+                            "${widget.giftName} x${widget.count}",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: const Text(
-                      'تخطي',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                  ),
+                  // زر التخطي (جهة اليمين)
+                  GestureDetector(
+                    onTap: _finishAnimation,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.4),
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 10,
+                          )
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'تخطي',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: Colors.white.withValues(alpha: 0.8),
+                            size: 14,
+                          ),
+                        ],
                       ),
                     ),
                   ),

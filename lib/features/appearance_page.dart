@@ -14,14 +14,15 @@ class AppearancePage extends StatefulWidget {
   State<AppearancePage> createState() => _AppearancePageState();
 }
 
-class _AppearancePageState extends State<AppearancePage> with SingleTickerProviderStateMixin {
+class _AppearancePageState extends State<AppearancePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirestoreService _firestoreService = FirestoreService();
-  
-  String? _previewFrame; 
-  String? _previewBadge; 
-  String? _previewEntryEffect; 
+
+  String? _previewFrame;
+  String? _previewBadge;
+  String? _previewEntryEffect;
   Map<String, String>? _previewVehicle;
   String? _previewBubble;
   String? _previewCover;
@@ -45,10 +46,12 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
     Map<String, dynamic> updates = {};
     if (_previewFrame != null) updates['currentFrame'] = _previewFrame;
     if (_previewBadge != null) updates['activeBadge'] = _previewBadge;
-    if (_previewEntryEffect != null) updates['entryEffect'] = _previewEntryEffect;
+    if (_previewEntryEffect != null) {
+      updates['entryEffect'] = _previewEntryEffect;
+    }
     if (_previewBubble != null) updates['chatBubble'] = _previewBubble;
     if (_previewCover != null) updates['profileCover'] = _previewCover;
-    
+
     if (_previewVehicle != null) {
       updates['activeVehicleUrl'] = _previewVehicle!['url'];
       updates['activeVehicleType'] = _previewVehicle!['type'];
@@ -76,7 +79,8 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('حدث خطأ: $e')));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('حدث خطأ: $e')));
         }
       }
     }
@@ -91,22 +95,33 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('حذف مقتنى', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        content: const Text('هل تريد حذف هذا العنصر نهائياً من مقتنياتك؟ لا يمكن التراجع عن هذا الإجراء.', 
-          style: TextStyle(color: Colors.white70, fontSize: 14)),
+        title: const Text('حذف مقتنى',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: const Text(
+            'هل تريد حذف هذا العنصر نهائياً من مقتنياتك؟ لا يمكن التراجع عن هذا الإجراء.',
+            style: TextStyle(color: Colors.white70, fontSize: 14)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء', style: TextStyle(color: Colors.white38))),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child:
+                  const Text('إلغاء', style: TextStyle(color: Colors.white38))),
           ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true), 
+            onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-            child: const Text('حذف نهائي', style: TextStyle(color: Colors.white)),
+            child:
+                const Text('حذف نهائي', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
 
     if (confirm == true) {
-      await _db.collection('users').doc(user.uid).collection('inventory').doc(docId).delete();
+      await _db
+          .collection('users')
+          .doc(user.uid)
+          .collection('inventory')
+          .doc(docId)
+          .delete();
     }
   }
 
@@ -117,38 +132,47 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
     return Directionality(
       textDirection: TextDirection.rtl,
       child: StreamBuilder<UserModel>(
-        stream: userAuth != null ? _firestoreService.streamUserData(userAuth.uid) : null,
-        builder: (context, snapshot) {
-          final userData = snapshot.data;
-          if (!snapshot.hasData) return const Scaffold(backgroundColor: Color(0xFF021412), body: Center(child: CircularProgressIndicator(color: Colors.amber)));
+          stream: userAuth != null
+              ? _firestoreService.streamUserData(userAuth.uid)
+              : null,
+          builder: (context, snapshot) {
+            final userData = snapshot.data;
+            if (!snapshot.hasData) {
+              return const Scaffold(
+                  backgroundColor: Color(0xFF021412),
+                  body: Center(
+                      child: CircularProgressIndicator(color: Colors.amber)));
+            }
 
-          return Scaffold(
-            backgroundColor: const Color(0xFF021412),
-            body: SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  _buildLivePreviewBox(userData!),
-                  _buildTabs(),
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        _buildInventorySection(userData, 'frame', 'الإطارات'),
-                        _buildInventorySection(userData, 'badge', 'الشارات'),
-                        _buildInventorySection(userData, 'vehicle', 'المركبات'),
-                        _buildInventorySection(userData, 'entry_effect', 'المؤثرات'),
-                        _buildInventorySection(userData, 'cover', 'الأغلفة'),
-                        _buildInventorySection(userData, 'bubble', 'الفقاعات'),
-                      ],
+            return Scaffold(
+              backgroundColor: const Color(0xFF021412),
+              body: SafeArea(
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    _buildLivePreviewBox(userData!),
+                    _buildTabs(),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildInventorySection(userData, 'frame', 'الإطارات'),
+                          _buildInventorySection(userData, 'badge', 'الشارات'),
+                          _buildInventorySection(
+                              userData, 'vehicle', 'المركبات'),
+                          _buildInventorySection(
+                              userData, 'entry_effect', 'المؤثرات'),
+                          _buildInventorySection(userData, 'cover', 'الأغلفة'),
+                          _buildInventorySection(
+                              userData, 'bubble', 'الفقاعات'),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        }
-      ),
+            );
+          }),
     );
   }
 
@@ -158,8 +182,15 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20), onPressed: () => Navigator.pop(context)),
-          const Text('مظهري الملكي', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+          IconButton(
+              icon: const Icon(Icons.arrow_back_ios,
+                  color: Colors.white, size: 20),
+              onPressed: () => Navigator.pop(context)),
+          const Text('مظهري الملكي',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
           const Icon(Icons.auto_awesome, color: Colors.amber, size: 20),
         ],
       ),
@@ -170,7 +201,8 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
     String displayFrame = _previewFrame ?? userData.currentFrame ?? '';
     String? displayBadge = _previewBadge ?? userData.activeBadge;
     String? displayEffect = _previewEntryEffect ?? userData.entryEffect;
-    
+    String? displayBubble = _previewBubble ?? userData.chatBubble;
+
     return Container(
       width: double.infinity,
       height: 240,
@@ -181,17 +213,15 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
         border:
             Border.all(color: Colors.amber.withValues(alpha: 0.2), width: 1.5),
         image: ((_previewCover != null &&
-                        Uri.tryParse(_previewCover!)?.host.isNotEmpty ==
-                            true) ||
-                    (userData.agentData?['profileCover'] != null &&
-                        Uri.tryParse(userData.agentData?['profileCover'])
-                                ?.host
-                                .isNotEmpty ==
-                            true))
+                    Uri.tryParse(_previewCover!)?.host.isNotEmpty == true) ||
+                (userData.agentData?['profileCover'] != null &&
+                    Uri.tryParse(userData.agentData?['profileCover'])
+                            ?.host
+                            .isNotEmpty ==
+                        true))
             ? DecorationImage(
-                image: NetworkImage(_previewCover ??
-                    userData.agentData?['profileCover'] ??
-                    ''),
+                image: NetworkImage(
+                    _previewCover ?? userData.agentData?['profileCover'] ?? ''),
                 fit: BoxFit.cover,
                 opacity: 0.3,
               )
@@ -207,14 +237,13 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
                 child: Opacity(
                   opacity: 0.6,
                   child: AnimatedVehiclePreview(
-                    type: _previewVehicle!['type']!, 
+                    type: _previewVehicle!['type']!,
                     url: _previewVehicle!['url']!,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
-
           if (displayEffect != null &&
               displayEffect.isNotEmpty &&
               Uri.tryParse(displayEffect)?.host.isNotEmpty == true)
@@ -229,7 +258,20 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
                 ),
               ),
             ),
-
+          if (displayBubble != null &&
+              displayBubble.isNotEmpty &&
+              Uri.tryParse(displayBubble)?.host.isNotEmpty == true)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Opacity(
+                  opacity: 0.4,
+                  child: CachedNetworkImage(
+                    imageUrl: displayBubble,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -240,14 +282,17 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
                     radius: 45,
                     backgroundColor: Colors.white10,
                     backgroundImage: (userData.profilePic.isNotEmpty &&
-                            Uri.tryParse(userData.profilePic)?.host.isNotEmpty ==
+                            Uri.tryParse(userData.profilePic)
+                                    ?.host
+                                    .isNotEmpty ==
                                 true)
                         ? NetworkImage(userData.profilePic)
                         : null,
                     child: (userData.profilePic.isEmpty ||
                             Uri.tryParse(userData.profilePic)?.host.isEmpty ==
                                 true)
-                        ? const Icon(Icons.person, color: Colors.white24, size: 40)
+                        ? const Icon(Icons.person,
+                            color: Colors.white24, size: 40)
                         : null,
                   ),
                   if (displayFrame.isNotEmpty &&
@@ -263,26 +308,40 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Flexible(child: Text(userData.name, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis)),
+                  Flexible(
+                      child: Text(userData.name,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis)),
                   if (displayBadge != null) ...[
                     const SizedBox(width: 8),
                     _buildBadgeDisplay(displayBadge),
                   ],
                 ],
               ),
-              if (_previewFrame != null || _previewVehicle != null || _previewBadge != null || _previewEntryEffect != null || _previewBubble != null || _previewCover != null)
+              if (_previewFrame != null ||
+                  _previewVehicle != null ||
+                  _previewBadge != null ||
+                  _previewEntryEffect != null ||
+                  _previewBubble != null ||
+                  _previewCover != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 15),
                   child: ElevatedButton(
                     onPressed: _applyAppearance,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amber, 
+                      backgroundColor: Colors.amber,
                       foregroundColor: Colors.black,
                       minimumSize: const Size(160, 40),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
                       elevation: 10,
                     ),
-                    child: const Text('تفعيل المظهر الآن', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                    child: const Text('تفعيل المظهر الآن',
+                        style: TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.bold)),
                   ),
                 ),
             ],
@@ -322,58 +381,75 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
 
   Widget _buildInventorySection(UserModel userData, String type, String title) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _db.collection('users').doc(userData.uid).collection('inventory').where('type', isEqualTo: type).snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Colors.amber));
-        final items = snapshot.data!.docs;
+        stream: _db
+            .collection('users')
+            .doc(userData.uid)
+            .collection('inventory')
+            .where('type', isEqualTo: type)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.amber));
+          }
+          final items = snapshot.data!.docs;
 
-        if (items.isEmpty) {
-          return Center(child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.inventory_2_outlined, color: Colors.white10, size: 50),
-            const SizedBox(height: 10),
-            Text('لا توجد $title مقتناة حالياً', style: const TextStyle(color: Colors.white24, fontSize: 13)),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/store'), 
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.white.withValues(alpha: 0.05)),
-              child: const Text('اذهب للمتجر الملكي', style: TextStyle(color: Colors.amber, fontSize: 12)),
-            )
-          ],
-        ));
-        }
+          if (items.isEmpty) {
+            return Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.inventory_2_outlined,
+                    color: Colors.white10, size: 50),
+                const SizedBox(height: 10),
+                Text('لا توجد $title مقتناة حالياً',
+                    style:
+                        const TextStyle(color: Colors.white24, fontSize: 13)),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () => Navigator.pushNamed(context, '/store'),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white.withValues(alpha: 0.05)),
+                  child: const Text('اذهب للمتجر الملكي',
+                      style: TextStyle(color: Colors.amber, fontSize: 12)),
+                )
+              ],
+            ));
+          }
 
-        return GridView.builder(
-          padding: const EdgeInsets.all(15),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 0.85
-          ),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index].data() as Map<String, dynamic>;
-            return _buildItemCard(items[index].id, item, type, userData);
-          },
-        );
-      }
-    );
+          return GridView.builder(
+            padding: const EdgeInsets.all(15),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 0.85),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index].data() as Map<String, dynamic>;
+              return _buildItemCard(items[index].id, item, type, userData);
+            },
+          );
+        });
   }
 
-  Widget _buildItemCard(String docId, Map<String, dynamic> item, String type, UserModel userData) {
+  Widget _buildItemCard(String docId, Map<String, dynamic> item, String type,
+      UserModel userData) {
     final String itemIcon = item['icon'] ?? item['imageUrl'] ?? '';
-    
+
     // التحقق من الحالة النشطة في قاعدة البيانات
-    final bool isCurrentActive = (type == 'frame' && userData.currentFrame == itemIcon) ||
-                                (type == 'badge' && userData.activeBadge == itemIcon) ||
-                                (type == 'entry_effect' && userData.entryEffect == itemIcon) ||
-                                (type == 'vehicle' && userData.activeVehicleUrl == itemIcon);
+    final bool isCurrentActive =
+        (type == 'frame' && userData.currentFrame == itemIcon) ||
+            (type == 'badge' && userData.activeBadge == itemIcon) ||
+            (type == 'entry_effect' && userData.entryEffect == itemIcon) ||
+            (type == 'vehicle' && userData.activeVehicleUrl == itemIcon);
 
     final bool isPreviewing = (type == 'frame' && _previewFrame == itemIcon) ||
-                              (type == 'badge' && _previewBadge == itemIcon) ||
-                              (type == 'entry_effect' && _previewEntryEffect == itemIcon) ||
-                              (type == 'vehicle' && _previewVehicle?['url'] == itemIcon) ||
-                              (type == 'bubble' && _previewBubble == itemIcon) ||
-                              (type == 'cover' && _previewCover == itemIcon);
+        (type == 'badge' && _previewBadge == itemIcon) ||
+        (type == 'entry_effect' && _previewEntryEffect == itemIcon) ||
+        (type == 'vehicle' && _previewVehicle?['url'] == itemIcon) ||
+        (type == 'bubble' && _previewBubble == itemIcon) ||
+        (type == 'cover' && _previewCover == itemIcon);
 
     return GestureDetector(
       onTap: () {
@@ -385,7 +461,7 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
           if (type == 'cover') _previewCover = item['imageUrl'];
           if (type == 'vehicle') {
             _previewVehicle = {
-              'url': item['imageUrl'], 
+              'url': item['imageUrl'],
               'type': item['vehicleType'] ?? 'gif'
             };
           }
@@ -397,7 +473,11 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
           color: Colors.white.withValues(alpha: isPreviewing ? 0.08 : 0.04),
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
-            color: isPreviewing ? Colors.amber : (isCurrentActive ? Colors.green.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.05)),
+            color: isPreviewing
+                ? Colors.amber
+                : (isCurrentActive
+                    ? Colors.green.withValues(alpha: 0.5)
+                    : Colors.white.withValues(alpha: 0.05)),
             width: isPreviewing || isCurrentActive ? 2 : 1,
           ),
         ),
@@ -407,12 +487,19 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
               Align(
                 alignment: Alignment.topRight,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                   decoration: const BoxDecoration(
                     color: Colors.green,
-                    borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomLeft: Radius.circular(10)),
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(10)),
                   ),
-                  child: const Text('مفعل', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
+                  child: const Text('مفعل',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold)),
                 ),
               ),
             Expanded(
@@ -426,21 +513,20 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      item['name'] ?? '', 
-                      maxLines: 1, 
-                      overflow: TextOverflow.ellipsis, 
-                      style: TextStyle(
-                        color: isPreviewing ? Colors.amber : Colors.white70, 
-                        fontSize: 11, 
-                        fontWeight: FontWeight.bold
-                      )
-                    ),
+                    child: Text(item['name'] ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: isPreviewing ? Colors.amber : Colors.white70,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold)),
                   ),
                   const SizedBox(width: 5),
                   GestureDetector(
                     onTap: () => _deleteInventoryItem(docId, type),
-                    child: Icon(Icons.delete_outline, color: Colors.redAccent.withValues(alpha: 0.5), size: 16),
+                    child: Icon(Icons.delete_outline,
+                        color: Colors.redAccent.withValues(alpha: 0.5),
+                        size: 16),
                   ),
                 ],
               ),
@@ -453,7 +539,10 @@ class _AppearancePageState extends State<AppearancePage> with SingleTickerProvid
 
   Widget _buildItemPreview(Map<String, dynamic> item, String type) {
     if (type == 'vehicle') {
-      return AnimatedVehiclePreview(type: item['vehicleType'] ?? 'gif', url: item['imageUrl'], fit: BoxFit.contain);
+      return AnimatedVehiclePreview(
+          type: item['vehicleType'] ?? 'gif',
+          url: item['imageUrl'],
+          fit: BoxFit.contain);
     } else if (type == 'badge') {
       final String icon = item['icon'] ?? '';
       final bool isImage = item['isImage'] ?? icon.startsWith('http');

@@ -150,6 +150,13 @@ class _SupportCenterPageState extends State<SupportCenterPage> {
     return Column(
       children: [
         _buildSocialItem(
+          icon: Icons.smart_toy_rounded,
+          title: 'بوت الدعم الملكي (تلغرام)',
+          subtitle: 'المساعد الذكي للخدمات الفورية 🤖',
+          color: Colors.cyanAccent,
+          onTap: () => _launchURL("https://t.me/royaldoor_bot"),
+        ),
+        _buildSocialItem(
           icon: Icons.chat_rounded,
           title: 'واتساب الدعم المباشر',
           subtitle: '07770992966',

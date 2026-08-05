@@ -7,13 +7,13 @@ void main() {
     test('SocialPointsModel basic functionality', () {
       final model = SocialPointsModel(
         userId: 'test_user',
-        totalStars: 150,
+        totalCoins: 150,
         level: 2,
         pointsByType: {'follow_given': 10, 'like_received': 20},
         lastUpdated: Timestamp.now(),
       );
 
-      expect(model.totalPoints, 150);
+      expect(model.totalCoins, 150);
       expect(model.level, 2);
       expect(model.nextLevelPoints, 200);
       expect(model.pointsByType['follow_given'], 10);
@@ -23,13 +23,14 @@ void main() {
     test('SocialPointsModel toMap works', () {
       final original = SocialPointsModel(
         userId: 'test_user',
-        totalStars: 150,
+        totalCoins: 150,
         level: 2,
         pointsByType: {'follow_given': 10},
         lastUpdated: Timestamp.now(),
       );
 
       final map = original.toMap();
+      expect(map['totalCoins'], 150);
       expect(map['totalPoints'], 150);
       expect(map['level'], 2);
       expect(map['pointsByType']['follow_given'], 10);
@@ -40,7 +41,7 @@ void main() {
       expect(
           SocialPointsModel(
             userId: 'test',
-            totalStars: 50,
+            totalCoins: 50,
             level: 1,
             pointsByType: {},
             lastUpdated: Timestamp.now(),
@@ -51,7 +52,7 @@ void main() {
       expect(
           SocialPointsModel(
             userId: 'test',
-            totalStars: 150,
+            totalCoins: 150,
             level: 2,
             pointsByType: {},
             lastUpdated: Timestamp.now(),

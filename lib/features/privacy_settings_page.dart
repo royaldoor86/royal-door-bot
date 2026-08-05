@@ -23,6 +23,7 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
   bool _showOnlineStatus = true;
   bool _allowFriendRequests = true;
   bool _notificationsFromNonFriends = true;
+  bool _autoBlockEnabled = false;
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
           _showOnlineStatus = data['showOnlineStatus'] ?? true;
           _allowFriendRequests = data['allowFriendRequests'] ?? true;
           _notificationsFromNonFriends = data['notificationsFromNonFriends'] ?? true;
+          _autoBlockEnabled = data['autoBlockEnabled'] ?? false;
         });
       }
     } catch (e) {
@@ -190,6 +192,28 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
               ),
               const SizedBox(height: 30),
 
+              // إعدادات الحظر
+              _buildSectionHeader('إعدادات الحظر'),
+              _buildSettingCard(
+                icon: Icons.block,
+                title: 'قائمة المحظورين',
+                subtitle: 'إدارة الأشخاص المحظورين',
+                onTap: () {
+                  Navigator.pushNamed(context, '/block_list');
+                },
+              ),
+              _buildSwitchCard(
+                icon: Icons.block_flipped,
+                title: 'حظر تلقائي',
+                subtitle: 'حظر تلقائي للمستخدمين المسيئين',
+                value: _autoBlockEnabled,
+                onChanged: (val) {
+                  setState(() => _autoBlockEnabled = val);
+                  _updateSetting('autoBlockEnabled', val);
+                },
+              ),
+              const SizedBox(height: 30),
+
               // زر إعادة التعيين
               Center(
                 child: TextButton.icon(
@@ -284,6 +308,70 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
     );
   }
 
+  Widget _buildSettingCard({
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppTheme.royalGold.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: AppTheme.royalGold, size: 22),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              size: 14,
+              color: Colors.white24,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildRadioCard({
     required IconData icon,
     required String title,
@@ -352,6 +440,7 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
       _showOnlineStatus = true;
       _allowFriendRequests = true;
       _notificationsFromNonFriends = true;
+      _autoBlockEnabled = false;
     });
 
     await _db.collection('users').doc(_currentUserId).update({
@@ -363,6 +452,7 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
       'showOnlineStatus': true,
       'allowFriendRequests': true,
       'notificationsFromNonFriends': true,
+      'autoBlockEnabled': false,
     });
 
     if (mounted) {

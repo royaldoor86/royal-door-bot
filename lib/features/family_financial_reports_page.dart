@@ -7,10 +7,12 @@ class FamilyFinancialReportsPage extends StatefulWidget {
   const FamilyFinancialReportsPage({super.key, required this.familyId});
 
   @override
-  State<FamilyFinancialReportsPage> createState() => _FamilyFinancialReportsPageState();
+  State<FamilyFinancialReportsPage> createState() =>
+      _FamilyFinancialReportsPageState();
 }
 
-class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage> {
+class _FamilyFinancialReportsPageState
+    extends State<FamilyFinancialReportsPage> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   String _selectedPeriod = 'all';
 
@@ -95,12 +97,13 @@ class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage>
       stream: _db.collection('families').doc(widget.familyId).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator(color: Colors.amber));
+          return const Center(
+              child: CircularProgressIndicator(color: Colors.amber));
         }
         final family = snapshot.data!.data() as Map<String, dynamic>?;
-        
+
         final familyGems = family?['familyGems'] ?? 0;
-        final familyStars = family?['familyStars'] ?? 0;
+        final familyStars = family?['familyCoins'] ?? 0;
         final totalExp = family?['totalExp'] ?? 0;
 
         return AppTheme.glassContainer(
@@ -114,11 +117,14 @@ class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage>
                       fontSize: 18,
                       fontWeight: FontWeight.bold)),
               const SizedBox(height: 15),
-              _buildSummaryItem('جواهر العائلة', familyGems, Icons.diamond, Colors.cyan),
+              _buildSummaryItem(
+                  'جواهر العائلة', familyGems, Icons.diamond, Colors.cyan),
               const SizedBox(height: 10),
-              _buildSummaryItem('نجوم العائلة', familyStars, Icons.star, Colors.amber),
+              _buildSummaryItem('كوينز العائلة', familyStars,
+                  Icons.monetization_on, Colors.amber),
               const SizedBox(height: 10),
-              _buildSummaryItem('إجمالي الخبرة', totalExp, Icons.explore, Colors.purple),
+              _buildSummaryItem(
+                  'إجمالي الخبرة', totalExp, Icons.explore, Colors.purple),
             ],
           ),
         );
@@ -126,7 +132,8 @@ class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage>
     );
   }
 
-  Widget _buildSummaryItem(String label, int value, IconData icon, Color color) {
+  Widget _buildSummaryItem(
+      String label, int value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -148,9 +155,7 @@ class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage>
                 Text(
                   value.toString(),
                   style: TextStyle(
-                      color: color,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold),
+                      color: color, fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -170,7 +175,7 @@ class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage>
     if (_selectedPeriod != 'all') {
       final now = DateTime.now();
       DateTime startDate;
-      
+
       switch (_selectedPeriod) {
         case 'today':
           startDate = DateTime(now.year, now.month, now.day);
@@ -187,8 +192,9 @@ class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage>
         default:
           startDate = DateTime(2000);
       }
-      
-      query = query.where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate));
+
+      query = query.where('timestamp',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startDate));
     }
 
     return AppTheme.glassContainer(
@@ -206,7 +212,8 @@ class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage>
             stream: query.limit(50).snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator(color: Colors.amber));
+                return const Center(
+                    child: CircularProgressIndicator(color: Colors.amber));
               }
               final transactions = snapshot.data!.docs;
               if (transactions.isEmpty) {
@@ -220,7 +227,8 @@ class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage>
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: transactions.length,
                 itemBuilder: (context, index) {
-                  final transaction = transactions[index].data() as Map<String, dynamic>;
+                  final transaction =
+                      transactions[index].data() as Map<String, dynamic>;
                   return _buildTransactionTile(transaction);
                 },
               );
@@ -232,7 +240,6 @@ class _FamilyFinancialReportsPageState extends State<FamilyFinancialReportsPage>
   }
 
   Widget _buildTransactionTile(Map<String, dynamic> transaction) {
-    final type = transaction['type'] ?? 'unknown';
     final amount = transaction['amount'] ?? 0;
     final description = transaction['description'] ?? '';
     final timestamp = transaction['timestamp'] as Timestamp?;

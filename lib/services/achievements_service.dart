@@ -87,8 +87,11 @@ class AchievementsService {
     if (!userDoc.exists) return;
 
     final userData = userDoc.data();
-    final totalGems = (userData?['harvestWallet'] ?? 0).toDouble();
-    final totalStars = (userData?['starsHarvestWallet'] ?? 0).toDouble();
+    final totalGems =
+        (userData?['rewardGems'] ?? userData?['harvestWallet'] ?? 0).toDouble();
+    final totalStars =
+        (userData?['rewardStars'] ?? userData?['starsHarvestWallet'] ?? 0)
+            .toDouble();
 
     // جلب الباقات النشطة
     final activeRewards = await _firestore
@@ -98,8 +101,8 @@ class AchievementsService {
         .get();
     final packagesCount = activeRewards.docs.length;
 
-    // جلب سجل الحصاد
-    final harvestLogs = await _firestore
+    // جلب سجل المكافآت
+    final rewardLogs = await _firestore
         .collection('users')
         .doc(userId)
         .collection('harvest_daily_logs')
@@ -133,17 +136,17 @@ class AchievementsService {
           shouldUnlock = packagesCount >= achievement.targetValue;
           break;
         case AchievementType.firstHarvest:
-          shouldUnlock = harvestLogs.docs.isNotEmpty;
+          shouldUnlock = rewardLogs.docs.isNotEmpty;
           break;
         case AchievementType.harvestStreak:
           // حساب أيام المكافآت المتتالية
-          if (harvestLogs.docs.isNotEmpty) {
+          if (rewardLogs.docs.isNotEmpty) {
             int streak = 1;
-            for (int i = 0; i < harvestLogs.docs.length - 1; i++) {
+            for (int i = 0; i < rewardLogs.docs.length - 1; i++) {
               final current =
-                  harvestLogs.docs[i].data()['timestamp'] as Timestamp;
+                  rewardLogs.docs[i].data()['timestamp'] as Timestamp;
               final next =
-                  harvestLogs.docs[i + 1].data()['timestamp'] as Timestamp;
+                  rewardLogs.docs[i + 1].data()['timestamp'] as Timestamp;
               final diff = current.toDate().difference(next.toDate()).inDays;
               if (diff <= 1) {
                 streak++;
@@ -181,14 +184,22 @@ class AchievementsService {
 
     // إضافة مكافآت الإنجاز
     if (achievement.rewardGems > 0 || achievement.rewardStars > 0) {
-      await _firestore.collection('users').doc(userId).update({
-        if (achievement.rewardGems > 0)
-          'harvestWallet':
-              FieldValue.increment(achievement.rewardGems.toDouble()),
-        if (achievement.rewardStars > 0)
-          'starsHarvestWallet':
-              FieldValue.increment(achievement.rewardStars.toDouble()),
-      });
+      final updates = <String, dynamic>{};
+
+      if (achievement.rewardGems > 0) {
+        updates['rewardGems'] =
+            FieldValue.increment(achievement.rewardGems.toDouble());
+        updates['harvestWallet'] = FieldValue.increment(
+            achievement.rewardGems.toDouble()); // للتوافقية
+      }
+      if (achievement.rewardStars > 0) {
+        updates['rewardStars'] =
+            FieldValue.increment(achievement.rewardStars.toDouble());
+        updates['starsHarvestWallet'] = FieldValue.increment(
+            achievement.rewardStars.toDouble()); // للتوافقية
+      }
+
+      await _firestore.collection('users').doc(userId).update(updates);
     }
 
     // تسجيل في سجل الإنجازات
@@ -239,10 +250,14 @@ class AchievementsService {
 
     switch (achievement.type) {
       case AchievementType.totalGems:
-        currentValue = (userData?['harvestWallet'] ?? 0).toDouble();
+        currentValue =
+            (userData?['rewardGems'] ?? userData?['harvestWallet'] ?? 0)
+                .toDouble();
         break;
       case AchievementType.totalStars:
-        currentValue = (userData?['starsHarvestWallet'] ?? 0).toDouble();
+        currentValue =
+            (userData?['rewardStars'] ?? userData?['starsHarvestWallet'] ?? 0)
+                .toDouble();
         break;
       case AchievementType.packagesOwned:
         final activeRewards = await _firestore

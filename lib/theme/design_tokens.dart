@@ -416,26 +416,25 @@ class DesignTokens {
   // Note: These classes are now abstract with static members.
   // We provide these "proxy" objects for backward compatibility with instance access,
   // but they will NOT work in const expressions. For const, use the class directly (e.g., PrimaryColors.gold).
-  static const _PrimaryColorsCompat primaryColors = _PrimaryColorsCompat();
-  static const _NeutralColorsCompat neutralColors = _NeutralColorsCompat();
-  static const _SemanticColorsCompat semanticColors = _SemanticColorsCompat();
-  static const _BackgroundColorsCompat backgroundColors =
-      _BackgroundColorsCompat();
-  static const _FontSizesCompat fontSizes = _FontSizesCompat();
-  static const _FontWeightsCompat fontWeights = _FontWeightsCompat();
-  static const _LineHeightsCompat lineHeights = _LineHeightsCompat();
-  static const _SpacingCompat spacing = _SpacingCompat();
-  static const _BorderRadiiCompat borderRadii = _BorderRadiiCompat();
-  static const _IconSizesCompat iconSizes = _IconSizesCompat();
-  static const _ShadowsCompat shadows = _ShadowsCompat();
-  static const _DurationTokensCompat durations =
-      _DurationTokensCompat(); // Alias
-  static const _DurationTokensCompat durationTokens = _DurationTokensCompat();
+  static const PrimaryColorsCompat primaryColors = PrimaryColorsCompat();
+  static const NeutralColorsCompat neutralColors = NeutralColorsCompat();
+  static const SemanticColorsCompat semanticColors = SemanticColorsCompat();
+  static const BackgroundColorsCompat backgroundColors =
+      BackgroundColorsCompat();
+  static const FontSizesCompat fontSizes = FontSizesCompat();
+  static const FontWeightsCompat fontWeights = FontWeightsCompat();
+  static const LineHeightsCompat lineHeights = LineHeightsCompat();
+  static const SpacingCompat spacing = SpacingCompat();
+  static const BorderRadiiCompat borderRadii = BorderRadiiCompat();
+  static const IconSizesCompat iconSizes = IconSizesCompat();
+  static const ShadowsCompat shadows = ShadowsCompat();
+  static const DurationTokensCompat durations = DurationTokensCompat(); // Alias
+  static const DurationTokensCompat durationTokens = DurationTokensCompat();
 }
 
 // Compatibility wrappers for non-const instance access
-class _PrimaryColorsCompat {
-  const _PrimaryColorsCompat();
+class PrimaryColorsCompat {
+  const PrimaryColorsCompat();
   Color get gold => PrimaryColors.gold;
   Color get goldLight => PrimaryColors.goldLight;
   Color get goldDark => PrimaryColors.goldDark;
@@ -453,8 +452,8 @@ class _PrimaryColorsCompat {
   Color get amethystDark => PrimaryColors.amethystDark;
 }
 
-class _NeutralColorsCompat {
-  const _NeutralColorsCompat();
+class NeutralColorsCompat {
+  const NeutralColorsCompat();
   Color get white => NeutralColors.white;
   Color get black => NeutralColors.black;
   Color get gray50 => NeutralColors.gray50;
@@ -469,8 +468,8 @@ class _NeutralColorsCompat {
   Color get gray900 => NeutralColors.gray900;
 }
 
-class _SemanticColorsCompat {
-  const _SemanticColorsCompat();
+class SemanticColorsCompat {
+  const SemanticColorsCompat();
   Color get success => SemanticColors.success;
   Color get warning => SemanticColors.warning;
   Color get error => SemanticColors.error;
@@ -478,8 +477,8 @@ class _SemanticColorsCompat {
   Color get disabled => SemanticColors.disabled;
 }
 
-class _BackgroundColorsCompat {
-  const _BackgroundColorsCompat();
+class BackgroundColorsCompat {
+  const BackgroundColorsCompat();
   Color get darkDeep => BackgroundColors.darkDeep;
   Color get darkMedium => BackgroundColors.darkMedium;
   Color get darkLight => BackgroundColors.darkLight;
@@ -487,8 +486,8 @@ class _BackgroundColorsCompat {
   Color get lightOverlay => BackgroundColors.lightOverlay;
 }
 
-class _FontSizesCompat {
-  const _FontSizesCompat();
+class FontSizesCompat {
+  const FontSizesCompat();
   double get xs => FontSizes.xs;
   double get sm => FontSizes.sm;
   double get base => FontSizes.base;
@@ -501,8 +500,8 @@ class _FontSizesCompat {
   double get xl6 => FontSizes.xl6;
 }
 
-class _FontWeightsCompat {
-  const _FontWeightsCompat();
+class FontWeightsCompat {
+  const FontWeightsCompat();
   FontWeight get thin => FontWeights.thin;
   FontWeight get extraLight => FontWeights.extraLight;
   FontWeight get light => FontWeights.light;
@@ -515,8 +514,8 @@ class _FontWeightsCompat {
   FontWeight get black => FontWeights.black;
 }
 
-class _LineHeightsCompat {
-  const _LineHeightsCompat();
+class LineHeightsCompat {
+  const LineHeightsCompat();
   double get tight => LineHeights.tight;
   double get snug => LineHeights.snug;
   double get normal => LineHeights.normal;
@@ -524,8 +523,8 @@ class _LineHeightsCompat {
   double get loose => LineHeights.loose;
 }
 
-class _SpacingCompat {
-  const _SpacingCompat();
+class SpacingCompat {
+  const SpacingCompat();
   double get xs => Spacing.xs;
   double get sm => Spacing.sm;
   double get md => Spacing.md;
@@ -538,8 +537,8 @@ class _SpacingCompat {
   double get xl6 => Spacing.xl6;
 }
 
-class _BorderRadiiCompat {
-  const _BorderRadiiCompat();
+class BorderRadiiCompat {
+  const BorderRadiiCompat();
   double get xs => BorderRadii.xs;
   double get sm => BorderRadii.sm;
   double get md => BorderRadii.md;
@@ -550,8 +549,8 @@ class _BorderRadiiCompat {
   double get full => BorderRadii.full;
 }
 
-class _IconSizesCompat {
-  const _IconSizesCompat();
+class IconSizesCompat {
+  const IconSizesCompat();
   double get xs => IconSizes.xs;
   double get sm => IconSizes.sm;
   double get md => IconSizes.md;
@@ -561,8 +560,8 @@ class _IconSizesCompat {
   double get xl3 => IconSizes.xl3;
 }
 
-class _ShadowsCompat {
-  const _ShadowsCompat();
+class ShadowsCompat {
+  const ShadowsCompat();
   List<BoxShadow> get xs => Shadows.xs;
   List<BoxShadow> get sm => Shadows.sm;
   List<BoxShadow> get md => Shadows.md;
@@ -571,8 +570,8 @@ class _ShadowsCompat {
   List<BoxShadow> get glow => Shadows.glow;
 }
 
-class _DurationTokensCompat {
-  const _DurationTokensCompat();
+class DurationTokensCompat {
+  const DurationTokensCompat();
   Duration get fast => DurationTokens.fast;
   Duration get normal => DurationTokens.normal;
   Duration get slow => DurationTokens.slow;

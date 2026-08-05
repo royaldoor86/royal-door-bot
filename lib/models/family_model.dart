@@ -6,6 +6,7 @@ class FamilyModel {
   final String logoUrl;
   final String description;
   final String slogan; // شعار العائلة القصير
+  final String? familyStory; // قصة العائلة
   final String creatorId;
   final String? roomId; // المعرف الخاص بغرفة العائلة الرسمية
   final int totalExp;
@@ -21,11 +22,17 @@ class FamilyModel {
 
   // التحسينات الجديدة
   final int familyGems; // محفظة الجواهر المشتركة
-  final int familyStars; // محفظة النجوم المشتركة
-  int get familyCoins => familyStars; // مزامنة مع الاسم القديم
+  final int familyCoins; // محفظة الكوينز المشتركة
   final String? activeBadgeId; // شارة العائلة النشطة
   final Map<String, dynamic> perks; // المزايا المفعلة (مثل تأثيرات الدخول)
   final bool isPrivate; // هل العائلة خاصة (تتطلب طلب انضمام)
+
+  // الإيدي الرسمي للعائلة
+  final String? familyHandNumber; // رقم الإيدي الرسمي
+  final String? familyHandLetters; // حروف الإيدي الرسمية
+  final Timestamp? lastHandIdUpdatedAt; // تاريخ آخر تحديث للإيدي
+  final String? lastHandIdSource; // مصدر آخر إيدي (purchase, grant, reward)
+  final String? lastHandIdItemId; // معرف العنصر لآخر إيدي
 
   // إحصائيات الحروب (Family Wars)
   final int warWins;
@@ -42,6 +49,7 @@ class FamilyModel {
     required this.logoUrl,
     required this.description,
     this.slogan = '',
+    this.familyStory,
     required this.creatorId,
     this.roomId,
     this.totalExp = 0,
@@ -55,10 +63,15 @@ class FamilyModel {
     required this.createdAt,
     this.isVerified = false,
     this.familyGems = 0,
-    this.familyStars = 0,
+    this.familyCoins = 0,
     this.activeBadgeId,
     this.perks = const {},
     this.isPrivate = false,
+    this.familyHandNumber,
+    this.familyHandLetters,
+    this.lastHandIdUpdatedAt,
+    this.lastHandIdSource,
+    this.lastHandIdItemId,
     this.warWins = 0,
     this.warLosses = 0,
     this.warExp = 0,
@@ -74,12 +87,13 @@ class FamilyModel {
       logoUrl: data['logoUrl'] ?? '',
       description: data['description'] ?? '',
       slogan: data['slogan'] ?? '',
+      familyStory: data['familyStory'],
       creatorId: data['creatorId'] ?? '',
       roomId: data['roomId'],
-      totalExp: (data['totalExp'] ?? data['totalPoints'] ?? 0).toInt(),
-      dailyExp: (data['dailyExp'] ?? data['dailyPoints'] ?? 0).toInt(),
-      weeklyExp: (data['weeklyExp'] ?? data['weeklyPoints'] ?? 0).toInt(),
-      monthlyExp: (data['monthlyExp'] ?? data['monthlyPoints'] ?? 0).toInt(),
+      totalExp: (data['totalExp'] ?? 0).toInt(),
+      dailyExp: (data['dailyExp'] ?? 0).toInt(),
+      weeklyExp: (data['weeklyExp'] ?? 0).toInt(),
+      monthlyExp: (data['monthlyExp'] ?? 0).toInt(),
       memberCount: (data['memberCount'] ?? 1).toInt(),
       maxMembers: (data['maxMembers'] ?? 50).toInt(),
       level: (data['level'] ?? 1).toInt(),
@@ -87,13 +101,18 @@ class FamilyModel {
       createdAt: data['createdAt'] ?? Timestamp.now(),
       isVerified: data['isVerified'] ?? false,
       familyGems: (data['familyGems'] ?? 0).toInt(),
-      familyStars: (data['familyStars'] ?? data['familyCoins'] ?? 0).toInt(),
+      familyCoins: (data['familyCoins'] ?? 0).toInt(),
       activeBadgeId: data['activeBadgeId'],
       perks: data['perks'] ?? {},
       isPrivate: data['isPrivate'] ?? false,
+      familyHandNumber: data['familyHandNumber'],
+      familyHandLetters: data['familyHandLetters'],
+      lastHandIdUpdatedAt: data['lastHandIdUpdatedAt'],
+      lastHandIdSource: data['lastHandIdSource'],
+      lastHandIdItemId: data['lastHandIdItemId'],
       warWins: (data['warWins'] ?? 0).toInt(),
       warLosses: (data['warLosses'] ?? 0).toInt(),
-      warExp: (data['warExp'] ?? data['warPoints'] ?? 0).toInt(),
+      warExp: (data['warExp'] ?? 0).toInt(),
       memberRanks: Map<String, String>.from(data['memberRanks'] ?? {}),
     );
   }
@@ -107,13 +126,9 @@ class FamilyModel {
       'creatorId': creatorId,
       'roomId': roomId,
       'totalExp': totalExp,
-      'totalPoints': totalExp, // مزامنة مع الحقل القديم
       'dailyExp': dailyExp,
-      'dailyPoints': dailyExp, // مزامنة مع الحقل القديم
       'weeklyExp': weeklyExp,
-      'weeklyPoints': weeklyExp, // مزامنة مع الحقل القديم
       'monthlyExp': monthlyExp,
-      'monthlyPoints': monthlyExp, // مزامنة مع الحقل القديم
       'memberCount': memberCount,
       'maxMembers': maxMembers,
       'level': level,
@@ -121,15 +136,18 @@ class FamilyModel {
       'createdAt': createdAt,
       'isVerified': isVerified,
       'familyGems': familyGems,
-      'familyStars': familyStars,
-      'familyCoins': familyStars, // مزامنة مع الحقل القديم
+      'familyCoins': familyCoins,
       'activeBadgeId': activeBadgeId,
       'perks': perks,
       'isPrivate': isPrivate,
+      'familyHandNumber': familyHandNumber,
+      'familyHandLetters': familyHandLetters,
+      'lastHandIdUpdatedAt': lastHandIdUpdatedAt,
+      'lastHandIdSource': lastHandIdSource,
+      'lastHandIdItemId': lastHandIdItemId,
       'warWins': warWins,
       'warLosses': warLosses,
       'warExp': warExp,
-      'warPoints': warExp, // مزامنة مع الحقل القديم
       'memberRanks': memberRanks,
     };
   }

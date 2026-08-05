@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
+import '../../../../theme/design_tokens.dart';
 
 class LuckyDrawGame extends StatefulWidget {
   final String roomId;
@@ -29,7 +32,7 @@ class _LuckyDrawGameState extends State<LuckyDrawGame> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _rotationController = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+    _rotationController = AnimationController(vsync: this, duration: const Duration(seconds: 4))..repeat();
     _startTimer();
   }
 
@@ -37,7 +40,10 @@ class _LuckyDrawGameState extends State<LuckyDrawGame> with SingleTickerProvider
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return;
-      final startTime = (widget.gameData['startTime'] as Timestamp).toDate();
+      final startTimeData = widget.gameData['startTime'];
+      if (startTimeData == null) return;
+
+      final startTime = (startTimeData as Timestamp).toDate();
       final duration = widget.gameData['duration'] ?? 60;
       final diff = DateTime.now().difference(startTime).inSeconds;
       final remaining = duration - diff;
@@ -67,41 +73,77 @@ class _LuckyDrawGameState extends State<LuckyDrawGame> with SingleTickerProvider
     String? winnerName = widget.gameData['winnerName'];
     bool isParticipating = participants.contains(_myUid);
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2C3E50), Color(0xFF000000)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color(0xFF0F1B25).withValues(alpha: 0.8),
+                const Color(0xFF051211).withValues(alpha: 0.9),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: DesignTokens.primaryGold.withValues(alpha: 0.3), width: 1.5),
+            boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 15)],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(status),
+              const SizedBox(height: 20),
+              if (status == 'ongoing') _buildOngoingUI(isParticipating, participants.length),
+              if (status == 'ended') _buildWinnerUI(winnerId, winnerName),
+              const SizedBox(height: 20),
+              _buildFooter(status),
+            ],
+          ),
         ),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.orangeAccent.withValues(alpha: 0.5), width: 2),
-        boxShadow: [BoxShadow(color: Colors.orangeAccent.withValues(alpha: 0.2), blurRadius: 20)],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildHeader(),
-          const SizedBox(height: 20),
-          if (status == 'ongoing') _buildOngoingUI(isParticipating, participants.length),
-          if (status == 'ended') _buildWinnerUI(winnerId, winnerName),
-          const SizedBox(height: 20),
-          _buildFooter(status),
-        ],
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Column(
+  Widget _buildHeader(String status) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text("سحب الحظ الملكي 🎁✨",
-            style: TextStyle(color: Colors.amber, fontSize: 20, fontWeight: FontWeight.bold)),
-        if (widget.gameData['status'] == 'ongoing')
-          Text("الوقت المتبقي: $_secondsLeft ثانية",
-              style: const TextStyle(color: Colors.white70, fontSize: 12)),
+        Row(
+          children: [
+            const Icon(Icons.auto_awesome_rounded, color: DesignTokens.primaryGold, size: 20),
+            const SizedBox(width: 8),
+            Text(status == 'ongoing' ? "سحب الحظ الملكي" : "انتهى السحب", 
+              style: const TextStyle(
+                color: Colors.white, 
+                fontWeight: FontWeight.bold, 
+                fontSize: 16,
+                fontFamily: DesignTokens.primaryFont,
+              )),
+          ],
+        ),
+        if (status == 'ongoing')
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.amber.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: DesignTokens.primaryGold.withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.timer_outlined, color: DesignTokens.primaryGold, size: 14),
+                const SizedBox(width: 6),
+                Text("$_secondsLeft ثانية", 
+                  style: const TextStyle(color: DesignTokens.primaryGold, fontWeight: FontWeight.w900, fontSize: 12)),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -109,27 +151,88 @@ class _LuckyDrawGameState extends State<LuckyDrawGame> with SingleTickerProvider
   Widget _buildOngoingUI(bool isParticipating, int count) {
     return Column(
       children: [
-        RotationTransition(
-          turns: _rotationController,
-          child: const Icon(Icons.stars, color: Colors.amber, size: 80),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            RotationTransition(
+              turns: _rotationController,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: SweepGradient(
+                    colors: [
+                      DesignTokens.primaryGold.withValues(alpha: 0.1),
+                      DesignTokens.primaryGold,
+                      DesignTokens.primaryGold.withValues(alpha: 0.1),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: 85,
+              height: 80,
+              decoration: const BoxDecoration(color: Color(0xFF0F1B25), shape: BoxShape.circle),
+              child: const Icon(Icons.stars_rounded, color: DesignTokens.primaryGold, size: 45),
+            ),
+          ],
         ),
         const SizedBox(height: 20),
-        Text("المشاركون: $count", style: const TextStyle(color: Colors.white, fontSize: 16)),
-        const SizedBox(height: 15),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white10),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.group_rounded, color: Colors.white54, size: 16),
+              const SizedBox(width: 8),
+              Text("المشاركون: $count", style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
         if (!isParticipating)
-          ElevatedButton(
-            onPressed: _joinDraw,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orangeAccent,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          Container(
+            width: 220,
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              gradient: const LinearGradient(colors: [DesignTokens.primaryGold, DesignTokens.primaryGoldLight]),
+              boxShadow: [BoxShadow(color: DesignTokens.primaryGold.withValues(alpha: 0.3), blurRadius: 12)],
             ),
-            child: const Text("دخول السحب مجاناً 🎫", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            child: ElevatedButton(
+              onPressed: _joinDraw,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+              ),
+              child: const Text("دخول مجاناً 🎫", 
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 14)),
+            ),
           )
         else
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
-            child: const Text("تم تسجيل دخولك ✅", style: TextStyle(color: Colors.greenAccent)),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.green.withValues(alpha: 0.1), 
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.5)),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.check_circle_rounded, color: Colors.greenAccent, size: 18),
+                SizedBox(width: 8),
+                Text("أنت مشارك في السحب ✅", style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 13)),
+              ],
+            ),
           ),
       ],
     );
@@ -139,15 +242,29 @@ class _LuckyDrawGameState extends State<LuckyDrawGame> with SingleTickerProvider
     bool iWon = id == _myUid;
     return Column(
       children: [
-        const Icon(Icons.card_membership, color: Colors.amber, size: 80),
-        const SizedBox(height: 15),
-        const Text("الفائز المحظوظ هو:", style: TextStyle(color: Colors.white70)),
-        const SizedBox(height: 5),
-        Text(name ?? "مستخدم ملكي",
-            style: const TextStyle(color: Colors.amber, fontSize: 22, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 10),
-        Text(iWon ? "مبروك! لقد ربحت 🏆👑" : "حظاً أوفر للجميع! ✨",
-            style: TextStyle(color: iWon ? Colors.greenAccent : Colors.white38)),
+        const Icon(Icons.emoji_events_rounded, color: DesignTokens.primaryGold, size: 70),
+        const SizedBox(height: 16),
+        const Text("الفائز المحظوظ في هذه الجولة:", 
+          style: TextStyle(color: Colors.white70, fontSize: 14, fontFamily: DesignTokens.primaryFont)),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+          decoration: BoxDecoration(
+            color: DesignTokens.primaryGold.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: DesignTokens.primaryGold.withValues(alpha: 0.3)),
+          ),
+          child: Text(name ?? "مستخدم",
+              style: const TextStyle(
+                color: DesignTokens.primaryGold, 
+                fontSize: 22, 
+                fontWeight: FontWeight.w900,
+                fontFamily: DesignTokens.primaryFont,
+              )),
+        ),
+        const SizedBox(height: 12),
+        Text(iWon ? "تهانينا! لقد حصلت على الجائزة 🏆" : "حظاً أوفر في السحب القادم ✨",
+            style: TextStyle(color: iWon ? Colors.greenAccent : Colors.white38, fontSize: 13, fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -157,15 +274,18 @@ class _LuckyDrawGameState extends State<LuckyDrawGame> with SingleTickerProvider
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (widget.hasPower)
-          TextButton(
+          TextButton.icon(
             onPressed: _closeGame,
-            child: const Text("إغلاق السحب", style: TextStyle(color: Colors.redAccent)),
+            icon: const Icon(Icons.close_rounded, size: 16, color: Colors.white24),
+            label: const Text("إغلاق السحب", 
+              style: TextStyle(color: Colors.white24, fontSize: 12, fontWeight: FontWeight.bold)),
           ),
       ],
     );
   }
 
   void _joinDraw() async {
+    HapticFeedback.mediumImpact();
     await FirebaseFirestore.instance.collection('rooms').doc(widget.roomId).update({
       'activeGame.participants': FieldValue.arrayUnion([_myUid]),
     });
@@ -199,3 +319,4 @@ class _LuckyDrawGameState extends State<LuckyDrawGame> with SingleTickerProvider
     });
   }
 }
+

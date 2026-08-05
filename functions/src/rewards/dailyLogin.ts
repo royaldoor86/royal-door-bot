@@ -1,13 +1,27 @@
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { CallableRequest } from "firebase-functions/v2/https";
 
 // Cloud Function: claimDailyLogin
-export const claimDailyLogin = functions.region("us-central1").https.onCall(async (_data, context) => {
-  // تحقق من تسجيل الدخول
-  if (!context.auth) {
-    throw new functions.https.HttpsError("unauthenticated", "يجب تسجيل الدخول");
+export const claimDailyLogin = onCall(
+  { region: "us-central1" },
+  async (request: CallableRequest) => {
+  // التحقق من App Check token
+  const appCheckToken = request.rawRequest?.headers?.['x-firebase-appcheck'];
+  if (appCheckToken) {
+    try {
+      const token = typeof appCheckToken === 'string' ? appCheckToken : appCheckToken[0];
+      await admin.appCheck().verifyToken(token);
+    } catch (error) {
+      throw new HttpsError('unauthenticated', 'Invalid App Check token');
+    }
   }
-  const uid = context.auth.uid;
+
+  // تحقق من تسجيل الدخول
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "يجب تسجيل الدخول");
+  }
+  const uid = request.auth.uid;
 
   // مراجع Firestore
   const dailyLoginRef = admin.firestore().collection("daily_logins").doc(uid);
@@ -33,7 +47,7 @@ export const claimDailyLogin = functions.region("us-central1").https.onCall(asyn
       } else if (diff > 1) {
         streak = 1;
       } else if (diff === 0) {
-        throw new functions.https.HttpsError("already-exists", "تم استلام مكافأة اليوم بالفعل");
+        throw new HttpsError("already-exists", "تم استلام مكافأة اليوم بالفعل");
       }
     }
   }

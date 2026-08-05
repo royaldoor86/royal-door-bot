@@ -194,391 +194,398 @@ class _FamilyBrandingPageState extends State<FamilyBrandingPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF3D0B16), Color(0xFF1A050E)],
+        body: SafeArea(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFF3D0B16), Color(0xFF1A050E)],
+              ),
             ),
-          ),
-          child: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              // Current Branding Status
-              StreamBuilder<DocumentSnapshot>(
-                stream:
-                    _db.collection('families').doc(widget.familyId).snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return const SizedBox();
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                // Current Branding Status
+                StreamBuilder<DocumentSnapshot>(
+                  stream: _db
+                      .collection('families')
+                      .doc(widget.familyId)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return const SizedBox();
 
-                  final family = snapshot.data!.data() as Map<String, dynamic>;
-                  final hasCustomBackground =
-                      family['hasCustomBackground'] ?? false;
-                  final hasCustomMusic = family['hasCustomMusic'] ?? false;
-                  final primaryColor = family['primaryColor'];
-                  final secondaryColor = family['secondaryColor'];
-                  final backgroundUrl = family['backgroundUrl'];
+                    final family =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    final hasCustomBackground =
+                        family['hasCustomBackground'] ?? false;
+                    final hasCustomMusic = family['hasCustomMusic'] ?? false;
+                    final primaryColor = family['primaryColor'];
+                    final secondaryColor = family['secondaryColor'];
+                    final backgroundUrl = family['backgroundUrl'];
 
-                  return AppTheme.glassContainer(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('الحالة الحالية',
-                            style: TextStyle(
-                                color: Colors.amber,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 15),
-                        if (primaryColor != null || secondaryColor != null)
-                          Row(
-                            children: [
-                              Container(
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: primaryColor != null &&
-                                          primaryColor.startsWith('#')
-                                      ? Color(int.parse(primaryColor
-                                          .replaceFirst('#', '0xFF')))
-                                      : Colors.grey,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Container(
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: secondaryColor != null &&
-                                          secondaryColor.startsWith('#')
-                                      ? Color(int.parse(secondaryColor
-                                          .replaceFirst('#', '0xFF')))
-                                      : Colors.grey,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Text('الألوان المخصصة',
-                                  style: TextStyle(color: Colors.white)),
-                            ],
-                          ),
-                        const SizedBox(height: 10),
-                        if (hasCustomBackground)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Row(
-                                children: [
-                                  Icon(Icons.wallpaper,
-                                      color: Colors.green),
-                                  SizedBox(width: 10),
-                                  Text('خلفية مخصصة',
-                                      style: TextStyle(color: Colors.green)),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              if (backgroundUrl != null &&
-                                  backgroundUrl.isNotEmpty)
-                                GestureDetector(
-                                  onTap: () =>
-                                      _showFullBackgroundDialog(backgroundUrl),
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 120,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.green
-                                              .withValues(alpha: 0.5)),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        backgroundUrl,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return Container(
-                                            color: Colors.green
-                                                .withValues(alpha: 0.1),
-                                            child: const Center(
-                                              child: Icon(Icons.broken_image,
-                                                  color: Colors.green),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
+                    return AppTheme.glassContainer(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('الحالة الحالية',
+                              style: TextStyle(
+                                  color: Colors.amber,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 15),
+                          if (primaryColor != null || secondaryColor != null)
+                            Row(
+                              children: [
+                                Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: primaryColor != null &&
+                                            primaryColor.startsWith('#')
+                                        ? Color(int.parse(primaryColor
+                                            .replaceFirst('#', '0xFF')))
+                                        : Colors.grey,
+                                    shape: BoxShape.circle,
                                   ),
                                 ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                'اضغط للعرض الكامل',
-                                style: TextStyle(
-                                    color: Colors.white38, fontSize: 11),
-                              ),
-                            ],
-                          ),
-                        const SizedBox(height: 10),
-                        if (hasCustomMusic)
-                          const Row(
-                            children: [
-                              Icon(Icons.music_note, color: Colors.green),
-                              SizedBox(width: 10),
-                              Text('موسيقى مخصصة',
-                                  style: TextStyle(color: Colors.green)),
-                            ],
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 20),
-
-              // Colors Section
-              AppTheme.glassContainer(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('تخصيص الألوان',
-                        style: TextStyle(
-                            color: Colors.amber,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _primaryColorController,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'اللون الأساسي (#RRGGBB)',
-                              labelStyle:
-                                  const TextStyle(color: Colors.white38),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: TextField(
-                            controller: _secondaryColorController,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'اللون الثانوي (#RRGGBB)',
-                              labelStyle:
-                                  const TextStyle(color: Colors.white38),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    ElevatedButton(
-                      onPressed: _updateColors,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: const Text('تحديث الألوان',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Background Section
-              AppTheme.glassContainer(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('خلفية مخصصة',
-                        style: TextStyle(
-                            color: Colors.amber,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 15),
-                    GestureDetector(
-                      onTap: _pickBackground,
-                      child: Container(
-                        width: double.infinity,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          border: Border.all(color: Colors.amber, width: 2),
-                          borderRadius: BorderRadius.circular(10),
-                          image: _selectedBackground != null
-                              ? DecorationImage(
-                                  image: FileImage(_selectedBackground!),
-                                  fit: BoxFit.cover)
-                              : null,
-                        ),
-                        child: _selectedBackground == null
-                            ? const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.add_photo_alternate,
-                                        color: Colors.amber, size: 40),
-                                    SizedBox(height: 10),
-                                    Text('اضغط لاختيار صورة',
-                                        style:
-                                            TextStyle(color: Colors.white38)),
-                                  ],
+                                const SizedBox(width: 10),
+                                Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: secondaryColor != null &&
+                                            secondaryColor.startsWith('#')
+                                        ? Color(int.parse(secondaryColor
+                                            .replaceFirst('#', '0xFF')))
+                                        : Colors.grey,
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              )
-                            : null,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.info, color: Colors.amber),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Text('التكلفة: 1000 جوهرة 💎',
-                                style: TextStyle(color: Colors.amber)),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    ElevatedButton(
-                      onPressed: _isLoading ? null : _purchaseBackground,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(color: Colors.black)
-                          : const Text('شراء الخلفية',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Music Section
-              AppTheme.glassContainer(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('موسيقى مخصصة',
-                        style: TextStyle(
-                            color: Colors.amber,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 15),
-                    GestureDetector(
-                      onTap: _pickMusic,
-                      child: Container(
-                        width: double.infinity,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          border: Border.all(color: Colors.amber, width: 2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: _selectedMusic == null
-                            ? const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                const SizedBox(width: 10),
+                                const Text('الألوان المخصصة',
+                                    style: TextStyle(color: Colors.white)),
+                              ],
+                            ),
+                          const SizedBox(height: 10),
+                          if (hasCustomBackground)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Row(
                                   children: [
-                                    Icon(Icons.music_note,
-                                        color: Colors.amber, size: 40),
-                                    SizedBox(height: 10),
-                                    Text('اضغط لاختيار ملف موسيقى',
-                                        style:
-                                            TextStyle(color: Colors.white38)),
-                                  ],
-                                ),
-                              )
-                            : const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.check_circle,
-                                        color: Colors.green, size: 40),
-                                    SizedBox(height: 10),
-                                    Text('تم اختيار الملف',
+                                    Icon(Icons.wallpaper, color: Colors.green),
+                                    SizedBox(width: 10),
+                                    Text('خلفية مخصصة',
                                         style: TextStyle(color: Colors.green)),
                                   ],
                                 ),
-                              ),
+                                const SizedBox(height: 10),
+                                if (backgroundUrl != null &&
+                                    backgroundUrl.isNotEmpty)
+                                  GestureDetector(
+                                    onTap: () => _showFullBackgroundDialog(
+                                        backgroundUrl),
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 120,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                            color: Colors.green
+                                                .withValues(alpha: 0.5)),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.network(
+                                          backgroundUrl,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Container(
+                                              color: Colors.green
+                                                  .withValues(alpha: 0.1),
+                                              child: const Center(
+                                                child: Icon(Icons.broken_image,
+                                                    color: Colors.green),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'اضغط للعرض الكامل',
+                                  style: TextStyle(
+                                      color: Colors.white38, fontSize: 11),
+                                ),
+                              ],
+                            ),
+                          const SizedBox(height: 10),
+                          if (hasCustomMusic)
+                            const Row(
+                              children: [
+                                Icon(Icons.music_note, color: Colors.green),
+                                SizedBox(width: 10),
+                                Text('موسيقى مخصصة',
+                                    style: TextStyle(color: Colors.green)),
+                              ],
+                            ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      controller: _musicUrlController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'رابط الموسيقى (اختياري)',
-                        labelStyle: const TextStyle(color: Colors.white38),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Row(
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                // Colors Section
+                AppTheme.glassContainer(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('تخصيص الألوان',
+                          style: TextStyle(
+                              color: Colors.amber,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 15),
+                      Row(
                         children: [
-                          Icon(Icons.info, color: Colors.amber),
-                          SizedBox(width: 10),
                           Expanded(
-                            child: Text('التكلفة: 5000 جوهرة 💎',
-                                style: TextStyle(color: Colors.amber)),
+                            child: TextField(
+                              controller: _primaryColorController,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                labelText: 'اللون الأساسي (#RRGGBB)',
+                                labelStyle:
+                                    const TextStyle(color: Colors.white38),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: TextField(
+                              controller: _secondaryColorController,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                labelText: 'اللون الثانوي (#RRGGBB)',
+                                labelStyle:
+                                    const TextStyle(color: Colors.white38),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 15),
-                    ElevatedButton(
-                      onPressed: _isLoading ? null : _purchaseMusic,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        minimumSize: const Size(double.infinity, 50),
+                      const SizedBox(height: 15),
+                      ElevatedButton(
+                        onPressed: _updateColors,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
+                        child: const Text('تحديث الألوان',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold)),
                       ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(color: Colors.black)
-                          : const Text('شراء الموسيقى',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold)),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 20),
+
+                // Background Section
+                AppTheme.glassContainer(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('خلفية مخصصة',
+                          style: TextStyle(
+                              color: Colors.amber,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 15),
+                      GestureDetector(
+                        onTap: _pickBackground,
+                        child: Container(
+                          width: double.infinity,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            border: Border.all(color: Colors.amber, width: 2),
+                            borderRadius: BorderRadius.circular(10),
+                            image: _selectedBackground != null
+                                ? DecorationImage(
+                                    image: FileImage(_selectedBackground!),
+                                    fit: BoxFit.cover)
+                                : null,
+                          ),
+                          child: _selectedBackground == null
+                              ? const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.add_photo_alternate,
+                                          color: Colors.amber, size: 40),
+                                      SizedBox(height: 10),
+                                      Text('اضغط لاختيار صورة',
+                                          style:
+                                              TextStyle(color: Colors.white38)),
+                                    ],
+                                  ),
+                                )
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.info, color: Colors.amber),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Text('التكلفة: 1000 جوهرة 💎',
+                                  style: TextStyle(color: Colors.amber)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      ElevatedButton(
+                        onPressed: _isLoading ? null : _purchaseBackground,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.black)
+                            : const Text('شراء الخلفية',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Music Section
+                AppTheme.glassContainer(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('موسيقى مخصصة',
+                          style: TextStyle(
+                              color: Colors.amber,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 15),
+                      GestureDetector(
+                        onTap: _pickMusic,
+                        child: Container(
+                          width: double.infinity,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            border: Border.all(color: Colors.amber, width: 2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: _selectedMusic == null
+                              ? const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.music_note,
+                                          color: Colors.amber, size: 40),
+                                      SizedBox(height: 10),
+                                      Text('اضغط لاختيار ملف موسيقى',
+                                          style:
+                                              TextStyle(color: Colors.white38)),
+                                    ],
+                                  ),
+                                )
+                              : const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.check_circle,
+                                          color: Colors.green, size: 40),
+                                      SizedBox(height: 10),
+                                      Text('تم اختيار الملف',
+                                          style:
+                                              TextStyle(color: Colors.green)),
+                                    ],
+                                  ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      TextField(
+                        controller: _musicUrlController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: 'رابط الموسيقى (اختياري)',
+                          labelStyle: const TextStyle(color: Colors.white38),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.info, color: Colors.amber),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Text('التكلفة: 5000 جوهرة 💎',
+                                  style: TextStyle(color: Colors.amber)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      ElevatedButton(
+                        onPressed: _isLoading ? null : _purchaseMusic,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator(
+                                color: Colors.black)
+                            : const Text('شراء الموسيقى',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

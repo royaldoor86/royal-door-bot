@@ -56,9 +56,9 @@ class DailyTasksService {
 
       // تطبيق الجائزة بناءً على نوعها
       if (rewardType == 'coin') {
-        updates['stars'] = (userData['stars'] ?? 0) + rewardAmount;
-        updates['coins'] =
-            (userData['coins'] ?? 0) + rewardAmount; // Keep in sync
+        updates['coins'] = (userData['coins'] ?? 0) + rewardAmount;
+        updates['stars'] =
+            (userData['stars'] ?? 0) + rewardAmount; // Keep in sync
       } else if (rewardType == 'gem') {
         updates['gems'] = (userData['gems'] ?? 0) + rewardAmount;
       } else if (rewardType == 'xp') {

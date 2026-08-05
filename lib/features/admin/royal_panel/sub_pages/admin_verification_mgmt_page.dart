@@ -5,20 +5,22 @@ class AdminVerificationMgmtPage extends StatefulWidget {
   const AdminVerificationMgmtPage({super.key});
 
   @override
-  State<AdminVerificationMgmtPage> createState() => _AdminVerificationMgmtPageState();
+  State<AdminVerificationMgmtPage> createState() =>
+      _AdminVerificationMgmtPageState();
 }
 
 class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final Color primaryDark = const Color(0xFF0A1F1C);
   final Color accentGold = const Color(0xFFC5A059);
-  
+
   // اللون الأزرق الطبيعي الموحد للتوثيق
   final String standardBlueHex = '#FF2196F3';
 
   Color _parseColor(String? hex) {
     try {
-      String cleanHex = (hex ?? standardBlueHex).replaceAll('#', '').replaceAll('0x', '');
+      String cleanHex =
+          (hex ?? standardBlueHex).replaceAll('#', '').replaceAll('0x', '');
       if (cleanHex.length == 6) cleanHex = 'FF$cleanHex';
       return Color(int.parse(cleanHex, radix: 16));
     } catch (_) {
@@ -34,7 +36,8 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
         backgroundColor: primaryDark,
         appBar: AppBar(
           backgroundColor: const Color(0xFF051211),
-          title: Text('إدارة توثيق الحسابات', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
+          title: Text('إدارة توثيق الحسابات',
+              style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
           centerTitle: true,
         ),
         body: Column(
@@ -45,7 +48,8 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
                 stream: _db.collection('verifications').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator(color: Colors.amber));
+                    return const Center(
+                        child: CircularProgressIndicator(color: Colors.amber));
                   }
                   final docs = snapshot.data?.docs ?? [];
                   if (docs.isEmpty) return _buildEmptyState();
@@ -79,11 +83,13 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
       child: ElevatedButton.icon(
         onPressed: () => _showAddDialog(),
         icon: const Icon(Icons.verified_user_rounded, color: Colors.black),
-        label: const Text('إضافة حزمة توثيق جديدة', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        label: const Text('إضافة حزمة توثيق جديدة',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         style: ElevatedButton.styleFrom(
           backgroundColor: accentGold,
           padding: const EdgeInsets.symmetric(vertical: 15),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),
       ),
     );
@@ -98,9 +104,13 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
         border: Border.all(color: accentGold.withValues(alpha: 0.1)),
       ),
       child: ListTile(
-        leading: Icon(Icons.verified, color: _parseColor(data['color']), size: 30),
-        title: Text(data['name'] ?? 'توثيق حساب', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text('السعر: ${data['price']} نجوم ⭐', style: TextStyle(color: accentGold, fontSize: 13)),
+        leading:
+            Icon(Icons.verified, color: _parseColor(data['color']), size: 30),
+        title: Text(data['name'] ?? 'توثيق حساب',
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+        subtitle: Text('السعر: ${data['price']} كوينز',
+            style: TextStyle(color: accentGold, fontSize: 13)),
         trailing: IconButton(
           icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
           onPressed: () => _deleteVerification(id),
@@ -117,8 +127,13 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
         title: const Text('حذف التوثيق', style: TextStyle(color: Colors.white)),
         content: const Text('هل أنت متأكد من حذف هذه الحزمة؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('حذف', style: TextStyle(color: Colors.redAccent))),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child:
+                  const Text('حذف', style: TextStyle(color: Colors.redAccent))),
         ],
       ),
     );
@@ -136,7 +151,8 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-        title: Text('إنشاء حزمة توثيق', style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
+        title: Text('إنشاء حزمة توثيق',
+            style: TextStyle(color: accentGold, fontWeight: FontWeight.bold)),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -145,15 +161,17 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
               _buildLabel('اسم الحزمة (مثال: توثيق رويال)'),
               _buildField(nameCtrl, 'الاسم'),
               const SizedBox(height: 15),
-              _buildLabel('السعر بالنجوم ⭐'),
+              _buildLabel('السعر بالكوينز'),
               _buildField(priceCtrl, '0', isNumber: true),
               const SizedBox(height: 20),
               Center(
                 child: Column(
                   children: [
-                    const Text('لون علامة التوثيق (أزرق افتراضي)', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                    const Text('لون علامة التوثيق (أزرق افتراضي)',
+                        style: TextStyle(color: Colors.white54, fontSize: 11)),
                     const SizedBox(height: 10),
-                    Icon(Icons.verified, color: _parseColor(standardBlueHex), size: 50),
+                    Icon(Icons.verified,
+                        color: _parseColor(standardBlueHex), size: 50),
                   ],
                 ),
               ),
@@ -161,7 +179,10 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء', style: TextStyle(color: Colors.white38))),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child:
+                  const Text('إلغاء', style: TextStyle(color: Colors.white38))),
           ElevatedButton(
             onPressed: () async {
               if (nameCtrl.text.isEmpty || priceCtrl.text.isEmpty) return;
@@ -171,9 +192,11 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
                 'color': standardBlueHex,
                 'createdAt': FieldValue.serverTimestamp(),
               });
+              if (!mounted) return;
               Navigator.pop(ctx);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: accentGold, foregroundColor: Colors.black),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: accentGold, foregroundColor: Colors.black),
             child: const Text('حفظ ونشر'),
           ),
         ],
@@ -181,17 +204,26 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
     );
   }
 
-  Widget _buildLabel(String text) => Padding(padding: const EdgeInsets.only(bottom: 8, right: 5), child: Text(text, style: TextStyle(color: accentGold.withValues(alpha: 0.7), fontSize: 12)));
+  Widget _buildLabel(String text) => Padding(
+      padding: const EdgeInsets.only(bottom: 8, right: 5),
+      child: Text(text,
+          style: TextStyle(
+              color: accentGold.withValues(alpha: 0.7), fontSize: 12)));
 
-  Widget _buildField(TextEditingController ctrl, String hint, {bool isNumber = false}) {
+  Widget _buildField(TextEditingController ctrl, String hint,
+      {bool isNumber = false}) {
     return TextField(
       controller: ctrl,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        hintText: hint, hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
-        filled: true, fillColor: Colors.white.withValues(alpha: 0.05),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+        hintText: hint,
+        hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
+        filled: true,
+        fillColor: Colors.white.withValues(alpha: 0.05),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none),
       ),
     );
   }
@@ -201,9 +233,11 @@ class _AdminVerificationMgmtPageState extends State<AdminVerificationMgmtPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.verified_outlined, size: 80, color: accentGold.withValues(alpha: 0.1)),
+          Icon(Icons.verified_outlined,
+              size: 80, color: accentGold.withValues(alpha: 0.1)),
           const SizedBox(height: 16),
-          const Text('لا توجد حزم توثيق مضافة', style: TextStyle(color: Colors.white24, fontSize: 16)),
+          const Text('لا توجد حزم توثيق مضافة',
+              style: TextStyle(color: Colors.white24, fontSize: 16)),
         ],
       ),
     );

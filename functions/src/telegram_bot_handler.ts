@@ -11,6 +11,7 @@ interface TelegramMessage {
   from: { id: number; first_name: string; username?: string; last_name?: string };
   text?: string;
   photo?: any[];
+  contact?: { phone_number: string; user_id: number; first_name: string };
 }
 
 interface TelegramCallback {
@@ -23,6 +24,23 @@ interface TelegramCallback {
 }
 
 const db = admin.firestore();
+
+/**
+ * 🛡️ Request Phone Verification
+ */
+async function handleRequestVerification(chat_id: number) {
+  await axios.post(`${TELEGRAM_API}/sendMessage`, {
+    chat_id,
+    text: "🛡️ **خطوة الأمان الملكية**\n\nلمنع الحسابات الوهمية وضمان جودة الخدمة، يرجى الضغط على الزر أدناه لمشاركة رقم هاتفك الموثق في تلجرام.\n\nسيتم فتح ميزة 'تطبيقي الملكي' فور التحقق.",
+    reply_markup: {
+      keyboard: [
+        [{ text: "📱 مشاركة رقم الهاتف للتحقق", request_contact: true }]
+      ],
+      resize_keyboard: true,
+      one_time_keyboard: true
+    }
+  });
+}
 
 /**
  * 🛠 Helper to escape HTML characters
@@ -42,8 +60,15 @@ function escapeHTML(str: string): string {
  */
 export const telegramBotHandler = functions
   .region("us-central1")
+  .runWith({
+    minInstances: 1,
+    timeoutSeconds: 540,
+  })
   .https.onRequest(async (req, res) => {
     try {
+      console.log('🚀 Telegram Bot Handler called');
+      console.log('📝 Request body:', JSON.stringify(req.body));
+      
       const body = req.body;
 
       // 1️⃣ Handle Message Reactions (New!)
@@ -65,7 +90,9 @@ export const telegramBotHandler = functions
         const text = msg.text;
         const user = msg.from;
 
-        if (text?.startsWith("/start")) {
+        if (msg.contact) {
+          await handleContactMessage(chat_id, msg.contact);
+        } else if (text?.startsWith("/start")) {
           const parts = text.split(" ");
           if (parts.length > 1) {
             const param = parts[1];
@@ -141,6 +168,9 @@ export const telegramBotHandler = functions
             break;
           case "admin_panel":
             await handleAdminPanel(chat_id, message_id);
+            break;
+          case "request_verification":
+            await handleRequestVerification(chat_id);
             break;
           case "admin_charge_points":
             await askForTargetUserId(chat_id, "charge");
@@ -400,9 +430,12 @@ export const telegramBotHandler = functions
       }
 
       res.status(200).send("OK");
-    } catch (error) {
-      console.error("Telegram Bot Error:", error);
-      res.status(200).send("OK");
+    } catch (error: any) {
+      console.error("Critical Bot Error:", error?.response?.data || error.message);
+      // Always respond with 200 OK to Telegram to prevent retry loops and webhook disabling
+      if (!res.headersSent) {
+        res.status(200).send("OK");
+      }
     }
   });
 
@@ -487,7 +520,7 @@ async function handleAdminPanel(chat_id: number, message_id: number) {
 async function handleAdminBotUsers(chat_id: number, message_id: number) {
   try {
     const usersSnapshot = await db.collection("telegram_users").get();
-    const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[];
     const total = usersSnapshot.size;
 
     let text = `👥 <b>مستخدمو البوت</b> 👥\n\n`;
@@ -1274,6 +1307,57 @@ export async function handleUserLeave(newUserId: number) {
 /**
  * 📱 Start Command - Main Menu
  */
+/**
+ * 📞 Handle Contact Message (Verification)
+ */
+async function handleContactMessage(chat_id: number, contact: any) {
+  const phone = contact.phone_number;
+  const contactUserId = contact.user_id;
+
+  // 1. التحقق من أن جهة الاتصال تخص المستخدم نفسه
+  if (contactUserId !== chat_id) {
+    await axios.post(`${TELEGRAM_API}/sendMessage`, {
+      chat_id,
+      text: "⚠️ يرجى مشاركة رقم هاتفك الخاص من خلال الزر المخصص فقط.",
+    });
+    return;
+  }
+
+  // 2. فحص الأرقام الوهمية (قائمة سوداء لمقدمات الأرقام)
+  // +1: USA/Canada, +371: Latvia, +44: UK (often virtual), +48: Poland (virtual)
+  const blacklistedPrefixes = ["1", "371", "48"];
+  const cleanPhone = phone.replace("+", "");
+
+  const isBlacklisted = blacklistedPrefixes.some(prefix => cleanPhone.startsWith(prefix));
+
+  if (isBlacklisted) {
+    await axios.post(`${TELEGRAM_API}/sendMessage`, {
+      chat_id,
+      text: "❌ عذراً، لا يمكن استخدام أرقام الهواتف الوهمية أو الدولية غير المدعومة لتفعيل التطبيق.",
+    });
+    return;
+  }
+
+  // 3. تحديث حالة المستخدم في Firestore
+  await db.collection("telegram_users").doc(chat_id.toString()).update({
+    phone_verified: true,
+    verified_phone: phone,
+    verified_at: admin.firestore.FieldValue.serverTimestamp(),
+  });
+
+  await axios.post(`${TELEGRAM_API}/sendMessage`, {
+    chat_id,
+    text: "✅ تم التحقق من رقم هاتفك بنجاح! يمكنك الآن استخدام التطبيق وكافة الخدمات.",
+    reply_markup: {
+      remove_keyboard: true // إخفاء لوحة مفاتيح طلب الرقم
+    }
+  });
+
+  // إعادة إظهار قائمة البداية مع زر التطبيق
+  const userDoc = await db.collection("telegram_users").doc(chat_id.toString()).get();
+  await handleStartCommand(chat_id, userDoc.data());
+}
+
 async function handleStartCommand(chat_id: number, user: any) {
   const firstName = user?.first_name || "عزيزي";
   // Added multiple admin IDs for testing and provided by user
@@ -1301,6 +1385,7 @@ async function handleStartCommand(chat_id: number, user: any) {
   }
 
   const userData = userDoc.data();
+  const isPhoneVerified = userData?.phone_verified === true;
   const userBalance = userData?.points || 0;
   const totalTransfers = userData?.transfers_count || 0;
   const collectivePoints = userData?.collective_points || 0;
@@ -1339,8 +1424,13 @@ async function handleStartCommand(chat_id: number, user: any) {
       // 👑 لوحة الإدارة (تظهر للمدير فقط)
       ...(isAdmin ? [[{ text: "👑 لوحة الإدارة (المدير)", callback_data: "admin_panel" }]] : []),
 
-      // 👑 الخدمات الملكية
-      [{ text: "👑 الخدمات الملكية", callback_data: "royal_services" }],
+      // 👑 الخدمات الملكية + 📱 تطبيقي (فقط للمحققين)
+      [
+        { text: "👑 الخدمات الملكية", callback_data: "royal_services" },
+        ...(isPhoneVerified
+          ? [{ text: "📱 تطبيقي الملكي", web_app: { url: "https://royaldoor86-e6489.web.app" } }]
+          : [{ text: "🛡️ تفعيل التطبيق", callback_data: "request_verification" }])
+      ],
 
       // 👤 الحساب - دعوة صديق - التفاعل (بترتيب عربي من اليمين لليسار)
       [
@@ -3176,15 +3266,22 @@ async function handleAgents(chat_id: number, message_id: number) {
 
 اختر الوكيل الأقرب إليك للتواصل المباشر:
 
-🏛 **وكيل المنطقة الوسطى** (بغداد وما حولها)
+🏛 **وكيل العاصمة بغداد** (أبو اسحاق المالكي)
+🌆 **وكيل المنطقة الوسطى** (بغداد وما حولها)
 🌴 **وكيل المنطقة الجنوبية** (البصرة والفرات الأوسط)
 🌊 **وكيل المنطقة الشمالية** (كوردستان والموصل)
 🏜 **وكيل المنطقة الغربية** (الأنبار وصلاح الدين)`;
 
   const keyboard = {
     inline_keyboard: [
+      // وكيل العاصمة بغداد
+      [{ text: "🏛 وكيل العاصمة بغداد (أبو اسحاق)", callback_data: "none" }],
+      [
+        { text: "🟢 واتساب", url: "https://wa.me/9647739676609" },
+        { text: "🔵 تلغرام", url: "https://t.me/+9647739676609" }
+      ],
       // المنطقة الوسطى
-      [{ text: "🏛 وكيل المنطقة الوسطى", callback_data: "none" }],
+      [{ text: "🌆 وكيل المنطقة الوسطى", callback_data: "none" }],
       [
         { text: "🟢 واتساب", url: "https://wa.me/9647813431076" },
         { text: "🔵 تلغرام", url: "https://t.me/+9647813431076" }

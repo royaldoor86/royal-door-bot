@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../app_theme.dart';
-import '../services/family_service.dart';
 
 class FamilyArchivePage extends StatefulWidget {
   final String familyId;
@@ -12,7 +11,6 @@ class FamilyArchivePage extends StatefulWidget {
 }
 
 class _FamilyArchivePageState extends State<FamilyArchivePage> {
-  final FamilyService _familyService = FamilyService();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   String _selectedCategory = 'all';
   String _searchQuery = '';
@@ -138,11 +136,11 @@ class _FamilyArchivePageState extends State<FamilyArchivePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.shield, color: Colors.amber),
-              const SizedBox(width: 10),
-              const Text('أرشيف الحروب',
+              Icon(Icons.shield, color: Colors.amber),
+              SizedBox(width: 10),
+              Text('أرشيف الحروب',
                   style: TextStyle(
                       color: Colors.amber,
                       fontSize: 18,
@@ -192,11 +190,11 @@ class _FamilyArchivePageState extends State<FamilyArchivePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.event, color: Colors.amber),
-              const SizedBox(width: 10),
-              const Text('أرشيف الأحداث',
+              Icon(Icons.event, color: Colors.amber),
+              SizedBox(width: 10),
+              Text('أرشيف الأحداث',
                   style: TextStyle(
                       color: Colors.amber,
                       fontSize: 18,
@@ -246,11 +244,11 @@ class _FamilyArchivePageState extends State<FamilyArchivePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.how_to_vote, color: Colors.amber),
-              const SizedBox(width: 10),
-              const Text('أرشيف التصويتات',
+              Icon(Icons.how_to_vote, color: Colors.amber),
+              SizedBox(width: 10),
+              Text('أرشيف التصويتات',
                   style: TextStyle(
                       color: Colors.amber,
                       fontSize: 18,
@@ -300,11 +298,11 @@ class _FamilyArchivePageState extends State<FamilyArchivePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.task_alt, color: Colors.amber),
-              const SizedBox(width: 10),
-              const Text('أرشيف المهام',
+              Icon(Icons.task_alt, color: Colors.amber),
+              SizedBox(width: 10),
+              Text('أرشيف المهام',
                   style: TextStyle(
                       color: Colors.amber,
                       fontSize: 18,
@@ -470,7 +468,7 @@ class _FamilyArchivePageState extends State<FamilyArchivePage> {
       csvData.writeln('النوع,التاريخ,البيانات');
 
       for (var doc in archiveSnap.docs) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data();
         final category = data['category'] ?? 'غير معروف';
         final archivedAt = (data['archivedAt'] as Timestamp).toDate();
         final itemData = data['data'] as Map<String, dynamic>?;

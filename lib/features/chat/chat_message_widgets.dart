@@ -11,7 +11,7 @@ import '../../models/chat_model.dart';
 import '../../theme/design_tokens.dart';
 import '../../theme/reusable_widgets.dart';
 import '../diaries/single_post_page.dart';
-import '../voice_room_page.dart';
+import '../../services/room_navigation_service.dart';
 
 class PostCardMessage extends StatelessWidget {
   final bool isMe;
@@ -204,11 +204,10 @@ class RoomCardMessage extends StatelessWidget {
               if (isSelected) {
                 onTap();
               } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) =>
-                            VoiceRoomPage(roomId: roomId, roomName: roomName)));
+                RoomNavigationService.joinRoom(context, {
+                  'roomId': roomId,
+                  'name': roomName,
+                });
               }
             },
             child: Row(
@@ -379,6 +378,8 @@ class ChatMessageBubble extends StatefulWidget {
   final bool isPlaying;
   final VoidCallback? onPlayVoice;
   final Duration? currentPosition;
+  final String? myChatBubble;
+  final String? otherChatBubble;
 
   const ChatMessageBubble({
     super.key,
@@ -399,6 +400,8 @@ class ChatMessageBubble extends StatefulWidget {
     this.isPlaying = false,
     this.onPlayVoice,
     this.currentPosition,
+    this.myChatBubble,
+    this.otherChatBubble,
   });
 
   @override
@@ -423,6 +426,9 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
   Widget build(BuildContext context) {
     final bool hasLink =
         widget.message.type == MessageType.text && _isLink(widget.message.text);
+
+    final String? activeBubble =
+        widget.isMe ? widget.myChatBubble : widget.otherChatBubble;
 
     return SwipeToReply(
       onReply: widget.onReply,
@@ -471,25 +477,37 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   margin: const EdgeInsets.symmetric(
                       vertical: DesignTokens.spacingXs),
                   constraints: BoxConstraints(
+                      minWidth: (activeBubble != null && activeBubble.isNotEmpty) ? 85 : 0,
+                      minHeight: (activeBubble != null && activeBubble.isNotEmpty) ? 45 : 0,
                       maxWidth: MediaQuery.of(context).size.width * 0.75),
-                  padding: const EdgeInsets.all(DesignTokens.spacingMd),
+                  padding: (activeBubble != null && activeBubble.isNotEmpty)
+                      ? const EdgeInsets.fromLTRB(25, 14, 25, 14)
+                      : const EdgeInsets.all(DesignTokens.spacingMd),
                   decoration: BoxDecoration(
-                    color: widget.isMe
-                        ? DesignTokens.primaryGold
-                        : DesignTokens.backgroundDarkMedium,
-                    borderRadius: BorderRadius.only(
-                      topLeft:
-                          const Radius.circular(DesignTokens.borderRadiusXl2),
-                      topRight:
-                          const Radius.circular(DesignTokens.borderRadiusXl2),
-                      bottomLeft: Radius.circular(widget.isMe
-                          ? DesignTokens.borderRadiusXl2
-                          : DesignTokens.borderRadiusXs),
-                      bottomRight: Radius.circular(widget.isMe
-                          ? DesignTokens.borderRadiusXs
-                          : DesignTokens.borderRadiusXl2),
-                    ),
-                    boxShadow: widget.isMe
+                    color: (activeBubble != null && activeBubble.isNotEmpty)
+                        ? Colors.transparent
+                        : (widget.isMe
+                            ? DesignTokens.primaryGold
+                            : DesignTokens.backgroundDarkMedium),
+                    borderRadius: (activeBubble != null && activeBubble.isNotEmpty)
+                        ? null
+                        : BorderRadius.only(
+                            topLeft: const Radius.circular(DesignTokens.borderRadiusXl2),
+                            topRight: const Radius.circular(DesignTokens.borderRadiusXl2),
+                            bottomLeft: Radius.circular(widget.isMe
+                                ? DesignTokens.borderRadiusXl2
+                                : DesignTokens.borderRadiusXs),
+                            bottomRight: Radius.circular(widget.isMe
+                                ? DesignTokens.borderRadiusXs
+                                : DesignTokens.borderRadiusXl2),
+                          ),
+                    image: (activeBubble != null && activeBubble.isNotEmpty)
+                        ? DecorationImage(
+                            image: CachedNetworkImageProvider(activeBubble),
+                            fit: BoxFit.fill,
+                          )
+                        : null,
+                    boxShadow: (widget.isMe && (activeBubble == null || activeBubble.isEmpty))
                         ? [
                             BoxShadow(
                                 color: DesignTokens.primaryGold
@@ -501,14 +519,17 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       if (!widget.isMe && widget.senderName != null)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 4.0),
                           child: Text(
                             widget.senderName!,
-                            style: const TextStyle(
-                              color: DesignTokens.primaryGold,
+                            style: TextStyle(
+                              color: (activeBubble != null && activeBubble.isNotEmpty) 
+                                  ? Colors.white70 
+                                  : DesignTokens.primaryGold,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -517,37 +538,45 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                       if (widget.message.forwardedFrom != null)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 4),
-                          child: Row(mainAxisSize: MainAxisSize.min, children: [
-                            const Icon(Icons.forward_rounded,
-                                size: 10, color: Colors.white38),
-                            const SizedBox(width: 4),
-                            Text('محولة من ${widget.message.forwardedFrom}',
-                                style: const TextStyle(
-                                    fontSize: DesignTokens.fontSizeXs,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.white38))
-                          ]),
+                          child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.forward_rounded,
+                                    size: 10, color: Colors.white38),
+                                const SizedBox(width: 4),
+                                Text(
+                                    'محولة من ${widget.message.forwardedFrom}',
+                                    style: const TextStyle(
+                                        fontSize:
+                                            DesignTokens.fontSizeXs,
+                                        fontStyle: FontStyle.italic,
+                                        color: Colors.white38))
+                              ]),
                         ),
                       if (widget.message.replyToText != null &&
-                          !widget.message.replyToText!.startsWith('room_id:'))
+                          !widget.message.replyToText!
+                              .startsWith('room_id:'))
                         Container(
                           margin: const EdgeInsets.only(bottom: 6),
-                          padding: const EdgeInsets.all(DesignTokens.spacingSm),
+                          padding: const EdgeInsets.all(
+                              DesignTokens.spacingSm),
                           decoration: BoxDecoration(
                               color: const Color(0x1A000000),
                               borderRadius: BorderRadius.circular(
                                   DesignTokens.borderRadiusMd),
-                              border: const Border(
+                              border: Border(
                                   right: BorderSide(
-                                      color: DesignTokens.primaryGold,
+                                      color: (activeBubble != null && activeBubble.isNotEmpty) 
+                                          ? Colors.white24 
+                                          : DesignTokens.primaryGold,
                                       width: 3))),
                           child: Text(widget.message.replyToText!,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                  color: widget.isMe
-                                      ? Colors.black54
-                                      : Colors.white38,
+                                  color: (activeBubble != null && activeBubble.isNotEmpty)
+                                      ? Colors.white54
+                                      : (widget.isMe ? Colors.black54 : Colors.white38),
                                   fontSize: DesignTokens.fontSizeXs)),
                         ),
                       if (hasLink)
@@ -562,10 +591,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                             },
                             previewData: _previewData,
                             text: widget.message.text,
-                            width: MediaQuery.of(context).size.width * 0.7,
+                            width:
+                                MediaQuery.of(context).size.width * 0.7,
                             textStyle: TextStyle(
-                                color:
-                                    widget.isMe ? Colors.black87 : Colors.white,
+                                color: (activeBubble != null && activeBubble.isNotEmpty)
+                                    ? Colors.white
+                                    : (widget.isMe ? Colors.black87 : Colors.white),
                                 fontSize: DesignTokens.fontSizeSm),
                             linkStyle: const TextStyle(
                                 color: DesignTokens.primarySapphire,
@@ -582,7 +613,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                         ),
                       if (widget.message.type == MessageType.image)
                         GestureDetector(
-                          onTap: () => (widget.message.imageUrl != null &&
+                          onTap: () => (widget.message.imageUrl !=
+                                      null &&
                                   widget.message.imageUrl!.isNotEmpty &&
                                   Uri.tryParse(widget.message.imageUrl!)
                                           ?.host
@@ -599,32 +631,36 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                     widget.message.id,
                                 child: CachedNetworkImage(
                                     imageUrl:
-                                        (widget.message.imageUrl != null &&
+                                        (widget.message.imageUrl !=
+                                                    null &&
                                                 widget.message.imageUrl!
                                                     .isNotEmpty &&
                                                 Uri.tryParse(widget
-                                                            .message.imageUrl!)
+                                                            .message
+                                                            .imageUrl!)
                                                         ?.host
                                                         .isNotEmpty ==
                                                     true)
                                             ? widget.message.imageUrl!
                                             : '',
                                     placeholder: (c, u) => const Center(
-                                        child:
-                                            RoyalLoadingIndicator(size: 30))),
+                                        child: RoyalLoadingIndicator(
+                                            size: 30))),
                               )),
                         )
                       else if (widget.message.type == MessageType.audio)
                         _buildVoiceWaveform(widget.isMe)
                       else if (widget.message.type == MessageType.video)
                         GestureDetector(
-                          onTap: () => (widget.message.videoUrl != null &&
+                          onTap: () => (widget.message.videoUrl !=
+                                      null &&
                                   widget.message.videoUrl!.isNotEmpty &&
                                   Uri.tryParse(widget.message.videoUrl!)
                                           ?.host
                                           .isNotEmpty ==
                                       true)
-                              ? widget.onVideoTap(widget.message.videoUrl!)
+                              ? widget
+                                  .onVideoTap(widget.message.videoUrl!)
                               : null,
                           child: Stack(
                             alignment: Alignment.center,
@@ -633,23 +669,24 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                   borderRadius: BorderRadius.circular(
                                       DesignTokens.borderRadiusLg),
                                   child: (widget.message.imageUrl != null &&
-                                          widget.message.imageUrl!.isNotEmpty &&
+                                          widget.message.imageUrl!
+                                              .isNotEmpty &&
                                           Uri.tryParse(widget.message.imageUrl!)
                                                   ?.host
                                                   .isNotEmpty ==
                                               true)
                                       ? CachedNetworkImage(
-                                          imageUrl: widget.message.imageUrl!,
+                                          imageUrl:
+                                              widget.message.imageUrl!,
                                           placeholder: (c, u) => const Center(
-                                              child: RoyalLoadingIndicator(
-                                                  size: 30)))
+                                              child:
+                                                  RoyalLoadingIndicator(
+                                                      size: 30)))
                                       : Container(
                                           width: 200,
                                           height: 150,
                                           color: Colors.black,
-                                          child: const Icon(Icons.videocam,
-                                              color: Colors.white54,
-                                              size: 40))),
+                                          child: const Icon(Icons.videocam, color: Colors.white54, size: 40))),
                               const Icon(Icons.play_circle_fill_rounded,
                                   color: Colors.white, size: 50),
                             ],
@@ -661,10 +698,14 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                       else if (!hasLink)
                         Text(widget.message.text,
                             style: TextStyle(
-                                color:
-                                    widget.isMe ? Colors.black : Colors.white,
+                                color: (activeBubble != null && activeBubble.isNotEmpty)
+                                    ? Colors.white
+                                    : (widget.isMe ? Colors.black : Colors.white),
                                 fontSize: DesignTokens.fontSizeSm + 0.5,
-                                height: 1.3)),
+                                height: 1.3,
+                                shadows: (activeBubble != null && activeBubble.isNotEmpty) ? [
+                                  const Shadow(color: Colors.black45, blurRadius: 2, offset: Offset(1, 1))
+                                ] : null)),
                       if (widget.message.reactions != null &&
                           widget.message.reactions!.isNotEmpty)
                         Padding(
@@ -677,10 +718,13 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                       padding: const EdgeInsets.all(2),
                                       decoration: BoxDecoration(
                                           color: Colors.black26,
-                                          borderRadius: BorderRadius.circular(
-                                              DesignTokens.borderRadiusSm)),
+                                          borderRadius:
+                                              BorderRadius.circular(
+                                                  DesignTokens
+                                                      .borderRadiusSm)),
                                       child: Text(e,
-                                          style: const TextStyle(fontSize: 10)),
+                                          style: const TextStyle(
+                                              fontSize: 10)),
                                     ))
                                 .toList(),
                           ),
@@ -694,7 +738,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                 padding: EdgeInsets.only(left: 4),
                                 child: Text('معدلة',
                                     style: TextStyle(
-                                        fontSize: 8, color: Colors.white24))),
+                                        fontSize: 8,
+                                        color: Colors.white24))),
                           if (widget.message.expiresAt != null)
                             const Padding(
                                 padding: EdgeInsets.only(left: 4),
@@ -704,9 +749,9 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                               intl.DateFormat('hh:mm a')
                                   .format(widget.message.timestamp),
                               style: TextStyle(
-                                  color: widget.isMe
-                                      ? Colors.black38
-                                      : Colors.white24,
+                                  color: (activeBubble != null && activeBubble.isNotEmpty)
+                                      ? Colors.white54
+                                      : (widget.isMe ? Colors.black38 : Colors.white24),
                                   fontSize: 9)),
                           if (widget.isMe) ...[
                             const SizedBox(width: 4),
@@ -717,7 +762,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble> {
                                 size: 12,
                                 color: widget.message.isRead
                                     ? DesignTokens.primarySapphire
-                                    : Colors.black26),
+                                    : (activeBubble != null && activeBubble.isNotEmpty ? Colors.white38 : Colors.black26)),
                           ]
                         ],
                       ),

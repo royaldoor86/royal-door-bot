@@ -13,11 +13,42 @@ class CustomNotificationsSheet extends StatefulWidget {
 class _CustomNotificationsSheetState extends State<CustomNotificationsSheet> {
   final TextEditingController _messageController = TextEditingController();
   bool _enableNotifications = true;
+  Map<String, bool> _eventToggles = {
+    'welcome': true,
+    'battle': true,
+    'gift': true,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
 
   @override
   void dispose() {
     _messageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadSettings() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(widget.roomId)
+        .get();
+    if (!mounted || !doc.exists) return;
+    final data = doc.data();
+    final custom = data?['customNotifications'] as Map<String, dynamic>?;
+    final toggles = (custom?['toggles'] as Map<String, dynamic>?) ?? {};
+    setState(() {
+      _enableNotifications = custom?['enabled'] ?? true;
+      _messageController.text = (custom?['welcomeMessage'] as String?) ?? '';
+      _eventToggles = {
+        'welcome': toggles['welcome'] ?? true,
+        'battle': toggles['battle'] ?? true,
+        'gift': toggles['gift'] ?? true,
+      };
+    });
   }
 
   @override
@@ -136,9 +167,12 @@ class _CustomNotificationsSheetState extends State<CustomNotificationsSheet> {
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 15),
-                        _quickNotification('🎉 معركة جديدة!', 'بدء معركة'),
-                        _quickNotification('🎁 هدية جديدة!', 'إرسال هدية'),
-                        _quickNotification('👋 ترحيب', 'دخول مستخدم'),
+                        _quickNotification(
+                            '🎉 معركة جديدة!', 'بدء معركة', 'battle'),
+                        _quickNotification(
+                            '🎁 هدية جديدة!', 'إرسال هدية', 'gift'),
+                        _quickNotification(
+                            '👋 ترحيب', 'دخول مستخدم', 'welcome'),
                       ],
                     ),
                   ),
@@ -152,7 +186,7 @@ class _CustomNotificationsSheetState extends State<CustomNotificationsSheet> {
     );
   }
 
-  Widget _quickNotification(String title, String subtitle) {
+  Widget _quickNotification(String title, String subtitle, String key) {
     return Material(
       color: Colors.transparent,
       child: ListTile(
@@ -160,8 +194,12 @@ class _CustomNotificationsSheetState extends State<CustomNotificationsSheet> {
         title: Text(title, style: const TextStyle(color: Colors.white)),
         subtitle: Text(subtitle, style: const TextStyle(color: Colors.white38)),
         trailing: Switch(
-          value: true,
-          onChanged: (v) {},
+          value: _eventToggles[key] ?? true,
+          onChanged: (v) {
+            setState(() {
+              _eventToggles[key] = v;
+            });
+          },
           activeThumbColor: Colors.teal,
         ),
       ),
@@ -176,6 +214,7 @@ class _CustomNotificationsSheetState extends State<CustomNotificationsSheet> {
       'customNotifications': {
         'enabled': _enableNotifications,
         'welcomeMessage': _messageController.text.trim(),
+        'toggles': _eventToggles,
       }
     });
 

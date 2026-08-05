@@ -5,7 +5,9 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../models/family_model.dart';
 import '../../../../services/storage_service.dart';
 import 'admin_family_badges_page.dart';
+import 'admin_family_requests_page.dart';
 import 'admin_family_store_page.dart';
+// import 'admin_family_hand_ids_tab.dart'; // File not found
 
 class AdminFamiliesPage extends StatefulWidget {
   const AdminFamiliesPage({super.key});
@@ -25,7 +27,7 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 7,
+      length: 8,
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
@@ -46,10 +48,11 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
                 Tab(text: 'العائلات'),
                 Tab(text: 'الشارات'),
                 Tab(text: 'المزايا'),
-                Tab(text: 'الإيدات'),
+                Tab(text: 'الإيديات'),
                 Tab(text: 'التأثيرات'),
                 Tab(text: 'الترفيه'),
                 Tab(text: 'التوثيق'),
+                Tab(text: 'الطلبات'),
               ],
             ),
           ),
@@ -62,6 +65,7 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
               _buildHandEffectsTab(),
               _buildEntertainmentTab(),
               _buildVerificationTab(),
+              const AdminFamilyRequestsPage(),
             ],
           ),
         ),
@@ -116,7 +120,10 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
   }
 
   Widget _buildHandIdsTab() {
-    return const AdminFamilyStorePage(initialType: 'hand_id');
+    // Feature not available - AdminFamilyHandIdsTab not found
+    return const Center(
+      child: Text('إدارة المعرفات اليدوية غير متاحة حالياً'),
+    );
   }
 
   Widget _buildHandEffectsTab() {
@@ -294,8 +301,10 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
                       'isVerified': true,
                       'createdAt': FieldValue.serverTimestamp(),
                     });
+                    if (!mounted) return;
                     Navigator.pop(ctx);
                   } catch (e) {
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context)
                         .showSnackBar(SnackBar(content: Text('خطأ: $e')));
                   } finally {
@@ -342,6 +351,7 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(15),
+        tileColor: Colors.transparent,
         leading: CircleAvatar(
           radius: 30,
           backgroundColor: Colors.black,
@@ -353,10 +363,12 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
         ),
         title: Text(family.name,
             style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold)),
+                color: Colors.white, fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis),
         subtitle: Text(family.slogan,
             style: TextStyle(
-                color: accentGold.withValues(alpha: 0.5), fontSize: 11)),
+                color: accentGold.withValues(alpha: 0.5), fontSize: 11),
+            overflow: TextOverflow.ellipsis),
         trailing: IconButton(
           icon: const Icon(Icons.delete_forever, color: Colors.redAccent),
           onPressed: () => _confirmDelete(family),
@@ -462,6 +474,7 @@ class _AdminFamiliesPageState extends State<AdminFamiliesPage> {
                   final isVerified = family.isVerified;
 
                   return ListTile(
+                    tileColor: Colors.transparent,
                     leading: CircleAvatar(
                       radius: 25,
                       backgroundImage: family.logoUrl.isNotEmpty

@@ -10,10 +10,28 @@ class RoyalAdminPanelEntry extends StatelessWidget {
   bool _isOwner(User? user, Map<String, dynamic>? userData) {
     if (user == null) return false;
     final email = user.email?.toLowerCase();
-    if (email == 'royaldoor86@gmail.com' || email == 'doorty86@gmail.com') {
+
+    // التحقق من البريد الإلكتروني المحدد
+    if (email == 'royaldoor86@gmail.com' ||
+        email == 'doorty86@gmail.com' ||
+        email == 'amjidhadi96@gmail.com' ||
+        email == 'shahadhadi.h@gmail.com') {
       return true;
     }
-    if (userData != null && (userData['isOwner'] == true)) return true;
+
+    // التحقق من الصلاحيات في مستند المستخدم
+    if (userData != null) {
+      final isAdmin = userData['isAdmin'] ?? false;
+      final isOwner = userData['isOwner'] ?? false;
+      final role = userData['role'] ?? 'user';
+
+      if (isAdmin ||
+          isOwner ||
+          ['admin', 'owner', 'developer'].contains(role)) {
+        return true;
+      }
+    }
+
     return false;
   }
 

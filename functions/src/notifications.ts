@@ -48,7 +48,12 @@ export const sendChatNotification = functions.firestore
       }
       const userDoc = await admin.firestore().collection("users").doc(uid).get();
       const userData = userDoc.data();
-      if (userData?.fcmToken && (!userData.isActive || userData.currentRoomId !== roomId)) {
+      
+      // التحقق من إعدادات الإشعارات للمستخدم
+      const chatNotificationsEnabled = userData?.chatNotificationsEnabled ?? true;
+      const pushNotificationsEnabled = userData?.pushNotificationsEnabled ?? true;
+      
+      if (userData?.fcmToken && chatNotificationsEnabled && pushNotificationsEnabled && (!userData.isActive || userData.currentRoomId !== roomId)) {
         tokens.push(userData.fcmToken);
       }
     }
@@ -70,8 +75,17 @@ export const sendFriendRequestNotification = functions.firestore
     }
 
     const receiverDoc = await admin.firestore().collection("users").doc(data.receiverId).get();
-    const token = receiverDoc.data()?.fcmToken;
-    if (!token) {
+    const receiverData = receiverDoc.data();
+    if (!receiverData?.fcmToken) {
+      return null;
+    }
+
+    // التحقق من إعدادات الإشعارات
+    const friendRequestNotificationsEnabled = receiverData?.friendRequestNotificationsEnabled ?? true;
+    const pushNotificationsEnabled = receiverData?.pushNotificationsEnabled ?? true;
+    const allowFriendRequests = receiverData?.allowFriendRequests ?? true;
+
+    if (!friendRequestNotificationsEnabled || !pushNotificationsEnabled || !allowFriendRequests) {
       return null;
     }
 
@@ -79,7 +93,7 @@ export const sendFriendRequestNotification = functions.firestore
     const senderName = senderDoc.data()?.name || "مستخدم";
 
     const message: admin.messaging.Message = {
-      token: token,
+      token: receiverData.fcmToken,
       notification: {
         title: "طلب صداقة جديد 🤝",
         body: `يرغب ${senderName} في إضافتك لقائمة أصدقائه`,
@@ -106,8 +120,16 @@ export const sendVisitorNotification = functions.firestore
     }
 
     const userDoc = await admin.firestore().collection("users").doc(userId).get();
-    const token = userDoc.data()?.fcmToken;
-    if (!token) {
+    const userData = userDoc.data();
+    if (!userData?.fcmToken) {
+      return null;
+    }
+
+    // التحقق من إعدادات الإشعارات
+    const notificationsFromNonFriends = userData?.notificationsFromNonFriends ?? true;
+    const pushNotificationsEnabled = userData?.pushNotificationsEnabled ?? true;
+
+    if (!notificationsFromNonFriends || !pushNotificationsEnabled) {
       return null;
     }
 
@@ -115,7 +137,7 @@ export const sendVisitorNotification = functions.firestore
     const visitorName = visitorDoc.data()?.name || "شخص ما";
 
     const message: admin.messaging.Message = {
-      token: token,
+      token: userData.fcmToken,
       notification: {
         title: "زائر جديد 👀",
         body: `قام ${visitorName} بزيارة بروفايلك الآن`,
@@ -143,6 +165,14 @@ export const sendFollowNotification = functions.firestore
     }
 
     if (!after.fcmToken) {
+      return null;
+    }
+
+    // التحقق من إعدادات الإشعارات
+    const followNotificationsEnabled = after.followNotificationsEnabled ?? true;
+    const pushNotificationsEnabled = after.pushNotificationsEnabled ?? true;
+
+    if (!followNotificationsEnabled || !pushNotificationsEnabled) {
       return null;
     }
 
@@ -180,8 +210,16 @@ export const sendGiftNotification = functions.firestore
     }
 
     const userDoc = await admin.firestore().collection("users").doc(receiverId).get();
-    const token = userDoc.data()?.fcmToken;
-    if (!token) {
+    const userData = userDoc.data();
+    if (!userData?.fcmToken) {
+      return null;
+    }
+
+    // التحقق من إعدادات الإشعارات
+    const giftNotificationsEnabled = userData?.giftNotificationsEnabled ?? true;
+    const pushNotificationsEnabled = userData?.pushNotificationsEnabled ?? true;
+
+    if (!giftNotificationsEnabled || !pushNotificationsEnabled) {
       return null;
     }
 
@@ -189,7 +227,7 @@ export const sendGiftNotification = functions.firestore
     const senderName = senderDoc.data()?.name || "مستخدم";
 
     const message: admin.messaging.Message = {
-      token: token,
+      token: userData.fcmToken,
       notification: {
         title: "هدية جديدة! 🎁",
         body: `لقد أرسل لك ${senderName} هدية: ${messageData.giftName}`,
@@ -211,8 +249,16 @@ export const sendMicInviteNotification = functions.firestore
     }
 
     const userDoc = await admin.firestore().collection("users").doc(inviteData.toUserId).get();
-    const token = userDoc.data()?.fcmToken;
-    if (!token) {
+    const userData = userDoc.data();
+    if (!userData?.fcmToken) {
+      return null;
+    }
+
+    // التحقق من إعدادات الإشعارات
+    const systemNotificationsEnabled = userData?.systemNotificationsEnabled ?? true;
+    const pushNotificationsEnabled = userData?.pushNotificationsEnabled ?? true;
+
+    if (!systemNotificationsEnabled || !pushNotificationsEnabled) {
       return null;
     }
 
@@ -223,7 +269,7 @@ export const sendMicInviteNotification = functions.firestore
     const roomName = roomDoc.data()?.name || "غرفة صوتية";
 
     const message: admin.messaging.Message = {
-      token: token,
+      token: userData.fcmToken,
       notification: {
         title: "دعوة للمايك 🎤",
         body: `يدعوك ${senderName} للتحدث في غرفة ${roomName}`,
@@ -247,43 +293,152 @@ export const sendNewPostNotification = functions.firestore
     if (!postData) {
       return null;
     }
-
     const authorDoc = await admin.firestore().collection("users").doc(postData.authorId).get();
     const authorName = authorDoc.data()?.name || "صديقك";
-    const followers = authorDoc.data()?.followers || [];
-    if (followers.length === 0) {
-      return null;
-    }
 
-    const tokens: string[] = [];
-    const users = await admin.firestore().collection("users")
-      .where(admin.firestore.FieldPath.documentId(), "in", followers.slice(0, 10))
-      .get();
-    
-    users.forEach((u) => {
-      if (u.data().fcmToken) {
-        tokens.push(u.data().fcmToken);
-      }
+    const followers = Array.isArray(authorDoc.data()?.followers) ? authorDoc.data()?.followers : [];
+    const friends = Array.isArray(authorDoc.data()?.friends) ? authorDoc.data()?.friends : [];
+
+    // اتحاد المتلقين: متابعين + أصدقاء، مع إزالة الكاتب نفسه
+    const recipients = Array.from(new Set([...(followers || []), ...(friends || [])])).filter((uid) => uid !== postData.authorId);
+    if (recipients.length === 0) return null;
+
+    const notifTitle = 'منشور جديد 📝';
+    const notifBody = `${authorName} نشر منشوراً جديداً، اطلِع عليه.`;
+
+    // احفظ إشعار داخلي لكل متلقي
+    const writePromises: Array<Promise<any>> = [];
+    recipients.forEach((uid: string) => {
+      const ref = admin.firestore().collection('notifications').doc(uid).collection('items').doc();
+      writePromises.push(ref.set({
+        title: notifTitle,
+        body: notifBody,
+        type: 'post',
+        postId: snapshot.id,
+        senderId: postData.authorId,
+        isRead: false,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      }));
     });
 
-    if (tokens.length === 0) {
+    // اجمع كل رموز الأجهزة (FCM tokens) في دفعات لاستهلاك where-in من Firestore
+    const allTokens: string[] = [];
+    for (let i = 0; i < recipients.length; i += 10) {
+      const batch = recipients.slice(i, i + 10);
+      const usersSnap = await admin.firestore().collection('users').where(admin.firestore.FieldPath.documentId(), 'in', batch).get();
+      usersSnap.forEach((u) => {
+        const t = u.data()?.fcmToken;
+        if (t) allTokens.push(t);
+      });
+    }
+
+    // إرسال Push في دفعات (حد FCM = 500 لكل إرسال متعدد)
+    const sendPromises: Array<Promise<any>> = [];
+    for (let i = 0; i < allTokens.length; i += 500) {
+      const tokensBatch = allTokens.slice(i, i + 500);
+      if (tokensBatch.length === 0) continue;
+      const message: admin.messaging.MulticastMessage = {
+        tokens: tokensBatch,
+        notification: {
+          title: notifTitle,
+          body: notifBody,
+        },
+        android: androidConfig,
+        data: { type: 'post', postId: snapshot.id, actionUrl: `app://post/${snapshot.id}` },
+      };
+      sendPromises.push(admin.messaging().sendMulticast(message));
+    }
+
+    await Promise.all(writePromises);
+    if (sendPromises.length === 0) return null;
+    return Promise.all(sendPromises);
+  });
+
+// 8. Story Published Notification
+export const sendNewStoryNotification = functions.firestore
+  .document("stories/{storyId}")
+  .onCreate(async (snapshot) => {
+    const storyData = snapshot.data();
+    if (!storyData) {
       return null;
     }
 
-    const message: admin.messaging.MulticastMessage = {
-      tokens: tokens,
-      notification: {
-        title: "يوميات جديدة 📸",
-        body: `نشر ${authorName} منشوراً جديداً، ألقِ نظرة!`,
-      },
-      android: androidConfig,
-      data: {type: "post", postId: snapshot.id},
-    };
+    const authorId = storyData.userId;
+    const authorDoc = await admin.firestore().collection("users").doc(authorId).get();
+    const authorName = authorDoc.data()?.name || "صديقك";
 
-    return admin.messaging().sendEachForMulticast(message);
+    const followers = Array.isArray(authorDoc.data()?.followers)
+      ? authorDoc.data()?.followers
+      : [];
+    const friends = Array.isArray(authorDoc.data()?.friends)
+      ? authorDoc.data()?.friends
+      : [];
+
+    const recipients = Array.from(
+      new Set([...(followers || []), ...(friends || [])])
+    ).filter((uid) => uid !== authorId);
+    if (recipients.length === 0) return null;
+
+    const notifTitle = 'قصة جديدة 🌟';
+    const notifBody = `${authorName} نشر قصة جديدة، اطلع عليها الآن.`;
+
+    const writePromises: Array<Promise<any>> = [];
+    recipients.forEach((uid: string) => {
+      const ref = admin.firestore()
+        .collection('notifications')
+        .doc(uid)
+        .collection('items')
+        .doc();
+      writePromises.push(ref.set({
+        title: notifTitle,
+        body: notifBody,
+        type: 'story',
+        storyId: snapshot.id,
+        senderId: authorId,
+        isRead: false,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      }));
+    });
+
+    const allTokens: string[] = [];
+    for (let i = 0; i < recipients.length; i += 10) {
+      const batch = recipients.slice(i, i + 10);
+      const usersSnap = await admin.firestore()
+        .collection('users')
+        .where(admin.firestore.FieldPath.documentId(), 'in', batch)
+        .get();
+      usersSnap.forEach((u) => {
+        const t = u.data()?.fcmToken;
+        if (t) allTokens.push(t);
+      });
+    }
+
+    const sendPromises: Array<Promise<any>> = [];
+    for (let i = 0; i < allTokens.length; i += 500) {
+      const tokensBatch = allTokens.slice(i, i + 500);
+      if (tokensBatch.length === 0) continue;
+      const message: admin.messaging.MulticastMessage = {
+        tokens: tokensBatch,
+        notification: {
+          title: notifTitle,
+          body: notifBody,
+        },
+        android: androidConfig,
+        data: {
+          type: 'story',
+          storyId: snapshot.id,
+          actionUrl: `app://story/${snapshot.id}`,
+        },
+      };
+      sendPromises.push(admin.messaging().sendMulticast(message));
+    }
+
+    await Promise.all(writePromises);
+    if (sendPromises.length === 0) return null;
+    return Promise.all(sendPromises);
   });
 
-// 8. Room Battle Notification
+// 9. Room Battle Notification
 export const sendBattleNotification = functions.firestore
   .document("rooms/{roomId}")
   .onUpdate(async (change, context) => {

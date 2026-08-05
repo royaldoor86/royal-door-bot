@@ -32,6 +32,10 @@ class _AdminSystemSettingsPageState extends State<AdminSystemSettingsPage> {
   bool _isFamilyLocked = false; // قفل العوائل
   bool _isGamesLocked = false; // قفل الألعاب
 
+  // الإيميلات المسموح لها أثناء الصيانة
+  List<String> _allowedEmails = [];
+  final TextEditingController _emailController = TextEditingController();
+
   final TextEditingController _maintenanceMsgCtrl = TextEditingController();
 
   @override
@@ -60,6 +64,8 @@ class _AdminSystemSettingsPageState extends State<AdminSystemSettingsPage> {
         _isFamilyLocked = data['isFamilyLocked'] ?? false;
         _isGamesLocked = data['isGamesLocked'] ?? false;
 
+        _allowedEmails =
+            List<String>.from(data['maintenanceAllowedEmails'] ?? []);
         _maintenanceMsgCtrl.text =
             data['maintenanceMessage'] ?? "نحن في صيانة دورية، نعود قريباً 👑";
       });
@@ -75,6 +81,25 @@ class _AdminSystemSettingsPageState extends State<AdminSystemSettingsPage> {
           content: Text('تم تحديث الإعداد بنجاح ✅'),
           duration: Duration(seconds: 1)));
     }
+  }
+
+  void _addAllowedEmail() {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) return;
+    if (!_allowedEmails.contains(email)) {
+      setState(() {
+        _allowedEmails.add(email);
+      });
+      _updateSetting('maintenanceAllowedEmails', _allowedEmails);
+      _emailController.clear();
+    }
+  }
+
+  void _removeAllowedEmail(String email) {
+    setState(() {
+      _allowedEmails.remove(email);
+    });
+    _updateSetting('maintenanceAllowedEmails', _allowedEmails);
   }
 
   @override
@@ -122,6 +147,56 @@ class _AdminSystemSettingsPageState extends State<AdminSystemSettingsPage> {
                         borderSide: BorderSide(
                             color: accentGold.withValues(alpha: 0.3))),
                   ),
+                ),
+              ),
+            if (_isMaintenanceMode)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('الإيميلات المسموح لها أثناء الصيانة',
+                        style: TextStyle(color: accentGold, fontSize: 14)),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _emailController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              labelText: 'إضافة إيميل',
+                              labelStyle: TextStyle(
+                                  color: accentGold.withValues(alpha: 0.7)),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: accentGold.withValues(alpha: 0.3)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          icon: Icon(Icons.add_circle, color: accentGold),
+                          onPressed: () => _addAllowedEmail(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _allowedEmails.map((email) {
+                        return Chip(
+                          label: Text(email,
+                              style: const TextStyle(color: Colors.white)),
+                          backgroundColor: accentGold.withValues(alpha: 0.2),
+                          deleteIcon: Icon(Icons.close, color: accentGold),
+                          onDeleted: () => _removeAllowedEmail(email),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
               ),
             _buildSectionTitle('إدارة الميزات الأساسية'),

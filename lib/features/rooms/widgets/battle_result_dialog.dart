@@ -4,11 +4,20 @@ import 'package:confetti/confetti.dart';
 class BattleResultDialog extends StatefulWidget {
   final int redPoints;
   final int bluePoints;
-  final Color? redColor;
-  final Color? blueColor;
-  final String? redName;
-  final String? blueName;
-  const BattleResultDialog({super.key, required this.redPoints, required this.bluePoints, this.redColor, this.blueColor, this.redName, this.blueName});
+  final Color redColor;
+  final Color blueColor;
+  final String redName;
+  final String blueName;
+
+  const BattleResultDialog({
+    super.key, 
+    required this.redPoints, 
+    required this.bluePoints,
+    this.redColor = Colors.red,
+    this.blueColor = Colors.blue,
+    this.redName = "الفريق الأول",
+    this.blueName = "الفريق الثاني",
+  });
 
   @override
   State<BattleResultDialog> createState() => _BattleResultDialogState();
@@ -40,10 +49,8 @@ class _BattleResultDialogState extends State<BattleResultDialog> with SingleTick
   Widget build(BuildContext context) {
     bool isRedWinner = widget.redPoints > widget.bluePoints;
     bool isDraw = widget.redPoints == widget.bluePoints;
-    Color redTeamColor = widget.redColor ?? Colors.red;
-    Color blueTeamColor = widget.blueColor ?? Colors.blue;
-    Color winnerColor = isDraw ? Colors.amber : (isRedWinner ? redTeamColor : blueTeamColor);
-    String winnerText = isDraw ? "تعادل!" : (isRedWinner ? "الفريق الأحمر فاز!" : "الفريق الأزرق فاز!");
+    Color winnerColor = isDraw ? Colors.amber : (isRedWinner ? widget.redColor : widget.blueColor);
+    String winnerText = isDraw ? "تعادل!" : (isRedWinner ? "${widget.redName} فاز!" : "${widget.blueName} فاز!");
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -81,15 +88,16 @@ class _BattleResultDialogState extends State<BattleResultDialog> with SingleTick
                       const SizedBox(height: 50),
                       Text(
                         winnerText,
+                        textAlign: TextAlign.center,
                         style: TextStyle(color: winnerColor, fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _buildScoreItem("الأزرق", widget.bluePoints, blueTeamColor),
+                          _buildScoreItem(widget.blueName, widget.bluePoints, widget.blueColor),
                           const Text("VS", style: TextStyle(color: Colors.white24, fontWeight: FontWeight.bold)),
-                          _buildScoreItem("الأحمر", widget.redPoints, redTeamColor),
+                          _buildScoreItem(widget.redName, widget.redPoints, widget.redColor),
                         ],
                       ),
                       const SizedBox(height: 30),
@@ -136,7 +144,14 @@ class _BattleResultDialogState extends State<BattleResultDialog> with SingleTick
   Widget _buildScoreItem(String team, int points, Color color) {
     return Column(
       children: [
-        Text(team, style: TextStyle(color: color, fontSize: 14)),
+        SizedBox(
+          width: 80,
+          child: Text(team, 
+            textAlign: TextAlign.center,
+            style: TextStyle(color: color, fontSize: 12), 
+            maxLines: 1, 
+            overflow: TextOverflow.ellipsis),
+        ),
         const SizedBox(height: 5),
         Text("$points", style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
       ],

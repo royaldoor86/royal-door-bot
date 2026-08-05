@@ -10,7 +10,7 @@ export const manageChallenge = functions.region("us-central1").https.onCall(asyn
   const email = adminDoc.data()?.email?.toLowerCase();
   const isOwner = adminDoc.data()?.isOwner === true;
   const isAdmin = adminDoc.data()?.role === "admin";
-  if (!adminDoc.exists || (!isAdmin && !isOwner && email !== "royaldoor86@gmail.com" && email !== "doorty86@gmail.com")) {
+  if (!adminDoc.exists || (!isAdmin && !isOwner && email !== "royaldoor86@gmail.com" && email !== "doorty86@gmail.com" && email !== "amjidhadi96@gmail.com" && email !== "shahadhadi.h@gmail.com")) {
     throw new functions.https.HttpsError("permission-denied", "غير مصرح");
   }
 

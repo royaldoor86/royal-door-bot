@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter/foundation.dart';
+import '../../../services/telegram_web_app_service.dart';
 import 'battle_setup_sheet.dart';
 import 'room_theme_shop_sheet.dart';
 import 'room_settings_sheet.dart';
@@ -9,6 +11,9 @@ import 'room_earnings_sheet.dart';
 import 'room_statistics_sheet.dart';
 import 'room_user_ranking_sheet.dart';
 import 'custom_notifications_sheet.dart';
+import 'transfer_currency_sheet.dart';
+import 'room_gift_log_sheet.dart';
+import 'room_report_sheet.dart';
 import '../../store_page.dart';
 
 class RoomMoreMenuSheet extends StatefulWidget {
@@ -17,6 +22,7 @@ class RoomMoreMenuSheet extends StatefulWidget {
   final String? roomImage;
   final String? ownerId;
   final bool hasPower;
+  final Map<String, dynamic> moderatorPermissions;
   final bool isBattleActive;
   final String micMode;
   final bool noiseReduction;
@@ -25,6 +31,7 @@ class RoomMoreMenuSheet extends StatefulWidget {
   final Function(bool) onEyeComfortChanged;
   final VoidCallback onEndBattle;
   final VoidCallback? onFixAudio;
+  final VoidCallback? onShowGames;
   final List<Widget>? extraWidgets;
   final VoidCallback? onShowLeaderboard; // إضافة الكولباك هنا
   final VoidCallback? onShowGames;
@@ -37,6 +44,7 @@ class RoomMoreMenuSheet extends StatefulWidget {
     this.roomImage,
     this.ownerId,
     required this.hasPower,
+    required this.moderatorPermissions,
     required this.isBattleActive,
     required this.micMode,
     required this.noiseReduction,
@@ -45,6 +53,7 @@ class RoomMoreMenuSheet extends StatefulWidget {
     required this.onEyeComfortChanged,
     required this.onEndBattle,
     this.onFixAudio,
+    this.onShowGames,
     this.extraWidgets,
     this.onShowLeaderboard, // إضافة الكولباك هنا
     this.onShowGames,
@@ -60,6 +69,11 @@ class _RoomMoreMenuSheetState extends State<RoomMoreMenuSheet> {
   late bool _localEye;
   String? _roomPassword;
   late String _selectedMicMode;
+
+  bool _can(String key) {
+    if (widget.ownerId == FirebaseAuth.instance.currentUser?.uid) return true;
+    return widget.moderatorPermissions[key] ?? false;
+  }
 
   @override
   void initState() {
@@ -244,6 +258,13 @@ class _RoomMoreMenuSheetState extends State<RoomMoreMenuSheet> {
       _buildModeCard(setModalState, title, mode, rows, isLocked: isLocked);
 
   void _shareRoom() {
+    // If running in Telegram Web App, use Telegram sharing
+    if (kIsWeb && TelegramWebAppService.isTelegramWebApp()) {
+      TelegramWebAppService.shareRoomInvite(widget.roomId, widget.roomName);
+      return;
+    }
+    
+    // Otherwise use regular share
     final String shareText = '''
 🔥 انضم الآن إلى غرفة "${widget.roomName}" في رويال دور!
 🎙️ دردشة صوتية، هدايا، ومعارك حماسية PK.
@@ -457,6 +478,71 @@ https://play.google.com/store/apps/details?id=com.royaldoor.live
     );
   }
 
+  void _showTransferCurrencySheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => TransferCurrencySheet(roomId: widget.roomId),
+    );
+  }
+
+  void _showGiftSettings() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => RoomGiftLogSheet(roomId: widget.roomId),
+    );
+  }
+
+  void _showReportSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => RoomReportSheet(roomId: widget.roomId, roomName: widget.roomName),
+    );
+  }
+
+  void _fixAudioLogic() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF0F1B25),
+        title: const Text('إصلاح مشكلات الصوت 🛠️',
+            style: TextStyle(color: Colors.white, fontSize: 18)),
+        content: const Text(
+          'سيقوم النظام بإعادة تهيئة محرك الصوت لحل أي مشاكل في الصدى أو انقطاع الصوت. هل تريد المتابعة؟',
+          style: TextStyle(color: Colors.white70, fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('إلغاء', style: TextStyle(color: Colors.white38))),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan),
+            onPressed: () {
+              Navigator.pop(context);
+              if (widget.onFixAudio != null) widget.onFixAudio!();
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('تمت إعادة تهيئة الصوت بنجاح ✅'),
+                backgroundColor: Colors.green,
+              ));
+            },
+            child: const Text('إصلاح الآن', style: TextStyle(color: Colors.black)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showGamesSelector() {
+    if (widget.onShowGames != null) {
+      widget.onShowGames!();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isBattle = widget.isBattleActive;
@@ -467,11 +553,10 @@ https://play.google.com/store/apps/details?id=com.royaldoor.live
       maxChildSize: 0.95,
       expand: false,
       builder: (context, scrollController) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF0F1B25),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-          ),
+        return Material(
+          color: const Color(0xFF0F1B25),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
+          clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
               Container(
@@ -492,7 +577,7 @@ https://play.google.com/store/apps/details?id=com.royaldoor.live
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         _quickActionItem(Icons.card_giftcard, 'إعدادات الهدايا',
-                            Colors.cyan),
+                            Colors.cyan, onTap: _showGiftSettings),
                         _quickActionItem(
                             Icons.graphic_eq, 'تقليل الضوضاء', Colors.teal,
                             hasSwitch: true,
@@ -502,10 +587,7 @@ https://play.google.com/store/apps/details?id=com.royaldoor.live
                         }),
                         _quickActionItem(
                             Icons.mic_none, 'مشكلات الصوت', Colors.cyan,
-                            onTap: () {
-                          Navigator.pop(context);
-                          if (widget.onFixAudio != null) widget.onFixAudio!();
-                        }),
+                            onTap: _fixAudioLogic),
                         _quickActionItem(Icons.reply, 'مشاركة', Colors.blueGrey,
                             onTap: _shareRoom),
                       ],
@@ -541,13 +623,30 @@ https://play.google.com/store/apps/details?id=com.royaldoor.live
                           _buildGridItem(
                               Icons.mic, 'نمط المايكات', Colors.orange,
                               onTap: () {
+                            if (!_can('canManageMic')) {
+                              _showNoPerm();
+                              return;
+                            }
                             Navigator.pop(context);
                             _showMicModesMenu();
                           }),
+                        _buildGridItem(Icons.videogame_asset, 'الألعاب',
+                            Colors.tealAccent, onTap: () {
+                          if (!_can('canManageActivities')) {
+                            _showNoPerm();
+                            return;
+                          }
+                          Navigator.pop(context);
+                          _showGamesSelector();
+                        }),
                         _buildGridItem(
                             isBattle ? Icons.flash_off : Icons.flash_on,
                             isBattle ? 'إنهاء المعركة' : 'معركة الفريق',
                             isBattle ? Colors.red : Colors.blue, onTap: () {
+                          if (!_can('canManageBattle')) {
+                            _showNoPerm();
+                            return;
+                          }
                           Navigator.pop(context);
                           if (isBattle) {
                             widget.onEndBattle();
@@ -570,19 +669,17 @@ https://play.google.com/store/apps/details?id=com.royaldoor.live
                                   ? 'الغرفة مقفلة'
                                   : 'قفل الغرفة',
                               Colors.amber, onTap: () {
+                            if (!_can('canLockRoom')) {
+                              _showNoPerm();
+                              return;
+                            }
                             Navigator.pop(context);
                             _showLockRoomDialog();
                           }),
                         _buildGridItem(Icons.brush, 'موضوع', Colors.brown,
                             onTap: () {
                           Navigator.pop(context);
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) =>
-                                RoomThemeShopSheet(roomId: widget.roomId),
-                          );
+                          RoomThemeShopSheet.show(context, widget.roomId);
                         }),
                         _buildGridItem(
                             Icons.bar_chart, 'إحصائيات', Colors.purple,
@@ -628,7 +725,13 @@ https://play.google.com/store/apps/details?id=com.royaldoor.live
                           if (widget.onShowLeaderboard != null) {
                             widget.onShowLeaderboard!();
                           }
-                        }), // الزر الجديد هنا
+                        }),
+                        _buildGridItem(
+                            Icons.swap_horiz, 'تحويل العملات', Colors.green,
+                            onTap: () {
+                          Navigator.pop(context);
+                          _showTransferCurrencySheet();
+                        }),
                         _buildGridItem(
                             Icons.campaign, 'استدعاء الأعضاء', Colors.orange,
                             onTap: () {
@@ -659,26 +762,9 @@ https://play.google.com/store/apps/details?id=com.royaldoor.live
                           _showEarningsMenu();
                         }),
                         _buildGridItem(Icons.report_problem_outlined, 'إبلاغ',
-                            Colors.orange, onTap: () async {
+                            Colors.orange, onTap: () {
                           Navigator.pop(context);
-                          await FirebaseFirestore.instance
-                              .collection('reports')
-                              .add({
-                            'reporterId':
-                                FirebaseAuth.instance.currentUser?.uid,
-                            'targetId': widget.roomId,
-                            'type': 'room',
-                            'reason': 'User report from room menu',
-                            'content': 'Room: ${widget.roomName}',
-                            'timestamp': FieldValue.serverTimestamp(),
-                            'status': 'pending',
-                          });
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'تم إرسال بلاغ عن هذه الغرفة للإدارة 🛡️')));
-                          }
+                          _showReportSheet();
                         }),
                       ],
                     ),
@@ -691,6 +777,11 @@ https://play.google.com/store/apps/details?id=com.royaldoor.live
         );
       },
     );
+  }
+
+  void _showNoPerm() {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('عذراً، لا تملك صلاحية الوصول لهذا الخيار 👑')));
   }
 
   Widget _buildGridItem(IconData icon, String label, Color color,

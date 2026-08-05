@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'web_rtc_service.dart';
 
 class AgoraService {
   static final AgoraService _instance = AgoraService._internal();
@@ -13,6 +16,9 @@ class AgoraService {
   RtcEngine? _engine;
   int? _localUid;
   int? get localUid => _localUid;
+
+  // WebRTC service for web platform
+  final _webRTCService = WebRTCService();
 
   final _volumeController = StreamController<List<AudioVolumeInfo>>.broadcast();
   Stream<List<AudioVolumeInfo>> get volumeStream => _volumeController.stream;
@@ -25,88 +31,188 @@ class AgoraService {
   final _musicPositionController = StreamController<int>.broadcast();
   Stream<int> get musicPositionStream => _musicPositionController.stream;
 
-  final _audioBlockedController = StreamController<bool>.broadcast();
-  Stream<bool> get audioBlockedStream => _audioBlockedController.stream;
+  final _mixingStateController = StreamController<AudioMixingStateType>.broadcast();
+  Stream<AudioMixingStateType> get mixingStateStream => _mixingStateController.stream;
 
-  final _mixingStateController = StreamController<String>.broadcast();
-  Stream<String> get mixingStateStream => _mixingStateController.stream;
-
-  static String get appId =>
-      dotenv.env['AGORA_APP_ID'] ?? "daed7a59dcbd4de2969b7504ae0843dc";
+  String getAppId() {
+    // استخدام App ID من ملف .env أو استخدام App ID افتراضي للاختبار
+    try {
+      final appId = dotenv.env['AGORA_APP_ID'];
+      debugPrint(
+          '🔍 Checking AGORA_APP_ID: ${appId == null ? "NULL" : appId.isEmpty ? "EMPTY" : "FOUND (${appId.length} chars)"}');
+      if (appId == null || appId.isEmpty) {
+        debugPrint('⚠️ Using default Agora App ID for testing');
+        return '2042a5996de7444e9a72babc8527b25e'; // App ID من ملف .env
+      }
+      return appId;
+    } catch (e) {
+      debugPrint('⚠️ Error loading AGORA_APP_ID: $e');
+      debugPrint('⚠️ Using default Agora App ID for testing');
+      return '2042a5996de7444e9a72babc8527b25e';
+    }
+  }
 
   bool _joined = false;
   bool get isJoined => _joined;
   bool _isInitializing = false;
+  bool _isJoining = false;
 
   // Music player state
+  final AudioPlayer _audioPlayer = AudioPlayer();
   final int _musicDuration = 0;
   Timer? _musicTimer;
+  bool _isMusicPlaying = false;
+  bool _isMusicPaused = false;
+  String? _currentMusicPath;
+
+  // Room audio state
+  bool _isRoomMuted = false;
+  bool _isSpeakerMuted = false;
+  bool _isInBackground = false;
 
   Completer<void>? _joinCompleter;
 
   Future<void> init() async {
-    if (_isInitializing || _engine != null) return;
-    _isInitializing = true;
-    try {
-      await [
-        Permission.microphone,
-        Permission.bluetoothConnect,
-      ].request();
+    if (kIsWeb) {
+      // Use WebRTC for web platform
+      await _webRTCService.init();
+      return;
+    }
 
+    if (_isInitializing) {
+      debugPrint("⚠️ Agora already initializing, waiting...");
+      return;
+    }
+    if (_engine != null) {
+      debugPrint("✅ Agora already initialized");
+      return;
+    }
+
+    _isInitializing = true;
+
+    try {
+      debugPrint("🔄 Initializing Agora RTC Engine");
+
+      // التحقق من App ID
+      final currentAppId = getAppId();
+      debugPrint("🔑 Using Agora App ID: ${currentAppId.substring(0, 8)}...");
+
+      // طلب الصلاحيات المطلوبة
+      debugPrint("🔐 Requesting permissions...");
+      final micStatus = await Permission.microphone.request();
+      final btStatus = await Permission.bluetoothConnect.request();
+
+      debugPrint(
+          "🔐 Microphone permission: ${micStatus.isGranted ? 'GRANTED' : 'DENIED'}");
+      debugPrint(
+          "🔐 Bluetooth permission: ${btStatus.isGranted ? 'GRANTED' : 'DENIED'}");
+
+      if (!micStatus.isGranted) {
+        throw Exception("Microphone permission denied");
+      }
+
+      // إنشاء المحرك
+      debugPrint("🔧 Creating Agora RTC Engine...");
       _engine = createAgoraRtcEngine();
 
+      // تهيئة المحرك
+      debugPrint("🔧 Initializing Agora Engine...");
       await _engine!.initialize(RtcEngineContext(
-        appId: appId,
+        appId: currentAppId,
         channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
         audioScenario: AudioScenarioType.audioScenarioGameStreaming,
       ));
 
+      debugPrint("✅ Agora Engine initialized successfully");
+
+      // تسجيل معالجات الأحداث
       _engine!.registerEventHandler(
         RtcEngineEventHandler(
-            onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint("✅ Agora Joined: ${connection.localUid}");
-          _joined = true;
-          _localUid = connection.localUid;
-          if (_joinCompleter != null && !_joinCompleter!.isCompleted) {
-            _joinCompleter!.complete();
-          }
-          _connectionController
-              .add(ConnectionStateType.connectionStateConnected);
-
-          _engine?.setEnableSpeakerphone(true);
-          _engine?.muteAllRemoteAudioStreams(false);
-        }, onAudioVolumeIndication: (RtcConnection connection,
-                List<AudioVolumeInfo> speakers,
-                int speakerNumber,
-                int totalVolume) {
-          _volumeController.add(speakers);
-        }, onError: (ErrorCodeType err, String msg) {
-          debugPrint("⚠️ Agora Error: $err - $msg");
-          _connectionController.add(ConnectionStateType.connectionStateFailed);
-        }, onConnectionLost: (RtcConnection connection) {
-          debugPrint("⚠️ Agora Connection Lost");
-          _connectionController
-              .add(ConnectionStateType.connectionStateDisconnected);
-        }, onLeaveChannel: (RtcConnection connection, RtcStats stats) {
-          debugPrint("✅ Agora Left Channel");
-          _connectionController
-              .add(ConnectionStateType.connectionStateDisconnected);
-        }),
+          onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+            debugPrint("✅ Agora Joined: ${connection.localUid}");
+            _joined = true;
+            _localUid = connection.localUid;
+            if (_joinCompleter != null && !_joinCompleter!.isCompleted) {
+              _joinCompleter!.complete();
+            }
+            _connectionController
+                .add(ConnectionStateType.connectionStateConnected);
+            
+            // تحسين: تفعيل السبيكر فقط إذا لم يتم كتمه مسبقاً
+            if (!_isSpeakerMuted) {
+              _engine?.setEnableSpeakerphone(true);
+            }
+            _engine?.muteAllRemoteAudioStreams(_isRoomMuted);
+          },
+          onAudioVolumeIndication: (RtcConnection connection,
+              List<AudioVolumeInfo> speakers,
+              int speakerNumber,
+              int totalVolume) {
+            _volumeController.add(speakers);
+          },
+          onError: (ErrorCodeType err, String msg) {
+            debugPrint("⚠️ Agora Error: $err - $msg");
+            _connectionController
+                .add(ConnectionStateType.connectionStateFailed);
+          },
+          onConnectionLost: (RtcConnection connection) {
+            debugPrint("⚠️ Agora Connection Lost");
+            _connectionController
+                .add(ConnectionStateType.connectionStateDisconnected);
+          },
+          onLeaveChannel: (RtcConnection connection, RtcStats stats) {
+            debugPrint("✅ Agora Left Channel");
+            _connectionController
+                .add(ConnectionStateType.connectionStateDisconnected);
+          },
+          onAudioMixingStateChanged: (AudioMixingStateType state, AudioMixingReasonType reason) {
+            debugPrint("🎵 Agora Mixing State: $state, Reason: $reason");
+            _mixingStateController.add(state);
+            if (state == AudioMixingStateType.audioMixingStateStopped || 
+                state == AudioMixingStateType.audioMixingStateFailed) {
+              _isMusicPlaying = false;
+              _isMusicPaused = false;
+              _musicTimer?.cancel();
+            } else if (state == AudioMixingStateType.audioMixingStatePlaying) {
+              _isMusicPlaying = true;
+              _isMusicPaused = false;
+            }
+          },
+        ),
       );
 
+      // ضبط إعدادات الصوت
+      debugPrint("🔧 Configuring audio settings...");
       await _engine!.setParameters('{"che.audio.opensles":true}');
       await _engine!.enableAudio();
       await _engine!.setAudioProfile(
         profile: AudioProfileType.audioProfileMusicStandard,
         scenario: AudioScenarioType.audioScenarioGameStreaming,
       );
-
-      await _engine!.setEnableSpeakerphone(true);
       await _engine!.setDefaultAudioRouteToSpeakerphone(true);
       await _engine!.enableAudioVolumeIndication(
-          interval: 250, smooth: 3, reportVad: true);
+        interval: 250,
+        smooth: 3,
+        reportVad: true,
+      );
+
+      // إعدادات للصوت في الخلفية
+      await _engine!.setParameters('{"che.audio.keep.audiosession":true}');
+      await _engine!.setParameters('{"che.audio.focus.request":true}');
+      await _engine!.setParameters('{"che.audio.focus.mode":"constant"}');
+      await _engine!.setParameters('{"che.audio.allow.background":true}');
+      await _engine!.setParameters('{"che.audio.keep.awake":true}');
+      await _engine!.setParameters('{"che.audio.scene":"chatroom"}');
+
+      debugPrint("✅ Agora initialization completed successfully");
     } catch (e) {
       debugPrint("❌ Agora Init Error: $e");
+      // تنظيف المحرك الفاشل
+      try {
+        await _engine?.release();
+        _engine = null;
+      } catch (_) {}
+      rethrow;
     } finally {
       _isInitializing = false;
     }
@@ -114,10 +220,27 @@ class AgoraService {
 
   Future<void> joinChannel(
       {required String channelId, bool asSpeaker = false}) async {
+    if (kIsWeb) {
+      // Use WebRTC for web platform
+      await _webRTCService.joinChannel(channelId: channelId, asSpeaker: asSpeaker);
+      return;
+    }
+
+    if (_isJoining || _joined) {
+      debugPrint("⚠️ Agora already joining or joined, skipping...");
+      return;
+    }
+
     if (_engine == null) await init();
 
-    // For testing, allow joining without token
+    _isJoining = true;
     final token = await _fetchToken(channelId);
+
+    // If token is mandatory and we failed to get it, handle appropriately
+    if (token == null) {
+      debugPrint("⚠️ Failed to fetch token, attempt to join without it (might fail if app is in production mode)");
+    }
+
     _joinCompleter = Completer<void>();
 
     try {
@@ -127,10 +250,16 @@ class AgoraService {
             : ClientRoleType.clientRoleAudience,
       );
 
+      final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+      final int numericUid = userId.isEmpty ? 0 : (userId.hashCode & 0x7FFFFFFF);
+
+      debugPrint(
+          "🔊 Joining Agora channel: $channelId, uid: $numericUid, token: ${token != null ? 'provided' : 'null'}");
+
       await _engine!.joinChannel(
-          token: token ?? "", // Use empty string if token is null
+          token: token ?? "", 
           channelId: channelId,
-          uid: 0,
+          uid: numericUid,
           options: ChannelMediaOptions(
             autoSubscribeAudio: true,
             publishMicrophoneTrack: asSpeaker,
@@ -141,54 +270,81 @@ class AgoraService {
                 AudienceLatencyLevelType.audienceLatencyLevelLowLatency,
           ));
 
-      await _joinCompleter!.future.timeout(const Duration(seconds: 15));
-      await _engine!.setEnableSpeakerphone(true);
+      try {
+        await _joinCompleter!.future.timeout(const Duration(seconds: 15));
+        debugPrint("✅ Agora join completed successfully");
+        _joined = true;
+      } on TimeoutException {
+        debugPrint("⚠️ Agora join timeout reached");
+        // We don't set _joined = true here, but we don't throw to allow background join
+      }
+
+      if (!_isSpeakerMuted) {
+        await _engine!.setEnableSpeakerphone(true);
+      }
+      
+      // التأكد من كتم المايك محلياً إذا كان داخلاً كمستمع فقط
+      if (!asSpeaker) {
+        await _engine!.muteLocalAudioStream(true);
+      }
     } catch (e) {
       debugPrint("❌ Agora Join Error: $e");
       _joined = false;
+      try {
+        await _engine!.setEnableSpeakerphone(true);
+      } catch (_) {}
+    } finally {
+      _isJoining = false;
     }
   }
 
   Future<void> updateClientRole(bool asSpeaker) async {
-    if (_engine == null) return;
-
-    await _engine!.setClientRole(
-      role: asSpeaker
-          ? ClientRoleType.clientRoleBroadcaster
-          : ClientRoleType.clientRoleAudience,
-    );
-
-    await _engine!.updateChannelMediaOptions(ChannelMediaOptions(
-      publishMicrophoneTrack: asSpeaker,
-      autoSubscribeAudio: true,
-    ));
-
-    if (asSpeaker) {
-      await _engine!.enableLocalAudio(true);
-      await _engine!.muteLocalAudioStream(false);
-    } else {
-      await _engine!.muteLocalAudioStream(true);
+    if (kIsWeb) {
+      // WebRTC handles this automatically based on asSpeaker parameter in joinChannel
+      debugPrint("🔄 WebRTC role update not needed (handled in joinChannel)");
+      return;
     }
 
-    await _engine!.setEnableSpeakerphone(true);
+    if (_engine == null || !_joined) {
+      debugPrint("⚠️ Cannot update role: Engine null or not joined");
+      return;
+    }
+
+    final role = asSpeaker
+        ? ClientRoleType.clientRoleBroadcaster
+        : ClientRoleType.clientRoleAudience;
+
+    try {
+      await _engine!.setClientRole(role: role);
+
+      await _engine!.updateChannelMediaOptions(ChannelMediaOptions(
+        publishMicrophoneTrack: asSpeaker,
+        autoSubscribeAudio: true,
+        clientRoleType: role,
+      ));
+
+      if (asSpeaker) {
+        await _engine!.enableLocalAudio(true);
+        await _engine!.muteLocalAudioStream(false);
+      } else {
+        await _engine!.muteLocalAudioStream(true);
+      }
+
+      if (!_isSpeakerMuted) {
+        await _engine!.setEnableSpeakerphone(true);
+      }
+    } catch (e) {
+      debugPrint("❌ Agora update role error: $e");
+    }
   }
 
   Future<void> toggleMute(bool muted) async {
+    if (kIsWeb) {
+      // Use WebRTC for web platform
+      await _webRTCService.muteLocalAudio(muted);
+      return;
+    }
     await _engine?.muteLocalAudioStream(muted);
-  }
-
-  Future<void> toggleMuteFromChat(bool muted) async {
-    await _engine?.muteLocalAudioStream(muted);
-  }
-
-  Future<void> resumeAudio() async {
-    await _engine?.enableLocalAudio(true);
-    await _engine?.muteLocalAudioStream(false);
-  }
-
-  Future<void> setBackgroundMode(bool enabled) async {
-    // Placeholder for background mode
-    debugPrint('Background mode set to: $enabled');
   }
 
   Future<void> toggleAllRemoteAudio(bool muted) async {
@@ -197,20 +353,59 @@ class AgoraService {
 
   Future<String?> _fetchToken(String channelName) async {
     try {
-      final HttpsCallable callable =
-          FirebaseFunctions.instance.httpsCallable('generateAgoraToken');
+      final auth = FirebaseAuth.instance;
+      if (auth.currentUser == null) {
+        debugPrint("⚠️ User not authenticated, skipping token fetch");
+        return null;
+      }
+
+      // زيادة مهلة الانتظار لـ Cloud Functions لتجنب DEADLINE_EXCEEDED
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'generateAgoraToken',
+        options: HttpsCallableOptions(
+          timeout: const Duration(seconds: 20),
+        ),
+      );
+
       final result = await callable.call({'channelName': channelName});
-      return result.data['token'] as String?;
+      final token = result.data['token'] as String?;
+
+      if (token != null && token.isNotEmpty) {
+        debugPrint("✅ Token fetched successfully");
+        return token;
+      } else {
+        debugPrint("⚠️ Token is null or empty from server");
+        return null;
+      }
     } catch (e) {
-      debugPrint("⚠️ Token Warning: $e");
+      debugPrint("! Token fetch error: $e");
+      
+      // التعامل مع أخطاء App Check و Timeout
+      if (e is FirebaseFunctionsException) {
+        if (e.code == 'deadline-exceeded') {
+          debugPrint("⏰ Cloud Function timeout (DEADLINE_EXCEEDED)");
+        }
+      }
+      
       return null;
     }
   }
 
   Future<void> leave() async {
+    if (kIsWeb) {
+      // Use WebRTC for web platform
+      await _webRTCService.leave();
+      return;
+    }
+
     if (_engine == null) return;
-    await _engine!.leaveChannel();
+    try {
+      await _engine!.leaveChannel();
+    } catch (e) {
+      debugPrint("⚠️ Error leaving channel: $e");
+    }
     _joined = false;
+    _isJoining = false;
     _localUid = null;
   }
 
@@ -231,10 +426,6 @@ class AgoraService {
   /// Preset examples: 'flat', 'bass_boost', 'voice'
   Future<void> applyEQPreset(String preset) async {
     try {
-      // Example parameter payload - the exact implementation can be refined
-      final params = {
-        'preset': preset,
-      };
       await _engine?.setParameters('{"che.audio.eq": "$preset"}');
       debugPrint('EQ preset applied: $preset');
     } catch (e) {
@@ -242,49 +433,224 @@ class AgoraService {
     }
   }
 
-  // Music player methods (placeholder implementations)
+  // Music player methods using Agora Audio Mixing for "Global" sound
   Future<void> startMusic(String path) async {
-    // Placeholder for music playback
-    debugPrint('Music started: $path');
+    if (_engine == null) return;
+    try {
+      if (_isMusicPlaying) {
+        await stopMusic();
+      }
+
+      // استخدام startAudioMixing لبث الصوت للجميع في الغرفة
+      // path: المسار للملف (محلي أو URL)
+      // loopback: false لكي يسمعه الجميع
+      // replace: false لكي لا يستبدل صوت المايك
+      // cycle: -1 للتكرار اللانهائي (أو 1 لمرة واحدة)
+      await _engine!.startAudioMixing(
+        filePath: path,
+        loopback: false,
+        cycle: 1,
+      );
+
+      _isMusicPlaying = true;
+      _isMusicPaused = false;
+      _currentMusicPath = path;
+
+      // تحسين مؤقت الموضع باستخدام بيانات Agora
+      _musicTimer?.cancel();
+      _musicTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+        if (!_isMusicPlaying || _isMusicPaused) return;
+        
+        final position = await _engine!.getAudioMixingCurrentPosition();
+        if (position >= 0) {
+          _musicPositionController.add(position); // Agora returns milliseconds
+        }
+      });
+
+      debugPrint('✅ Global Music started via Agora: $path');
+    } catch (e) {
+      debugPrint('❌ Error starting Agora music: $e');
+    }
   }
 
   Future<void> stopMusic() async {
-    // Placeholder for stopping music
-    debugPrint('Music stopped');
-    _musicTimer?.cancel();
+    if (_engine == null) return;
+    try {
+      await _engine!.stopAudioMixing();
+      _musicTimer?.cancel();
+      _isMusicPlaying = false;
+      _isMusicPaused = false;
+      _currentMusicPath = null;
+      _musicPositionController.add(0);
+      debugPrint('✅ Agora Music stopped');
+    } catch (e) {
+      debugPrint('❌ Error stopping Agora music: $e');
+    }
   }
 
   Future<void> pauseMusic() async {
-    // Placeholder for pausing music
-    debugPrint('Music paused');
+    if (_engine == null) return;
+    try {
+      await _engine!.pauseAudioMixing();
+      _isMusicPaused = true;
+      debugPrint('✅ Agora Music paused');
+    } catch (e) {
+      debugPrint('❌ Error pausing Agora music: $e');
+    }
   }
 
   Future<void> resumeMusic() async {
-    // Placeholder for resuming music
-    debugPrint('Music resumed');
+    if (_engine == null) return;
+    try {
+      await _engine!.resumeAudioMixing();
+      _isMusicPaused = false;
+      debugPrint('✅ Agora Music resumed');
+    } catch (e) {
+      debugPrint('❌ Error resuming Agora music: $e');
+    }
   }
 
   Future<int> getMusicDuration() async {
-    // Placeholder for getting music duration
-    return _musicDuration;
+    if (_engine == null) return 0;
+    try {
+      return await _engine!.getAudioMixingDuration();
+    } catch (e) {
+      debugPrint('❌ Error getting Agora music duration: $e');
+      return 0;
+    }
   }
 
   Future<void> adjustMusicVolume(int volume) async {
-    // Placeholder for adjusting music volume
-    debugPrint('Music volume adjusted to: $volume');
+    if (_engine == null) return;
+    try {
+      // تعديل مستوى صوت البث (للآخرين)
+      await _engine!.adjustAudioMixingPublishVolume(volume);
+      // تعديل مستوى صوت الاستماع (للمستخدم المحلي)
+      await _engine!.adjustAudioMixingPlayoutVolume(volume);
+      debugPrint('✅ Agora Music volume adjusted to: $volume');
+    } catch (e) {
+      debugPrint('❌ Error adjusting Agora music volume: $e');
+    }
   }
 
-  Future<void> seekMusic(int position) async {
-    // Placeholder for seeking music
-    debugPrint('Music seeked to: $position');
+  Future<void> seekMusic(int positionMs) async {
+    if (_engine == null) return;
+    try {
+      await _engine!.setAudioMixingPosition(positionMs);
+      debugPrint('✅ Agora Music seeked to: $positionMs ms');
+    } catch (e) {
+      debugPrint('❌ Error seeking Agora music: $e');
+    }
   }
 
   void dispose() {
     _volumeController.close();
     _connectionController.close();
     _musicPositionController.close();
-    _audioBlockedController.close();
     _mixingStateController.close();
     _musicTimer?.cancel();
+    _audioPlayer.dispose();
   }
+
+  // --- Room Audio Management ---
+
+  /// كتم صوت الغرفة بالكامل (remote audio)
+  Future<void> muteRoomAudio(bool muted) async {
+    if (_engine == null) return;
+    try {
+      _isRoomMuted = muted;
+      await _engine?.muteAllRemoteAudioStreams(muted);
+      debugPrint('✅ Room audio ${muted ? "muted" : "unmuted"}');
+    } catch (e) {
+      debugPrint('❌ Error muting room audio: $e');
+    }
+  }
+
+  /// كتم السبيكر (speakerphone)
+  Future<void> muteSpeaker(bool muted) async {
+    if (_engine == null) return;
+    try {
+      _isSpeakerMuted = muted;
+      await _engine?.setEnableSpeakerphone(!muted);
+      debugPrint('✅ Speaker ${muted ? "muted" : "unmuted"}');
+    } catch (e) {
+      debugPrint('❌ Error muting speaker: $e');
+    }
+  }
+
+  /// الحصول على حالة كتم صوت الغرفة
+  bool get isRoomMuted => _isRoomMuted;
+
+  /// الحصول على حالة كتم السبيكر
+  bool get isSpeakerMuted => _isSpeakerMuted;
+
+  /// Web only: Check if audio is blocked by browser
+  bool get isAudioBlockedByBrowser => kIsWeb && _webRTCService.audioAutoplayBlocked;
+
+  /// Web only: Stream for autoplay blocked state
+  Stream<bool> get audioBlockedStream => _webRTCService.autoplayBlockedStream;
+
+  /// Web only: Resume audio context
+  Future<void> resumeAudio() async {
+    if (kIsWeb) {
+      await _webRTCService.resumeAudio();
+    }
+  }
+
+  /// الحصول على حالة الوضع الخلفي
+  bool get isInBackground => _isInBackground;
+
+  /// تعيين حالة الوضع الخلفي (يستخدم عند الاحتفاظ بالغرفة)
+  Future<void> setBackgroundMode(bool inBackground) async {
+    _isInBackground = inBackground;
+
+    // عند الاحتفاظ بالغرفة: أبقِ الصوت شغال دائماً
+    if (inBackground) {
+      // إلغاء كتم صوت الغرفة وتفعيل السبيكر
+      await muteRoomAudio(false);
+      await muteSpeaker(false);
+
+      // إعدادات إضافية للصوت في الخلفية
+      await _engine?.setParameters('{"che.audio.keep.audiosession":true}');
+      await _engine?.setParameters('{"che.audio.focus.request":true}');
+      await _engine?.setParameters('{"che.audio.focus.mode":"constant"}');
+      await _engine?.setParameters('{"che.audio.allow.background":true}');
+
+      // إبقاء الموسيقى شغالة إذا كانت تعمل
+      if (_isMusicPlaying) {
+        await resumeMusic();
+      }
+
+      debugPrint('✅ Background: Room audio continues');
+    } else {
+      // عند العودة من الاحتفاظ، استعد حالة الصوت الأصلية
+      if (_isSpeakerMuted) {
+        await muteRoomAudio(true);
+        await muteSpeaker(true);
+      } else {
+        await muteRoomAudio(false);
+        await muteSpeaker(false);
+      }
+      debugPrint('✅ Foreground: Room audio restored');
+    }
+  }
+
+  /// كتم/إلغاء كتم الصوت من شريط المحادثة
+  Future<void> toggleMuteFromChat(bool muted) async {
+    _isSpeakerMuted = muted;
+    await muteSpeaker(muted);
+
+    // إذا كان في الوضع الخلفي، كتم صوت الغرفة أيضاً
+    if (_isInBackground) {
+      await muteRoomAudio(muted);
+      debugPrint(
+          '✅ Chat toggle: Room audio ${muted ? "muted" : "unmuted"} (background mode)');
+    }
+  }
+
+  // --- Music State Getters ---
+
+  bool get isMusicPlaying => _isMusicPlaying;
+  bool get isMusicPaused => _isMusicPaused;
+  String? get currentMusicPath => _currentMusicPath;
 }

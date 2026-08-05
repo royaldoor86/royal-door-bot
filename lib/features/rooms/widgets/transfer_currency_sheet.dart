@@ -15,11 +15,29 @@ class _TransferCurrencySheetState extends State<TransferCurrencySheet> {
   final TextEditingController _amountController = TextEditingController();
   String _selectedCurrency = 'gems';
   bool _isProcessing = false;
+  int _calculatedResult = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController.addListener(_calculateResult);
+  }
 
   @override
   void dispose() {
     _amountController.dispose();
     super.dispose();
+  }
+
+  void _calculateResult() {
+    final int amount = int.tryParse(_amountController.text) ?? 0;
+    setState(() {
+      if (_selectedCurrency == 'gems') {
+        _calculatedResult = amount * 2;
+      } else {
+        _calculatedResult = amount ~/ 2;
+      }
+    });
   }
 
   @override
@@ -45,14 +63,14 @@ class _TransferCurrencySheetState extends State<TransferCurrencySheet> {
           const Text('تحويل العملات الملكي 🔄',
               style: TextStyle(
                   color: AppTheme.royalGold,
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold)),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             child: Text(
-                'يمكنك تحويل الجواهر إلى نجوم أو العكس لدعم الغرفة أو شراء الهدايا.',
+                'حول رصيدك بسهولة بين الجواهر والكوينز. الحد الأدنى للتحويل هو 100 وحدة.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white54, fontSize: 12)),
+                style: TextStyle(color: Colors.white70, fontSize: 13)),
           ),
           if (user != null)
             StreamBuilder<DocumentSnapshot>(
@@ -61,24 +79,37 @@ class _TransferCurrencySheetState extends State<TransferCurrencySheet> {
                   .doc(user.uid)
                   .snapshots(),
               builder: (context, snapshot) {
+                if (!snapshot.hasData) return const SizedBox(height: 200, child: Center(child: CircularProgressIndicator()));
+                
                 final data = snapshot.data?.data() as Map<String, dynamic>?;
                 final gems = (data?['gems'] ?? 0).toInt();
-                final stars = (data?['stars'] ?? data?['coins'] ?? 0).toInt();
+                final coins = (data?['coins'] ?? 0).toInt();
 
                 return Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _balanceBox('جواهر 💎', gems.toString(), Colors.cyan),
-                          const Icon(Icons.compare_arrows, color: Colors.white24),
-                          _balanceBox('نجوم ⭐', stars.toString(), Colors.amber),
-                        ],
+                      Container(
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _balanceBox('جواهر 💎', gems.toString(), Colors.cyan),
+                            Container(
+                              height: 40,
+                              width: 1,
+                              color: Colors.white10,
+                            ),
+                            _balanceBox('كوينز 🪙', coins.toString(), AppTheme.royalGold),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 30),
-                      _buildTransferForm(gems, stars),
+                      const SizedBox(height: 25),
+                      _buildTransferForm(gems, coins),
                     ],
                   ),
                 );
@@ -105,51 +136,109 @@ class _TransferCurrencySheetState extends State<TransferCurrencySheet> {
     );
   }
 
-  Widget _buildTransferForm(int gems, int stars) {
+  Widget _buildTransferForm(int gems, int coins) {
+    bool isGems = _selectedCurrency == 'gems';
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _currencyChoice('gems', 'تحويل من جواهر', Icons.diamond, Colors.cyan),
-            const SizedBox(width: 15),
-            _currencyChoice('stars', 'تحويل من نجوم', Icons.stars, Colors.amber),
+            Expanded(child: _currencyChoice('gems', 'من جواهر', Icons.diamond, Colors.cyan)),
+            const SizedBox(width: 10),
+            Expanded(child: _currencyChoice('coins', 'من كوينز', Icons.monetization_on, AppTheme.royalGold)),
           ],
         ),
-        const SizedBox(height: 20),
-        TextField(
-          controller: _amountController,
-          keyboardType: TextInputType.number,
-          style: const TextStyle(color: Colors.white, fontSize: 20),
-          textAlign: TextAlign.center,
-          decoration: InputDecoration(
-            hintText: 'أدخل المبلغ',
-            hintStyle: const TextStyle(color: Colors.white24),
-            filled: true,
-            fillColor: Colors.white.withValues(alpha: 0.05),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide.none),
-          ),
-        ),
         const SizedBox(height: 25),
+        Stack(
+          alignment: Alignment.centerRight,
+          children: [
+            TextField(
+              controller: _amountController,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                hintText: 'المبلغ المراد تحويله',
+                hintStyle: const TextStyle(color: Colors.white24, fontSize: 16),
+                contentPadding: const EdgeInsets.symmetric(vertical: 20),
+                filled: true,
+                fillColor: Colors.white.withValues(alpha: 0.05),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1))),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1))),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15),
+              child: Icon(isGems ? Icons.diamond : Icons.monetization_on, 
+                color: (isGems ? Colors.cyan : AppTheme.royalGold).withValues(alpha: 0.5)),
+            ),
+          ],
+        ),
+        if (_calculatedResult > 0)
+          Padding(
+            padding: const EdgeInsets.only(top: 15),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.green.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('ستحصل على: ', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                  Text(
+                    '$_calculatedResult ${isGems ? 'كوينز 🪙' : 'جواهر 💎'}',
+                    style: TextStyle(
+                      color: isGems ? AppTheme.royalGold : Colors.cyan,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        const SizedBox(height: 30),
         SizedBox(
           width: double.infinity,
-          height: 55,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.royalGold,
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
+          height: 60,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                colors: isGems 
+                  ? [Colors.cyan, Colors.blue.shade900]
+                  : [AppTheme.royalGold, Colors.orange.shade900],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: (isGems ? Colors.cyan : AppTheme.royalGold).withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                )
+              ]
             ),
-            onPressed: _isProcessing ? null : () => _processTransfer(gems, stars),
-            child: _isProcessing
-                ? const CircularProgressIndicator(color: Colors.black)
-                : const Text('تأكيد التحويل الآن',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+              onPressed: _isProcessing ? null : () => _processTransfer(gems, coins),
+              child: _isProcessing
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('تأكيد عملية التحويل',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white)),
+            ),
           ),
         ),
+        const SizedBox(height: 10),
+        const Text('سعر الصرف: 1 جوهرة = 2 كوينز | 2 كوينز = 1 جوهرة',
+          style: TextStyle(color: Colors.white24, fontSize: 10)),
         const SizedBox(height: 20),
       ],
     );
@@ -158,7 +247,10 @@ class _TransferCurrencySheetState extends State<TransferCurrencySheet> {
   Widget _currencyChoice(String type, String label, IconData icon, Color color) {
     bool selected = _selectedCurrency == type;
     return GestureDetector(
-      onTap: () => setState(() => _selectedCurrency = type),
+      onTap: () {
+        setState(() => _selectedCurrency = type);
+        _calculateResult();
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
         decoration: BoxDecoration(
@@ -177,17 +269,24 @@ class _TransferCurrencySheetState extends State<TransferCurrencySheet> {
     );
   }
 
-  void _processTransfer(int gems, int stars) async {
+  void _processTransfer(int gems, int coins) async {
     final int amount = int.tryParse(_amountController.text) ?? 0;
-    if (amount <= 0) return;
-
-    if (_selectedCurrency == 'gems' && gems < amount) {
-      _showMsg('رصيد الجواهر غير كافٍ');
+    
+    if (amount < 100) {
+      _showMsg('الحد الأدنى للتحويل هو 100');
       return;
     }
-    if (_selectedCurrency == 'stars' && stars < amount) {
-      _showMsg('رصيد النجوم غير كافٍ');
-      return;
+
+    if (_selectedCurrency == 'gems') {
+      if (gems < amount) {
+        _showMsg('رصيد الجواهر غير كافٍ');
+        return;
+      }
+    } else {
+      if (coins < amount) {
+        _showMsg('رصيد الكوينز غير كافٍ');
+        return;
+      }
     }
 
     setState(() => _isProcessing = true);
@@ -198,22 +297,27 @@ class _TransferCurrencySheetState extends State<TransferCurrencySheet> {
 
       await FirebaseFirestore.instance.runTransaction((tx) async {
         if (_selectedCurrency == 'gems') {
+          int coinsToAdd = amount * 2;
           tx.update(userRef, {
             'gems': FieldValue.increment(-amount),
-            'stars': FieldValue.increment(amount),
-            'coins': FieldValue.increment(amount),
+            'coins': FieldValue.increment(coinsToAdd),
+            'stars': FieldValue.increment(coinsToAdd),
           });
         } else {
+          int gemsToAdd = amount ~/ 2;
           tx.update(userRef, {
-            'stars': FieldValue.increment(-amount),
             'coins': FieldValue.increment(-amount),
-            'gems': FieldValue.increment(amount),
+            'stars': FieldValue.increment(-amount),
+            'gems': FieldValue.increment(gemsToAdd),
           });
         }
       });
 
       _showMsg('تم التحويل بنجاح ✅', isError: false);
-      if (mounted) Navigator.pop(context);
+      if (mounted) {
+        _amountController.clear();
+        Navigator.pop(context);
+      }
     } catch (e) {
       _showMsg('فشل التحويل: $e');
     } finally {

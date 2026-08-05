@@ -1,24 +1,57 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { onSchedule } from "firebase-functions/v2/scheduler";
+import { AppCheck } from "firebase-admin/app-check";
 
 // Version: 1.0.1 - Removed Agora
 import {claimDailyLogin} from "./rewards/dailyLogin";
 import {completeDailyTask} from "./rewards/dailyTasks";
 import {resetDailyTasks} from "./rewards/resetDailyTasks";
 import {generateAgoraToken} from "./agora";
-import {sendCallNotification} from "./agora";
+// import {sendOTP, verifyOTP, resendOTP, checkOTPStatus} from "./otp"; // File not found
 
 admin.initializeApp();
 
+// دالة مساعدة للتحقق من App Check token
+async function verifyAppCheckToken(context: functions.https.CallableContext): Promise<void> {
+  const appCheckToken = context.rawRequest?.headers?.['x-firebase-appcheck'];
+  
+  if (!appCheckToken) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'App Check token is missing'
+    );
+  }
+
+  try {
+    const token = typeof appCheckToken === 'string' ? appCheckToken : appCheckToken[0];
+    await admin.appCheck().verifyToken(token);
+  } catch (error) {
+    throw new functions.https.HttpsError(
+      'unauthenticated',
+      'Invalid App Check token'
+    );
+  }
+}
+
 import {purchaseRewardFromMarketplace} from "./rewards/marketplace";
 
-export {claimDailyLogin, completeDailyTask, resetDailyTasks, purchaseRewardFromMarketplace, generateAgoraToken, sendCallNotification};
+export {claimDailyLogin, completeDailyTask, resetDailyTasks, purchaseRewardFromMarketplace, generateAgoraToken};
 
 import {manageChallenge, claimChallengeReward} from "./admin/challenges";
 import {purchaseRoyalId, assignRoyalIdToUser, respondToRoyalIdRequest} from "./admin/royalIdManagement";
 import {sendGift, collectRoomEarnings} from "./gifts";
 
+// استيراد دوال بوت التلغرام
+// import {handleTelegramUpdate, setTelegramWebhook, getTelegramWebhookInfo, approveImageFromBot, rejectImageFromBot} from "./telegram"; // File not found
+import {telegramBotHandler} from "./telegram_bot_handler";
+import {migrateTelegramUsers} from "./migrateTelegramUsers";
+import {getTelegramCustomToken} from "./telegram_auth";
+
 export {manageChallenge, claimChallengeReward, purchaseRoyalId, assignRoyalIdToUser, respondToRoyalIdRequest, sendGift, collectRoomEarnings};
+
+// تصدير دوال بوت التلغرام
+export {telegramBotHandler, migrateTelegramUsers, getTelegramCustomToken};
 
 // تصدير كافة وظائف الإشعارات من الملف الموحد
 export {
@@ -104,6 +137,33 @@ export const adminUnbanUser = functions.region("us-central1").https.onCall(async
   return {success: true, message: "تم فك الحظر"};
 });
 
+/* ================================
+   4️⃣ adminDeleteUser
+   ================================ */
+export const adminDeleteUser = functions.region("us-central1").https.onCall(async (data, context) => {
+  if (!context.auth) throw new functions.https.HttpsError("unauthenticated", "المستخدم غير مسجل");
+  const adminUid = context.auth.uid;
+  const adminDoc = await admin.firestore().collection("users").doc(adminUid).get();
+  if (!adminDoc.exists || adminDoc.data()?.role !== "admin") {
+    throw new functions.https.HttpsError("permission-denied", "ليس لديك صلاحية");
+  }
+  const {uid} = data;
+  if (!uid) throw new functions.https.HttpsError("invalid-argument", "uid مطلوب");
+  
+  try {
+    // حذف المستخدم من Firebase Auth
+    await admin.auth().deleteUser(uid);
+    return {success: true, message: "تم حذف المستخدم من Firebase Auth"};
+  } catch (error: any) {
+    // إذا كان المستخدم غير موجود في Auth، نرجع رسالة ولكن لا نوقف العملية
+    if (error.code === 'auth/user-not-found') {
+      console.log(`User ${uid} not found in Auth, but continuing with Firestore deletion`);
+      return {success: true, message: "المستخدم غير موجود في Auth، يمكن حذفه من Firestore"};
+    }
+    throw error;
+  }
+});
+
 // تصدير وظائف الستوري
 export {onStoryDelete, onNotificationCreate} from "./storyFunctions";
 
@@ -111,13 +171,13 @@ export {onStoryDelete, onNotificationCreate} from "./storyFunctions";
 /* ================================
    5️⃣ checkExpiredHarvests (Scheduled)
    ================================ */
-export const checkExpiredHarvests = functions.pubsub
-  .schedule("every 1 hours") // يعمل كل ساعة
-  .onRun(async () => {
+export const checkExpiredHarvests = onSchedule(
+  { schedule: "every 1 hours", region: "us-central1" },
+  async () => {
     const now = admin.firestore.Timestamp.now();
     const db = admin.firestore();
 
-    // استعلام عن كل عمليات الحصاد النشطة التي انتهى وقتها
+    // استعلام عن كل عمليات المكافآت النشطة التي انتهى وقتها
     const querySnapshot = await db
       .collectionGroup("active_harvests")
       .where("status", "==", "active")
@@ -135,7 +195,7 @@ export const checkExpiredHarvests = functions.pubsub
 
       if (!userId) return;
 
-      // ١. تحديث حالة الحصاد إلى "جاهز للاستلام" لتجنب إرسال إشعارات متكررة
+      // ١. تحديث حالة المكافآت إلى "جاهز للاستلام" لتجنب إرسال إشعارات متكررة
       await doc.ref.update({status: "ready_to_claim"});
 
       // ٢. إرسال إشعار للمستخدم
@@ -160,15 +220,15 @@ export const checkExpiredHarvests = functions.pubsub
     await Promise.all(promises);
     console.log(`Processed and sent notifications for ${querySnapshot.size} harvests.`);
     return null;
-  });
+  }
+);
 
 /* ================================
    7️⃣ activateDailyRewards (Scheduled)
    ================================ */
-export const activateDailyRewards = functions.pubsub
-  .schedule("0 6 * * *")
-  .timeZone("Asia/Baghdad")
-  .onRun(async () => {
+export const activateDailyRewards = onSchedule(
+  { schedule: "0 6 * * *", timeZone: "Asia/Baghdad", region: "us-central1" },
+  async () => {
     const db = admin.firestore();
     const now = admin.firestore.Timestamp.now();
     console.log("Activating daily rewards for all users...");
@@ -201,7 +261,7 @@ export const activateDailyRewards = functions.pubsub
         const dailyReward = reward.dailyReward || 0;
         const packageName = reward.packageName || "Unknown";
 
-        // التحقق من مرور 24 ساعة منذ آخر حصاد
+        // التحقق من مرور 24 ساعة منذ آخر مكافأه
         if (lastRewardDate) {
           const nextAvailable = new Date(lastRewardDate.getTime() + 24 * 60 * 60 * 1000);
           if (now.toDate() < nextAvailable) {
@@ -210,7 +270,7 @@ export const activateDailyRewards = functions.pubsub
           }
         }
 
-        // تحديث وقت آخر حصاد
+        // تحديث وقت آخر مكافأه
         await doc.ref.update({
           lastRewardDate: now,
           updated_at: now,
@@ -263,15 +323,15 @@ export const activateDailyRewards = functions.pubsub
       console.error("Error activating daily rewards:", error);
       return null;
     }
-  });
+  }
+);
 
 /* ================================
    8️⃣ finalizeExpiredPackages (Scheduled)
    ================================ */
-export const finalizeExpiredPackages = functions.pubsub
-  .schedule("0 7 * * *")
-  .timeZone("Asia/Baghdad")
-  .onRun(async () => {
+export const finalizeExpiredPackages = onSchedule(
+  { schedule: "0 7 * * *", timeZone: "Asia/Baghdad", region: "us-central1" },
+  async () => {
     const db = admin.firestore();
     const now = admin.firestore.Timestamp.now();
     console.log("Finalizing expired packages after 31 days...");
@@ -376,14 +436,12 @@ export const finalizeExpiredPackages = functions.pubsub
       return null;
     }
   });
-
 /* ================================
    9️⃣ sendHarvestReminders (Scheduled)
    ================================ */
-export const sendHarvestReminders = functions.pubsub
-  .schedule("0 */4 * * *") // كل 4 ساعات
-  .timeZone("Asia/Baghdad")
-  .onRun(async () => {
+export const sendHarvestReminders = onSchedule(
+  { schedule: "0 */4 * * *", timeZone: "Asia/Baghdad", region: "us-central1" },
+  async () => {
     const db = admin.firestore();
     const now = admin.firestore.Timestamp.now();
     console.log("Sending harvest reminders...");
@@ -422,7 +480,7 @@ export const sendHarvestReminders = functions.pubsub
             await admin.messaging().send({
               token: fcmToken,
               notification: {
-                title: "⏰ حصادك جاهز!",
+                title: "⏰ مكافأتك جاهزة!",
                 body: `يمكنك حصاد مكافآتك من باقة ${reward.packageName} قريباً. لا تفوت فرصتك!`,
               },
               data: {
@@ -444,7 +502,8 @@ export const sendHarvestReminders = functions.pubsub
   });
 
 /* ================================
-   10 sendPackageExpiryWarnings (Scheduled)
+   
+10 sendPackageExpiryWarnings (Scheduled)
    ================================ */
 export const sendPackageExpiryWarnings = functions.pubsub
   .schedule("0 9 * * *") // يومياً الساعة 9 صباحاً
@@ -504,7 +563,8 @@ export const sendPackageExpiryWarnings = functions.pubsub
       console.error("Error sending package expiry warnings:", error);
       return null;
     }
-  });
+  }
+);
 
 /* ================================
    11 onHarvestListingCreated (Alert System)
@@ -614,7 +674,6 @@ export const endExpiredFamilyWars = functions.pubsub
               warExp: admin.firestore.FieldValue.increment(100),
               warPoints: admin.firestore.FieldValue.increment(100),
               familyGems: admin.firestore.FieldValue.increment(rewards.winnerGems || 500),
-              familyStars: admin.firestore.FieldValue.increment(rewards.winnerStars || 2500),
               familyCoins: admin.firestore.FieldValue.increment(rewards.winnerStars || 2500),
               currentWarId: null,
             });
@@ -624,7 +683,6 @@ export const endExpiredFamilyWars = functions.pubsub
             transaction.update(loserRef, {
               warLosses: admin.firestore.FieldValue.increment(1),
               familyGems: admin.firestore.FieldValue.increment(rewards.loserGems || 100),
-              familyStars: admin.firestore.FieldValue.increment(rewards.loserStars || 500),
               familyCoins: admin.firestore.FieldValue.increment(rewards.loserStars || 500),
               currentWarId: null,
             });
@@ -645,13 +703,11 @@ export const endExpiredFamilyWars = functions.pubsub
             // تعادل
             transaction.update(db.collection("families").doc(challengerId), {
               familyGems: admin.firestore.FieldValue.increment(200),
-              familyStars: admin.firestore.FieldValue.increment(1000),
               familyCoins: admin.firestore.FieldValue.increment(1000),
               currentWarId: null,
             });
             transaction.update(db.collection("families").doc(targetId), {
               familyGems: admin.firestore.FieldValue.increment(200),
-              familyStars: admin.firestore.FieldValue.increment(1000),
               familyCoins: admin.firestore.FieldValue.increment(1000),
               currentWarId: null,
             });
@@ -675,7 +731,8 @@ export const endExpiredFamilyWars = functions.pubsub
       console.error("Error ending expired family wars:", error);
       return null;
     }
-  });
+  }
+);
 
 /* ================================
    13 updateMemberRanksDaily (Scheduled)
@@ -764,4 +821,5 @@ export const updateMemberRanksDaily = functions.pubsub
       console.error("Error updating member ranks:", error);
       return null;
     }
-  });
+  }
+);

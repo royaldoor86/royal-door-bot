@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import '../models/rewards_models.dart';
 import '../constants/rewards_constants.dart';
@@ -371,24 +372,43 @@ class RewardsService {
 
   /// شراء مكافأة من السوق (عبر Cloud Function للأمان)
   Future<void> purchaseFromMarketplace(String listingId) async {
-    final buyerId = _auth.currentUser?.uid;
-    if (buyerId == null) throw RewardsException('يجب تسجيل الدخول أولاً');
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) throw RewardsException('يجب تسجيل الدخول أولاً');
 
     await _checkMaintenance();
 
     try {
+      // جلب توكن المصادقة محدثاً لضمان تمريره للفنكشن
+      await currentUser.getIdToken(true);
+
       // استدعاء الـ Cloud Function لضمان أمان العملية ومنع التلاعب
-      final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
-      final result = await functions
+      final functions = FirebaseFunctions.instanceFor(
+          app: Firebase.app(), region: 'us-central1');
+      HttpsCallableResult result = await functions
           .httpsCallable('purchaseRewardFromMarketplace')
           .call({'listingId': listingId});
 
       if (result.data['success'] != true) {
-        throw RewardsException(result.data['message'] ?? 'فشلت عملية الشراء');
+        throw RewardsException(result.data['message'] ?? 'فشل عملية الشراء');
       }
     } catch (e) {
       debugPrint('Error purchasing from marketplace: $e');
       if (e is FirebaseFunctionsException) {
+        if (e.code == 'unauthenticated') {
+          // محاولة أخيرة بتحديث التوكن
+          try {
+            await currentUser.getIdToken(true);
+            final functions = FirebaseFunctions.instanceFor(
+                app: Firebase.app(), region: 'us-central1');
+            final retry = await functions
+                .httpsCallable('purchaseRewardFromMarketplace')
+                .call({'listingId': listingId});
+            if (retry.data['success'] == true) return;
+            throw RewardsException(retry.data['message'] ?? 'فشل عملية الشراء');
+          } catch (e2) {
+            throw RewardsException('فشل التحقق: يرجى إعادة تسجيل الدخول');
+          }
+        }
         throw RewardsException(e.message ?? 'حدث خطأ في السيرفر الملكي');
       }
       rethrow;
@@ -780,7 +800,7 @@ class RewardsService {
       dailyReward = reward.dailyReward;
       remainingDays = reward.remainingDays;
 
-      // التحقق من الإنجازات بعد الحصاد
+      // التحقق من الإنجازات بعد المكافأة
       checkAndUnlockAchievements(userId);
     });
 
@@ -817,8 +837,8 @@ class RewardsService {
     for (var doc in snapshot.docs) {
       final reward = ActiveReward.fromMap(doc.data(), doc.id);
 
-      // 1. فحص انتهاء دورة الـ 31 يوماً للتحويل التلقائي للنجوم
-      final expiryThreshold = reward.startTime.add(const Duration(days: 31));
+      // 1. فحص انتهاء دورة الـ 30 يوماً للتحويل التلقائي للنجوم
+      final expiryThreshold = reward.startTime.add(const Duration(days: 30));
       if (now.isAfter(expiryThreshold)) {
         await finalizeAndConvertPackage(doc.id);
         continue; // انتقل للباقة التالية بعد تصفية الحالية
@@ -879,26 +899,44 @@ class RewardsService {
 
       if (packageSnapshot.docs.isNotEmpty) {
         final pkg = packageSnapshot.docs.first.data();
-        starsAmount = _parseDouble(pkg['conversion_stars']);
+        // استخدام نسبة التحويل من الباقة أو حسابها بناءً على totalReward
+        final conversionStars = _parseDouble(pkg['conversion_stars']);
+        if (conversionStars > 0) {
+          starsAmount = conversionStars;
+        } else {
+          // حساب نسبة التحويل: totalReward * 0.05 (5% من إجمالي المكافأة)
+          starsAmount = reward.totalReward * 0.05;
+        }
       } else {
-        // نسبة افتراضية (رأس المال + 5% ربح) إذا لم يتم العثور على الباقة
-        double conversionRate = 105000 / 40400;
-        starsAmount = reward.totalReward * conversionRate;
+        // نسبة افتراضية (5% من إجمالي المكافأة) إذا لم يتم العثور على الباقة
+        starsAmount = reward.totalReward * 0.05;
       }
 
-      // 1. تحديث المحفظة (إضافة النجوم المكتملة)
+      // 1. تحديث المحفظة (إضافة النجوم المكتملة وتصفير الجواهر)
       final userRef = _firestore.collection('users').doc(userId);
       final userDoc = await transaction.get(userRef);
       final userData = userDoc.data()!;
 
-      double currentStars = _parseDouble(
+      double currentStars = _parseDouble(userData['rewardStars'] ??
           userData[RewardsConstants.walletStarsField] ??
-              userData['harvest_stars_wallet'] ??
-              0);
+          userData['harvest_stars_wallet'] ??
+          0);
+
+      // تصفير الجواهر المكتسبة من هذه الباقة
+      double currentGems = _parseDouble(userData['rewardGems'] ??
+          userData[RewardsConstants.walletGemsField] ??
+          userData['harvest_wallet'] ??
+          userData['harvestWallet'] ??
+          0);
 
       transaction.update(userRef, {
+        'rewardStars': currentStars + starsAmount,
         RewardsConstants.walletStarsField: currentStars + starsAmount,
-        'harvest_stars_wallet': currentStars + starsAmount,
+        'harvest_stars_wallet': currentStars + starsAmount, // للتوافقية
+        'rewardGems': currentGems - reward.totalReward,
+        RewardsConstants.walletGemsField: currentGems - reward.totalReward,
+        'harvest_wallet': currentGems - reward.totalReward, // للتوافقية
+        'harvestWallet': currentGems - reward.totalReward, // للتوافقية
       });
 
       // 2. أرشفة الباقة وحذفها من النشط
@@ -940,12 +978,14 @@ class RewardsService {
     double balance = 0;
 
     if (currency == RewardsConstants.currencyGems) {
-      balance = _parseDouble(data[RewardsConstants.walletGemsField] ??
+      balance = _parseDouble(data['rewardGems'] ??
+          data[RewardsConstants.walletGemsField] ??
           data['harvest_wallet'] ??
           data['harvestWallet'] ??
           0);
     } else if (currency == RewardsConstants.currencyStars) {
-      balance = _parseDouble(data[RewardsConstants.walletStarsField] ??
+      balance = _parseDouble(data['rewardStars'] ??
+          data[RewardsConstants.walletStarsField] ??
           data['harvest_stars_wallet'] ??
           data['starsHarvestWallet'] ??
           0);
@@ -971,19 +1011,57 @@ class RewardsService {
     }
 
     if (field.isNotEmpty) {
-      transaction.update(userRef, {
+      final updates = <String, dynamic>{
         field: FieldValue.increment(-amount),
-        // للتوافق مع المسميات القديمة إذا وجدت
-        if (field == RewardsConstants.walletGemsField)
-          'harvest_wallet': FieldValue.increment(-amount),
-        if (field == RewardsConstants.walletGemsField)
-          'harvestWallet': FieldValue.increment(-amount),
-        if (field == RewardsConstants.walletStarsField)
-          'harvest_stars_wallet': FieldValue.increment(-amount),
-        if (field == RewardsConstants.walletStarsField)
-          'starsHarvestWallet': FieldValue.increment(-amount),
-      });
+      };
+
+      // للتوافق مع المسميات القديمة إذا وجدت
+      if (field == RewardsConstants.walletGemsField) {
+        updates['rewardGems'] = FieldValue.increment(-amount);
+        updates['harvest_wallet'] = FieldValue.increment(-amount); // للتوافقية
+        updates['harvestWallet'] = FieldValue.increment(-amount); // للتوافقية
+      }
+      if (field == RewardsConstants.walletStarsField) {
+        updates['rewardStars'] = FieldValue.increment(-amount);
+        updates['harvest_stars_wallet'] =
+            FieldValue.increment(-amount); // للتوافقية
+        updates['starsHarvestWallet'] =
+            FieldValue.increment(-amount); // للتوافقية
+      }
+
+      transaction.update(userRef, updates);
     }
+  }
+
+  /// جمع أرباح الغرفة الصوتية بشكل آمن (في معاملة واحدة)
+  Future<void> collectRoomEarnings(String roomId, String userId, double amount) async {
+    if (amount <= 0) return;
+
+    await _firestore.runTransaction((transaction) async {
+      final roomRef = _firestore.collection('rooms').doc(roomId);
+      final roomSnap = await transaction.get(roomRef);
+
+      if (!roomSnap.exists) throw Exception("الغرفة غير موجودة");
+      
+      final currentPending = _parseDouble(roomSnap.data()?['pendingEarnings'] ?? 0);
+      if (currentPending < amount) throw Exception("المبلغ المتاح أقل من المطلوب");
+
+      // 1. تصفير أرباح الغرفة
+      transaction.update(roomRef, {'pendingEarnings': 0});
+
+      // 2. إضافة الأرباح لمحفظة المستخدم (نجوم)
+      await _addRewardToWallet(transaction, userId, amount, RewardsConstants.currencyStars);
+      
+      // 3. تسجيل في Audit Log
+      final logRef = _firestore.collection('admin_logs').doc();
+      transaction.set(logRef, {
+        'action': 'collect_room_earnings',
+        'userId': userId,
+        'roomId': roomId,
+        'amount': amount,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    });
   }
 
   Future<void> addRewardToWallet(
@@ -1005,17 +1083,24 @@ class RewardsService {
     }
 
     if (field.isNotEmpty) {
-      transaction.update(userRef, {
+      final updates = <String, dynamic>{
         field: FieldValue.increment(amount),
-        if (field == RewardsConstants.walletGemsField)
-          'harvest_wallet': FieldValue.increment(amount),
-        if (field == RewardsConstants.walletGemsField)
-          'harvestWallet': FieldValue.increment(amount),
-        if (field == RewardsConstants.walletStarsField)
-          'harvest_stars_wallet': FieldValue.increment(amount),
-        if (field == RewardsConstants.walletStarsField)
-          'starsHarvestWallet': FieldValue.increment(amount),
-      });
+      };
+
+      if (field == RewardsConstants.walletGemsField) {
+        updates['rewardGems'] = FieldValue.increment(amount);
+        updates['harvest_wallet'] = FieldValue.increment(amount); // للتوافقية
+        updates['harvestWallet'] = FieldValue.increment(amount); // للتوافقية
+      }
+      if (field == RewardsConstants.walletStarsField) {
+        updates['rewardStars'] = FieldValue.increment(amount);
+        updates['harvest_stars_wallet'] =
+            FieldValue.increment(amount); // للتوافقية
+        updates['starsHarvestWallet'] =
+            FieldValue.increment(amount); // للتوافقية
+      }
+
+      transaction.update(userRef, updates);
     }
   }
 
@@ -1183,17 +1268,17 @@ class RewardsService {
         });
       }
 
-      // 3. إنجاز المواظب الملكي (سجل حصاد 7 أيام)
+      // 3. إنجاز المواظب الملكي (سجل مكافأة 7 أيام)
       final logsSnapshot = await _firestore
           .collection('users')
           .doc(userId)
-          .collection('harvest_daily_logs')
+          .collection('reward_daily_logs')
           .limit(7)
           .get();
       if (logsSnapshot.docs.length >= 7) {
         await _unlockIfNew(achievementsRef, 'royal_constant', {
           'title': 'المواظب الملكي',
-          'description': 'التزمت بالحصاد اليومي لمدة 7 أيام',
+          'description': 'التزمت بالمكافأة اليومية لمدة 7 أيام',
           'icon': 'event_available',
           'rewardGems': 20,
         });
@@ -1267,5 +1352,89 @@ class RewardsService {
         },
       );
     });
+  }
+
+  /// ==================== دوال حاسبة الضرائب والرسوم ====================
+
+  /// حساب الضريبة على المبلغ (0% - تم إيقافها)
+  static double calculateTransferTax(double amount) {
+    return 0.0;
+  }
+
+  /// حساب صافي المبلغ بعد الضريبة
+  static double calculateNetAmount(double amount) {
+    return amount;
+  }
+
+  /// حساب رسوم التحويل (5% من المبلغ المرسل)
+  static double calculateGlobalSupportContribution(double amount) {
+    return amount * 0.05;
+  }
+
+  /// حساب إجمالي الخصومات
+  static double calculateTotalDeductions(double amount) {
+    return calculateGlobalSupportContribution(amount);
+  }
+
+  /// حساب صافي المبلغ بعد جميع الخصومات
+  static double calculateFinalNetAmount(double amount) {
+    return amount - calculateTotalDeductions(amount);
+  }
+
+  /// حساب رسم تفعيل الباقة
+  static double getPackageActivationFee() {
+    return RewardsConstants.packageActivationCost;
+  }
+
+  /// التحقق من صلاحية المبلغ للتحويل
+  static bool isValidTransferAmount(double amount) {
+    return amount >= RewardsConstants.minRedemptionAmount &&
+        amount <= RewardsConstants.maxDailyRedemption;
+  }
+
+  /// التحقق من صلاحية المبلغ الشهري
+  static bool isValidMonthlyAmount(double totalTransferred) {
+    return totalTransferred <= RewardsConstants.maxMonthlyRedemption;
+  }
+
+  /// حساب الحد الأقصى للتحويل اليومي المتبقي
+  static double getRemainingDailyLimit(double alreadyTransferred) {
+    return RewardsConstants.maxDailyRedemption - alreadyTransferred;
+  }
+
+  /// حساب الحد الأقصى للتحويل الشهري المتبقي
+  static double getRemainingMonthlyLimit(double alreadyTransferred) {
+    return RewardsConstants.maxMonthlyRedemption - alreadyTransferred;
+  }
+
+  /// حساب نسبة الضريبة الفعلية
+  static String getTaxRatePercentage() {
+    return '0%';
+  }
+
+  /// حساب نسبة المساهمة الفعلية
+  static String getContributionRatePercentage() {
+    return '5%';
+  }
+
+  /// طباعة تقرير الخصومات
+  static Map<String, double> getDeductionReport(double amount) {
+    return {
+      'original': amount,
+      'tax': 0.0,
+      'global_support': calculateGlobalSupportContribution(amount),
+      'total_deductions': calculateTotalDeductions(amount),
+      'net_amount': calculateFinalNetAmount(amount),
+    };
+  }
+
+  /// حساب تكلفة الشراء
+  static Map<String, double> getPurchaseCostBreakdown(double baseCost) {
+    return {
+      'base_cost': baseCost,
+      'tax': 0.0,
+      'global_support': 0.0,
+      'total_cost': baseCost,
+    };
   }
 }

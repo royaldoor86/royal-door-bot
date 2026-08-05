@@ -3,9 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
-import '../services/ad_manager.dart';
 import '../services/firestore_service.dart';
 import '../services/family_service.dart';
 import '../services/storage_service.dart';
@@ -53,7 +51,7 @@ class FamilyPage extends StatefulWidget {
 }
 
 class _FamilyPageState extends State<FamilyPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController _tabController;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirestoreService _firestoreService = FirestoreService();
@@ -65,18 +63,22 @@ class _FamilyPageState extends State<FamilyPage>
   int _minLevelFilter = 1;
   bool _isPrivateFilter = false;
   bool _isPlayingMusic = false;
-  String? _currentMusicUrl;
 
-  BannerAd? _bannerAd;
-  bool _isAdLoaded = false;
+  // BannerAd? _bannerAd; // تعطيل الإعلانات مؤقتاً لحل مشكلة الرعشة
+  // bool _isAdLoaded = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    _initBannerAd();
+    // _initBannerAd(); // تعطيل الإعلانات مؤقتاً لحل مشكلة الرعشة
     _tabController = TabController(length: 9, vsync: this, initialIndex: 1);
+    // إزالة listener غير الضروري الذي يسبب الوميض
+    // البحث سيتم تحديثه مباشرة في onChanged بدون setState
     _searchController.addListener(() {
-      setState(() => _searchQuery = _searchController.text.trim());
+      _searchQuery = _searchController.text.trim();
     });
 
     // فحص الجوائز المعلقة عند الدخول
@@ -94,23 +96,22 @@ class _FamilyPageState extends State<FamilyPage>
       await _audioPlayer.play(UrlSource(musicUrl));
       setState(() {
         _isPlayingMusic = true;
-        _currentMusicUrl = musicUrl;
       });
     }
   }
 
-  void _initBannerAd() {
-    _bannerAd = AdManager().getBannerAd(
-      size: AdSize.banner,
-      onAdLoaded: () {
-        if (mounted) {
-          setState(() {
-            _isAdLoaded = true;
-          });
-        }
-      },
-    );
-  }
+  // void _initBannerAd() {
+  //   _bannerAd = AdManager().getBannerAd(
+  //     size: AdSize.banner,
+  //     onAdLoaded: () {
+  //       if (mounted) {
+  //         setState(() {
+  //           _isAdLoaded = true;
+  //         });
+  //       }
+  //     },
+  //   );
+  // }
 
   void _checkForLevelRewards() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -193,7 +194,7 @@ class _FamilyPageState extends State<FamilyPage>
   @override
   void dispose() {
     _audioPlayer.dispose();
-    _bannerAd?.dispose();
+    // _bannerAd?.dispose(); // تعطيل الإعلانات مؤقتاً لحل مشكلة الرعشة
     _tabController.dispose();
     _searchController.dispose();
     super.dispose();
@@ -208,6 +209,22 @@ class _FamilyPageState extends State<FamilyPage>
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating),
     );
+  }
+
+  String _formatTimestamp(Timestamp timestamp) {
+    final now = DateTime.now();
+    final date = timestamp.toDate();
+    final difference = now.difference(date);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays} يوم';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} ساعة';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} دقيقة';
+    } else {
+      return 'الآن';
+    }
   }
 
   void _showSuccessSnack(String msg) {
@@ -659,17 +676,6 @@ class _FamilyPageState extends State<FamilyPage>
     );
   }
 
-  Widget _optionTile(
-          IconData icon, String title, Color color, VoidCallback onTap) =>
-      Material(
-        color: Colors.transparent,
-        child: ListTile(
-            leading: Icon(icon, color: color),
-            title: Text(title,
-                style: const TextStyle(color: Colors.white, fontSize: 14)),
-            onTap: onTap),
-      );
-
   void _showInviteDialog(String familyId) {
     final idController = TextEditingController();
     showDialog(
@@ -692,10 +698,12 @@ class _FamilyPageState extends State<FamilyPage>
                         try {
                           await _familyService.addMemberByShortId(
                               familyId, idController.text.trim());
-                          if (mounted) Navigator.pop(ctx);
-                          _showSuccessSnack('تمت الإضافة بنجاح');
+                          if (mounted) {
+                            Navigator.pop(ctx);
+                            _showSuccessSnack('تمت الإضافة بنجاح');
+                          }
                         } catch (e) {
-                          _showErrorSnack(e.toString());
+                          if (mounted) _showErrorSnack(e.toString());
                         }
                       },
                       child: const Text('إضافة'))
@@ -761,9 +769,11 @@ class _FamilyPageState extends State<FamilyPage>
                             try {
                               await _familyService.acceptJoinRequest(
                                   familyId, friend.uid);
-                              if (mounted) Navigator.pop(context);
-                              _showSuccessSnack(
-                                  'تمت إضافة ${friend.name} للعائلة');
+                              if (mounted) {
+                                Navigator.pop(context);
+                                _showSuccessSnack(
+                                    'تمت إضافة ${friend.name} للعائلة');
+                              }
                             } catch (e) {
                               _showErrorSnack(e.toString());
                             }
@@ -911,8 +921,10 @@ class _FamilyPageState extends State<FamilyPage>
                                   slogan: sloganController.text.trim(),
                                   logoUrl: logoUrl,
                                   isPrivate: isPrivate);
-                              if (mounted) Navigator.pop(context);
-                              _showSuccessSnack('تم التحديث بنجاح ✅');
+                              if (mounted) {
+                                Navigator.pop(context);
+                                _showSuccessSnack('تم التحديث بنجاح ✅');
+                              }
                             }),
                     const SizedBox(height: 40)
                   ]),
@@ -1023,10 +1035,12 @@ class _FamilyPageState extends State<FamilyPage>
                 try {
                   await _familyService.donateToFamily(family.id, amount,
                       selectedCurrency == 'coins' ? 'coins' : 'gems');
-                  if (mounted) Navigator.pop(ctx);
-                  _showSuccessSnack('شكراً لمساهمتك الملكية! ✅');
+                  if (mounted) {
+                    Navigator.pop(ctx);
+                    _showSuccessSnack('شكراً لمساهمتك الملكية! ✅');
+                  }
                 } catch (e) {
-                  _showErrorSnack(e.toString());
+                  if (mounted) _showErrorSnack(e.toString());
                 }
               },
               child: const Text('تبرع الآن'),
@@ -1172,14 +1186,8 @@ class _FamilyPageState extends State<FamilyPage>
                             icon: const Icon(Icons.shield_rounded,
                                 color: Colors.white))
                         : null,
-                    bottomNavigationBar: _isAdLoaded && _bannerAd != null
-                        ? Container(
-                            color: const Color(0xFF1A050E),
-                            height: _bannerAd!.size.height.toDouble(),
-                            width: _bannerAd!.size.width.toDouble(),
-                            child: AdWidget(ad: _bannerAd!),
-                          )
-                        : null,
+                    bottomNavigationBar:
+                        null, // تعطيل الإعلانات مؤقتاً لحل مشكلة الرعشة
                   );
                 }),
             if (_isDeleting)
@@ -1286,10 +1294,12 @@ class _FamilyPageState extends State<FamilyPage>
                       challengerId: myFamilyId,
                       targetId: targetFamily.id,
                       durationMinutes: 30);
-                  if (mounted) Navigator.pop(ctx);
-                  _showSuccessSnack('تم إرسال التحدي! بدأت الحرب الآن 🔥');
+                  if (mounted) {
+                    Navigator.pop(ctx);
+                    _showSuccessSnack('تم إرسال التحدي! بدأت الحرب الآن 🔥');
+                  }
                 } catch (e) {
-                  _showErrorSnack(e.toString());
+                  if (mounted) _showErrorSnack(e.toString());
                 }
               },
               child: const Text('بدء التحدي')),
@@ -1336,7 +1346,9 @@ class _FamilyPageState extends State<FamilyPage>
           child: TextField(
               controller: _searchController,
               style: const TextStyle(color: Colors.white),
-              onChanged: (v) => setState(() {}),
+              onChanged: (v) {
+                // لا نحتاج setState هنا لأن _searchQuery محدث في listener
+              },
               decoration: InputDecoration(
                   hintText: 'ابحث عن عائلة...',
                   prefixIcon: const Icon(Icons.search, color: Colors.redAccent),
@@ -1379,7 +1391,7 @@ class _FamilyPageState extends State<FamilyPage>
                 child: const Text('إلغاء')),
             ElevatedButton(
               onPressed: () {
-                setState(() {});
+                // لا نحتاج setState هنا لأن الفلاتر محدثة محلياً
                 Navigator.pop(ctx);
               },
               child: const Text('تطبيق'),
@@ -1446,6 +1458,12 @@ class _FamilyPageState extends State<FamilyPage>
 
           final family = FamilyModel.fromFirestore(
               snap.data! as DocumentSnapshot<Map<String, dynamic>>);
+
+          print('DEBUG: Family data loaded');
+          print('DEBUG: familyHandNumber: ${family.familyHandNumber}');
+          print('DEBUG: familyHandLetters: ${family.familyHandLetters}');
+          print('DEBUG: lastHandIdUpdatedAt: ${family.lastHandIdUpdatedAt}');
+
           final backgroundUrl = familyData['backgroundUrl'];
           final hasCustomBackground =
               familyData['hasCustomBackground'] ?? false;
@@ -1567,7 +1585,7 @@ class _FamilyPageState extends State<FamilyPage>
         GestureDetector(
             onTap: () => _showDonateDialog(family),
             child: _WealthItem(
-                value: family.familyStars,
+                value: family.familyCoins,
                 icon: Icons.stars_rounded,
                 color: Colors.amber)),
       ],
@@ -1741,16 +1759,46 @@ class _FamilyPageState extends State<FamilyPage>
               return const SizedBox.shrink();
             }
             final docs = snapshot.data!.docs;
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: docs.length,
-              itemBuilder: (context, index) {
-                final memberData = docs[index].data() as Map<String, dynamic>;
-                return _ContributorTile(
-                  uid: memberData['uid'],
-                  contribution: memberData['totalContribution'] ?? 0,
-                  rank: index + 1,
+            // جلب جميع بيانات المستخدمين دفعة واحدة لتجنب الرعشة
+            return FutureBuilder<List<Map<String, dynamic>>>(
+              future: Future.wait(docs.map((doc) async {
+                final memberData = doc.data() as Map<String, dynamic>;
+                final uid = memberData['uid'];
+                final userDoc = await _db.collection('users').doc(uid).get();
+                final userData = userDoc.data();
+                return {
+                  'uid': uid,
+                  'name': userData?['name'] ?? userData?['displayName'] ?? uid,
+                  'photoUrl': userData?['photoUrl'] ?? userData?['avatarUrl'],
+                  'contribution': memberData['totalContribution'] ?? 0,
+                };
+              })),
+              builder: (context, usersSnapshot) {
+                if (!usersSnapshot.hasData) {
+                  return const SizedBox(
+                      height: 60,
+                      child: Center(
+                          child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child:
+                                  CircularProgressIndicator(strokeWidth: 2))));
+                }
+                final usersData = usersSnapshot.data!;
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: usersData.length,
+                  itemBuilder: (context, index) {
+                    final userData = usersData[index];
+                    return _ContributorTile(
+                      uid: userData['uid'],
+                      displayName: userData['name'],
+                      photoUrl: userData['photoUrl'],
+                      contribution: userData['contribution'],
+                      rank: index + 1,
+                    );
+                  },
                 );
               },
             );
@@ -1824,7 +1872,7 @@ class _FamilyPageState extends State<FamilyPage>
                         builder: (_) => FamilyWarsManagementPage(
                             familyId: family.id, familyName: family.name)))),
             if (hasCustomMusic && musicUrl != null && musicUrl.isNotEmpty)
-              _MusicPlayerBox(
+              _musicPlayerBox(
                 isPlaying: _isPlayingMusic,
                 musicUrl: musicUrl,
                 onToggle: () => _toggleMusic(musicUrl),
@@ -1835,7 +1883,7 @@ class _FamilyPageState extends State<FamilyPage>
     );
   }
 
-  Widget _MusicPlayerBox({
+  Widget _musicPlayerBox({
     required bool isPlaying,
     required String musicUrl,
     required VoidCallback onToggle,
@@ -2077,17 +2125,83 @@ class _FamilyPageState extends State<FamilyPage>
             if (f.isVerified)
               const Icon(Icons.verified, color: Colors.blue, size: 18),
             const SizedBox(width: 5),
-            Text(f.name,
+            Flexible(
+              child: Text(
+                f.name,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
                 style: const TextStyle(
                     color: Colors.white,
                     fontSize: 22,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
           ],
         ),
         Text('شعارنا: ${f.slogan}',
             style: const TextStyle(color: Colors.amber, fontSize: 12)),
-        Text('ID: ${f.id.substring(0, 8)}',
-            style: const TextStyle(color: Colors.white24, fontSize: 11)),
+        // إخفاء الإيدي القديم (معرف Firestore) وإظهار الإيدي الملكي فقط
+        // Text('ID: ${f.id.substring(0, 8)}',
+        //     style: const TextStyle(color: Colors.white24, fontSize: 11)),
+        const SizedBox(height: 10),
+        // عرض الإيدي الملكي للعائلة
+        if (f.familyHandNumber != null && f.familyHandNumber!.isNotEmpty ||
+            f.familyHandLetters != null && f.familyHandLetters!.isNotEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.purple.withValues(alpha: 0.3),
+                  Colors.blue.withValues(alpha: 0.3),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.cyanAccent.withValues(alpha: 0.5),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.diamond, color: Colors.cyanAccent, size: 16),
+                    SizedBox(width: 6),
+                    Text(
+                      'الإيدي الملكي',
+                      style: TextStyle(
+                        color: Colors.cyanAccent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  f.familyHandNumber?.isNotEmpty == true
+                      ? f.familyHandNumber!
+                      : f.familyHandLetters ?? '',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                  ),
+                ),
+                if (f.lastHandIdUpdatedAt != null)
+                  Text(
+                    'منذ ${_formatTimestamp(f.lastHandIdUpdatedAt!)}',
+                    style: const TextStyle(
+                      color: Colors.white38,
+                      fontSize: 9,
+                    ),
+                  ),
+              ],
+            ),
+          ),
       ]);
 
   Widget _buildFamilyStatsRow(FamilyModel f) =>
@@ -2143,12 +2257,16 @@ class _FamilyPageState extends State<FamilyPage>
                         try {
                           if (f.isPrivate) {
                             await _familyService.sendJoinRequest(f.id);
-                            if (mounted) Navigator.pop(context);
-                            _showSuccessSnack('تم إرسال طلب الانضمام');
+                            if (mounted) {
+                              Navigator.pop(context);
+                              _showSuccessSnack('تم إرسال طلب الانضمام');
+                            }
                           } else {
                             await _familyService.joinFamily(f.id);
-                            if (mounted) Navigator.pop(context);
-                            _showSuccessSnack('تم الانضمام بنجاح');
+                            if (mounted) {
+                              Navigator.pop(context);
+                              _showSuccessSnack('تم الانضمام بنجاح');
+                            }
                           }
                         } catch (e) {
                           _showErrorSnack(e.toString());
@@ -2229,10 +2347,12 @@ class _FamilyPageState extends State<FamilyPage>
               try {
                 await _familyService.setFamilyRoom(
                     familyId, roomIdController.text.trim());
-                if (mounted) Navigator.pop(ctx);
-                _showSuccessSnack('تم تعيين غرفة العائلة');
+                if (mounted) {
+                  Navigator.pop(ctx);
+                  _showSuccessSnack('تم تعيين غرفة العائلة');
+                }
               } catch (e) {
-                _showErrorSnack(e.toString());
+                if (mounted) _showErrorSnack(e.toString());
               }
             },
             child: const Text('تعيين'),
@@ -2425,24 +2545,33 @@ class _FamilyPageState extends State<FamilyPage>
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (handNumber != null && handNumber.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(handNumber,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold)),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(handNumber,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold)),
+              ),
             ),
           if (handLetters != null && handLetters.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(handLetters,
-                  style: const TextStyle(
-                      color: Colors.amber,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold)),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(handLetters,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    style: const TextStyle(
+                        color: Colors.amber,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold)),
+              ),
             ),
         ],
       ),
@@ -2460,24 +2589,33 @@ class _FamilyPageState extends State<FamilyPage>
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (handNumber != null && handNumber.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(handNumber,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold)),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(handNumber,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold)),
+              ),
             ),
           if (handLetters != null && handLetters.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(handLetters,
-                  style: const TextStyle(
-                      color: Colors.amber,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold)),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(handLetters,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    style: const TextStyle(
+                        color: Colors.amber,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold)),
+              ),
             ),
         ],
       ),
@@ -2672,76 +2810,75 @@ class _ServiceBox extends StatelessWidget {
 
 class _ContributorTile extends StatelessWidget {
   final String uid;
+  final String displayName;
+  final String? photoUrl;
   final int contribution;
   final int rank;
 
   const _ContributorTile({
     required this.uid,
+    required this.displayName,
+    this.photoUrl,
     required this.contribution,
     required this.rank,
   });
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream:
-          FirebaseFirestore.instance.collection('users').doc(uid).snapshots(),
-      builder: (context, userSnap) {
-        if (!userSnap.hasData) return const SizedBox.shrink();
-        final userData = userSnap.data!.data() as Map<String, dynamic>?;
-        if (userData == null) return const SizedBox.shrink();
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          child: AppTheme.glassContainer(
-            opacity: 0.03,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            child: Material(
-              color: Colors.transparent,
-              child: ListTile(
-                leading: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '#$rank',
-                      style: TextStyle(
-                        color: rank == 1
-                            ? Colors.amber
-                            : (rank == 2
-                                ? Colors.grey[400]
-                                : Colors.brown[300]),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.white10,
-                      backgroundImage: (userData['profilePic'] != null &&
-                              Uri.tryParse(userData['profilePic'])
-                                      ?.host
-                                      .isNotEmpty ==
-                                  true)
-                          ? NetworkImage(userData['profilePic'])
-                          : null,
-                    ),
-                  ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: AppTheme.glassContainer(
+        opacity: 0.03,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Material(
+          color: Colors.transparent,
+          child: ListTile(
+            leading: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '#$rank',
+                  style: TextStyle(
+                    color: rank == 1
+                        ? Colors.amber
+                        : (rank == 2 ? Colors.grey[400] : Colors.brown[300]),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                title: Text(userData['name'] ?? '',
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold)),
-                trailing: Text(
-                  '$contribution 💎',
-                  style: const TextStyle(
-                      color: Colors.lightBlueAccent,
-                      fontWeight: FontWeight.bold),
+                const SizedBox(width: 15),
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.white10,
+                  backgroundImage: photoUrl != null && photoUrl!.isNotEmpty
+                      ? NetworkImage(photoUrl!)
+                      : null,
+                  child: (photoUrl == null || photoUrl!.isEmpty)
+                      ? Text(
+                          displayName.isNotEmpty
+                              ? displayName[0].toUpperCase()
+                              : '?',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        )
+                      : null,
                 ),
-              ),
+              ],
+            ),
+            title: Text(displayName,
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+            trailing: Text(
+              '$contribution 💎',
+              style: const TextStyle(
+                  color: Colors.lightBlueAccent, fontWeight: FontWeight.bold),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

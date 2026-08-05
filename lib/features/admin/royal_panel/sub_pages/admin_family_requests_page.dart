@@ -277,8 +277,8 @@ class _AdminFamilyRequestsPageState extends State<AdminFamilyRequestsPage>
                   if ((data['gems'] ?? 0) > 0)
                     _rewardChip('${data['gems']} 💎', Colors.cyanAccent),
                   if ((data['stars'] ?? data['coins'] ?? 0) > 0)
-                    _rewardChip(
-                        '${data['stars'] ?? data['coins']} ⭐', Colors.amber),
+                    _rewardChip('${data['stars'] ?? data['coins']} كوينز',
+                        Colors.amber),
                   if ((data['xp'] ?? 0) > 0)
                     _rewardChip('${data['xp']} XP', Colors.purpleAccent),
                   if (isLimited)
@@ -439,7 +439,7 @@ class _AdminFamilyRequestsPageState extends State<AdminFamilyRequestsPage>
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                            _buildLabel('النجوم ⭐'),
+                            _buildLabel('الكوينز'),
                             _buildRoyalInput(
                                 coinsCtrl, '0', Icons.stars_rounded,
                                 isNum: true)
@@ -463,8 +463,8 @@ class _AdminFamilyRequestsPageState extends State<AdminFamilyRequestsPage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                             _buildLabel('الهدف المطلوب'),
-                            _buildRoyalInput(
-                                TextEditingController(text: '1'), '1', Icons.flag,
+                            _buildRoyalInput(TextEditingController(text: '1'),
+                                '1', Icons.flag,
                                 isNum: true)
                           ])),
                       const SizedBox(width: 12),
@@ -473,8 +473,8 @@ class _AdminFamilyRequestsPageState extends State<AdminFamilyRequestsPage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                             _buildLabel('قيمة كل خطوة'),
-                            _buildRoyalInput(
-                                TextEditingController(text: '1'), '1', Icons.trending_up,
+                            _buildRoyalInput(TextEditingController(text: '1'),
+                                '1', Icons.trending_up,
                                 isNum: true)
                           ])),
                     ],
@@ -502,7 +502,9 @@ class _AdminFamilyRequestsPageState extends State<AdminFamilyRequestsPage>
                                   DateTime.now().add(Duration(hours: hours)))
                               : null,
                         });
-                        if (mounted) Navigator.pop(context);
+                        if (mounted) {
+                          Navigator.pop(context);
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(

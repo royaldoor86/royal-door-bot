@@ -124,7 +124,7 @@ class _AdminHarvestSettingsPageState extends State<AdminHarvestSettingsPage> {
         backgroundColor: const Color(0xFF021B2B),
         appBar: AppBar(
           backgroundColor: const Color(0xFF021B2B),
-          title: const Text('إعدادات الحصاد الملكي',
+          title: const Text('إعدادات المكافآت الملكية',
               style: TextStyle(color: Colors.white)),
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.white),

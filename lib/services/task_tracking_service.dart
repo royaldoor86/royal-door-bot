@@ -1,4 +1,4 @@
-import '../../services/ad_manager.dart';
+import 'ad_manager.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +15,12 @@ class TaskTrackingService with WidgetsBindingObserver {
 
   void startTracking() {
     WidgetsBinding.instance.addObserver(this);
+    _auth.authStateChanges().listen((user) {
+      if (user != null) {
+        _updateOnlineStatus(true);
+      }
+    });
+    _updateOnlineStatus(true);
     _startSession();
   }
 
@@ -27,15 +33,32 @@ class TaskTrackingService with WidgetsBindingObserver {
 
   void _stopSession() {
     _appUsageTimer?.cancel();
+    _updateOnlineStatus(false);
+  }
+
+  Future<void> _updateOnlineStatus(bool isOnline) async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    try {
+      await _db.collection('users').doc(user.uid).update({
+        'isOnline': isOnline,
+        'lastSeen': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      debugPrint('Error updating online status: $e');
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      _updateOnlineStatus(true);
       _startSession();
       // إظهار إعلان فتح التطبيق عند العودة من الخلفية
       AdManager().showAppOpenAdIfAvailable();
-    } else if (state == AppLifecycleState.paused) {
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached ||
+        state == AppLifecycleState.inactive) {
       _stopSession();
     }
   }

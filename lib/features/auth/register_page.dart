@@ -34,9 +34,6 @@ class _RegisterPageState extends State<RegisterPage> {
   String _selectedCountryCode = "+964";
   String _countryEmoji = "🇮🇶";
 
-  // Firebase Phone Auth
-  String? _verificationId;
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -102,44 +99,17 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
 
-      await authService.verifyPhoneNumber(
-        phoneNumber: fullPhoneNumber,
-        onCodeSent: (String verificationId) {
-          setState(() {
-            _verificationId = verificationId;
-            _isLoading = false;
-          });
-          _showOtpDialog(fullPhoneNumber);
-        },
-        onVerificationFailed: (FirebaseAuthException e) {
-          setState(() => _isLoading = false);
-          String errorMsg = "فشل إرسال الكود";
-          if (e.code == 'invalid-phone-number') {
-            errorMsg = "رقم الهاتف غير صحيح";
-          } else if (e.code == 'too-many-requests') {
-            errorMsg = "محاولات كثيرة، حاول لاحقاً";
-          }
-          _showSnack(errorMsg);
-        },
-        onVerificationCompleted: (PhoneAuthCredential credential) async {
-          try {
-            final result =
-                await FirebaseAuth.instance.signInWithCredential(credential);
-            final user = result.user;
-            if (user != null) {
-              await UserBootstrapService.bootstrapUser();
-              final sessionService = SessionTrackingService();
-              await sessionService.initialize();
-              if (mounted) {
-                Navigator.pushReplacementNamed(context, "/home");
-              }
-            }
-          } catch (e) {
-            setState(() => _isLoading = false);
-            _showSnack("فشل التحقق التلقائي: $e");
-          }
-        },
+      // استخدام نظام OTP المحسّن
+      await authService.sendOTP(
+        phone,
+        countryCode: _selectedCountryCode,
+        allowAnonymous: true,
       );
+
+      setState(() {
+        _isLoading = false;
+      });
+      _showOtpDialog(fullPhoneNumber);
     } catch (e) {
       setState(() => _isLoading = false);
       _showSnack("فشل إرسال الكود: $e");
@@ -321,18 +291,15 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _signInWithPhoneCredential(String fullPhone) async {
-    if (_verificationId == null) {
-      _showSnack("يرجى إرسال الكود أولاً");
-      return;
-    }
-
     setState(() => _isLoading = true);
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
       final smsCode = _otpController.text.trim();
-      final user = await authService.signInWithPhone(_verificationId!, smsCode);
 
-      if (user != null) {
+      // استخدام نظام OTP المحسّن
+      final verified = await authService.verifyOTP(smsCode, allowAnonymous: true);
+
+      if (verified) {
         await UserBootstrapService.bootstrapUser();
         final sessionService = SessionTrackingService();
         await sessionService.initialize();
@@ -342,14 +309,6 @@ class _RegisterPageState extends State<RegisterPage> {
       } else {
         _showSnack("كود التحقق غير صحيح");
       }
-    } on FirebaseAuthException catch (e) {
-      String errorMsg = "كود التحقق غير صحيح";
-      if (e.code == 'invalid-verification-code') {
-        errorMsg = "كود التحقق غير صحيح";
-      } else if (e.code == 'code-expired') {
-        errorMsg = "الكود منتهي، أعد الإرسال";
-      }
-      _showSnack(errorMsg);
     } catch (e) {
       _showSnack("حدث خطأ: $e");
     } finally {
@@ -595,7 +554,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               child: const Center(
                                 child: Icon(Icons.g_mobiledata,
-                                    color: Colors.white, size: 28),
+                                    color: Color(0xFF4285F4), size: 28),
                               ),
                             ),
                           ),
@@ -614,8 +573,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                 border: Border.all(color: Colors.white10),
                               ),
                               child: const Center(
-                                child: Icon(Icons.phone_android_rounded,
-                                    color: Colors.white, size: 24),
+                                child: Icon(Icons.phone,
+                                    color: Color(0xFF25D366), size: 24),
                               ),
                             ),
                           ),

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/family_service.dart';
 import '../models/mini_game_model.dart';
 import '../app_theme.dart';
+import '../widgets/growth_challenge_widget.dart';
 import 'dart:ui' as ui;
 
 class FamilyMiniGamesPage extends StatefulWidget {
@@ -57,6 +58,9 @@ class _FamilyMiniGamesPageState extends State<FamilyMiniGamesPage> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
+                // ويدجت تحدي النمو
+                const GrowthChallengeWidget(),
+                const SizedBox(height: 20),
                 // زر إنشاء لعبة جديدة
                 AppTheme.gradientButton(
                   text: 'إنشاء لعبة جديدة 🎮',

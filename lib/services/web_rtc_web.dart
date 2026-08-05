@@ -32,8 +32,8 @@ class WebRTCService {
     try {
       if (_window.hasProperty('AGORA_APP_ID'.toJS).toDart) {
         final appId = _window.getProperty('AGORA_APP_ID'.toJS);
-        if (appId != null && appId.isString) {
-          return (appId as JSString).toDart;
+        if (appId != null && appId is JSString) {
+          return (appId).toDart;
         }
       }
       return '2042a5996de7444e9a72babc8527b25e';
@@ -61,7 +61,7 @@ class WebRTCService {
 
       final agoraRtc = _window.getProperty('AgoraRTC'.toJS) as JSObject;
 
-      // Create client for Agora SDK v4.
+      // Create a new client for the Agora SDK version 4.
       final clientOptions = JSObject();
       clientOptions.setProperty('mode'.toJS, 'live'.toJS);
       clientOptions.setProperty('codec'.toJS, 'vp8'.toJS);
@@ -135,22 +135,23 @@ class WebRTCService {
       }
 
       // Subscribe to remote users.
-      _client!.callMethod('on'.toJS, 'user-published'.toJS, ((JSObject user, JSString mediaType) async {
+      _client!.callMethod('on'.toJS, 'user-published'.toJS, ((JSObject user, JSString mediaType) {
         final type = mediaType.toDart;
         debugPrint("📥 Remote user published, mediaType: $type");
         
         final subscribePromise = _client!.callMethod('subscribe'.toJS, user, mediaType) as JSPromise;
-        await subscribePromise.toDart;
-        
-        if (type == 'audio') {
-          final remoteAudioTrack = user.getProperty('audioTrack'.toJS);
-          if (remoteAudioTrack != null) {
-            final track = remoteAudioTrack as JSObject;
-            final playPromise = track.callMethod('play'.toJS) as JSPromise;
-            await playPromise.toDart;
-            _remoteAudioTracks.add(track);
+        subscribePromise.toDart.then((_) {
+          if (type == 'audio') {
+            final remoteAudioTrack = user.getProperty('audioTrack'.toJS);
+            if (remoteAudioTrack != null) {
+              final track = remoteAudioTrack as JSObject;
+              final playPromise = track.callMethod('play'.toJS) as JSPromise;
+              playPromise.toDart.then((_) {
+                _remoteAudioTracks.add(track);
+              });
+            }
           }
-        }
+        });
       }).toJS);
 
       _client!.callMethod('on'.toJS, 'user-unpublished'.toJS, ((JSObject user, JSString mediaType) {

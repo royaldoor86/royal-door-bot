@@ -145,30 +145,28 @@ class _RoomInfoSheetState extends State<RoomInfoSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: DefaultTabController(
-        length: 3,
-        initialIndex: 0,
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.85,
-          decoration: const BoxDecoration(
-            color: Color(0xFF08141E),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-          ),
-          child: Column(
-            children: [
-              _buildHeader(context),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    _buildInfoTab(context),
-                    _buildMembersTab(),
-                    _buildMomentsTab(), // تفعيل اللحظات هنا
-                  ],
+    return Scaffold(
+      backgroundColor: const Color(0xFF08141E),
+      body: SafeArea(
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: DefaultTabController(
+            length: 3,
+            initialIndex: 0,
+            child: Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      _buildInfoTab(context),
+                      _buildMembersTab(),
+                      _buildMomentsTab(),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -547,8 +545,9 @@ class _RoomInfoSheetState extends State<RoomInfoSheet> {
                         children: [
                       Row(
                         children: [
-                          Flexible(
-                              child: Text("معرف: ${widget.roomId}",
+                          Expanded(
+                              child: Text(
+                                  "معرف: ${data['shortId'] ?? data['royalId'] ?? (widget.roomId.length > 8 ? widget.roomId.substring(0, 8) : widget.roomId)}",
                                   style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
@@ -562,7 +561,7 @@ class _RoomInfoSheetState extends State<RoomInfoSheet> {
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
-                        runSpacing: 4,
+                        runSpacing: 8,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           const Icon(Icons.public,
@@ -760,15 +759,15 @@ class _RoomInfoSheetState extends State<RoomInfoSheet> {
                 if (!userSnap.hasData) return const SizedBox(height: 70);
                 final userData =
                     userSnap.data!.data() as Map<String, dynamic>? ?? {};
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      color: const Color(0xFF11212D),
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Material(
-                    color: Colors.transparent,
+                return Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    decoration: BoxDecoration(
+                        color: const Color(0xFF11212D),
+                        borderRadius: BorderRadius.circular(15)),
                     child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                       leading: CircleAvatar(
                           backgroundImage: userData['profilePic'] != null
                               ? NetworkImage(userData['profilePic'])
@@ -778,11 +777,14 @@ class _RoomInfoSheetState extends State<RoomInfoSheet> {
                               ? const Icon(Icons.person, color: Colors.white)
                               : null),
                       title: Row(children: [
-                        Text(userData['name'] ?? 'مستخدم ملكي',
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14)),
+                        Flexible(
+                          child: Text(userData['name'] ?? 'مستخدم ملكي',
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14),
+                              overflow: TextOverflow.ellipsis),
+                        ),
                         const SizedBox(width: 8),
                         if (mNumber != null)
                           Container(
@@ -950,12 +952,15 @@ class _RoomInfoSheetState extends State<RoomInfoSheet> {
                                   : Colors.cyanAccent,
                               size: 20),
                           const SizedBox(width: 8),
-                          Text(_isFollowing ? "تمت المتابعة" : "متابعة",
-                              style: TextStyle(
-                                  color: _isFollowing
-                                      ? Colors.white54
-                                      : Colors.white,
-                                  fontWeight: FontWeight.bold))
+                          Flexible(
+                            child: Text(_isFollowing ? "تمت المتابعة" : "متابعة",
+                                style: TextStyle(
+                                    color: _isFollowing
+                                        ? Colors.white54
+                                        : Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis),
+                          )
                         ])))),
         const SizedBox(width: 15),
         Expanded(
@@ -976,10 +981,13 @@ class _RoomInfoSheetState extends State<RoomInfoSheet> {
                           Icon(_isMember ? Icons.group_remove : Icons.group_add,
                               color: Colors.white, size: 20),
                           const SizedBox(width: 8),
-                          Text(_isMember ? "مغادرة النادي" : "انضمام للنادي",
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold))
+                          Flexible(
+                            child: Text(_isMember ? "مغادرة النادي" : "انضمام للنادي",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis),
+                          )
                         ])))),
       ],
     );

@@ -129,8 +129,9 @@ class _FamilyNotificationsPageState extends State<FamilyNotificationsPage> {
   List<FamilyNotificationModel> _filterNotifications(
       List<FamilyNotificationModel> notifications) {
     if (_selectedFilter == 'all') return notifications;
-    if (_selectedFilter == 'unread')
+    if (_selectedFilter == 'unread') {
       return notifications.where((n) => !n.isRead).toList();
+    }
     return notifications.where((n) => n.type == _selectedFilter).toList();
   }
 

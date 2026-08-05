@@ -16,6 +16,8 @@ import 'package:intl/intl.dart' as intl;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter/foundation.dart';
+import '../../services/telegram_web_app_service.dart';
 
 class DailyRewardsPage extends StatefulWidget {
   const DailyRewardsPage({super.key});
@@ -59,12 +61,12 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
   }
 
   final List<Map<String, dynamic>> rewards = [
-    {'day': '1', 'val': '500', 'type': 'star'},
-    {'day': '2', 'val': '800', 'type': 'star'},
-    {'day': '3', 'val': '5', 'type': 'gem'},
-    {'day': '4', 'val': '1000', 'type': 'star'},
-    {'day': '5', 'val': '1500', 'type': 'star'},
-    {'day': '6', 'val': '2000', 'type': 'star'},
+    {'day': '1', 'val': '500', 'type': 'star'}, // اليوم الأول: 500 كوينز
+    {'day': '2', 'val': '800', 'type': 'star'}, // الثاني: 800 كوينز
+    {'day': '3', 'val': '5', 'type': 'gem'},   // الثالث: 5 جواهر
+    {'day': '4', 'val': '1000', 'type': 'star'}, // الرابع: 1000 كوينز
+    {'day': '5', 'val': '1500', 'type': 'star'}, // الخامس: 1500 كوينز
+    {'day': '6', 'val': '2000', 'type': 'star'}, // السادس: 2000 كوينز
   ];
 
   @override
@@ -120,7 +122,7 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
         final status = await _firestoreService.getDailyRewardStatus(user.uid);
         if (mounted) {
           setState(() {
-            _rawStreak = status['streak'] ?? 0;
+            _rawStreak = (status['streak'] ?? 0).toInt();
             final lastClaimed = status['lastClaimed'];
             _lastClaimedAt = lastClaimed?.toDate();
 
@@ -167,28 +169,22 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
       body: Stack(
         children: [
           // Background
-          Transform.translate(
-            offset: Offset(_offsetX, _offsetY),
-            child: Transform.scale(
-              scale: 1.15, // تكبير الصورة قليلاً لتغطية الحركة دون فراغات
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: _getBackgroundImage(),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.85),
-                        const Color(0xFF1A0533).withValues(alpha: 0.95)
-                      ],
-                    ),
-                  ),
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: _getBackgroundImage(),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.85),
+                    const Color(0xFF1A0533).withValues(alpha: 0.95)
+                  ],
                 ),
               ),
             ),
@@ -350,11 +346,16 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
       await file.writeAsBytes(pngBytes);
 
       // فتح واجهة المشاركة
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        text:
-            'انظر إلى تقدمي في تطبيق رويال دور! 🔥 لقد حققت سلسلة مكافآت مذهلة! 👑✨',
-      );
+      const message = 'انظر إلى تقدمي في تطبيق رويال دور! 🔥 لقد حققت سلسلة مكافآت مذهلة! 👑✨';
+      
+      if (kIsWeb && TelegramWebAppService.isTelegramWebApp()) {
+        TelegramWebAppService.shareText(message);
+      } else {
+        await Share.shareXFiles(
+          [XFile(file.path)],
+          text: message,
+        );
+      }
     } catch (e) {
       debugPrint("Error sharing streak: $e");
     }
@@ -560,18 +561,13 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
                   ),
                 ),
                 const SizedBox(width: 12),
-                Shimmer.fromColors(
-                  baseColor: Colors.amber,
-                  highlightColor: Colors.yellow,
-                  period: const Duration(milliseconds: 2000),
-                  child: const Text(
-                    'الكنز الملكي',
-                    style: TextStyle(
-                      color: Colors.amber,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
+                const Text(
+                  'الكنز الملكي',
+                  style: TextStyle(
+                    color: Colors.amber,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
                   ),
                 ),
               ],
@@ -605,61 +601,39 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
           alignment: Alignment.center,
           children: [
             // حلقات دوارة ملونة
-            AnimatedBuilder(
-              animation: _pulseController,
-              builder: (context, child) {
-                return Container(
-                  width: 140,
-                  height: 140,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.amber.withValues(
-                          alpha: (0.3 *
-                                  math.sin(
-                                      _pulseController.value * 2 * math.pi))
-                              .abs()
-                              .clamp(0.1, 0.5)),
-                      width: 2,
-                    ),
-                  ),
-                );
-              },
+            Container(
+              width: 140,
+              height: 140,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.amber.withValues(alpha: 0.3),
+                  width: 2,
+                ),
+              ),
             ),
             // التوهج الخارجي
-            AnimatedBuilder(
-              animation: _glowController,
-              builder: (context, child) {
-                return Container(
-                  width: 110,
-                  height: 110,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.amber.withValues(
-                          alpha: (0.4 * _glowController.value).clamp(0.0, 1.0),
-                        ),
-                        blurRadius: 30,
-                        spreadRadius: 15,
-                      ),
-                      BoxShadow(
-                        color: Colors.yellow.withValues(
-                          alpha: (0.2 * _glowController.value).clamp(0.0, 1.0),
-                        ),
-                        blurRadius: 20,
-                        spreadRadius: 5,
-                      ),
-                    ],
+            Container(
+              width: 110,
+              height: 110,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.amber.withValues(alpha: 0.3),
+                    blurRadius: 30,
+                    spreadRadius: 15,
                   ),
-                );
-              },
+                  BoxShadow(
+                    color: Colors.yellow.withValues(alpha: 0.2),
+                    blurRadius: 20,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
             ),
-            // الأيقونة الرئيسية مع دوران
-            Transform.rotate(
-              angle: _shineController.value * 2 * math.pi,
-              child: const Icon(Icons.stars, color: Colors.amber, size: 70),
-            ),
+            // الأيقونة الرئيسية
+            const Icon(Icons.stars, color: Colors.amber, size: 70),
             // جزيئات ساقطة
             const Positioned(
               top: 20,
@@ -688,25 +662,15 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
           ],
         ),
         const SizedBox(height: 25),
-        // نص بتأثير نبض
-        AnimatedBuilder(
-          animation: _pulseController,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: 1.0 +
-                  (0.05 * math.sin(_pulseController.value * 2 * math.pi)).abs(),
-              child: child,
-            );
-          },
-          child: const Text(
-            'استمر في الحضور يومياً لتحصل على جوائز أثمن',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.5,
-            ),
+        const SizedBox(height: 25),
+        const Text(
+          'استمر في الحضور يومياً لتحصل على جوائز أثمن',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.5,
           ),
         ),
       ],
@@ -730,18 +694,7 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
         bool isCurrent = index == _currentDayIndex;
         bool isLocked = !isClaimed && !isCurrent;
 
-        return AnimatedBuilder(
-          animation: _entryController,
-          builder: (context, child) {
-            final delay = index * 0.1;
-            final animValue = Curves.easeOutBack.transform(
-                math.max(0, math.min(1, (_entryController.value - delay) * 2)));
-            return Transform.scale(
-              scale: animValue,
-              child: _buildRewardCard(reward, isClaimed, isCurrent, isLocked),
-            );
-          },
-        );
+        return _buildRewardCard(reward, isClaimed, isCurrent, isLocked);
       },
     );
   }
@@ -755,30 +708,26 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
       (_offsetX.abs() / 25).clamp(0, 1),
     )!;
 
-    return AnimatedBuilder(
-      animation:
-          isCurrent ? _pulseController : const AlwaysStoppedAnimation(0.0),
-      builder: (context, child) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-            boxShadow: [
-              if (isCurrent)
-                BoxShadow(
-                  color: Colors.amber.withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  spreadRadius: 3,
-                ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          if (isCurrent)
+            BoxShadow(
+              color: Colors.amber.withValues(alpha: 0.3),
+              blurRadius: 20,
+              spreadRadius: 3,
+            ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(25),
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(
+            sigmaX: isLocked ? 10 : 0,
+            sigmaY: isLocked ? 10 : 0,
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(25),
-            child: BackdropFilter(
-              filter: ui.ImageFilter.blur(
-                sigmaX: isLocked ? 10 : 0,
-                sigmaY: isLocked ? 10 : 0,
-              ),
-              child: Container(
+          child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
@@ -840,8 +789,6 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
             ),
           ),
         );
-      },
-    );
   }
 
   Widget _buildDaySevenLuxuryCard() {
@@ -849,36 +796,21 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
     bool isCurrent = _currentDayIndex == 6;
     bool isLocked = !isClaimed && !isCurrent;
 
-    return AnimatedBuilder(
-      animation: Listenable.merge([_glowController, _pulseController]),
-      builder: (context, child) {
-        final pulseScale = isCurrent
-            ? 1.0 +
-                (0.06 * math.sin(_pulseController.value * 2 * math.pi)).abs()
-            : 1.0;
-
-        return Transform.scale(
-          scale: pulseScale,
-          child: Container(
-            width: double.infinity,
-            height: 160,
-            decoration: BoxDecoration(
-              gradient: isCurrent
-                  ? LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: const [
-                        Color(0xFFE0E0E0), // Holographic Chrome Base
-                        Color(0xFFB8860B),
-                        Color(0xFFE0E0E0),
-                      ],
-                      stops: [
-                        0.0,
-                        (_shineController.value).clamp(0.0, 1.0),
-                        1.0
-                      ],
-                    )
-                  : null,
+    return Container(
+      width: double.infinity,
+      height: 160,
+      decoration: BoxDecoration(
+        gradient: isCurrent
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFE0E0E0),
+                  Color(0xFFB8860B),
+                  Color(0xFFE0E0E0),
+                ],
+              )
+            : null,
               color: isLocked ? Colors.white.withValues(alpha: 0.05) : null,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
@@ -938,18 +870,15 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
 
                 // ستار ذهبي خلفي للحالة الحالية
                 if (isCurrent)
-                  Positioned(
+                  const Positioned(
                     right: -30,
                     top: -30,
                     child: Opacity(
                       opacity: 0.15,
-                      child: Transform.rotate(
-                        angle: _shineController.value * 2 * math.pi,
-                        child: const Icon(
-                          Icons.stars,
-                          color: Colors.white,
-                          size: 200,
-                        ),
+                      child: Icon(
+                        Icons.stars,
+                        color: Colors.white,
+                        size: 200,
                       ),
                     ),
                   ),
@@ -999,30 +928,14 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
                           },
                         ),
                         const SizedBox(width: 20),
-                        AnimatedBuilder(
-                          animation: isCurrent
-                              ? _pulseController
-                              : const AlwaysStoppedAnimation(0.0),
-                          builder: (context, child) {
-                            final scale = 1.0 +
-                                (0.15 *
-                                        math.sin(_pulseController.value *
-                                            2 *
-                                            math.pi))
-                                    .abs();
-                            return Transform.scale(
-                              scale: scale,
-                              child: Icon(
-                                Icons.redeem,
-                                size: 64,
-                                color: isCurrent
-                                    ? Colors.white
-                                    : isLocked
-                                        ? Colors.white10
-                                        : Colors.amber,
-                              ),
-                            );
-                          },
+                        Icon(
+                          Icons.redeem,
+                          size: 64,
+                          color: isCurrent
+                              ? Colors.white
+                              : isLocked
+                                  ? Colors.white10
+                                  : Colors.amber,
                         ),
                         const SizedBox(width: 20),
                         AnimatedBuilder(
@@ -1059,7 +972,7 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
                         ).createShader(bounds);
                       },
                       child: Text(
-                        '2000 نجمة ⭐ + 10 جواهر 💎',
+                        '2000 كوينز ⭐ + 10 جواهر 💎 + 1 قصاصة ورق 📜',
                         style: TextStyle(
                           color: isCurrent ? Colors.white : Colors.white24,
                           fontSize: 14,
@@ -1096,10 +1009,7 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
                   ),
               ],
             ),
-          ),
-        );
-      },
-    );
+          );
   }
 
   Widget _buildClaimButton() {
@@ -1246,15 +1156,12 @@ class _DailyRewardsPageState extends State<DailyRewardsPage>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               if (_canClaim)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 12.0),
-                                  child: Transform.rotate(
-                                    angle: _shineController.value * 2 * math.pi,
-                                    child: const Icon(
-                                      Icons.stars_rounded,
-                                      color: Colors.black,
-                                      size: 24,
-                                    ),
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 12.0),
+                                  child: Icon(
+                                    Icons.stars_rounded,
+                                    color: Colors.black,
+                                    size: 24,
                                   ),
                                 ),
                               Text(

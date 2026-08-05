@@ -120,250 +120,258 @@ class _FamilyChallengesPageState extends State<FamilyChallengesPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF3D0B16), Color(0xFF1A050E)],
+        body: SafeArea(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFF3D0B16), Color(0xFF1A050E)],
+              ),
             ),
-          ),
-          child: Column(
-            children: [
-              // Create Challenge Form
-              AppTheme.glassContainer(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('إنشاء تحدي جديد',
-                        style: TextStyle(
-                            color: Colors.amber,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _nameController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'اسم التحدي',
-                        labelStyle: const TextStyle(color: Colors.white38),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      controller: _descriptionController,
-                      style: const TextStyle(color: Colors.white),
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: 'وصف التحدي',
-                        labelStyle: const TextStyle(color: Colors.white38),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    DropdownButtonFormField<String>(
-                      initialValue: _selectedType,
-                      style: const TextStyle(color: Colors.white),
-                      dropdownColor: const Color(0xFF3D0B16),
-                      decoration: InputDecoration(
-                        labelText: 'نوع التحدي',
-                        labelStyle: const TextStyle(color: Colors.white38),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      items: const [
-                        DropdownMenuItem(
-                            value: 'contribution', child: Text('مساهمة')),
-                        DropdownMenuItem(
-                            value: 'activity', child: Text('نشاط')),
-                        DropdownMenuItem(value: 'custom', child: Text('مخصص')),
-                      ],
-                      onChanged: (value) =>
-                          setState(() => _selectedType = value!),
-                    ),
-                    const SizedBox(height: 15),
-                    DropdownButtonFormField<String>(
-                      initialValue: _selectedMetric,
-                      style: const TextStyle(color: Colors.white),
-                      dropdownColor: const Color(0xFF3D0B16),
-                      decoration: InputDecoration(
-                        labelText: 'المقياس',
-                        labelStyle: const TextStyle(color: Colors.white38),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      items: const [
-                        DropdownMenuItem(
-                            value: 'gems', child: Text('جواهر 💎')),
-                        DropdownMenuItem(value: 'stars', child: Text('نجوم ⭐')),
-                        DropdownMenuItem(
-                            value: 'activity_minutes',
-                            child: Text('دقائق نشاط 🕐')),
-                      ],
-                      onChanged: (value) =>
-                          setState(() => _selectedMetric = value!),
-                    ),
-                    const SizedBox(height: 15),
-                    TextField(
-                      controller: _targetValueController,
-                      keyboardType: TextInputType.number,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'الهدف',
-                        labelStyle: const TextStyle(color: Colors.white38),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Create Challenge Form
+                  AppTheme.glassContainer(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _rewardGemsController,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'مكافأة الجواهر',
-                              labelStyle:
-                                  const TextStyle(color: Colors.white38),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
+                        const Text('إنشاء تحدي جديد',
+                            style: TextStyle(
+                                color: Colors.amber,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 20),
+                        TextField(
+                          controller: _nameController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: 'اسم التحدي',
+                            labelStyle: const TextStyle(color: Colors.white38),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
                           ),
                         ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: TextField(
-                            controller: _rewardStarsController,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'مكافأة النجوم',
-                              labelStyle:
-                                  const TextStyle(color: Colors.white38),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                            ),
+                        const SizedBox(height: 15),
+                        TextField(
+                          controller: _descriptionController,
+                          style: const TextStyle(color: Colors.white),
+                          maxLines: 3,
+                          decoration: InputDecoration(
+                            labelText: 'وصف التحدي',
+                            labelStyle: const TextStyle(color: Colors.white38),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppTheme.glassContainer(
-                            padding: const EdgeInsets.all(12),
-                            child: GestureDetector(
-                              onTap: () => _selectDate(context, true),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.calendar_today,
-                                      color: Colors.amber),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      _startDate != null
-                                          ? '${_startDate!.day}/${_startDate!.month}/${_startDate!.year}'
-                                          : 'تاريخ البدء',
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ],
+                        const SizedBox(height: 15),
+                        DropdownButtonFormField<String>(
+                          initialValue: _selectedType,
+                          style: const TextStyle(color: Colors.white),
+                          dropdownColor: const Color(0xFF3D0B16),
+                          decoration: InputDecoration(
+                            labelText: 'نوع التحدي',
+                            labelStyle: const TextStyle(color: Colors.white38),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                                value: 'contribution', child: Text('مساهمة')),
+                            DropdownMenuItem(
+                                value: 'activity', child: Text('نشاط')),
+                            DropdownMenuItem(
+                                value: 'custom', child: Text('مخصص')),
+                          ],
+                          onChanged: (value) =>
+                              setState(() => _selectedType = value!),
+                        ),
+                        const SizedBox(height: 15),
+                        DropdownButtonFormField<String>(
+                          initialValue: _selectedMetric,
+                          style: const TextStyle(color: Colors.white),
+                          dropdownColor: const Color(0xFF3D0B16),
+                          decoration: InputDecoration(
+                            labelText: 'المقياس',
+                            labelStyle: const TextStyle(color: Colors.white38),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                                value: 'gems', child: Text('جواهر 💎')),
+                            DropdownMenuItem(
+                                value: 'stars', child: Text('نجوم ⭐')),
+                            DropdownMenuItem(
+                                value: 'activity_minutes',
+                                child: Text('دقائق نشاط 🕐')),
+                          ],
+                          onChanged: (value) =>
+                              setState(() => _selectedMetric = value!),
+                        ),
+                        const SizedBox(height: 15),
+                        TextField(
+                          controller: _targetValueController,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: 'الهدف',
+                            labelStyle: const TextStyle(color: Colors.white38),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _rewardGemsController,
+                                keyboardType: TextInputType.number,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'مكافأة الجواهر',
+                                  labelStyle:
+                                      const TextStyle(color: Colors.white38),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: AppTheme.glassContainer(
-                            padding: const EdgeInsets.all(12),
-                            child: GestureDetector(
-                              onTap: () => _selectDate(context, false),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.calendar_today,
-                                      color: Colors.amber),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      _endDate != null
-                                          ? '${_endDate!.day}/${_endDate!.month}/${_endDate!.year}'
-                                          : 'تاريخ الانتهاء',
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ],
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: TextField(
+                                controller: _rewardStarsController,
+                                keyboardType: TextInputType.number,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'مكافأة النجوم',
+                                  labelStyle:
+                                      const TextStyle(color: Colors.white38),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                ),
                               ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: AppTheme.glassContainer(
+                                padding: const EdgeInsets.all(12),
+                                child: GestureDetector(
+                                  onTap: () => _selectDate(context, true),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today,
+                                          color: Colors.amber),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          _startDate != null
+                                              ? '${_startDate!.day}/${_startDate!.month}/${_startDate!.year}'
+                                              : 'تاريخ البدء',
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: AppTheme.glassContainer(
+                                padding: const EdgeInsets.all(12),
+                                child: GestureDetector(
+                                  onTap: () => _selectDate(context, false),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today,
+                                          color: Colors.amber),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          _endDate != null
+                                              ? '${_endDate!.day}/${_endDate!.month}/${_endDate!.year}'
+                                              : 'تاريخ الانتهاء',
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: _isLoading ? null : _createChallenge,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                            minimumSize: const Size(double.infinity, 50),
                           ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.black)
+                              : const Text('إنشاء التحدي',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _isLoading ? null : _createChallenge,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(color: Colors.black)
-                          : const Text('إنشاء التحدي',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
 
-              const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-              // Challenges List
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _db
-                      .collection('family_challenges')
-                      .where('familyId', isEqualTo: widget.familyId)
-                      .orderBy('createdAt', descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(
-                          child:
-                              CircularProgressIndicator(color: Colors.amber));
-                    }
+                  // Challenges List
+                  Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: _db
+                          .collection('family_challenges')
+                          .where('familyId', isEqualTo: widget.familyId)
+                          .orderBy('createdAt', descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                              child: CircularProgressIndicator(
+                                  color: Colors.amber));
+                        }
 
-                    final challenges = snapshot.data!.docs;
+                        final challenges = snapshot.data!.docs;
 
-                    if (challenges.isEmpty) {
-                      return const Center(
-                        child: Text('لا توجد تحديات حالياً',
-                            style: TextStyle(color: Colors.white38)),
-                      );
-                    }
+                        if (challenges.isEmpty) {
+                          return const Center(
+                            child: Text('لا توجد تحديات حالياً',
+                                style: TextStyle(color: Colors.white38)),
+                          );
+                        }
 
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(20),
-                      itemCount: challenges.length,
-                      itemBuilder: (context, index) {
-                        final challenge = FamilyChallengeModel.fromFirestore(
-                            challenges[index]);
-                        return _buildChallengeCard(challenge);
+                        return ListView.builder(
+                          padding: const EdgeInsets.all(20),
+                          itemCount: challenges.length,
+                          itemBuilder: (context, index) {
+                            final challenge =
+                                FamilyChallengeModel.fromFirestore(
+                                    challenges[index]);
+                            return _buildChallengeCard(challenge);
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

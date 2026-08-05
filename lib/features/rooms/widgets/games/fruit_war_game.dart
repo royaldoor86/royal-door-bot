@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
+import '../../../../theme/design_tokens.dart';
 
 class FruitWarGame extends StatefulWidget {
   final String roomId;
@@ -35,6 +38,7 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
   late AnimationController _pulseController;
   Timer? _localTimer;
   int _secondsLeft = 0;
+  bool _isDrawing = false;
 
   @override
   void initState() {
@@ -47,16 +51,32 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
     _localTimer?.cancel();
     _localTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return;
-      final startTime = (widget.gameData['startTime'] as Timestamp).toDate();
+      
+      final dynamic startData = widget.gameData['startTime'];
+      if (startData == null) {
+        if (_secondsLeft != 30) setState(() => _secondsLeft = 30);
+        return;
+      }
+      
+      final DateTime startTime;
+      if (startData is Timestamp) {
+        startTime = startData.toDate();
+      } else {
+        startTime = DateTime.now();
+      }
+
       final now = DateTime.now();
       final diff = now.difference(startTime).inSeconds;
       final remaining = 30 - diff;
 
-      setState(() {
-        _secondsLeft = remaining > 0 ? remaining : 0;
-      });
+      final newSeconds = remaining > 0 ? remaining : 0;
+      if (_secondsLeft != newSeconds) {
+        setState(() {
+          _secondsLeft = newSeconds;
+        });
+      }
 
-      if (remaining <= 0 && widget.gameData['status'] == 'betting' && widget.hasPower) {
+      if (_secondsLeft <= 0 && widget.gameData['status'] == 'betting' && widget.hasPower && !_isDrawing) {
         _drawWinner();
       }
     });
@@ -76,29 +96,42 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
     Map<String, dynamic> selections = widget.gameData['selections'] ?? {};
     _myChoice = selections[_myUid];
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [const Color(0xFF1A242F), const Color(0xFF0F1B25).withValues(alpha: 0.9)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color(0xFF1A242F).withValues(alpha: 0.8),
+                const Color(0xFF0F1B25).withValues(alpha: 0.9),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: DesignTokens.primaryGold.withValues(alpha: 0.3), width: 1.5),
+            boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 15)],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(status),
+              const SizedBox(height: 16),
+              _buildFruitGrid(status, winnerId, selections),
+              const SizedBox(height: 16),
+              _buildStatusArea(status, winnerId),
+              if (widget.hasPower) ...[
+                const SizedBox(height: 12),
+                _buildAdminControls(status),
+              ],
+            ],
+          ),
         ),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.amber.withValues(alpha: 0.2), width: 1.5),
-        boxShadow: [BoxShadow(color: Colors.black45, blurRadius: 15)],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildHeader(status),
-          const SizedBox(height: 20),
-          _buildFruitGrid(status, winnerId, selections),
-          const SizedBox(height: 20),
-          _buildStatusText(status, winnerId),
-          if (widget.hasPower) _buildAdminControls(status),
-        ],
       ),
     );
   }
@@ -107,12 +140,35 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text("حرب الفواكه 🍉", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 18)),
+        const Row(
+          children: [
+            Icon(Icons.videogame_asset_rounded, color: DesignTokens.primaryGold, size: 20),
+            SizedBox(width: 8),
+            Text("حرب الفواكه الملكية", 
+              style: TextStyle(
+                color: Colors.white, 
+                fontWeight: FontWeight.bold, 
+                fontSize: 15,
+                fontFamily: DesignTokens.primaryFont,
+              )),
+          ],
+        ),
         if (status == 'betting')
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(color: Colors.redAccent, borderRadius: BorderRadius.circular(15)),
-            child: Text("$_secondsLeft s", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [Colors.redAccent, Colors.red]),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [BoxShadow(color: Colors.red.withValues(alpha: 0.3), blurRadius: 8)],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.timer_sharp, color: Colors.white, size: 12),
+                const SizedBox(width: 4),
+                Text("$_secondsLeft ثانية", 
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 11)),
+              ],
+            ),
           ),
       ],
     );
@@ -124,8 +180,9 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        mainAxisSpacing: 15,
-        crossAxisSpacing: 15,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 1.1,
       ),
       itemCount: _fruits.length,
       itemBuilder: (context, index) {
@@ -133,7 +190,6 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
         bool isSelected = _myChoice == fruit['id'];
         bool isWinner = status == 'result' && winnerId == fruit['id'];
         
-        // Count total bets for this fruit
         int betCount = 0;
         selections.forEach((key, value) {
           if (value == fruit['id']) betCount++;
@@ -142,15 +198,22 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
         return GestureDetector(
           onTap: status == 'betting' ? () => _selectFruit(fruit['id']) : null,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
             decoration: BoxDecoration(
-              color: isWinner ? fruit['color'].withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(20),
+              color: isWinner 
+                  ? fruit['color'].withValues(alpha: 0.3) 
+                  : Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: isWinner ? Colors.amber : (isSelected ? fruit['color'] : Colors.white10),
-                width: isWinner || isSelected ? 3 : 1,
+                color: isWinner 
+                    ? DesignTokens.primaryGold 
+                    : (isSelected ? fruit['color'] : Colors.white10),
+                width: isWinner || isSelected ? 2.5 : 1.0,
               ),
-              boxShadow: isWinner ? [BoxShadow(color: Colors.amber.withValues(alpha: 0.5), blurRadius: 10)] : null,
+              boxShadow: isWinner ? [
+                BoxShadow(color: fruit['color'].withValues(alpha: 0.4), blurRadius: 10)
+              ] : null,
             ),
             child: Stack(
               alignment: Alignment.center,
@@ -158,23 +221,32 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(fruit['icon'], style: const TextStyle(fontSize: 32)),
+                    Text(fruit['icon'], style: const TextStyle(fontSize: 28)),
                     const SizedBox(height: 4),
-                    Text(fruit['name'], style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                    Text(fruit['name'], 
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.white54, 
+                        fontSize: 10,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal
+                      )),
                   ],
                 ),
                 if (betCount > 0)
                   Positioned(
-                    top: 5,
-                    right: 8,
+                    top: 6,
+                    right: 6,
                     child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
-                      child: Text("$betCount", style: const TextStyle(color: Colors.white, fontSize: 9)),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6), 
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white10, width: 0.5),
+                      ),
+                      child: Text("$betCount", style: const TextStyle(color: Colors.amber, fontSize: 9, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 if (isSelected)
-                  const Positioned(top: 5, left: 8, child: Icon(Icons.check_circle, color: Colors.green, size: 16)),
+                  const Positioned(top: 6, left: 6, child: Icon(Icons.check_circle, color: Colors.greenAccent, size: 16)),
               ],
             ),
           ),
@@ -183,49 +255,99 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
     );
   }
 
-  Widget _buildStatusText(String status, String? winnerId) {
+  Widget _buildStatusArea(String status, String? winnerId) {
     if (status == 'betting') {
-      return const Text("اختر فاكهتك الملكية واربح!", style: TextStyle(color: Colors.white54, fontSize: 13));
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: DesignTokens.primaryGold.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: DesignTokens.primaryGold.withValues(alpha: 0.1)),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.stars, color: DesignTokens.primaryGold, size: 16),
+            SizedBox(width: 8),
+            Text("توقع الفاكهة الرابحة واحصد الجوائز!", 
+                style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
     }
-    if (status == 'result') {
-      final winner = _fruits.firstWhere((f) => f['id'] == winnerId);
+    
+    if (status == 'result' && winnerId != null) {
+      final winner = _fruits.firstWhere((f) => f['id'] == winnerId, orElse: () => _fruits[0]);
       bool iWon = _myChoice == winnerId;
-      return Column(
-        children: [
-          Text("الفائز هو: ${winner['icon']} ${winner['name']}", 
-              style: TextStyle(color: winner['color'], fontWeight: FontWeight.bold, fontSize: 18)),
-          const SizedBox(height: 8),
-          Text(iWon ? "مبروك! لقد فزت 👑🏆" : "حظاً أوفر في المرة القادمة 🚩",
-              style: TextStyle(color: iWon ? Colors.amber : Colors.white38, fontSize: 14)),
-        ],
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+            winner['color'].withValues(alpha: 0.2),
+            Colors.black.withValues(alpha: 0.4),
+          ]),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: winner['color'].withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: winner['color'].withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Text(winner['icon'], style: const TextStyle(fontSize: 40)),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("الفاكهة الرابحة: ${winner['name']}", 
+                    style: TextStyle(color: winner['color'], fontWeight: FontWeight.w900, fontSize: 18)),
+                  const SizedBox(height: 4),
+                  Text(iWon ? "تهانينا! لقد ربحت الرهان 🏆" : "حظاً أوفر في الجولة القادمة 🚩",
+                      style: TextStyle(color: iWon ? Colors.greenAccent : Colors.white38, fontSize: 13, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ],
+        ),
       );
     }
     return const SizedBox.shrink();
   }
 
   Widget _buildAdminControls(String status) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (status == 'result')
-            ElevatedButton(
+    return Row(
+      children: [
+        if (status == 'result')
+          Expanded(
+            child: ElevatedButton.icon(
               onPressed: _restartGame,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
-              child: const Text("جولة جديدة"),
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              label: const Text("جولة جديدة", style: TextStyle(fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green.withValues(alpha: 0.8),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
             ),
-          const SizedBox(width: 10),
-          TextButton(
-            onPressed: _endGame,
-            child: const Text("إغلاق اللعبة", style: TextStyle(color: Colors.redAccent)),
           ),
-        ],
-      ),
+        const SizedBox(width: 12),
+        TextButton(
+          onPressed: _endGame,
+          style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+          child: const Text("إنهاء اللعبة", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+        ),
+      ],
     );
   }
 
   void _selectFruit(String fruitId) async {
+    HapticFeedback.lightImpact();
     final docRef = FirebaseFirestore.instance.collection('rooms').doc(widget.roomId);
     await docRef.update({
       'activeGame.selections.$_myUid': fruitId,
@@ -233,14 +355,22 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
   }
 
   void _drawWinner() async {
-    if (!widget.hasPower) return;
+    if (!widget.hasPower || _isDrawing) return;
     
-    final winner = _fruits[Random().nextInt(_fruits.length)];
-    
-    await FirebaseFirestore.instance.collection('rooms').doc(widget.roomId).update({
-      'activeGame.status': 'result',
-      'activeGame.winnerId': winner['id'],
-    });
+    if (widget.gameData['status'] != 'betting') return;
+
+    setState(() => _isDrawing = true);
+    try {
+      final winner = _fruits[Random().nextInt(_fruits.length)];
+      await FirebaseFirestore.instance.collection('rooms').doc(widget.roomId).update({
+        'activeGame.status': 'result',
+        'activeGame.winnerId': winner['id'],
+      });
+    } catch (e) {
+      debugPrint("Error drawing winner: $e");
+    } finally {
+      if (mounted) setState(() => _isDrawing = false);
+    }
   }
 
   void _restartGame() async {
@@ -258,3 +388,4 @@ class _FruitWarGameState extends State<FruitWarGame> with TickerProviderStateMix
     });
   }
 }
+

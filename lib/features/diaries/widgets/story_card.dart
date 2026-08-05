@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../models/story_model.dart';
+import '../../../services/privacy_service.dart';
 import '../../../app_theme.dart';
 
 class StoryCard extends StatelessWidget {
@@ -15,6 +16,26 @@ class StoryCard extends StatelessWidget {
     required this.onTap,
     this.isAddButton = false,
   });
+
+  Future<bool> _canViewStories() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return false;
+
+    for (var story in group) {
+      // Owner can always view their own stories
+      if (story.userId == currentUser.uid) continue;
+
+      final canView = await PrivacyService.canViewContent(
+        contentOwnerId: story.userId,
+        privacyLevel: story.privacy,
+        viewerId: currentUser.uid,
+      );
+
+      if (!canView) return false;
+    }
+
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +96,18 @@ class StoryCard extends StatelessWidget {
     final bool allViewed = group.every((s) => s.viewers.contains(currentUid));
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () async {
+        final canView = await _canViewStories();
+        if (canView) {
+          onTap();
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('ليس لديك صلاحية لعرض هذه القصص')),
+            );
+          }
+        }
+      },
       child: Container(
         width: 80,
         margin: const EdgeInsets.symmetric(horizontal: 4),

@@ -7,12 +7,10 @@ class UserModel {
   final String email;
   final String profilePic;
   final int gems;
-  final int stars;
   final int coins;
-  final int rewardStars;
-  final int rewardGems;
   final int agencyGems;
   final int agencyStars;
+  final int agencyCoins;
   final int userLevel;
   final int accountLevel;
   final int royalXP;
@@ -56,18 +54,20 @@ class UserModel {
   final Map<String, dynamic>? agentData;
   final Map<String, bool> privilegeSettings;
 
-  final int harvestCoinsWallet;
-  final int harvestGemsWallet;
-  final double harvestFinancialWallet;
-  final double harvestWallet; // محفظة المكافآت المنفصلة
-  final double harvestPointsWallet; // محفظة النجوم من المكافآت (Legacy)
-  final double harvestStarsWallet; // محفظة النجوم من المكافآت (Modern)
-  double get starsHarvestWallet =>
-      harvestStarsWallet; // alias for compatibility
+  // معلومات طريقة تسجيل الدخول
+  final String? authProvider; // email, google, facebook, phone
+  final Map<String, dynamic>?
+      authProviderDetails; // تفاصيل إضافية عن طريقة التسجيل
+
+  // محفظة المكافآت الملكية المستقلة
+  final int rewardGems;
+  final int rewardStars;
 
   // حقول المعارك
   final int battleWins;
   final int battleLosses;
+  final int voiceRoomWins;
+  final int voiceRoomLosses;
 
   // حقول VIP المطورة
   final String? vipRank;
@@ -114,12 +114,10 @@ class UserModel {
     required this.email,
     this.profilePic = '',
     this.gems = 0,
-    this.stars = 0,
     this.coins = 0,
-    this.rewardStars = 0,
-    this.rewardGems = 0,
     this.agencyGems = 0,
     this.agencyStars = 0,
+    this.agencyCoins = 0,
     this.userLevel = 1,
     this.accountLevel = 1,
     this.royalXP = 0,
@@ -162,29 +160,20 @@ class UserModel {
     this.inventory = const [],
     this.agentData,
     this.privilegeSettings = const {},
-    this.harvestCoinsWallet = 0,
-    this.harvestGemsWallet = 0,
-    this.harvestFinancialWallet = 0.0,
-    this.harvestWallet = 0.0,
-    this.harvestPointsWallet = 0.0,
-    this.harvestStarsWallet = 0.0,
+    this.authProvider,
+    this.authProviderDetails,
+    this.rewardGems = 0,
+    this.rewardStars = 0,
     this.battleWins = 0,
     this.battleLosses = 0,
+    this.voiceRoomWins = 0,
+    this.voiceRoomLosses = 0,
     this.vipRank,
     this.vipExpiryDate,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> data, String documentId) {
     // Helper to safely parse numbers from potential strings
-    double safeParseDouble(dynamic value) {
-      if (value == null) return 0.0;
-      if (value is num) return value.toDouble();
-      if (value is String) {
-        return double.tryParse(value.replaceAll('%', '')) ?? 0.0;
-      }
-      return 0.0;
-    }
-
     int safeParseInt(dynamic value) {
       if (value == null) return 0;
       if (value is num) return value.toInt();
@@ -201,12 +190,10 @@ class UserModel {
       email: data['email'] ?? '',
       profilePic: data['profilePic'] ?? '',
       gems: safeParseInt(data['gems']),
-      stars: safeParseInt(data['stars'] ?? data['coins']),
-      coins: safeParseInt(data['coins']),
-      rewardStars: safeParseInt(data['rewardStars']),
-      rewardGems: safeParseInt(data['rewardGems']),
+      coins: safeParseInt(data['coins'] ?? data['stars']),
       agencyGems: safeParseInt(data['agencyGems']),
-      agencyStars: safeParseInt(data['agencyStars'] ?? data['agencyCoins']),
+      agencyStars: safeParseInt(data['agencyStars']),
+      agencyCoins: safeParseInt(data['agencyCoins']),
       userLevel: safeParseInt(data['userLevel'] ?? 1),
       accountLevel: safeParseInt(data['accountLevel'] ?? 1),
       royalXP: safeParseInt(data['royalXP']),
@@ -216,9 +203,12 @@ class UserModel {
       zodiac: data['zodiac'] ?? '',
       phoneNumber: data['phoneNumber'] ?? '',
       friends: (data['friends'] as List?)?.whereType<String>().toList() ?? [],
-      following: (data['following'] as List?)?.whereType<String>().toList() ?? [],
-      followers: (data['followers'] as List?)?.whereType<String>().toList() ?? [],
-      blockedUsers: (data['blockedUsers'] as List?)?.whereType<String>().toList() ?? [],
+      following:
+          (data['following'] as List?)?.whereType<String>().toList() ?? [],
+      followers:
+          (data['followers'] as List?)?.whereType<String>().toList() ?? [],
+      blockedUsers:
+          (data['blockedUsers'] as List?)?.whereType<String>().toList() ?? [],
       tags: (data['tags'] as List?)?.whereType<String>().toList() ?? [],
       birthDate: data['birthDate'] != null
           ? (data['birthDate'] as Timestamp).toDate()
@@ -256,20 +246,27 @@ class UserModel {
       activeBadge: data['activeBadge'],
       activeVehicleUrl: data['activeVehicleUrl'],
       activeVehicleType: data['activeVehicleType'],
-      inventory: (data['inventory'] as List?)?.whereType<String>().toList() ?? [],
+      inventory:
+          (data['inventory'] as List?)?.whereType<String>().toList() ?? [],
       agentData: data['agentData'],
-      privilegeSettings: (data['privilegeSettings'] as Map?)?.map((key, value) =>
-              MapEntry(key.toString(), value is bool ? value : false)) ??
+      privilegeSettings: (data['privilegeSettings'] as Map?)?.map(
+              (key, value) =>
+                  MapEntry(key.toString(), value is bool ? value : false)) ??
           {},
-      harvestCoinsWallet: safeParseInt(data['harvest_coins_wallet']),
-      harvestGemsWallet: safeParseInt(data['harvest_gems_wallet']),
-      harvestFinancialWallet: safeParseDouble(data['harvest_financial_wallet']),
-      harvestWallet: safeParseDouble(data['harvest_wallet']),
-      harvestPointsWallet: safeParseDouble(data['harvest_points_wallet']),
-      harvestStarsWallet: safeParseDouble(
-          data['harvest_stars_wallet'] ?? data['harvest_points_wallet']),
+      authProvider: data['authProvider'],
+      authProviderDetails: data['authProviderDetails'],
+      // محفظة المكافآت الملكية (الحقول الجديدة)
+      rewardGems: safeParseInt(data['rewardGems'] ??
+          data['harvest_gems_wallet'] ??
+          data['harvest_coins_wallet'] ??
+          data['harvest_wallet']),
+      rewardStars: safeParseInt(data['rewardStars'] ??
+          data['harvest_stars_wallet'] ??
+          data['harvest_points_wallet']),
       battleWins: safeParseInt(data['battleWins']),
       battleLosses: safeParseInt(data['battleLosses']),
+      voiceRoomWins: safeParseInt(data['voiceRoomWins']),
+      voiceRoomLosses: safeParseInt(data['voiceRoomLosses']),
       vipRank: data['vipRank'],
       vipExpiryDate: data['vipExpiryDate'] != null
           ? (data['vipExpiryDate'] as Timestamp).toDate()
@@ -284,13 +281,10 @@ class UserModel {
       'email': email,
       'profilePic': profilePic,
       'gems': gems,
-      'stars': stars,
       'coins': coins,
-      'rewardStars': rewardStars,
-      'rewardGems': rewardGems,
       'agencyGems': agencyGems,
       'agencyStars': agencyStars,
-      'agencyCoins': agencyStars,
+      'agencyCoins': agencyCoins,
       'userLevel': userLevel,
       'accountLevel': accountLevel,
       'royalXP': royalXP,
@@ -333,14 +327,13 @@ class UserModel {
       'agentData': agentData,
       'privilegeSettings': privilegeSettings,
       'lastActive': FieldValue.serverTimestamp(),
-      'harvest_coins_wallet': harvestCoinsWallet,
-      'harvest_gems_wallet': harvestGemsWallet,
-      'harvest_financial_wallet': harvestFinancialWallet,
-      'harvest_wallet': harvestWallet,
-      'harvest_points_wallet': harvestPointsWallet,
-      'harvest_stars_wallet': harvestStarsWallet,
+      // محفظة المكافآت الملكية (الحقول الجديدة)
+      'rewardGems': rewardGems,
+      'rewardStars': rewardStars,
       'battleWins': battleWins,
       'battleLosses': battleLosses,
+      'voiceRoomWins': voiceRoomWins,
+      'voiceRoomLosses': voiceRoomLosses,
       'vipRank': vipRank,
       'vipExpiryDate':
           vipExpiryDate != null ? Timestamp.fromDate(vipExpiryDate!) : null,

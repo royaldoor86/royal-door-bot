@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
 import '../services/firestore_service.dart';
 import '../app_theme.dart';
 import '../theme/design_tokens.dart';
@@ -35,7 +36,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String _selectedGender = 'ذكر';
   String _selectedZodiac = 'الحمل';
   List<String> _userTags = [];
-  File? _imageFile;
+  dynamic _imageFile; // File on mobile, XFile on web
   bool _isLoading = false;
   bool _isVoiceUploading = false;
   String? _voiceBioUrl;
@@ -231,6 +232,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _startRecording() async {
     try {
+      if (kIsWeb) {
+        // Recording not supported on web
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('التسجيل الصوتي غير مدعوم على الويب حالياً')));
+        }
+        return;
+      }
+      
       final hasPermission = await _recorder.hasPermission();
       if (hasPermission) {
         final dir = (await getTemporaryDirectory()).path;
@@ -289,8 +299,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
               .ref()
               .child('profile_pics')
               .child(fileName);
-          await ref.putFile(_imageFile!);
-          finalImageUrl = await ref.getDownloadURL();
+          
+          if (kIsWeb && _imageFile is XFile) {
+            // Web: Use XFile
+            final bytes = await (_imageFile as XFile).readAsBytes();
+            await ref.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
+            finalImageUrl = await ref.getDownloadURL();
+          } else {
+            // Mobile: Use File
+            await ref.putFile(_imageFile as File);
+            finalImageUrl = await ref.getDownloadURL();
+          }
         }
         await FirebaseFirestore.instance
             .collection('users')
@@ -323,7 +342,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker()
         .pickImage(source: ImageSource.gallery, imageQuality: 60);
-    if (pickedFile != null) setState(() => _imageFile = File(pickedFile.path));
+    if (pickedFile != null) {
+      if (kIsWeb) {
+        setState(() => _imageFile = pickedFile); // XFile on web
+      } else {
+        setState(() => _imageFile = File(pickedFile.path)); // File on mobile
+      }
+    }
   }
 
   void _showAllTagsSheet() {

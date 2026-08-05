@@ -41,7 +41,9 @@ class VIPService {
       if (!userDoc.exists) throw Exception('المستخدم غير موجود');
 
       final userData = userDoc.data();
-      final currentGems = (userData?['harvestWallet'] ?? 0).toDouble();
+      final currentGems =
+          (userData?['rewardGems'] ?? userData?['harvestWallet'] ?? 0)
+              .toDouble();
 
       if (currentGems < package.price) {
         throw Exception('رصيد الجواهر غير كافٍ');
@@ -49,7 +51,8 @@ class VIPService {
 
       // خصم المبلغ
       transaction.update(userRef, {
-        'harvestWallet': FieldValue.increment(-package.price),
+        'rewardGems': FieldValue.increment(-package.price),
+        'harvestWallet': FieldValue.increment(-package.price), // للتوافقية
       });
 
       // تحديث حالة VIP
@@ -79,7 +82,7 @@ class VIPService {
     });
   }
 
-  /// تحديث نقاط النشاط
+  /// تحديث نقاط النشاط (ملاحظة: الترقية التلقائية معطلة - VIP فقط بالشراء)
   static Future<void> addActivityPoints(String userId, int points) async {
     final userRef = _firestore.collection('users').doc(userId);
     final userDoc = await userRef.get();
@@ -91,27 +94,9 @@ class VIPService {
     final currentActivityPoints = vipData?['activityPoints'] ?? 0;
     final newActivityPoints = currentActivityPoints + points;
 
-    // التحقق من الترقية التلقائية
-    VIPLevel newLevel = VIPLevel.none;
-    if (vipData != null) {
-      newLevel = _parseLevel(vipData['level']);
-    }
-
-    if (newActivityPoints >= 250000 && newLevel != VIPLevel.platinum) {
-      newLevel = VIPLevel.platinum;
-    } else if (newActivityPoints >= 100000 && newLevel != VIPLevel.gold) {
-      newLevel = VIPLevel.gold;
-    } else if (newActivityPoints >= 50000 && newLevel != VIPLevel.silver) {
-      newLevel = VIPLevel.silver;
-    } else if (newActivityPoints >= 10000 && newLevel != VIPLevel.bronze) {
-      newLevel = VIPLevel.bronze;
-    }
-
+    // تحديث نقاط النشاط فقط بدون ترقية تلقائية
     await userRef.update({
       'vip_status.activityPoints': newActivityPoints,
-      if (newLevel != VIPLevel.none) 'vip_status.level': newLevel.name,
-      if (newLevel != VIPLevel.none && vipData == null)
-        'vip_status.activatedAt': FieldValue.serverTimestamp(),
     });
   }
 

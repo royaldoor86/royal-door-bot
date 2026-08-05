@@ -58,6 +58,23 @@ class _AdminFamilyBadgesPageState extends State<AdminFamilyBadgesPage> {
       final minContribution =
           int.tryParse(_minContributionController.text) ?? 0;
 
+      // Add to family_store_items for family store
+      await _db.collection('family_store_items').add({
+        'name': _nameController.text.trim(),
+        'description': _descriptionController.text.trim(),
+        'imageUrl': imageUrl,
+        'type': 'badge',
+        'cost': cost,
+        'currency': 'family_gems',
+        'mediaType': 'image',
+        'isActive': true,
+        'isSold': false,
+        'isFeatured': false,
+        'purchaseCount': 0,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      // Also add to family_badges for other uses (war rewards, contributor badges)
       await _db.collection('family_badges').add({
         'name': _nameController.text.trim(),
         'description': _descriptionController.text.trim(),

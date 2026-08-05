@@ -170,15 +170,8 @@ class _RoomEarningsSheetState extends State<RoomEarningsSheet>
     final rewardsService = RewardsService();
 
     try {
-      // استخدام الخدمة المركزية بدلاً من التحديث المباشر
-      await FirebaseFirestore.instance
-          .collection('rooms')
-          .doc(widget.roomId)
-          .update({
-        'pendingEarnings': 0,
-      });
-
-      await rewardsService.addRewardToWallet(user.uid, amount, 'stars');
+      // استخدام المعاملة الآمنة الموحدة
+      await rewardsService.collectRoomEarnings(widget.roomId, user.uid, amount);
 
       if (mounted) {
         Navigator.pop(context);
@@ -188,8 +181,8 @@ class _RoomEarningsSheetState extends State<RoomEarningsSheet>
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('فشل في جمع المكافآت ❌'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('فشل في جمع المكافآت: $e'),
             backgroundColor: Colors.redAccent));
       }
     }

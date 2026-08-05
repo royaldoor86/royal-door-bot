@@ -130,7 +130,7 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 13)),
-                Text('${data['price'] ?? 0} نجمة ⭐',
+                Text('${data['price'] ?? 0} كوينز',
                     style: TextStyle(
                         color: accentGold,
                         fontSize: 11,
@@ -239,7 +239,7 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
                 _buildInput(
                     nameCtrl, 'اسم المؤثر (مثلاً: دخول التنين)', Icons.title),
                 const SizedBox(height: 15),
-                _buildInput(priceCtrl, 'السعر بالنجوم ⭐', Icons.stars,
+                _buildInput(priceCtrl, 'السعر بالكوينز', Icons.stars,
                     isNum: true),
                 const SizedBox(height: 25),
                 if (isLoading)
@@ -276,14 +276,14 @@ class _AdminEntryEffectsPageState extends State<AdminEntryEffectsPage> {
                           'isActive': true,
                           'createdAt': FieldValue.serverTimestamp(),
                         });
-                        if (mounted) {
+                        if (ctx.mounted) {
                           Navigator.pop(ctx);
                           setModalState(() => isLoading = false);
                         }
                       } catch (e) {
                         setModalState(() => isLoading = false);
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
                               SnackBar(content: Text('فشل الرفع: $e')));
                         }
                       }

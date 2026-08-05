@@ -14,10 +14,6 @@
         }
       }
     },
-    "domino_rooms": {
-      ".read": "auth != null",
-      ".write": "auth != null"
-    },
     "admin_notifications": {
       ".read": "root.child('users').child(auth.uid).child('isAdmin').val() === true",
       ".write": "auth != null"

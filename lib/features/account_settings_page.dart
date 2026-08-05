@@ -44,7 +44,12 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   BannerAd? _bannerAd;
   bool _isAdLoaded = false;
 
-  final String _ownerEmail = "royaldoor86@gmail.com";
+  final List<String> _adminEmails = [
+    "royaldoor86@gmail.com",
+    "doorty86@gmail.com",
+    "amjidhadi96@gmail.com",
+    "shahadhadi.h@gmail.com",
+  ];
 
   @override
   void initState() {
@@ -143,12 +148,11 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
         cancelLabel: trans.get('logout').contains('خروج') ? 'إلغاء' : 'Cancel',
         onConfirm: () async {
           await FirebaseAuth.instance.signOut();
-          if (mounted) {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-              (route) => false,
-            );
-          }
+          if (!mounted) return;
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (ctx) => const LoginPage()),
+            (route) => false,
+          );
         },
         icon: Icons.logout_rounded,
         iconColor: DesignTokens.semanticError,
@@ -168,14 +172,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        bottomNavigationBar: _isAdLoaded && _bannerAd != null
-            ? Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                height: _bannerAd!.size.height.toDouble(),
-                width: _bannerAd!.size.width.toDouble(),
-                child: AdWidget(ad: _bannerAd!),
-              )
-            : null,
+        bottomNavigationBar: null,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -197,7 +194,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                   return const RoyalLoadingIndicator();
                 }
                 final bool isOwner =
-                    user?.email == _ownerEmail || userData.isOwner;
+                    _adminEmails.contains(user?.email?.toLowerCase()) ||
+                        userData.isOwner;
 
                 return ListView(
                   physics: const BouncingScrollPhysics(),

@@ -8,12 +8,15 @@ import 'package:intl/intl.dart' as intl;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import '../../models/user_model.dart';
 import '../../models/post_model.dart';
 import '../../models/family_model.dart';
 import '../../services/firestore_service.dart';
+import '../../services/user_settings_service.dart';
+import '../../services/telegram_web_app_service.dart';
 import '../edit_profile_page.dart';
-import '../voice_room_page.dart';
+import '../../services/room_navigation_service.dart';
 import 'visitors_page.dart';
 import 'friends_lists_page.dart';
 import '../../features/chat/individual_chat_page.dart';
@@ -69,11 +72,9 @@ class _UserDetailsViewPageState extends State<UserDetailsViewPage>
       if (!_tabController.indexIsChanging) setState(() {});
     });
     _frameController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 10))
-          ..repeat();
+        AnimationController(vsync: this, duration: const Duration(seconds: 10));
     _pulseController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2))
-          ..repeat(reverse: true);
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
 
     _loadRealData();
 
@@ -205,7 +206,8 @@ class _UserDetailsViewPageState extends State<UserDetailsViewPage>
             final giftId = data['giftId'];
             if (groupedGifts.containsKey(giftId)) {
               groupedGifts[giftId]!['count'] =
-                  (groupedGifts[giftId]!['count'] ?? 0) + (data['count'] ?? 1);
+                  ((groupedGifts[giftId]!['count'] ?? 0) as num).toInt() +
+                      ((data['count'] ?? 1) as num).toInt();
             } else {
               groupedGifts[giftId] = {
                 'name': data['giftName'],
@@ -309,6 +311,20 @@ class _UserDetailsViewPageState extends State<UserDetailsViewPage>
   }
 
   Future<void> _sendFriendRequest() async {
+    // التحقق من إعدادات الخصوصية قبل إرسال طلب الصداقة
+    final canSend = await UserSettingsService.canSendFriendRequestTo(widget.user.uid);
+    if (!canSend) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('هذا المستخدم لا يقبل طلبات صداقة حالياً'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
     setState(() => _hasPendingRequest = true);
     try {
       await _firestoreService.sendFriendRequest(
@@ -368,13 +384,10 @@ class _UserDetailsViewPageState extends State<UserDetailsViewPage>
       if (roomSnap.docs.isNotEmpty) {
         final roomData = roomSnap.docs.first.data();
         if (mounted) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => VoiceRoomPage(
-                      roomId: roomSnap.docs.first.id,
-                      roomName: roomData['name'] ?? 'غرفة ملكية',
-                      roomImage: roomData['imageUrl'])));
+          RoomNavigationService.joinRoom(context, {
+            ...roomData,
+            'id': roomSnap.docs.first.id,
+          });
         }
       } else {
         if (mounted) {
@@ -475,8 +488,13 @@ class _UserDetailsViewPageState extends State<UserDetailsViewPage>
 
   void _shareProfile() {
     HapticFeedback.mediumImpact();
-    Share.share(
-        'شاهد هذا البروفايل الملكي على رويال دور: ${widget.user.name}\nID: ${widget.user.royalId}');
+    final message = 'شاهد هذا البروفايل الملكي على رويال دور: ${widget.user.name}\nID: ${widget.user.royalId}';
+    
+    if (kIsWeb && TelegramWebAppService.isTelegramWebApp()) {
+      TelegramWebAppService.shareText(message);
+    } else {
+      Share.share(message);
+    }
   }
 
   String _formatLastSeen(DateTime lastSeen) {
@@ -709,22 +727,20 @@ class _UserDetailsViewPageState extends State<UserDetailsViewPage>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              RotationTransition(
-                  turns: _frameController,
-                  child: Container(
-                      width: 105,
-                      height: 105,
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: SweepGradient(colors: [
-                            Colors.amber,
-                            Colors.orange,
-                            Colors.red,
-                            Colors.purple,
-                            Colors.blue,
-                            Colors.green,
-                            Colors.amber
-                          ])))),
+              Container(
+                  width: 105,
+                  height: 105,
+                  decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: SweepGradient(colors: [
+                        Colors.amber,
+                        Colors.orange,
+                        Colors.red,
+                        Colors.purple,
+                        Colors.blue,
+                        Colors.green,
+                        Colors.amber
+                      ]))),
               Container(
                   width: 95,
                   height: 95,
@@ -751,33 +767,29 @@ class _UserDetailsViewPageState extends State<UserDetailsViewPage>
             left: 20,
             child: GestureDetector(
               onTap: _navigateToUserRoom,
-              child: ScaleTransition(
-                scale: Tween(begin: 1.0, end: 1.08).animate(CurvedAnimation(
-                    parent: _pulseController, curve: Curves.easeInOut)),
-                child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                            colors: [Color(0xFFFF0080), Color(0xFFFF4DAB)]),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                              color: const Color(0xFFFF0080)
-                                  .withValues(alpha: 0.4),
-                              blurRadius: 15,
-                              spreadRadius: 2)
-                        ]),
-                    child: const Row(children: [
-                      Icon(Icons.live_tv, color: Colors.white, size: 18),
-                      SizedBox(width: 8),
-                      Text('في الغرفة الآن',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13))
-                    ])),
-              ),
+              child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                          colors: [Color(0xFFFF0080), Color(0xFFFF4DAB)]),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                            color:
+                                const Color(0xFFFF0080).withValues(alpha: 0.4),
+                            blurRadius: 15,
+                            spreadRadius: 2)
+                      ]),
+                  child: const Row(children: [
+                    Icon(Icons.live_tv, color: Colors.white, size: 18),
+                    SizedBox(width: 8),
+                    Text('في الغرفة الآن',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13))
+                  ])),
             ),
           ),
         Positioned(
@@ -1397,6 +1409,80 @@ class _UserDetailsViewPageState extends State<UserDetailsViewPage>
                     MaterialPageRoute(
                         builder: (_) =>
                             UserVehiclesPage(userId: widget.user.uid))))),
+        if (_userVehicles.isEmpty)
+          const Center(
+              child: Text('لا توجد مركبات خاصة حتى الآن',
+                  style: TextStyle(color: Colors.white38, fontSize: 13)))
+        else
+          GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, mainAxisSpacing: 12, crossAxisSpacing: 12),
+              itemCount: _userVehicles.length,
+              itemBuilder: (context, index) {
+                final vehicle = _userVehicles[index];
+                return GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              UserVehiclesPage(userId: widget.user.uid))),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppTheme.royalGold.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (vehicle['imageUrl'] != null)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: vehicle['type'] == 'gif'
+                                ? AnimatedVehiclePreview(
+                                    url: vehicle['imageUrl'],
+                                    type: 'gif',
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.network(
+                                    vehicle['imageUrl'],
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(Icons.directions_car,
+                                                color: AppTheme.royalGold,
+                                                size: 40),
+                                  ),
+                          )
+                        else
+                          const Icon(Icons.directions_car,
+                              color: AppTheme.royalGold, size: 40),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                            vehicle['name'] ?? 'مركبة',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
         Padding(
             padding: const EdgeInsets.all(20),
             child: _buildSectionHeader(
@@ -1801,60 +1887,54 @@ class _UserDetailsViewPageState extends State<UserDetailsViewPage>
           const SizedBox(width: 12),
         ],
         Expanded(
-            child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: ElevatedButton.icon(
-                    key: ValueKey(_isFriend),
-                    onPressed: _handleFriendAction,
-                    icon: Icon(
-                        _isFriend
-                            ? Icons.people
-                            : (_hasPendingRequest
-                                ? Icons.hourglass_top
-                                : Icons.person_add_alt_1),
-                        color: Colors.white),
-                    label: Text(
-                        _isFriend
-                            ? 'صديق ملكي'
-                            : (_hasPendingRequest ? 'قيد الطلب' : 'إضافة صديق'),
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: _isFriend
-                            ? Colors.blueGrey.withValues(alpha: 0.5)
-                            : (_hasPendingRequest
-                                ? Colors.orange
-                                : const Color(0xFF00C853)),
-                        elevation: 5,
-                        shadowColor: Colors.black26,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape:
-                            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)))))),
+            child: ElevatedButton.icon(
+                onPressed: _handleFriendAction,
+                icon: Icon(
+                    _isFriend
+                        ? Icons.people
+                        : (_hasPendingRequest
+                            ? Icons.hourglass_top
+                            : Icons.person_add_alt_1),
+                    color: Colors.white),
+                label: Text(
+                    _isFriend
+                        ? 'صديق ملكي'
+                        : (_hasPendingRequest ? 'قيد الطلب' : 'إضافة صديق'),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: _isFriend
+                        ? Colors.blueGrey.withValues(alpha: 0.5)
+                        : (_hasPendingRequest
+                            ? Colors.orange
+                            : const Color(0xFF00C853)),
+                    elevation: 5,
+                    shadowColor: Colors.black26,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30))))),
         const SizedBox(width: 15),
         Expanded(
-            child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: ElevatedButton.icon(
-                    key: ValueKey(_isFollowing),
-                    onPressed: _toggleFollow,
-                    icon: Icon(_isFollowing ? Icons.check : Icons.add,
-                        color: Colors.white),
-                    label: Text(_isFollowing ? 'متابع' : 'متابعة',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: _isFollowing
-                            ? Colors.grey.withValues(alpha: 0.5)
-                            : const Color(0xFF03A9F4),
-                        elevation: 5,
-                        shadowColor: Colors.black26,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)))))),
+            child: ElevatedButton.icon(
+                onPressed: _toggleFollow,
+                icon: Icon(_isFollowing ? Icons.check : Icons.add,
+                    color: Colors.white),
+                label: Text(_isFollowing ? 'متابع' : 'متابعة',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15)),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: _isFollowing
+                        ? Colors.grey.withValues(alpha: 0.5)
+                        : const Color(0xFF03A9F4),
+                    elevation: 5,
+                    shadowColor: Colors.black26,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30))))),
       ]),
     );
   }

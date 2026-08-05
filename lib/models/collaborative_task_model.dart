@@ -115,39 +115,39 @@ class CollaborativeTaskModel {
       case 'team':
         return {
           'familyGems': 500,
-          'familyStars': 1000,
+          'familyCoins': 1000,
           'participantGems': 50,
-          'participantStars': 100,
+          'participantCoins': 100,
         };
       case 'alliance':
         return {
           'allianceGems': 1000,
-          'allianceStars': 2000,
+          'allianceCoins': 2000,
           'participantGems': 100,
-          'participantStars': 200,
+          'participantCoins': 200,
         };
       case 'war':
         return {
           'warPoints': 500,
           'familyGems': 1000,
-          'familyStars': 2000,
+          'familyCoins': 2000,
           'participantGems': 150,
-          'participantStars': 300,
+          'participantCoins': 300,
         };
       case 'resource':
         return {
           'resourceBonus': 1.5,
           'familyGems': 300,
-          'familyStars': 600,
+          'familyCoins': 600,
           'participantGems': 30,
-          'participantStars': 60,
+          'participantCoins': 60,
         };
       default:
         return {
           'familyGems': 200,
-          'familyStars': 400,
+          'familyCoins': 400,
           'participantGems': 20,
-          'participantStars': 40,
+          'participantCoins': 40,
         };
     }
   }

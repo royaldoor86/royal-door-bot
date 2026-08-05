@@ -265,7 +265,7 @@ class _FamilyNominationsPageState extends State<FamilyNominationsPage> {
                     style: TextStyle(color: Colors.white70)),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
-                  value: selectedType,
+                  initialValue: selectedType,
                   style: const TextStyle(color: Colors.white),
                   dropdownColor: const Color(0xFF3D0B16),
                   decoration: const InputDecoration(

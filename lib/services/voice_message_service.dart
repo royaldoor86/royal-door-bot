@@ -24,7 +24,7 @@ class VoiceMessageService {
   Future<bool> startRecording() async {
     if (await _audioRecorder.isRecording()) {
       if (kDebugMode) {
-        print("التسجيل قيد التقدم بالفعل.");
+        debugPrint("التسجيل قيد التقدم بالفعل.");
       }
       return false;
     }
@@ -32,7 +32,7 @@ class VoiceMessageService {
     final hasPermission = await _checkPermission();
     if (!hasPermission) {
       if (kDebugMode) {
-        print("تم رفض إذن الميكروفون.");
+        debugPrint("تم رفض إذن الميكروفون.");
       }
       // يمكنك هنا إظهار رسالة للمستخدم لإعلامه برفض الصلاحية
       return false;
@@ -52,12 +52,12 @@ class VoiceMessageService {
 
       await _audioRecorder.start(config, path: _recordingPath!);
       if (kDebugMode) {
-        print("بدأ التسجيل في: $_recordingPath");
+        debugPrint("بدأ التسجيل في: $_recordingPath");
       }
       return true;
     } catch (e) {
       if (kDebugMode) {
-        print("خطأ في بدء التسجيل: $e");
+        debugPrint("خطأ في بدء التسجيل: $e");
       }
       _recordingPath = null;
       return false;
@@ -69,7 +69,7 @@ class VoiceMessageService {
   Future<String?> stopRecording() async {
     if (!await _audioRecorder.isRecording()) {
       if (kDebugMode) {
-        print("لا يوجد تسجيل قيد التقدم لإيقافه.");
+        debugPrint("لا يوجد تسجيل قيد التقدم لإيقافه.");
       }
       return null;
     }
@@ -77,13 +77,13 @@ class VoiceMessageService {
     try {
       final path = await _audioRecorder.stop();
       if (kDebugMode) {
-        print("توقف التسجيل. الملف في: $path");
+        debugPrint("توقف التسجيل. الملف في: $path");
       }
       _recordingPath = path;
       return _recordingPath;
     } catch (e) {
       if (kDebugMode) {
-        print("خطأ في إيقاف التسجيل: $e");
+        debugPrint("خطأ في إيقاف التسجيل: $e");
       }
       await _deleteRecordingFile(); // تنظيف الملف الفاشل
       return null;
@@ -97,7 +97,7 @@ class VoiceMessageService {
     }
     await _deleteRecordingFile();
     if (kDebugMode) {
-      print("تم إلغاء التسجيل.");
+      debugPrint("تم إلغاء التسجيل.");
     }
   }
 
@@ -109,7 +109,7 @@ class VoiceMessageService {
         try {
           await file.delete();
         } catch (e) {
-          if (kDebugMode) print("خطأ في حذف الملف: $e");
+          if (kDebugMode) debugPrint("خطأ في حذف الملف: $e");
         }
       }
       _recordingPath = null;
@@ -121,7 +121,7 @@ class VoiceMessageService {
   Future<String?> uploadVoiceMessage(String filePath, String chatRoomId) async {
     final file = File(filePath);
     if (!await file.exists()) {
-      if (kDebugMode) print("الملف المراد رفعه غير موجود: $filePath");
+      if (kDebugMode) debugPrint("الملف المراد رفعه غير موجود: $filePath");
       return null;
     }
 
@@ -141,7 +141,7 @@ class VoiceMessageService {
 
       return downloadUrl;
     } catch (e) {
-      if (kDebugMode) print("خطأ في رفع الرسالة الصوتية: $e");
+      if (kDebugMode) debugPrint("خطأ في رفع الرسالة الصوتية: $e");
       return null;
     }
   }

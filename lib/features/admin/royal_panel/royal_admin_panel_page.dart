@@ -13,8 +13,7 @@ import 'package:royaldoor/features/admin/admin_roles_permissions_page.dart';
 import 'package:royaldoor/features/admin/texts_languages_system_page.dart';
 import 'package:royaldoor/features/admin/admin_achievements_stats_page.dart';
 import 'package:royaldoor/features/admin/admin_logs_page.dart';
-import 'package:royaldoor/features/admin/admin_redemption_mgmt_page.dart';
-import 'package:royaldoor/pages/admin/admin_room_themes_page.dart';
+import 'package:royaldoor/features/admin/admin_uid_page.dart';
 
 import 'sub_pages/admin_families_page.dart';
 import 'sub_pages/admin_frames_page.dart';
@@ -30,6 +29,13 @@ import 'sub_pages/admin_badges_mgmt_page.dart';
 import 'sub_pages/admin_vehicles_mgmt_page.dart';
 import 'sub_pages/admin_covers_bubbles_page.dart';
 import 'sub_pages/admin_rewards_settings_page.dart';
+// import 'sub_pages/admin_advanced_security_page.dart'; // File not found
+// import 'sub_pages/admin_notifications_page.dart'; // File not found
+// import 'sub_pages/admin_support_page.dart'; // File not found
+// import 'sub_pages/admin_backup_page.dart'; // File not found
+// import 'sub_pages/admin_automation_page.dart'; // File not found
+import 'sub_pages/admin_room_themes_page.dart';
+import 'sub_pages/admin_telegram_stats_page.dart';
 
 class RoyalAdminPanelPage extends StatefulWidget {
   const RoyalAdminPanelPage({super.key});
@@ -61,8 +67,12 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                 _buildGridSection([
                   _adminTile('إدارة المستخدمين', Icons.group_add_rounded,
                       Colors.blueAccent, const AdminUsersPage()),
+                  _adminTile('UID', Icons.fingerprint_rounded,
+                      Colors.purpleAccent, const AdminUidPage()),
                   _adminTile('بيوت الدعم', Icons.castle_rounded,
                       Colors.tealAccent, const ManageAgentsPage()),
+                  _adminTile('إحصائيات بوت التلغرام', Icons.telegram_rounded,
+                      Colors.lightBlueAccent, const AdminTelegramStatsPage()),
                   _adminTile('العائلات الملكية', Icons.shield_rounded,
                       Colors.amberAccent, const AdminFamiliesPage()),
                   _adminTile('الرتب والصلاحيات', Icons.gavel_rounded,
@@ -77,10 +87,8 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                       Colors.purpleAccent, const AdminLevelsMgmtPage()),
                   _adminTile('نظام الخبرة XP', Icons.auto_awesome_rounded,
                       Colors.yellowAccent, const PointsXPSystemPage()),
-                  _adminTile('طلبات تحويل المزايا', Icons.stars_rounded,
-                      Colors.amber, const AdminRedemptionMgmtPage()),
                   _adminTile(
-                      'إعدادات الحصاد الملكي',
+                      'إعدادات المكافآت الملكية',
                       Icons.settings_suggest_rounded,
                       Colors.orange,
                       const AdminHarvestSettingsPage()),
@@ -114,10 +122,10 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                       Colors.blueAccent, const AdminVerificationMgmtPage()),
                   _adminTile('إدارة الشارات', Icons.shield_rounded,
                       Colors.orangeAccent, const AdminBadgesMgmtPage()),
-                  _adminTile('ثيمات الغرف', Icons.palette_rounded,
-                      Colors.indigoAccent, const AdminRoomThemesPage()),
                   _adminTile('المتجر والهدايا', Icons.card_giftcard_rounded,
                       Colors.redAccent, const AdminGiftsPage()),
+                  _adminTile('موضوعات الغرف', Icons.brush_rounded,
+                      Colors.brown, const AdminRoomThemesPage()),
                 ]),
                 _buildCategory('الأنشطة والرقابة', Icons.security_rounded),
                 _buildGridSection([
@@ -147,6 +155,34 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                   _adminTile('إحصائيات', Icons.analytics_rounded, Colors.cyan,
                       const AdminAchievementsStatsPage()),
                 ]),
+                // _buildCategory('الأمان المتقدم', Icons.security_rounded),
+                // _buildGridSection([
+                //   _adminTile('إدارة الأمان المتقدمة', Icons.shield_rounded,
+                //       Colors.redAccent, AdminAdvancedSecurityPage()),
+                // ]),
+                // _buildCategory('إدارة الإشعارات', Icons.notifications_rounded),
+                // _buildGridSection([
+                //   _adminTile('إدارة الإشعارات', Icons.send_rounded,
+                //       Colors.purpleAccent, AdminNotificationsPage()),
+                // ]),
+                // _buildCategory('الدعم الفني', Icons.support_agent_rounded),
+                // _buildGridSection([
+                //   _adminTile('إدارة الدعم الفني', Icons.headset_mic_rounded,
+                //       Colors.tealAccent, const AdminSupportPage()),
+                // ]),
+                // _buildCategory('النسخ الاحتياطي', Icons.backup_rounded),
+                // _buildGridSection([
+                //   _adminTile(
+                //       'إدارة النسخ الاحتياطي',
+                //       Icons.cloud_upload_rounded,
+                //       Colors.indigoAccent,
+                //       const AdminBackupPage()),
+                // ]),
+                // _buildCategory('إدارة الأتمتة', Icons.auto_mode_rounded),
+                // _buildGridSection([
+                //   _adminTile('إدارة الأتمتة', Icons.smart_toy_rounded,
+                //       Colors.amberAccent, const AdminAutomationPage()),
+                // ]),
                 const SliverToBoxAdapter(child: SizedBox(height: 120)),
               ],
             ),
@@ -310,55 +346,89 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                             .where('type', isEqualTo: 'harvest')
                             .snapshots(),
                         builder: (context, harvestSnap) {
-                          final harvestSubscribers =
-                              harvestSnap.data?.docs.length ?? 0;
+                          if (harvestSnap.hasError) {
+                            debugPrint(
+                                'Firestore stream error: ${harvestSnap.error}');
+                          }
+                          final harvestSubscribers = harvestSnap.hasError
+                              ? 0
+                              : (harvestSnap.data?.docs.length ?? 0);
 
-                          return Container(
-                            height: 130,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              physics: const BouncingScrollPhysics(),
-                              children: [
-                                _overviewCard('المتصلون الآن', '$onlineUsers',
-                                    Icons.bolt, Colors.greenAccent,
-                                    onTap: _showOnlineUsersDialog),
-                                _overviewCard('نشط اليوم (DAU)', '$dailyActive',
-                                    Icons.trending_up, Colors.blueAccent,
-                                    onTap: _showActiveTodayDialog),
-                                _overviewCard('مستخدمون جدد', '$newUsersToday',
-                                    Icons.person_add, Colors.cyanAccent,
-                                    onTap: _showNewUsersDialog),
-                                _overviewCard('الغرف النشطة', '$activeRooms',
-                                    Icons.mic, Colors.amberAccent,
-                                    onTap: _showActiveRoomsDialog),
-                                _overviewCard(
-                                    'على المايك',
-                                    '$usersInVoice',
-                                    Icons.record_voice_over,
-                                    Colors.orangeAccent,
-                                    onTap: _showOnMicDialog),
-                                _overviewCard('هدايا اليوم', '$giftsToday',
-                                    Icons.card_giftcard, Colors.pinkAccent,
-                                    onTap: _showGiftsTodayDialog),
-                                _overviewCard(
-                                    'عوائد اليوم',
-                                    '${dailyRevenue.toStringAsFixed(0)} نجمة',
-                                    Icons.stars,
-                                    Colors.lightGreenAccent,
-                                    onTap: _showDailyRevenueDialog),
-                                _overviewCard(
-                                    'المشتركون في باقات المكافآت',
-                                    '$harvestSubscribers',
-                                    Icons.redeem,
-                                    Colors.purpleAccent,
-                                    onTap: _showHarvestSubscribersDialog),
-                                _overviewCard('إجمالي المستخدمين',
-                                    '$totalUsers', Icons.group, Colors.white70,
-                                    onTap: _showTotalUsersDialog),
-                              ],
-                            ),
+                          return StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('users')
+                                .where('isBanned', isEqualTo: true)
+                                .snapshots(),
+                            builder: (context, bannedSnap) {
+                              final bannedUsers =
+                                  bannedSnap.data?.docs.length ?? 0;
+
+                              return Container(
+                                height: 130,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  physics: const BouncingScrollPhysics(),
+                                  children: [
+                                    _overviewCard(
+                                        'المتصلون الآن',
+                                        '$onlineUsers',
+                                        Icons.bolt,
+                                        Colors.greenAccent,
+                                        onTap: _showOnlineUsersDialog),
+                                    _overviewCard(
+                                        'نشط اليوم (DAU)',
+                                        '$dailyActive',
+                                        Icons.trending_up,
+                                        Colors.blueAccent,
+                                        onTap: _showActiveTodayDialog),
+                                    _overviewCard(
+                                        'مستخدمون جدد',
+                                        '$newUsersToday',
+                                        Icons.person_add,
+                                        Colors.cyanAccent,
+                                        onTap: _showNewUsersDialog),
+                                    _overviewCard(
+                                        'الغرف النشطة',
+                                        '$activeRooms',
+                                        Icons.mic,
+                                        Colors.amberAccent,
+                                        onTap: _showActiveRoomsDialog),
+                                    _overviewCard(
+                                        'على المايك',
+                                        '$usersInVoice',
+                                        Icons.record_voice_over,
+                                        Colors.orangeAccent,
+                                        onTap: _showOnMicDialog),
+                                    _overviewCard('هدايا اليوم', '$giftsToday',
+                                        Icons.card_giftcard, Colors.pinkAccent,
+                                        onTap: _showGiftsTodayDialog),
+                                    _overviewCard(
+                                        'عوائد اليوم',
+                                        '${dailyRevenue.toStringAsFixed(0)} نجمة',
+                                        Icons.stars,
+                                        Colors.lightGreenAccent,
+                                        onTap: _showDailyRevenueDialog),
+                                    _overviewCard(
+                                        'المشتركون في باقات المكافآت',
+                                        '$harvestSubscribers',
+                                        Icons.redeem,
+                                        Colors.purpleAccent,
+                                        onTap: _showHarvestSubscribersDialog),
+                                    _overviewCard('المحظورون', '$bannedUsers',
+                                        Icons.block, Colors.redAccent,
+                                        onTap: _showBannedUsersDialog),
+                                    _overviewCard(
+                                        'إجمالي المستخدمين',
+                                        '$totalUsers',
+                                        Icons.group,
+                                        Colors.white70,
+                                        onTap: _showTotalUsersDialog),
+                                  ],
+                                ),
+                              );
+                            },
                           );
                         },
                       );
@@ -510,9 +580,11 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                          data['royalId'] != null
+                          data['royalId'] != null && data['royalId'].toString().isNotEmpty
                               ? 'الآيدي: ${data['royalId']}'
-                              : 'آيدي غير متوفر',
+                              : (data['shortId'] != null && data['shortId'].toString().isNotEmpty
+                                  ? 'الآيدي: ${data['shortId']}'
+                                  : 'آيدي غير متوفر'),
                           style: const TextStyle(color: Colors.white70),
                         ),
                       );
@@ -989,6 +1061,16 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
           .where('type', isEqualTo: 'harvest')
           .snapshots(),
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          debugPrint('Firestore stream error: ${snapshot.error}');
+          return const SizedBox(
+            height: 120,
+            child: Center(
+              child: Text('حدث خطأ في تحميل البيانات',
+                  style: TextStyle(color: Colors.white70)),
+            ),
+          );
+        }
         if (!snapshot.hasData) {
           return const SizedBox(
             height: 120,
@@ -1043,6 +1125,108 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
         );
       },
     );
+  }
+
+  void _showBannedUsersDialog() {
+    _showStreamDialog(
+      title: 'المستخدمون المحظورون',
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .where('isBanned', isEqualTo: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox(
+            height: 120,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        final bannedUsers = snapshot.data!.docs;
+        if (bannedUsers.isEmpty) {
+          return const SizedBox(
+            height: 120,
+            child: Center(
+              child: Text('لا يوجد مستخدمون محظورون حالياً',
+                  style: TextStyle(color: Colors.white70)),
+            ),
+          );
+        }
+
+        return SizedBox(
+          height: 300,
+          child: ListView.builder(
+            itemCount: bannedUsers.length,
+            itemBuilder: (context, index) {
+              final data = bannedUsers[index].data() as Map<String, dynamic>;
+              final name = data['name'] ?? 'مستخدم';
+              final royalId = data['royalId'] ?? bannedUsers[index].id;
+              final email = data['email'] ?? 'غير متوفر';
+              final createdAt = data['createdAt'];
+              final createdText = createdAt is Timestamp
+                  ? DateFormat('yyyy-MM-dd').format(createdAt.toDate())
+                  : 'غير متوفر';
+
+              return ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+                leading: const CircleAvatar(
+                  backgroundColor: Colors.white12,
+                  child: Icon(Icons.block, color: Colors.redAccent),
+                ),
+                title: Text(
+                  name,
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  'الآيدي: $royalId • البريد: $email • انضم: $createdText',
+                  style: const TextStyle(color: Colors.white70),
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.lock_open, color: Colors.green),
+                  onPressed: () =>
+                      _unbanUserFromDialog(bannedUsers[index].id, name),
+                  tooltip: 'فك الحظر',
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _unbanUserFromDialog(String uid, String name) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF051211),
+        title: Text('تأكيد فك الحظر', style: TextStyle(color: royalGold)),
+        content: Text('هل أنت متأكد من فك حظر $name؟',
+            style: const TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child:
+                  const Text('إلغاء', style: TextStyle(color: Colors.white70))),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              child: const Text('فك الحظر')),
+        ],
+      ),
+    );
+    if (confirm == true) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .update({'isBanned': false, 'isActive': true});
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('تم رفع الحظر بنجاح ✅')));
+      }
+    }
   }
 
   void _showTotalUsersDialog() {

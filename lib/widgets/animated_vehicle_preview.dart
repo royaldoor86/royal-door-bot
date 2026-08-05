@@ -88,21 +88,31 @@ class _AnimatedVehiclePreviewState extends State<AnimatedVehiclePreview> {
   }
 
   Widget _buildContent() {
-    if (_hasError) return const Center(child: Icon(Icons.broken_image, color: Colors.white10, size: 40));
+    if (_hasError) {
+      return const Center(
+          child: Icon(Icons.broken_image, color: Colors.white10, size: 40));
+    }
 
     switch (widget.type) {
       case "lottie":
         return Lottie.network(
           widget.url,
           fit: widget.fit,
-          errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, color: Colors.white10),
+          animate: false,
+          errorBuilder: (context, error, stackTrace) =>
+              const Icon(Icons.broken_image, color: Colors.white10),
         );
       case "gif":
         return CachedNetworkImage(
           imageUrl: widget.url,
           fit: widget.fit,
-          placeholder: (context, url) => const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
-          errorWidget: (context, url, error) => const Icon(Icons.broken_image, color: Colors.white10),
+          placeholder: (context, url) => const Center(
+              child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2))),
+          errorWidget: (context, url, error) =>
+              const Icon(Icons.broken_image, color: Colors.white10),
         );
       case "video":
         if (_isInitialized && _controller != null) {
@@ -117,9 +127,14 @@ class _AnimatedVehiclePreviewState extends State<AnimatedVehiclePreview> {
             ),
           );
         }
-        return const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)));
+        return const Center(
+            child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2)));
       default:
-        return const Center(child: Icon(Icons.directions_car, color: Colors.white24, size: 50));
+        return const Center(
+            child: Icon(Icons.directions_car, color: Colors.white24, size: 50));
     }
   }
 }

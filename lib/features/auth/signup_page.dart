@@ -29,6 +29,11 @@ class _SignupPageState extends State<SignupPage> {
   String? _verifiedPhoneNumber;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();

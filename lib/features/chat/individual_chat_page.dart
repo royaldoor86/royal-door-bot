@@ -13,8 +13,10 @@ import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 
 import '../../services/firestore_service.dart';
+import '../../services/user_settings_service.dart';
 import '../../models/chat_model.dart';
 import '../../models/user_model.dart';
 import '../../app_theme.dart';
@@ -47,6 +49,7 @@ class _IndividualChatPageState extends State<IndividualChatPage>
   final AudioPlayer _audioPlayer = AudioPlayer();
   final AudioPlayer _sfxPlayer = AudioPlayer();
   final ImagePicker _picker = ImagePicker();
+  bool _showEmojiPicker = false;
   final RecordingService _recordingService = RecordingService();
 
   StreamSubscription<List<MessageModel>>? _messageSubscription;
@@ -186,7 +189,10 @@ class _IndividualChatPageState extends State<IndividualChatPage>
           setState(() {
             _currentWallpaper = data['wallpaperUrl'];
             _isDisappearingMessages = data['isDisappearing'] ?? false;
-            _disappearingDurationHours = data['disappearingDuration'] ?? 24;
+            _disappearingDurationHours =
+                (data['disappearingDuration'] ?? 24) is num
+                    ? (data['disappearingDuration'] as num).toInt()
+                    : 24;
             _pinnedMessageIds = pinned;
           });
           if (pinned.isNotEmpty) {
@@ -220,7 +226,7 @@ class _IndividualChatPageState extends State<IndividualChatPage>
   void _setupMessageSubscription() {
     _messageSubscription?.cancel();
     _messageSubscription = _firestoreService
-        .streamMessages(widget.roomId, limit: _messageLimit)
+        .streamMessages(widget.roomId, limit: _messageLimit, userId: _currentUserId)
         .listen((messages) {
       if (messages.isNotEmpty) {
         final latestMsg = messages.first;
@@ -347,8 +353,8 @@ class _IndividualChatPageState extends State<IndividualChatPage>
           Icon(icon,
               color: DesignTokens.primaryGold, size: DesignTokens.iconSizeSm),
           const SizedBox(width: DesignTokens.spacingMd),
-          BodyText(label, color: DesignTokens.neutralGray400),
-          const Spacer(),
+          Flexible(child: BodyText(label, color: DesignTokens.neutralGray400)),
+          const SizedBox(width: DesignTokens.spacingMd),
           BodyText(
               time != null
                   ? intl.DateFormat('hh:mm a').format(time)
@@ -569,6 +575,20 @@ class _IndividualChatPageState extends State<IndividualChatPage>
       return;
     }
 
+    // التحقق من إعدادات الخصوصية قبل إرسال الرسالة
+    final canSend = await UserSettingsService.canSendMessageTo(widget.otherUser.uid);
+    if (!canSend) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('هذا المستخدم لا يقبل رسائل منك حالياً'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
     if (_editingMessage != null) {
       await _firestoreService.updateMessageText(
           widget.roomId, _editingMessage!.id, text);
@@ -714,57 +734,60 @@ class _IndividualChatPageState extends State<IndividualChatPage>
                     child: ListView.builder(
                       controller: scrollController,
                       itemCount: friends.length,
-                      itemBuilder: (_, i) => ListTile(
-                        leading: CircleAvatar(
-                            backgroundImage:
-                                (friends[i].profilePic.isNotEmpty &&
-                                        Uri.tryParse(friends[i].profilePic)
-                                                ?.host
-                                                .isNotEmpty ==
-                                            true)
-                                    ? CachedNetworkImageProvider(
-                                        friends[i].profilePic)
-                                    : null),
-                        title: BodyText(friends[i].name,
-                            color: DesignTokens.neutralWhite),
-                        onTap: () async {
-                          Navigator.pop(ctx);
-                          final targetRoomId =
-                              await _firestoreService.ensureChatRoomExists(
-                                  _currentUserId, friends[i].uid);
+                      itemBuilder: (_, i) => Material(
+                        color: Colors.transparent,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                              backgroundImage:
+                                  (friends[i].profilePic.isNotEmpty &&
+                                          Uri.tryParse(friends[i].profilePic)
+                                                  ?.host
+                                                  .isNotEmpty ==
+                                              true)
+                                      ? CachedNetworkImageProvider(
+                                          friends[i].profilePic)
+                                      : null),
+                          title: BodyText(friends[i].name,
+                              color: DesignTokens.neutralWhite),
+                          onTap: () async {
+                            Navigator.pop(ctx);
+                            final targetRoomId =
+                                await _firestoreService.ensureChatRoomExists(
+                                    _currentUserId, friends[i].uid);
 
-                          final roomSnap = await FirebaseFirestore.instance
-                              .collection('chatRooms')
-                              .doc(widget.roomId)
-                              .collection('messages')
-                              .get();
-                          final selectedMessages = roomSnap.docs
-                              .map((doc) =>
-                                  MessageModel.fromMap(doc.data(), doc.id))
-                              .where((m) => _selectedMessageIds.contains(m.id))
-                              .toList();
+                            final roomSnap = await FirebaseFirestore.instance
+                                .collection('chatRooms')
+                                .doc(widget.roomId)
+                                .collection('messages')
+                                .get();
+                            final selectedMessages = roomSnap.docs
+                                .map((doc) =>
+                                    MessageModel.fromMap(doc.data(), doc.id))
+                                .where((m) => _selectedMessageIds.contains(m.id))
+                                .toList();
 
-                          for (var msg in selectedMessages) {
-                            final fMsg = MessageModel(
-                                id: '',
-                                senderId: _currentUserId,
-                                text: msg.text,
-                                timestamp: DateTime.now(),
-                                type: msg.type,
-                                imageUrl: msg.imageUrl,
-                                audioUrl: msg.audioUrl,
-                                location: msg.location,
-                                contactData: msg.contactData,
-                                forwardedFrom: widget.otherUser.name);
-                            await _firestoreService.sendMessage(
-                                targetRoomId, fMsg);
-                          }
-                          _clearSelection();
-                          if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  'تم التحويل بنجاح لـ ${friends[i].name}')));
-                        },
+                            for (var msg in selectedMessages) {
+                              final fMsg = MessageModel(
+                                  id: '',
+                                  senderId: _currentUserId,
+                                  text: msg.text,
+                                  timestamp: DateTime.now(),
+                                  type: msg.type,
+                                  imageUrl: msg.imageUrl,
+                                  audioUrl: msg.audioUrl,
+                                  location: msg.location,
+                                  contactData: msg.contactData,
+                                  forwardedFrom: widget.otherUser.name);
+                              await _firestoreService.sendMessage(
+                                  targetRoomId, fMsg);
+                            }
+                            _clearSelection();
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                    'تم التحويل بنجاح لـ ${friends[i].name}')));
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -806,7 +829,7 @@ class _IndividualChatPageState extends State<IndividualChatPage>
             Expanded(
               child: StreamBuilder<List<MessageModel>>(
                 stream:
-                    _firestoreService.streamMessages(widget.roomId, limit: 100),
+                    _firestoreService.streamMessages(widget.roomId, limit: 100, userId: _currentUserId),
                 builder: (context, snap) {
                   if (!snap.hasData) {
                     return const RoyalLoadingIndicator();
@@ -879,42 +902,45 @@ class _IndividualChatPageState extends State<IndividualChatPage>
                     child: ListView.builder(
                       controller: scrollController,
                       itemCount: friends.length,
-                      itemBuilder: (context, i) => ListTile(
-                        leading: CircleAvatar(
-                            backgroundImage:
-                                (friends[i].profilePic.isNotEmpty &&
-                                        Uri.tryParse(friends[i].profilePic)
-                                                ?.host
-                                                .isNotEmpty ==
-                                            true)
-                                    ? CachedNetworkImageProvider(
-                                        friends[i].profilePic)
-                                    : null),
-                        title: BodyText(friends[i].name,
-                            color: DesignTokens.neutralWhite),
-                        onTap: () async {
-                          Navigator.pop(ctx);
-                          final rId =
-                              await _firestoreService.ensureChatRoomExists(
-                                  _currentUserId, friends[i].uid);
-                          final fMsg = MessageModel(
-                              id: '',
-                              senderId: _currentUserId,
-                              text: message.text,
-                              timestamp: DateTime.now(),
-                              type: message.type,
-                              imageUrl: message.imageUrl,
-                              audioUrl: message.audioUrl,
-                              location: message.location,
-                              contactData: message.contactData,
-                              forwardedFrom: widget.otherUser.name);
-                          await _firestoreService.sendMessage(rId, fMsg);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content:
-                                    Text('تم التحويل إلى ${friends[i].name}')));
-                          }
-                        },
+                      itemBuilder: (context, i) => Material(
+                        color: Colors.transparent,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                              backgroundImage:
+                                  (friends[i].profilePic.isNotEmpty &&
+                                          Uri.tryParse(friends[i].profilePic)
+                                                  ?.host
+                                                  .isNotEmpty ==
+                                              true)
+                                      ? CachedNetworkImageProvider(
+                                          friends[i].profilePic)
+                                      : null),
+                          title: BodyText(friends[i].name,
+                              color: DesignTokens.neutralWhite),
+                          onTap: () async {
+                            Navigator.pop(ctx);
+                            final rId =
+                                await _firestoreService.ensureChatRoomExists(
+                                    _currentUserId, friends[i].uid);
+                            final fMsg = MessageModel(
+                                id: '',
+                                senderId: _currentUserId,
+                                text: message.text,
+                                timestamp: DateTime.now(),
+                                type: message.type,
+                                imageUrl: message.imageUrl,
+                                audioUrl: message.audioUrl,
+                                location: message.location,
+                                contactData: message.contactData,
+                                forwardedFrom: widget.otherUser.name);
+                            await _firestoreService.sendMessage(rId, fMsg);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content:
+                                      Text('تم التحويل إلى ${friends[i].name}')));
+                            }
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -1030,6 +1056,7 @@ class _IndividualChatPageState extends State<IndividualChatPage>
             const SizedBox(width: DesignTokens.spacingSm),
             Expanded(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const CaptionText('رسالة مثبتة',
@@ -1050,7 +1077,8 @@ class _IndividualChatPageState extends State<IndividualChatPage>
                 ],
               ),
             ),
-            if (_pinnedMessageIds.length > 1)
+            if (_pinnedMessageIds.length > 1) ...[
+              const SizedBox(width: DesignTokens.spacingSm),
               Container(
                 padding: const EdgeInsets.all(DesignTokens.spacingXs),
                 decoration: const BoxDecoration(
@@ -1058,6 +1086,7 @@ class _IndividualChatPageState extends State<IndividualChatPage>
                 child: CaptionText('+${_pinnedMessageIds.length - 1}',
                     color: DesignTokens.neutralWhite, fontSize: 10),
               ),
+            ],
           ],
         ),
       ),
@@ -1213,6 +1242,54 @@ class _IndividualChatPageState extends State<IndividualChatPage>
     );
   }
 
+  void _showDeleteOptions(MessageModel message) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: DesignTokens.backgroundDarkDeep,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+              top: Radius.circular(DesignTokens.borderRadiusXl3))),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: DesignTokens.spacingMd),
+            Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: DesignTokens.neutralGray700,
+                    borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: DesignTokens.spacingLg),
+            ListTile(
+              leading: const Icon(Icons.delete_outline_rounded,
+                  color: DesignTokens.semanticError),
+              title: const BodyText('حذف من عندي فقط',
+                  color: DesignTokens.neutralWhite),
+              onTap: () {
+                Navigator.pop(ctx);
+                _firestoreService.deleteMessage(widget.roomId, message.id,
+                    userId: _currentUserId, deleteForEveryone: false);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_forever_rounded,
+                  color: DesignTokens.semanticError),
+              title: const BodyText('حذف للجميع',
+                  color: DesignTokens.semanticError),
+              onTap: () {
+                Navigator.pop(ctx);
+                _firestoreService.deleteMessage(widget.roomId, message.id,
+                    userId: _currentUserId, deleteForEveryone: true);
+              },
+            ),
+            const SizedBox(height: DesignTokens.spacingLg),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showMessageOptions(MessageModel message) {
     bool isMe = message.senderId == _currentUserId;
     showModalBottomSheet(
@@ -1284,13 +1361,24 @@ class _IndividualChatPageState extends State<IndividualChatPage>
               ),
               if (isMe)
                 ListTile(
+                  leading: const Icon(Icons.edit_rounded,
+                      color: DesignTokens.primaryGold),
+                  title: const BodyText('تعديل', color: DesignTokens.neutralWhite),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    setState(() => _editingMessage = message);
+                    _messageController.text = message.text;
+                  },
+                ),
+              if (isMe)
+                ListTile(
                   leading: const Icon(Icons.delete_outline_rounded,
                       color: DesignTokens.semanticError),
                   title:
                       const BodyText('حذف', color: DesignTokens.semanticError),
                   onTap: () {
                     Navigator.pop(ctx);
-                    _firestoreService.deleteMessage(widget.roomId, message.id);
+                    _showDeleteOptions(message);
                   },
                 ),
               const RoyalDivider(
@@ -1315,121 +1403,134 @@ class _IndividualChatPageState extends State<IndividualChatPage>
   }
 
   Widget _buildMessagesList() {
-    return StreamBuilder<List<MessageModel>>(
-      stream:
-          _firestoreService.streamMessages(widget.roomId, limit: _messageLimit),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+    return StreamBuilder<UserModel>(
+      stream: _firestoreService.streamUserData(_currentUserId),
+      builder: (context, userSnapshot) {
+        if (!userSnapshot.hasData) {
           return const Center(child: RoyalLoadingIndicator());
         }
-        var messages = snapshot.data!;
+        final currentUser = userSnapshot.data!;
 
-        messages = messages.where((m) {
-          if (m.expiresAt == null) return true;
-          return m.expiresAt!.isAfter(DateTime.now());
-        }).toList();
+        return StreamBuilder<List<MessageModel>>(
+          stream: _firestoreService.streamMessages(widget.roomId,
+              limit: _messageLimit, userId: _currentUserId),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: RoyalLoadingIndicator());
+            }
+            var messages = snapshot.data!;
 
-        if (_searchQuery.isNotEmpty) {
-          messages =
-              messages.where((m) => m.text.contains(_searchQuery)).toList();
-        }
+            messages = messages.where((m) {
+              if (m.expiresAt == null) return true;
+              return m.expiresAt!.isAfter(DateTime.now());
+            }).toList();
 
-        return ListView.builder(
-          controller: _scrollController,
-          reverse: true,
-          padding: const EdgeInsets.only(
-              top: 100,
-              left: DesignTokens.spacingMd,
-              right: DesignTokens.spacingMd,
-              bottom: DesignTokens.spacingLg),
-          itemCount: messages.length,
-          itemBuilder: (context, index) {
-            final message = messages[index];
-            final isMe = message.senderId == _currentUserId;
-            final isSelected = _selectedMessageIds.contains(message.id);
-
-            bool showDate = false;
-            if (index == messages.length - 1) {
-              showDate = true;
-            } else {
-              final nextMsg = messages[index + 1];
-              if (!_isSameDay(message.timestamp, nextMsg.timestamp)) {
-                showDate = true;
-              }
+            if (_searchQuery.isNotEmpty) {
+              messages =
+                  messages.where((m) => m.text.contains(_searchQuery)).toList();
             }
 
-            final key = _messageKeys.putIfAbsent(message.id, () => GlobalKey());
+            return ListView.builder(
+              controller: _scrollController,
+              reverse: true,
+              padding: const EdgeInsets.only(
+                  top: 100,
+                  left: DesignTokens.spacingMd,
+                  right: DesignTokens.spacingMd,
+                  bottom: DesignTokens.spacingLg),
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                final message = messages[index];
+                final isMe = message.senderId == _currentUserId;
+                final isSelected = _selectedMessageIds.contains(message.id);
 
-            return Container(
-              key: key,
-              color: _highlightedMessageId == message.id
-                  ? DesignTokens.primaryGold.withValues(alpha: 0.2)
-                  : Colors.transparent,
-              child: Column(
-                children: [
-                  if (showDate) _buildDateHeader(message.timestamp),
-                  ChatMessageBubble(
-                    message: message,
-                    isMe: isMe,
-                    isSelected: isSelected,
-                    senderAvatar: isMe ? null : widget.otherUser.profilePic,
-                    onAvatarTap: isMe
-                        ? null
-                        : () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UserProfilePage(
-                                    userId: widget.otherUser.uid),
-                              ),
-                            );
-                          },
-                    onReply: () => setState(() => _replyingTo = message),
-                    onEdit: () {
-                      setState(() => _editingMessage = message);
-                      _messageController.text = message.text;
-                    },
-                    onForward: () => _showForwardPicker(message),
-                    onLongPress: () {
-                      if (_isSelectionMode) {
-                        _toggleSelection(message.id);
-                      } else {
-                        HapticFeedback.mediumImpact();
-                        _showMessageOptions(message);
-                      }
-                    },
-                    onTap: () {
-                      if (_isSelectionMode) {
-                        _toggleSelection(message.id);
-                      } else if (isMe) {
-                        _showMessageInfo(message);
-                      }
-                    },
-                    onDoubleTap: () {
-                      HapticFeedback.mediumImpact();
-                      _firestoreService.addReaction(
-                          widget.roomId, message.id, _currentUserId, '❤️');
-                    },
-                    onVideoTap: (url) => _openPiP(url),
-                    onImageTap: (url) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              FullScreenImageViewer(imageUrl: url),
-                        ),
-                      );
-                    },
-                    isPlaying: _playingAudioUrl == message.audioUrl,
-                    onPlayVoice: message.audioUrl != null
-                        ? () => _playVoice(message.audioUrl!)
-                        : null,
-                    currentPosition: _playingAudioUrl == message.audioUrl
-                        ? _audioPosition
-                        : null,
+                bool showDate = false;
+                if (index == messages.length - 1) {
+                  showDate = true;
+                } else {
+                  final nextMsg = messages[index + 1];
+                  if (!_isSameDay(message.timestamp, nextMsg.timestamp)) {
+                    showDate = true;
+                  }
+                }
+
+                final key =
+                    _messageKeys.putIfAbsent(message.id, () => GlobalKey());
+
+                return Container(
+                  key: key,
+                  color: _highlightedMessageId == message.id
+                      ? DesignTokens.primaryGold.withValues(alpha: 0.2)
+                      : Colors.transparent,
+                  child: Column(
+                    children: [
+                      if (showDate) _buildDateHeader(message.timestamp),
+                      ChatMessageBubble(
+                        message: message,
+                        isMe: isMe,
+                        isSelected: isSelected,
+                        senderAvatar: isMe ? null : widget.otherUser.profilePic,
+                        myChatBubble: currentUser.chatBubble,
+                        otherChatBubble: widget.otherUser.chatBubble,
+                        onAvatarTap: isMe
+                            ? null
+                            : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserProfilePage(
+                                        userId: widget.otherUser.uid),
+                                  ),
+                                );
+                              },
+                        onReply: () => setState(() => _replyingTo = message),
+                        onEdit: () {
+                          setState(() => _editingMessage = message);
+                          _messageController.text = message.text;
+                        },
+                        onForward: () => _showForwardPicker(message),
+                        onLongPress: () {
+                          if (_isSelectionMode) {
+                            _toggleSelection(message.id);
+                          } else {
+                            HapticFeedback.mediumImpact();
+                            _showMessageOptions(message);
+                          }
+                        },
+                        onTap: () {
+                          if (_isSelectionMode) {
+                            _toggleSelection(message.id);
+                          } else if (isMe) {
+                            _showMessageInfo(message);
+                          }
+                        },
+                        onDoubleTap: () {
+                          HapticFeedback.mediumImpact();
+                          _firestoreService.addReaction(
+                              widget.roomId, message.id, _currentUserId, '❤️');
+                        },
+                        onVideoTap: (url) => _openPiP(url),
+                        onImageTap: (url) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  FullScreenImageViewer(imageUrl: url),
+                            ),
+                          );
+                        },
+                        isPlaying: _playingAudioUrl == message.audioUrl,
+                        onPlayVoice: message.audioUrl != null
+                            ? () => _playVoice(message.audioUrl!)
+                            : null,
+                        currentPosition: _playingAudioUrl == message.audioUrl
+                            ? _audioPosition
+                            : null,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             );
           },
         );
@@ -1785,6 +1886,27 @@ class _IndividualChatPageState extends State<IndividualChatPage>
 
         return Column(
           children: [
+            if (_showEmojiPicker)
+              Container(
+                height: 250,
+                color: DesignTokens.backgroundDarkDeep,
+                child: emoji.EmojiPicker(
+                  onEmojiSelected: (emoji.Category? category, emoji.Emoji emoji) {
+                    _messageController.text += emoji.emoji;
+                    _messageController.selection = TextSelection.fromPosition(
+                      TextPosition(offset: _messageController.text.length),
+                    );
+                  },
+                  config: const emoji.Config(
+                    height: 250,
+                    checkPlatformCompatibility: true,
+                    emojiViewConfig: emoji.EmojiViewConfig(
+                      emojiSizeMax: 32,
+                      columns: 8,
+                    ),
+                  ),
+                ),
+              ),
             Container(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).padding.bottom +
@@ -1803,6 +1925,17 @@ class _IndividualChatPageState extends State<IndividualChatPage>
                       icon: const Icon(Icons.add_circle_outline_rounded,
                           color: DesignTokens.neutralGray400),
                       onPressed: _showMediaOptions),
+                  IconButton(
+                      icon: Icon(
+                          _showEmojiPicker
+                              ? Icons.keyboard_rounded
+                              : Icons.emoji_emotions_outlined,
+                          color: DesignTokens.neutralGray400),
+                      onPressed: () {
+                        setState(() {
+                          _showEmojiPicker = !_showEmojiPicker;
+                        });
+                      }),
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(

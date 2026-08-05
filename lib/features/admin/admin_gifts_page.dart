@@ -127,7 +127,7 @@ class _AdminGiftsPageState extends State<AdminGiftsPage> {
                                 _currencyType,
                                 (v) => setModalState(() => _currencyType = v)),
                             const SizedBox(width: 10),
-                            _buildChoiceChip('نجوم ⭐', 'coins', _currencyType,
+                            _buildChoiceChip('كوينز', 'coins', _currencyType,
                                 (v) => setModalState(() => _currencyType = v)),
                           ],
                         ),

@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter/foundation.dart';
 import '../services/firestore_service.dart';
+import '../services/telegram_web_app_service.dart';
 import '../models/user_model.dart';
 import '../app_theme.dart';
 import '../theme/design_tokens.dart';
@@ -42,6 +44,13 @@ class _InvitesPageState extends State<InvitesPage> {
   }
 
   void _shareInvite(String code, String name) {
+    // If running in Telegram Web App, use Telegram sharing
+    if (kIsWeb && TelegramWebAppService.isTelegramWebApp()) {
+      TelegramWebAppService.shareFriendInvite(code);
+      return;
+    }
+    
+    // Otherwise use regular share
     final String shareMessage = '''
 👑 دعوة ملكية خاصة من [$name] 👑
 

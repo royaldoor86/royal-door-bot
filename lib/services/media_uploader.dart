@@ -1,11 +1,11 @@
 // lib/services/media_uploader.dart
 
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:video_compress/video_compress.dart';
+import 'package:flutter/foundation.dart';
 
 class MediaUploader {
   MediaUploader._();
@@ -14,13 +14,22 @@ class MediaUploader {
 
   /// 🔹 ضغط صورة قبل الرفع
   static Future<Uint8List?> _compressImage(
-    File file, {
+    dynamic file, {
     int minWidth = 1080,
     int minHeight = 1080,
     int quality = 75, 
   }) async {
+    if (kIsWeb) {
+      // Web: Read bytes directly (compression not supported on web)
+      if (file is XFile) {
+        return await file.readAsBytes();
+      }
+      return null;
+    }
+    
+    // Mobile: Compress image
     final result = await FlutterImageCompress.compressWithFile(
-      file.absolute.path,
+      (file as File).absolute.path,
       minWidth: minWidth,
       minHeight: minHeight,
       quality: quality,
@@ -31,7 +40,7 @@ class MediaUploader {
 
   /// 📸 رفع صورة مضغوطة إلى Storage
   static Future<String> uploadCompressedImage({
-    required File file,
+    required dynamic file,
     required String pathInStorage, 
   }) async {
     final Uint8List? compressedBytes = await _compressImage(file);
@@ -52,14 +61,19 @@ class MediaUploader {
   }
 
   /// 🎥 ضغط فيديو قبل الرفع
-  static Future<File?> _compressVideo(
-    File file, {
+  static Future<dynamic> _compressVideo(
+    dynamic file, {
     VideoQuality quality = VideoQuality.MediumQuality,
   }) async {
+    if (kIsWeb) {
+      // Web: Return file as-is (compression not supported on web)
+      return file;
+    }
+    
     await VideoCompress.setLogLevel(0);
 
     final info = await VideoCompress.compressVideo(
-      file.path,
+      (file as File).path,
       quality: quality, 
       deleteOrigin: false, 
     );
@@ -69,10 +83,10 @@ class MediaUploader {
 
   /// 🎥 رفع فيديو مضغوط إلى Storage
   static Future<String> uploadCompressedVideo({
-    required File file,
+    required dynamic file,
     required String pathInStorage, 
   }) async {
-    final File? compressedFile = await _compressVideo(file);
+    final compressedFile = await _compressVideo(file);
 
     if (compressedFile == null) {
       throw Exception('فشل ضغط الفيديو');
@@ -80,26 +94,50 @@ class MediaUploader {
 
     final ref = _storage.ref().child(pathInStorage);
 
-    final uploadTask = await ref.putFile(
-      compressedFile,
-      SettableMetadata(contentType: 'video/mp4'),
-    );
-
-    final url = await uploadTask.ref.getDownloadURL();
-    return url;
+    if (kIsWeb && compressedFile is XFile) {
+      // Web: Use XFile
+      final bytes = await compressedFile.readAsBytes();
+      final uploadTask = await ref.putData(
+        bytes,
+        SettableMetadata(contentType: 'video/mp4'),
+      );
+      final url = await uploadTask.ref.getDownloadURL();
+      return url;
+    } else {
+      // Mobile: Use File
+      final uploadTask = await ref.putFile(
+        compressedFile as File,
+        SettableMetadata(contentType: 'video/mp4'),
+      );
+      final url = await uploadTask.ref.getDownloadURL();
+      return url;
+    }
   }
 
   /// 🎙️ رفع ملف صوتي
   static Future<String> uploadAudioFile({
-    required File file,
+    required dynamic file,
     required String pathInStorage,
   }) async {
     final ref = _storage.ref().child(pathInStorage);
-    final uploadTask = await ref.putFile(
-      file,
-      SettableMetadata(contentType: 'audio/m4a'),
-    );
-    final url = await uploadTask.ref.getDownloadURL();
-    return url;
+    
+    if (kIsWeb && file is XFile) {
+      // Web: Use XFile
+      final bytes = await file.readAsBytes();
+      final uploadTask = await ref.putData(
+        bytes,
+        SettableMetadata(contentType: 'audio/m4a'),
+      );
+      final url = await uploadTask.ref.getDownloadURL();
+      return url;
+    } else {
+      // Mobile: Use File
+      final uploadTask = await ref.putFile(
+        file as File,
+        SettableMetadata(contentType: 'audio/m4a'),
+      );
+      final url = await uploadTask.ref.getDownloadURL();
+      return url;
+    }
   }
 }

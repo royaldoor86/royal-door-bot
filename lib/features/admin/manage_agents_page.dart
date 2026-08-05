@@ -283,6 +283,7 @@ class _ManageAgentsPageState extends State<ManageAgentsPage> {
                 'isAgent': false,
                 'agentData': FieldValue.delete(),
               });
+              if (!mounted) return;
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),

@@ -75,7 +75,10 @@ class _AdminHarvestWalletMgmtPageState
 
                 final stars = _parseDouble(data['stars'] ?? data['coins'] ?? 0);
                 final gems = _parseDouble(data['gems'] ?? 0);
-                final harvestWallet = _parseDouble(data['harvest_wallet'] ?? 0);
+                final rewardGems = _parseDouble(
+                    data['rewardGems'] ?? data['harvest_wallet'] ?? 0);
+                final rewardStars = _parseDouble(
+                    data['rewardStars'] ?? data['harvest_stars_wallet'] ?? 0);
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -121,8 +124,12 @@ class _AdminHarvestWalletMgmtPageState
                                 "${gems.toStringAsFixed(0)} 💎", Colors.cyan),
                             _miniStat(
                                 Icons.account_balance_wallet,
-                                "${harvestWallet.toStringAsFixed(0)} 💰",
+                                "${rewardGems.toStringAsFixed(0)} 💎",
                                 Colors.greenAccent),
+                            _miniStat(
+                                Icons.star,
+                                "${rewardStars.toStringAsFixed(0)} ⭐",
+                                Colors.orangeAccent),
                           ],
                         ),
                       ],
@@ -205,7 +212,7 @@ class _AdminHarvestWalletMgmtPageState
       String userId, String userName, Map<String, dynamic> userData) {
     final amountController = TextEditingController();
     final reasonController = TextEditingController();
-    String selectedWallet = 'stars'; // stars, gems, harvest_wallet
+    String selectedWallet = 'stars'; // stars, gems, rewardGems, rewardStars
     String operationType = 'increase'; // increase, decrease
 
     showDialog(
@@ -222,9 +229,15 @@ class _AdminHarvestWalletMgmtPageState
           } else if (selectedWallet == 'gems') {
             currentBalance = _parseDouble(userData['gems'] ?? 0);
             currencyName = "جوهرة 💎";
-          } else if (selectedWallet == 'harvest_wallet') {
-            currentBalance = _parseDouble(userData['harvest_wallet'] ?? 0);
-            currencyName = "رصيد الحصاد";
+          } else if (selectedWallet == 'rewardGems') {
+            currentBalance = _parseDouble(
+                userData['rewardGems'] ?? userData['harvest_wallet'] ?? 0);
+            currencyName = "جوهرة ملكية 💎";
+          } else if (selectedWallet == 'rewardStars') {
+            currentBalance = _parseDouble(userData['rewardStars'] ??
+                userData['harvest_stars_wallet'] ??
+                0);
+            currencyName = "نجمة ملكية ⭐";
           }
 
           return AlertDialog(
@@ -251,7 +264,9 @@ class _AdminHarvestWalletMgmtPageState
                           (v) => dialogSetState(() => selectedWallet = v)),
                       _choiceChip('جواهر', 'gems', selectedWallet,
                           (v) => dialogSetState(() => selectedWallet = v)),
-                      _choiceChip('حصاد', 'harvest_wallet', selectedWallet,
+                      _choiceChip('جواهر ملكية', 'rewardGems', selectedWallet,
+                          (v) => dialogSetState(() => selectedWallet = v)),
+                      _choiceChip('نجوم ملكية', 'rewardStars', selectedWallet,
                           (v) => dialogSetState(() => selectedWallet = v)),
                     ],
                   ),
@@ -338,6 +353,20 @@ class _AdminHarvestWalletMgmtPageState
 
                       if (selectedWallet == 'stars') {
                         updates['coins'] =
+                            FieldValue.increment(finalAdjustment);
+                      }
+
+                      // للتوافق مع الحقول القديمة
+                      if (selectedWallet == 'rewardGems') {
+                        updates['harvest_wallet'] =
+                            FieldValue.increment(finalAdjustment);
+                        updates['harvestWallet'] =
+                            FieldValue.increment(finalAdjustment);
+                      }
+                      if (selectedWallet == 'rewardStars') {
+                        updates['harvest_stars_wallet'] =
+                            FieldValue.increment(finalAdjustment);
+                        updates['starsHarvestWallet'] =
                             FieldValue.increment(finalAdjustment);
                       }
 

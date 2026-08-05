@@ -68,9 +68,10 @@ class _GiftShopSheetState extends State<GiftShopSheet> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Container(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-      height: MediaQuery.of(context).size.height * 0.75,
+      height: screenHeight,
       decoration: const BoxDecoration(
         color: Color(0xFF0F1B25),
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
@@ -599,7 +600,7 @@ class _GiftShopSheetState extends State<GiftShopSheet> {
             'totalGiftsSent': FieldValue.increment(_giftCount), // تحديث عدد الهدايا المرسلة
           });
         } else {
-          if (userStars < totalCost) throw "رصيد النجوم غير كافٍ";
+          if (userStars < totalCost) throw "رصيد الكوينز غير كافٍ";
           transaction.update(userRef, {
             'stars': FieldValue.increment(-totalCost),
             'coins': FieldValue.increment(-totalCost), // Keep in sync
@@ -705,9 +706,9 @@ class _GiftShopSheetState extends State<GiftShopSheet> {
           final battle = roomData['battle'] as Map<String, dynamic>?;
 
           if (battle != null && battle['active'] == true) {
-            // استخدام نقاط المعركة من الهدية بدلاً من السعر
+            // استخدام نقاط المعركة من الهدية بدلاً من السعر (أو السعر كاحتياطي)
             final int? battlePoints = giftData['battlePoints'];
-            final int pointsToAdd = (battlePoints ?? 0) * _giftCount;
+            final int pointsToAdd = (battlePoints ?? price) * _giftCount;
 
             if (pointsToAdd > 0) {
               String mode = battle['mode'] ?? 'team';

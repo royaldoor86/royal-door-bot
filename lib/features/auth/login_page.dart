@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/foundation.dart';
 import '../../services/auth_service.dart';
 import '../../app_theme.dart';
 import '../../services/user_bootstrap_service.dart';
@@ -29,8 +29,13 @@ class _LoginPageState extends State<LoginPage> {
   String _selectedCountryCode = "+964";
   String _countryEmoji = "🇮🇶";
 
-  // Firebase Phone Auth
-  String? _verificationId;
+  // Google Sign In Button for web
+  Widget? _googleSignInButton;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -88,38 +93,34 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _loginWithGoogle() async {
+    debugPrint('🚀 _loginWithGoogle called');
+    debugPrint('🔍 Platform: ${kIsWeb ? "Web" : "Mobile"}');
     setState(() => _isLoading = true);
     try {
       final auth = Provider.of<AuthService>(context, listen: false);
       final result = await auth.loginWithGoogle();
-      if (result == "CANCELLED") {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-        return;
-      }
-      if (result == null) {
-        await UserBootstrapService.bootstrapUser();
-        if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
-        }
-      } else {
-        if (mounted) {
-          _showSnack(result);
-        }
+      debugPrint('📝 Google login result: $result');
+      if (result != null) {
+        _showSnack(result);
+      } else if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
       }
     } catch (e) {
-      _showSnack("حدث خطأ أثناء الاتصال بـ Google");
+      debugPrint('❌ Google login exception: $e');
+      _showSnack("حدث خطأ أثناء تسجيل الدخول بـ Google: $e");
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
   Future<void> _loginWithFacebook() async {
+    debugPrint('🚀 _loginWithFacebook called');
+    debugPrint('🔍 Platform: ${kIsWeb ? "Web" : "Mobile"}');
     setState(() => _isLoading = true);
     try {
       final auth = Provider.of<AuthService>(context, listen: false);
       final result = await auth.loginWithFacebook();
+      debugPrint('📝 Facebook login result: $result');
       if (result == "CANCELLED") {
         if (mounted) {
           setState(() => _isLoading = false);
@@ -127,7 +128,6 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
       if (result == null) {
-        await UserBootstrapService.bootstrapUser();
         if (mounted) {
           Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
         }
@@ -137,35 +137,8 @@ class _LoginPageState extends State<LoginPage> {
         }
       }
     } catch (e) {
-      _showSnack("حدث خطأ أثناء الاتصال بـ Facebook");
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _loginWithTwitter() async {
-    setState(() => _isLoading = true);
-    try {
-      final auth = Provider.of<AuthService>(context, listen: false);
-      final result = await auth.loginWithTwitter();
-      if (result == "CANCELLED") {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-        return;
-      }
-      if (result == null) {
-        await UserBootstrapService.bootstrapUser();
-        if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
-        }
-      } else {
-        if (mounted) {
-          _showSnack(result);
-        }
-      }
-    } catch (e) {
-      _showSnack("حدث خطأ أثناء الاتصال بـ Twitter");
+      debugPrint('❌ Facebook login exception: $e');
+      _showSnack("حدث خطأ أثناء الاتصال بـ Facebook: $e");
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -306,45 +279,17 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
 
-      // استخدام Firebase Phone Auth المباشر
-      await authService.verifyPhoneNumber(
-        phoneNumber: fullPhoneNumber,
-        onCodeSent: (String verificationId) {
-          setState(() {
-            _verificationId = verificationId;
-            _isLoading = false;
-          });
-          _showOtpDialog(fullPhoneNumber);
-        },
-        onVerificationFailed: (FirebaseAuthException e) {
-          setState(() => _isLoading = false);
-          String errorMsg = "فشل إرسال الكود";
-          if (e.code == 'invalid-phone-number') {
-            errorMsg = "رقم الهاتف غير صحيح";
-          } else if (e.code == 'too-many-requests') {
-            errorMsg = "محاولات كثيرة، حاول لاحقاً";
-          }
-          _showSnack(errorMsg);
-        },
-        onVerificationCompleted: (PhoneAuthCredential credential) async {
-          // عند التحقق التلقائي (Android) - تسجيل الدخول مباشرة
-          try {
-            final result =
-                await FirebaseAuth.instance.signInWithCredential(credential);
-            final user = result.user;
-            if (user != null) {
-              await UserBootstrapService.bootstrapUser();
-              if (mounted) {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, "/home", (r) => false);
-              }
-            }
-          } catch (e) {
-            setState(() => _isLoading = false);
-            _showSnack("فشل التحقق التلقائي: $e");
-          }
-        },
+      // استخدام نظام OTP المحسّن
+      await authService.sendOTP(
+        phone,
+        countryCode: _selectedCountryCode,
+        allowAnonymous: true,
       );
+
+      setState(() {
+        _isLoading = false;
+      });
+      _showOtpDialog(fullPhoneNumber);
     } catch (e) {
       setState(() => _isLoading = false);
       _showSnack("فشل إرسال الكود: $e");
@@ -405,20 +350,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _signInWithCredential(String fullPhone) async {
-    if (_verificationId == null) {
-      _showSnack("يرجى إرسال الكود أولاً");
-      return;
-    }
-
     setState(() => _isLoading = true);
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
       final smsCode = _otpController.text.trim();
 
-      // استخدام Firebase Phone Auth للتحقق من الكود
-      final user = await authService.signInWithPhone(_verificationId!, smsCode);
+      // استخدام نظام OTP المحسّن
+      final verified = await authService.verifyOTP(smsCode, allowAnonymous: true);
 
-      if (user != null) {
+      if (verified) {
         await UserBootstrapService.bootstrapUser();
         if (mounted) {
           Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
@@ -426,14 +366,6 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         _showSnack("كود التحقق غير صحيح");
       }
-    } on FirebaseAuthException catch (e) {
-      String errorMsg = "كود التحقق غير صحيح";
-      if (e.code == 'invalid-verification-code') {
-        errorMsg = "كود التحقق غير صحيح";
-      } else if (e.code == 'code-expired') {
-        errorMsg = "الكود منتهي، أعد الإرسال";
-      }
-      _showSnack(errorMsg);
     } catch (e) {
       _showSnack("حدث خطأ: $e");
     } finally {
@@ -471,39 +403,34 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 40),
                     _buildDivider(),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _ColoredSocialButton(
-                          iconPath:
-                              'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg', // Official Google G Logo
-                          label: 'Google',
-                          color: const Color(0xFF4285F4),
-                          onPressed: _isLoading ? () {} : _loginWithGoogle,
-                        ),
-                        _ColoredSocialButton(
-                          iconPath:
-                              'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg', // Official Facebook Logo
-                          label: 'Facebook',
-                          color: const Color(0xFF1877F2),
-                          onPressed: _isLoading ? () {} : _loginWithFacebook,
-                        ),
-                        _ColoredSocialButton(
-                          iconPath:
-                              'https://upload.wikimedia.org/wikipedia/commons/6/6e/X_logo_2023.svg', // Official X (Twitter) Logo
-                          label: 'Twitter/X',
-                          color: Colors.black,
-                          onPressed: _isLoading ? () {} : _loginWithTwitter,
-                        ),
-                        _ColoredSocialButton(
-                          iconPath:
-                              'https://cdn-icons-png.flaticon.com/512/724/724664.png', // Phone Icon
-                          label: 'Phone',
-                          color: const Color(0xFF25D366),
-                          onPressed: _isLoading ? () {} : _showPhoneLoginDialog,
-                          isPng: true,
-                        ),
-                      ],
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Google, Facebook, and Phone login options
+                          _ColoredSocialButton(
+                            icon: Icons.g_mobiledata,
+                            label: 'Google',
+                            color: const Color(0xFF4285F4),
+                            onPressed: _isLoading ? () {} : _loginWithGoogle,
+                          ),
+                          const SizedBox(width: 15),
+                          _ColoredSocialButton(
+                            icon: Icons.facebook,
+                            label: 'Facebook',
+                            color: const Color(0xFF1877F2),
+                            onPressed: _isLoading ? () {} : _loginWithFacebook,
+                          ),
+                          const SizedBox(width: 15),
+                          _ColoredSocialButton(
+                            icon: Icons.phone,
+                            label: 'Phone',
+                            color: const Color(0xFF25D366),
+                            onPressed: _isLoading ? () {} : _showPhoneLoginDialog,
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 40),
                     _buildSignupBtn(),
@@ -653,42 +580,17 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-class _SocialIconButton extends StatelessWidget {
-  final Widget icon;
-  final VoidCallback onPressed;
-  const _SocialIconButton({required this.icon, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(15),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.white10),
-        ),
-        child: Center(child: icon),
-      ),
-    );
-  }
-}
-
 class _ColoredSocialButton extends StatelessWidget {
-  final String iconPath;
+  final IconData icon;
   final String label;
   final Color color;
   final VoidCallback onPressed;
-  final bool isPng;
 
   const _ColoredSocialButton({
-    required this.iconPath,
+    required this.icon,
     required this.label,
     required this.color,
     required this.onPressed,
-    this.isPng = false,
   });
 
   @override
@@ -716,19 +618,11 @@ class _ColoredSocialButton extends StatelessWidget {
             child: ClipOval(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: isPng
-                    ? Image.network(
-                        iconPath,
-                        fit: BoxFit.contain,
-                        errorBuilder: (c, e, s) =>
-                            Icon(Icons.star, color: color),
-                      )
-                    : SvgPicture.network(
-                        iconPath,
-                        fit: BoxFit.contain,
-                        placeholderBuilder: (context) =>
-                            Icon(Icons.star, color: color),
-                      ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 32,
+                ),
               ),
             ),
           ),

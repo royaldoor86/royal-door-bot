@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../app_theme.dart';
 import '../../../services/firestore_service.dart';
-import '../../voice_room_page.dart';
+import '../../../services/room_navigation_service.dart';
 
 class AnnouncedRoomInfoSheet extends StatefulWidget {
   final String roomId;
@@ -138,40 +138,44 @@ class _AnnouncedRoomInfoSheetState extends State<AnnouncedRoomInfoSheet> {
             Text('بواسطة: ${owner['name'] ?? ''}',
                 style: const TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 8),
-          Text('ID: ${room['roomId']}',
+          Text(
+              'ID: ${room['shortId'] ?? room['royalId'] ?? (widget.roomId.length > 8 ? widget.roomId.substring(0, 8) : widget.roomId)}',
               style: const TextStyle(color: AppTheme.royalGold, fontSize: 12)),
           const Divider(color: Colors.white12, height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildActionButton(
-                  onPressed: _joinOrLeaveFanClub,
-                  label: _isFan ? 'أنت عضو' : 'انضم للنادي',
-                  icon: _isFan ? Icons.star_rounded : Icons.star_border_rounded,
-                  isActive: _isFan,
-                  activeColor: Colors.green,
-                  inactiveColor: AppTheme.royalGold),
-              _buildActionButton(
-                  onPressed: _followRoom,
-                  label: _isFollowing ? 'إلغاء المتابعة' : 'متابعة',
-                  icon: _isFollowing
-                      ? Icons.notifications_active_rounded
-                      : Icons.notifications_none_rounded,
-                  isActive: _isFollowing,
-                  activeColor: Colors.grey[600]!,
-                  inactiveColor: Colors.blueAccent),
+              Expanded(
+                child: _buildActionButton(
+                    onPressed: _joinOrLeaveFanClub,
+                    label: _isFan ? 'أنت عضو' : 'انضم للنادي',
+                    icon: _isFan ? Icons.star_rounded : Icons.star_border_rounded,
+                    isActive: _isFan,
+                    activeColor: Colors.green,
+                    inactiveColor: AppTheme.royalGold),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildActionButton(
+                    onPressed: _followRoom,
+                    label: _isFollowing ? 'إلغاء المتابعة' : 'متابعة',
+                    icon: _isFollowing
+                        ? Icons.notifications_active_rounded
+                        : Icons.notifications_none_rounded,
+                    isActive: _isFollowing,
+                    activeColor: Colors.grey[600]!,
+                    inactiveColor: Colors.blueAccent),
+              ),
             ],
           ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context); // Close sheet
-              Navigator.pop(context); // Close current room
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => VoiceRoomPage(
-                          roomId: widget.roomId, roomName: room['name'])));
+              RoomNavigationService.joinRoom(context, {
+                ...room,
+                'id': widget.roomId,
+              });
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
@@ -198,9 +202,16 @@ class _AnnouncedRoomInfoSheetState extends State<AnnouncedRoomInfoSheet> {
       required Color inactiveColor}) {
     return ElevatedButton.icon(
       onPressed: onPressed,
-      icon: Icon(icon),
-      label: Text(label),
+      icon: Icon(icon, size: 18),
+      label: Flexible(
+        child: Text(
+          label,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 12),
+        ),
+      ),
       style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
         backgroundColor:
             isActive ? activeColor.withValues(alpha: 0.2) : inactiveColor,
         foregroundColor: isActive ? activeColor : Colors.white,

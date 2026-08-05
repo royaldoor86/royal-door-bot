@@ -105,9 +105,9 @@ class _FamilyEventsPageState extends State<FamilyEventsPage> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
+            children: [
               Text('أحد',
                   style: TextStyle(color: Colors.white38, fontSize: 12)),
               Text('إثنين',
@@ -412,7 +412,7 @@ class _FamilyEventsPageState extends State<FamilyEventsPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'أحداث ${day}/${_selectedMonth.month}/${_selectedMonth.year}',
+              'أحداث $day/${_selectedMonth.month}/${_selectedMonth.year}',
               style: const TextStyle(
                   color: Colors.amber,
                   fontSize: 18,
@@ -531,7 +531,7 @@ class _FamilyEventsPageState extends State<FamilyEventsPage> {
                 ),
                 if (isRecurring)
                   DropdownButtonFormField<String>(
-                    value: recurringType,
+                    initialValue: recurringType,
                     style: const TextStyle(color: Colors.white),
                     dropdownColor: const Color(0xFF3D0B16),
                     decoration: const InputDecoration(

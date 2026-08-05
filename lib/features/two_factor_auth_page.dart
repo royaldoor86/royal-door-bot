@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:country_picker/country_picker.dart';
+import 'package:provider/provider.dart';
+import '../services/auth_service.dart';
 import '../app_theme.dart';
 
 class TwoFactorAuthPage extends StatefulWidget {
@@ -18,10 +21,12 @@ class _TwoFactorAuthPageState extends State<TwoFactorAuthPage> {
 
   bool _twoFactorEnabled = false;
   String _phoneNumber = '';
-  String _verificationId = '';
+  final String _verificationId = '';
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
   bool _isLoading = false;
+  String _selectedCountryCode = "+964";
+  String _selectedCountryFlag = "🇮🇶";
 
   @override
   void initState() {
@@ -89,60 +94,110 @@ class _TwoFactorAuthPageState extends State<TwoFactorAuthPage> {
   void _showPhoneDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E293B),
-        title: const Text(
-          'تفعيل التحقق بخطوتين',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                labelText: 'رقم الهاتف',
-                labelStyle:
-                    TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: const Color(0xFF1E293B),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text(
+            'تفعيل التحقق بخطوتين',
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Cairo'),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'سيتم إرسال رمز تحقق لرقمك لضمان ملكية الحساب',
+                style: TextStyle(color: Colors.white70, fontSize: 12),
+                textAlign: TextAlign.center,
               ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      showCountryPicker(
+                        context: context,
+                        onSelect: (Country country) {
+                          setDialogState(() {
+                            _selectedCountryCode = "+${country.phoneCode}";
+                            _selectedCountryFlag = country.flagEmoji;
+                          });
+                          setState(() {
+                            _selectedCountryCode = "+${country.phoneCode}";
+                            _selectedCountryFlag = country.flagEmoji;
+                          });
+                        },
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 15),
+                      decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.1))),
+                      child: Text("$_selectedCountryFlag $_selectedCountryCode",
+                          style: const TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                      decoration: InputDecoration(
+                        hintText: '77000000',
+                        hintStyle: const TextStyle(color: Colors.white24),
+                        filled: true,
+                        fillColor: Colors.white.withValues(alpha: 0.05),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child:
+                  const Text('إلغاء', style: TextStyle(color: Colors.white70)),
             ),
-            const SizedBox(height: 10),
-            Text(
-              'سيتم إرسال رمز تحقق إلى هذا الرقم',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5),
-                fontSize: 12,
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _sendVerificationCode();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.royalGold,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
+              child: const Text('إرسال الرمز',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء', style: TextStyle(color: Colors.white70)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _sendVerificationCode();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.royalGold,
-            ),
-            child: const Text('إرسال', style: TextStyle(color: Colors.white)),
-          ),
-        ],
       ),
     );
   }
 
   Future<void> _sendVerificationCode() async {
-    if (_phoneController.text.isEmpty) {
+    String phoneInput = _phoneController.text.trim();
+    if (phoneInput.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('الرجاء إدخال رقم الهاتف')),
       );
@@ -151,59 +206,24 @@ class _TwoFactorAuthPageState extends State<TwoFactorAuthPage> {
 
     setState(() => _isLoading = true);
     try {
-      await _auth.verifyPhoneNumber(
-        phoneNumber: _phoneController.text,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          // Auto-retrieval on Android
-          await _auth.currentUser?.linkWithCredential(credential);
-          await _db.collection('users').doc(_currentUserId).update({
-            'twoFactorEnabled': true,
-            'phoneNumber': _phoneController.text,
-          });
-          setState(() {
-            _twoFactorEnabled = true;
-            _phoneNumber = _phoneController.text;
-            _isLoading = false;
-          });
-          if (mounted) {
-            HapticFeedback.heavyImpact();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('تم تفعيل التحقق بخطوتين بنجاح'),
-                backgroundColor: AppTheme.royalGold,
-              ),
-            );
-          }
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          setState(() => _isLoading = false);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('فشل إرسال رمز التحقق: ${e.message}')),
-            );
-          }
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          setState(() {
-            _verificationId = verificationId;
-            _isLoading = false;
-          });
-          if (mounted) {
-            _showCodeDialog();
-          }
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          setState(() {
-            _verificationId = verificationId;
-            _isLoading = false;
-          });
-        },
+      final authService = Provider.of<AuthService>(context, listen: false);
+      
+      // استخدام النظام الموحد والمؤمن لإرسال الرمز
+      await authService.sendOTP(
+        phoneInput,
+        countryCode: _selectedCountryCode,
+        allowAnonymous: false,
       );
+
+      setState(() => _isLoading = false);
+      if (mounted) {
+        _showCodeDialog();
+      }
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('فشل إرسال رمز التحقق: $e')),
+          SnackBar(content: Text('فشل إرسال الرمز: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -212,6 +232,7 @@ class _TwoFactorAuthPageState extends State<TwoFactorAuthPage> {
   void _showCodeDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1E293B),
         title: const Text(
@@ -233,15 +254,6 @@ class _TwoFactorAuthPageState extends State<TwoFactorAuthPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'تم إرسال رمز التحقق إلى ${_phoneController.text}',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5),
-                fontSize: 12,
               ),
               textAlign: TextAlign.center,
             ),
@@ -268,47 +280,53 @@ class _TwoFactorAuthPageState extends State<TwoFactorAuthPage> {
   }
 
   Future<void> _verifyCode() async {
-    if (_codeController.text.length != 6) {
+    final code = _codeController.text.trim();
+    if (code.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('الرجاء إدخال رمز تحقق صحيح (6 أرقام)')),
+        const SnackBar(content: Text('الرجاء إدخال رمز تحقق صحيح')),
       );
       return;
     }
 
     setState(() => _isLoading = true);
     try {
-      final PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId,
-        smsCode: _codeController.text,
-      );
+      final authService = Provider.of<AuthService>(context, listen: false);
+      
+      // التحقق من الرمز
+      final verified = await authService.verifyOTP(code);
 
-      await _auth.currentUser?.linkWithCredential(credential);
+      if (verified) {
+        // تحديث الرقم في Firestore وتفعيل 2FA
+        await authService.updateVerifiedPhoneNumber('$_selectedCountryCode${_phoneController.text}');
+        
+        setState(() {
+          _twoFactorEnabled = true;
+          _phoneNumber = '$_selectedCountryCode${_phoneController.text}';
+          _isLoading = false;
+        });
 
-      await _db.collection('users').doc(_currentUserId).update({
-        'twoFactorEnabled': true,
-        'phoneNumber': _phoneController.text,
-      });
-
-      setState(() {
-        _twoFactorEnabled = true;
-        _phoneNumber = _phoneController.text;
-        _isLoading = false;
-      });
-
-      if (mounted) {
-        HapticFeedback.heavyImpact();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم تفعيل التحقق بخطوتين بنجاح'),
-            backgroundColor: AppTheme.royalGold,
-          ),
-        );
+        if (mounted) {
+          HapticFeedback.heavyImpact();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('تم تفعيل التحقق بخطوتين بنجاح ✅'),
+              backgroundColor: AppTheme.royalGold,
+            ),
+          );
+        }
+      } else {
+        setState(() => _isLoading = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('رمز التحقق غير صحيح ❌'), backgroundColor: Colors.red),
+          );
+        }
       }
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('فشل التحقق من الرمز: $e')),
+          SnackBar(content: Text('خطأ في التحقق: $e'), backgroundColor: Colors.red),
         );
       }
     }

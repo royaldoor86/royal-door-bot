@@ -102,8 +102,8 @@ class ChallengesService {
 
       if (rewardType == 'stars') {
         transaction.update(userRef, {
-          'stars': FieldValue.increment(reward),
-          'coins': FieldValue.increment(reward), // Keep in sync
+          'coins': FieldValue.increment(reward),
+          'stars': FieldValue.increment(reward), // Keep in sync
         });
       } else if (rewardType == 'xp') {
         transaction.update(userRef, {'royalXP': FieldValue.increment(reward)});

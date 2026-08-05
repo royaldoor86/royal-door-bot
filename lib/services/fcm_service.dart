@@ -1,13 +1,17 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'dart:convert';
+import 'notification_router_service.dart';
 
 class FcmService {
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
-  static final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
 
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'high_importance_channel',
@@ -32,19 +36,29 @@ class FcmService {
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
-    
+
     await _localNotifications.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse details) {
         if (details.payload != null) {
           final data = json.decode(details.payload!);
-          _handleMessageClick(data);
+          
+          // Check if this is an action button click
+          if (details.actionId != null && details.actionId!.isNotEmpty) {
+            NotificationRouterService.handleNotificationTap(
+              data,
+              action: details.actionId,
+            );
+          } else {
+            _handleMessageClick(data);
+          }
         }
       },
     );
 
     await _localNotifications
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_channel);
 
     // 3. Try to register token multiple times if failed
@@ -74,16 +88,26 @@ class FcmService {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _handleMessageClick(message.data);
+      // Use enhanced router for new notification types
+      final type = message.data['type'];
+      if (type != null && 
+          ['message', 'friendRequest', 'like', 'battle', 'story', 'dailyPost']
+              .contains(type)) {
+        NotificationRouterService.handleNotificationTap(message.data);
+      } else {
+        _handleMessageClick(message.data);
+      }
     });
   }
 
   static void _handleMessageClick(Map<String, dynamic> data) {
-    print("Notification clicked with data: $data");
+    debugPrint("Notification clicked with data: $data");
+    // Legacy handling - can be removed once all notifications use enhanced format
   }
 
   static Future<void> _tryRegisterToken() async {
-    for (int i = 0; i < 3; i++) { // محاولة 3 مرات في حال وجود ضعف إنترنت
+    for (int i = 0; i < 3; i++) {
+      // محاولة 3 مرات في حال وجود ضعف إنترنت
       bool success = await registerTokenForCurrentUser();
       if (success) break;
       await Future.delayed(const Duration(seconds: 5));
@@ -101,11 +125,11 @@ class FcmService {
           'fcmToken': token,
           'lastTokenUpdate': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
-        print("👑 FCM SUCCESS: Token registered for ${user.uid}");
+        debugPrint("👑 FCM SUCCESS: Token registered for ${user.uid}");
         return true;
       }
     } catch (e) {
-      print("⚠️ FCM ERROR: Could not get token: $e");
+      debugPrint("⚠️ FCM ERROR: Could not get token: $e");
     }
     return false;
   }
@@ -114,7 +138,10 @@ class FcmService {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     try {
-      await _db.collection('users').doc(user.uid).update({'fcmToken': FieldValue.delete()});
+      await _db
+          .collection('users')
+          .doc(user.uid)
+          .update({'fcmToken': FieldValue.delete()});
       await _messaging.deleteToken();
     } catch (_) {}
   }
@@ -122,5 +149,52 @@ class FcmService {
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Background message: ${message.messageId}");
+  await Firebase.initializeApp();
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const InitializationSettings initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    description: 'This channel is used for important notifications.',
+    importance: Importance.max,
+    playSound: true,
+    enableVibration: true,
+  );
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+  RemoteNotification? notification = message.notification;
+  AndroidNotification? android = message.notification?.android;
+
+  if (notification != null && android != null) {
+    await flutterLocalNotificationsPlugin.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channelDescription: channel.description,
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          playSound: true,
+          enableVibration: true,
+        ),
+      ),
+    );
+  }
 }

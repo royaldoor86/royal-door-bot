@@ -117,6 +117,7 @@ class MessageModel {
   final DateTime? deliveredAt;
   final Map<String, double>? location;
   final Map<String, dynamic>? contactData;
+  final List<String>? deletedFor;
 
   MessageModel({
     required this.id,
@@ -147,6 +148,7 @@ class MessageModel {
     this.deliveredAt,
     this.location,
     this.contactData,
+    this.deletedFor,
   });
 
   factory MessageModel.fromMap(Map<String, dynamic> data, String documentId) {
@@ -186,6 +188,9 @@ class MessageModel {
           ? Map<String, double>.from(data['location'])
           : null,
       contactData: data['contactData'],
+      deletedFor: data['deletedFor'] != null
+          ? List<String>.from(data['deletedFor'])
+          : null,
     );
   }
 
@@ -219,6 +224,7 @@ class MessageModel {
           deliveredAt != null ? Timestamp.fromDate(deliveredAt!) : null,
       'location': location,
       'contactData': contactData,
+      'deletedFor': deletedFor,
     };
   }
 }

@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:provider/provider.dart';
 import '../app_theme.dart';
+import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
 import '../models/user_model.dart';
 import 'auth/login_page.dart';
@@ -339,37 +341,19 @@ class _SecurityLoginPageState extends State<SecurityLoginPage> {
   Future<void> _sendVerificationCode(String phoneNumber) async {
     setState(() => _isLoading = true);
     try {
-      // استخدام Firebase Phone Auth مباشرة
-      await _auth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          // التحقق التلقائي (Android)
-          await _auth.currentUser?.linkWithCredential(credential);
-          _showSuccess("تم ربط الهاتف بنجاح ✅");
-          setState(() => _isLoading = false);
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          setState(() => _isLoading = false);
-          String errorMsg = "فشل إرسال الرمز";
-          if (e.code == 'invalid-phone-number') {
-            errorMsg = "رقم الهاتف غير صحيح";
-          } else if (e.code == 'too-many-requests') {
-            errorMsg = "محاولات كثيرة، حاول لاحقاً";
-          }
-          _showError(errorMsg);
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          setState(() {
-            _verificationId = verificationId;
-            _isLoading = false;
-          });
-          _showOtpDialog(phoneNumber);
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {},
+      final authService = Provider.of<AuthService>(context, listen: false);
+
+      // استخدام النظام الموحد لإرسال الرمز
+      await authService.sendOTP(
+        phoneNumber,
+        allowAnonymous: false, // المستخدم مسجل دخول بالفعل ويريد الربط
       );
-    } catch (e) {
-      _showError("خطأ في إرسال الرمز: $e");
+
       setState(() => _isLoading = false);
+      _showOtpDialog(phoneNumber);
+    } catch (e) {
+      setState(() => _isLoading = false);
+      _showError("فشل إرسال الرمز: $e");
     }
   }
 
@@ -411,21 +395,19 @@ class _SecurityLoginPageState extends State<SecurityLoginPage> {
               Navigator.pop(ctx);
               setState(() => _isLoading = true);
               try {
-                // استخدام Firebase Phone Auth للتحقق من الكود
-                PhoneAuthCredential credential = PhoneAuthProvider.credential(
-                  verificationId: _verificationId!,
-                  smsCode: code,
-                );
-                await _auth.currentUser?.linkWithCredential(credential);
-                _showSuccess("تم ربط الهاتف بنجاح ✅");
-              } on FirebaseAuthException catch (e) {
-                String errorMsg = "رمز غير صحيح";
-                if (e.code == 'invalid-verification-code') {
-                  errorMsg = "رمز التحقق غير صحيح";
-                } else if (e.code == 'code-expired') {
-                  errorMsg = "الكود منتهي، أعد الإرسال";
+                final authService =
+                    Provider.of<AuthService>(context, listen: false);
+
+                // التحقق من الرمز وربط الحساب
+                final verified = await authService.verifyOTP(code);
+
+                if (verified) {
+                  // بعد التحقق الناجح، نقوم بتحديث رقم الهاتف في سجل المستخدم
+                  await authService.updateUserPhoneNumber(phoneNumber);
+                  _showSuccess("تم ربط الهاتف وتفعيل التحقق بنجاح ✅");
+                } else {
+                  _showError("رمز التحقق غير صحيح ❌");
                 }
-                _showError(errorMsg);
               } catch (e) {
                 _showError("خطأ في التحقق: $e");
               } finally {

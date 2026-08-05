@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firestore_service.dart';
 import '../models/user_model.dart';
 import '../services/ad_manager.dart';
+import '../services/vip_privilege_service.dart';
+import '../models/vip_model.dart';
 import 'voice_room_page.dart';
 
 class VipSubscriptionPage extends StatefulWidget {
@@ -27,7 +29,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
       'priceStars': 300000,
       'level': 5,
       'royalId': '555555',
-      'mics': 30,
+      'mics': 15,
       'friends': 200,
       'boost': 1.05,
       'color': const Color(0xFF00ACC1),
@@ -37,7 +39,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
         'إعلان دخول عالمي 📢',
         'توثيق الحساب ✅',
         'تأثير دخول',
-        'غرفه ملكيه 30 مايك',
+        'غرفه ملكيه 15 مايك',
         'سعة الأصدقاء 200',
         'زيادة المتابعة',
         'موضوعات مميزة',
@@ -54,7 +56,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
       'priceStars': 400000,
       'level': 8,
       'royalId': '444444',
-      'mics': 40,
+      'mics': 20,
       'friends': 400,
       'boost': 1.08,
       'color': const Color(0xFF2E7D32),
@@ -64,7 +66,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
         'إعلان دخول عالمي 📢',
         'توثيق الحساب ✅',
         'درع الطرد 🛡️',
-        'غرفه ملكيه 40 مايك',
+        'غرفه ملكيه 20 مايك',
         'سعة الأصدقاء 400',
         'زيادة المتابعة',
         'موضوعات مميزة',
@@ -81,7 +83,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
       'priceStars': 500000,
       'level': 10,
       'royalId': '333333',
-      'mics': 50,
+      'mics': 25,
       'friends': 700,
       'boost': 1.10,
       'color': const Color(0xFFE0E0E0),
@@ -91,7 +93,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
         'إعلان دخول عالمي 📢',
         'توثيق الحساب ✅',
         'تأثير دخول فاخر',
-        'غرفه ملكيه 50 مايك',
+        'غرفه ملكيه 25 مايك',
         'سعة الأصدقاء 700',
         'زيادة المتابعة',
         'موضوعات مميزة',
@@ -108,7 +110,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
       'priceStars': 750000,
       'level': 15,
       'royalId': '222222',
-      'mics': 75,
+      'mics': 30,
       'friends': 800,
       'boost': 1.15,
       'color': const Color(0xFFD81B60),
@@ -120,7 +122,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
         'درع الحصانة 🛡️',
         'أولوية المايك 🎤',
         'توثيق ذهبي',
-        'غرفه ملكيه 75 مايك',
+        'غرفه ملكيه 30 مايك',
         'سعة الأصدقاء 800',
         'زيادة المتابعة',
         'موضوعات مميزة',
@@ -137,7 +139,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
       'priceStars': 1000000,
       'level': 20,
       'royalId': '111111',
-      'mics': 100,
+      'mics': 40,
       'friends': 1000,
       'boost': 1.25,
       'color': const Color(0xFFFFD700),
@@ -148,7 +150,7 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
         'توثيق الحساب (العلامة الزرقاء) ✅',
         'المستوى الملكي: 20 🏆',
         'آيدي (ID) ملكي مميز: 111111 🔥',
-        'غرفة ملكية خاصة مكونة من 100 مايك',
+        'غرفة ملكية خاصة مكونة من 40 مايك',
         'سعة الأصدقاء 1000',
         'شارة ذهبية ملكية',
         'أولوية الدعم الفني',
@@ -180,145 +182,166 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
     super.dispose();
   }
 
-  Future<void> _purchaseVip(
-      Map<String, dynamic> package, UserModel userData) async {
+  Future<void> _purchaseVip(Map<String, dynamic> package, UserModel userData,
+      bool isSubscribed) async {
     // نستخدم num للتعامل مع أي نوع رقمي قادم من Firestore ثم نحوله لـ int
     int pGems = (package['priceGems'] as num).toInt();
     int pStars = (package['priceStars'] as num).toInt();
     int userGems = (userData.gems as num).toInt();
-    int userStars = (userData.stars as num).toInt();
+    int userCoins = (userData.coins as num).toInt();
 
-    // طباعة للتحقق في الـ Debug Console
-    print(
-        "Purchase Attempt: Need Gems:$pGems, Stars:$pStars | User has Gems:$userGems, Stars:$userStars");
-
-    if (userGems < pGems || userStars < pStars) {
+    if (userGems < pGems || userCoins < pStars) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-            'رصيد غير كافٍ. تحتاج $pGems جوهرة و $pStars نجمة ⭐. رصيدك الحالي: $userGems جوهرة و $userStars نجمة ⭐.'),
+            'رصيد غير كافٍ. تحتاج $pGems جوهرة و $pStars كوينز. رصيدك الحالي: $userGems جوهرة و $userCoins كوينز.'),
         backgroundColor: Colors.redAccent,
         duration: const Duration(seconds: 4),
       ));
       return;
     }
 
-    bool? confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A2E),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: package['color'].withValues(alpha: 0.5))),
-        title: Text('مرسوم السيادة: باقة ${package['name']}',
-            style: TextStyle(
-                color: package['color'], fontWeight: FontWeight.bold)),
-        content: Text(
-            'هل تريد تفعيل باقة (${package['name']}) بخصم $pGems جوهرة و $pStars نجمة ⭐؟ سيتم إنشاء غرفتك الملكية فوراً.',
-            style: const TextStyle(color: Colors.white70)),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child:
-                  const Text('إلغاء', style: TextStyle(color: Colors.white24))),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(backgroundColor: package['color']),
-            child: const Text('تأكيد التفعيل',
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
+    try {
+      await _db.runTransaction((tx) async {
+        final userRef = _db.collection('users').doc(userData.uid);
+        // التحقق مرة أخرى داخل المعاملة لضمان الأمان
+        final userSnap = await tx.get(userRef);
+        int currentGems = (userSnap.data()?['gems'] as num?)?.toInt() ?? 0;
+        int currentStars = ((userSnap.data()?['stars'] ??
+                userSnap.data()?['coins'] ??
+                0) as num)
+            .toInt();
 
-    if (confirm == true) {
-      try {
-        await _db.runTransaction((tx) async {
-          final userRef = _db.collection('users').doc(userData.uid);
-          // التحقق مرة أخرى داخل المعاملة لضمان الأمان
-          final userSnap = await tx.get(userRef);
-          int currentGems = (userSnap.data()?['gems'] as num?)?.toInt() ?? 0;
-          int currentStars = ((userSnap.data()?['stars'] ??
-                  userSnap.data()?['coins'] ??
-                  0) as num)
-              .toInt();
+        if (currentGems < pGems || currentStars < pStars) {
+          throw Exception("الرصيد غير كافٍ فعلياً في قاعدة البيانات");
+        }
 
-          if (currentGems < pGems || currentStars < pStars) {
-            throw Exception("الرصيد غير كافٍ فعلياً في قاعدة البيانات");
-          }
+        // تحديد مدة الاشتراك (3 أشهر)
+        final expiryDate = DateTime.now().add(const Duration(days: 90));
 
-          // تحديد مدة الاشتراك (30 يوماً افتراضياً)
-          final expiryDate = DateTime.now().add(const Duration(days: 30));
+        // تحديد مستوى VIP بناءً على الباقة
+        VIPLevel vipLevel = VIPLevel.none;
+        switch (package['name']) {
+          case 'الفيروز':
+            vipLevel = VIPLevel.bronze;
+            break;
+          case 'الزمرد':
+            vipLevel = VIPLevel.silver;
+            break;
+          case 'اللؤلؤ':
+            vipLevel = VIPLevel.gold;
+            break;
+          case 'الياقوت':
+            vipLevel = VIPLevel.gold;
+            break;
+          case 'Royal Door':
+            vipLevel = VIPLevel.platinum;
+            break;
+        }
 
-          tx.update(userRef, {
-            'gems': currentGems - pGems,
-            'stars': currentStars - pStars,
-            'coins':
-                currentStars - pStars, // Keep coins in sync during transition
-            'vipRank': package['name'],
-            'royalId': package['royalId'],
-            'accountLevel': package['level'],
-            'isVerified': true,
-            'maxFriends': package['friends'],
-            'maxMics': package['mics'],
-            'harvestBoost': package['boost'],
-            'hasAntiKick': package['name'] == 'Royal Door' ||
-                package['name'] == 'الياقوت' ||
-                package['name'] == 'الزمرد',
-            'canBypassLocks': package['name'] == 'Royal Door',
-            'hasGlobalArrival': true,
-            'canSeeInvisible':
-                package['name'] == 'Royal Door' || package['name'] == 'الزمرد',
-            'hasGlowingName':
-                package['name'] == 'Royal Door' || package['name'] == 'الزمرد',
-            'vipExpiryDate': Timestamp.fromDate(expiryDate),
-            'vipActivatedAt': FieldValue.serverTimestamp(),
-          });
-
-          // تسجيل في سجل عمليات VIP
-          final vipLogRef = userRef.collection('vip_logs').doc();
-          tx.set(vipLogRef, {
-            'packageName': package['name'],
-            'priceGems': pGems,
-            'priceStars': pStars,
-            'level': package['level'],
+        tx.update(userRef, {
+          'gems': currentGems - pGems,
+          'stars': currentStars - pStars,
+          'coins':
+              currentStars - pStars, // Keep coins in sync during transition
+          'vipRank': package['name'],
+          'royalId': package['royalId'],
+          'accountLevel': package['level'],
+          'isVerified': true,
+          'maxFriends': package['friends'],
+          'maxMics': package['mics'],
+          'harvestBoost': package['boost'],
+          'hasAntiKick': package['name'] == 'Royal Door' ||
+              package['name'] == 'الياقوت' ||
+              package['name'] == 'الزمرد',
+          'canBypassLocks': package['name'] == 'Royal Door',
+          'hasGlobalArrival': true,
+          'canSeeInvisible':
+              package['name'] == 'Royal Door' || package['name'] == 'الزمرد',
+          'hasGlowingName':
+              package['name'] == 'Royal Door' || package['name'] == 'الزمرد',
+          'vipExpiryDate': Timestamp.fromDate(expiryDate),
+          'vipActivatedAt': FieldValue.serverTimestamp(),
+          // تحديث vip_status للربط مع VIPPrivilegeService
+          'vip_status': {
+            'level': vipLevel.name,
             'activatedAt': FieldValue.serverTimestamp(),
             'expiresAt': Timestamp.fromDate(expiryDate),
-            'royalId': package['royalId'],
-          });
+            'totalSpent': FieldValue.increment(pGems + pStars),
+          },
         });
 
-        final String roomName = "غرفة الملك ${userData.name}";
-        final String roomId = await _firestoreService.createRoom(
-          ownerId: userData.uid,
-          roomName: roomName,
-          maxSeats: package['mics'],
-        );
+        // تسجيل في سجل عمليات VIP
+        final vipLogRef = userRef.collection('vip_logs').doc();
+        tx.set(vipLogRef, {
+          'packageName': package['name'],
+          'priceGems': pGems,
+          'priceStars': pStars,
+          'level': package['level'],
+          'activatedAt': FieldValue.serverTimestamp(),
+          'expiresAt': Timestamp.fromDate(expiryDate),
+          'royalId': package['royalId'],
+        });
+      });
 
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                  'تم تفعيل باقة ${package['name']} وإنشاء غرفتك الملكية بنجاح! 👑'),
-              backgroundColor: Colors.green));
+      String roomName;
+      switch (package['name']) {
+        case 'الفيروز':
+          roomName = 'VIP1';
+          break;
+        case 'الزمرد':
+          roomName = 'VIP2';
+          break;
+        case 'اللؤلؤ':
+          roomName = 'VIP3';
+          break;
+        case 'الياقوت':
+          roomName = 'VIP4';
+          break;
+        case 'Royal Door':
+          roomName = 'الملكية العالمية';
+          break;
+        default:
+          roomName = "غرفة الملك ${userData.name}";
+      }
 
-          // إظهار إعلان ملء الشاشة بعد تفعيل باقة VIP
-          AdManager().showInterstitialAd();
+      final String roomId = await _firestoreService.createRoom(
+        ownerId: userData.uid,
+        roomName: roomName,
+        maxSeats: package['mics'],
+      );
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => VoiceRoomPage(
-                roomId: roomId,
-                roomName: roomName,
-              ),
+      // حفظ معرف الغرفة في بيانات المستخدم لحذفها عند انتهاء الاشتراك
+      await _db.collection('users').doc(userData.uid).update({
+        'vipRoomId': roomId,
+      });
+
+      // تطبيق الامتيازات تلقائياً بعد الشراء
+      await VIPPrivilegeService.applyVIPPrivileges(userData.uid);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(isSubscribed
+                ? 'تم تجديد باقة ${package['name']} بنجاح! 👑'
+                : 'تم تفعيل باقة ${package['name']} وإنشاء غرفتك الملكية بنجاح! 👑'),
+            backgroundColor: Colors.green));
+
+        // إظهار إعلان ملء الشاشة بعد تفعيل باقة VIP
+        AdManager().showInterstitialAd();
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VoiceRoomPage(
+              roomId: roomId,
+              roomName: roomName,
             ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('فشل التفعيل: ${e.toString()}')));
-        }
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('فشل التفعيل: ${e.toString()}')));
       }
     }
   }
@@ -353,10 +376,13 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
                     appBar: AppBar(
                       backgroundColor: Colors.transparent,
                       elevation: 0,
-                      title: const Text('اشتراكات السيادة الملكية VIP',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
+                      title: const FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text('اشتراكات السيادة الملكية VIP',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                      ),
                       centerTitle: true,
                       bottom: TabBar(
                         controller: _tabController,
@@ -470,8 +496,13 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
 
   Widget _buildActionBtn(UserModel user, Color currentColor) {
     final p = _vipPackages[_tabController.index];
-    int pGems = (p['priceGems'] as num).toInt();
-    int pStars = (p['priceStars'] as num).toInt();
+
+    // التحقق من حالة الاشتراك الحالي
+    final bool isSubscribed = user.vipRank == p['name'] &&
+        user.vipExpiryDate != null &&
+        DateTime.now().isBefore(user.vipExpiryDate!);
+
+    final String buttonText = isSubscribed ? 'تجديد' : 'تفعيل';
 
     return Container(
       decoration: BoxDecoration(
@@ -481,72 +512,119 @@ class _VipSubscriptionPageState extends State<VipSubscriptionPage>
           border: Border(
               top: BorderSide(color: currentColor.withValues(alpha: 0.2)))),
       child: SafeArea(
+        left: false,
+        right: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(25, 20, 25, 15),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _balItem(user.gems.toString(), 'جواهر', Icons.diamond,
-                      Colors.blue),
-                  _balItem(user.stars.toString(), 'نجمة ⭐', Icons.stars_rounded,
-                      Colors.amber),
-                ],
-              ),
-              const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () => _purchaseVip(p, user),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: currentColor,
-                    minimumSize: const Size(double.infinity, 60),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25)),
-                    elevation: 10,
-                    shadowColor: currentColor.withValues(alpha: 0.5)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('تفعيل باقة ${p['name']}',
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
-                    Text('بخصم $pGems جوهرة و $pStars نجمة ⭐',
-                        style: const TextStyle(
-                            color: Colors.black87,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ),
-            ],
+          child: ElevatedButton(
+            onPressed: () =>
+                _showPurchaseDialog(p, user, currentColor, isSubscribed),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: currentColor,
+                minimumSize: const Size(double.infinity, 60),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25)),
+                elevation: 10,
+                shadowColor: currentColor.withValues(alpha: 0.5)),
+            child: Text(buttonText,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
           ),
         ),
       ),
     );
   }
 
+  Future<void> _showPurchaseDialog(Map<String, dynamic> package,
+      UserModel userData, Color currentColor, bool isSubscribed) async {
+    int pGems = (package['priceGems'] as num).toInt();
+    int pStars = (package['priceStars'] as num).toInt();
+    int userGems = (userData.gems as num).toInt();
+    int userCoins = (userData.coins as num).toInt();
+
+    final String dialogTitle = isSubscribed
+        ? 'تجديد باقة ${package['name']}'
+        : 'مرسوم السيادة: باقة ${package['name']}';
+
+    final String dialogMessage = isSubscribed
+        ? 'سعر التجديد: $pGems جوهرة و $pStars كوينز\nمدة الاشتراك: 3 أشهر'
+        : 'سعر الباقة: $pGems جوهرة و $pStars كوينز\nمدة الاشتراك: 3 أشهر';
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: currentColor.withValues(alpha: 0.5))),
+        title: Text(dialogTitle,
+            style: TextStyle(color: currentColor, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _balItem(
+                      userGems.toString(), 'جواهر', Icons.diamond, Colors.blue),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _balItem(userCoins.toString(), 'كوينز',
+                      Icons.stars_rounded, Colors.amber),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Text(dialogMessage, style: const TextStyle(color: Colors.white70)),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child:
+                  const Text('إلغاء', style: TextStyle(color: Colors.white24))),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _purchaseVip(package, userData, isSubscribed);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: currentColor),
+            child: Text(isSubscribed ? 'تجديد' : 'تأكيد',
+                style: const TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _balItem(String val, String label, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(15)),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 18),
-          const SizedBox(width: 8),
-          Text(val,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15)),
-          const SizedBox(width: 5),
-          Text(label,
-              style: const TextStyle(color: Colors.white38, fontSize: 11)),
-        ],
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 16),
+            const SizedBox(width: 4),
+            Text(val,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14)),
+            const SizedBox(width: 4),
+            Text(label,
+                style: const TextStyle(color: Colors.white38, fontSize: 10)),
+          ],
+        ),
       ),
     );
   }

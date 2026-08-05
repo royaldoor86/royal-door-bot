@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:ui' as ui;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -1362,7 +1363,7 @@ class _RewardsPageState extends State<RewardsPage>
   Widget _buildWalletSection(UserModel userData) {
     // حساب النجوم بناءً على سعر الجواهر (1 جوهرة = 2.6 نجمة)
     const gemsToStarsRate = 2.6;
-    final calculatedStars = (userData.harvestWallet * gemsToStarsRate).toInt();
+    final calculatedStars = (userData.rewardGems * gemsToStarsRate).toInt();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1379,8 +1380,8 @@ class _RewardsPageState extends State<RewardsPage>
           const SizedBox(width: 15),
           Expanded(
             child: _glassWalletCard(
-              "الجواهر المتوفرة",
-              _formatNumber(userData.harvestWallet),
+              "الجواهر الملكية",
+              _formatNumber(userData.rewardGems),
               Icons.diamond,
               Colors.cyanAccent,
             ),
@@ -2051,7 +2052,7 @@ class _RewardsPageState extends State<RewardsPage>
     final total = (plan['total'] as num).toDouble();
     final daily = (total / 30).toDouble();
     final netProfit = total - cost;
-    final canAfford = userData.harvestWallet >= cost;
+    final canAfford = userData.rewardGems >= cost;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -2487,6 +2488,17 @@ class _RewardsPageState extends State<RewardsPage>
     );
   }
 
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      debugPrint("Error launching URL: $e");
+    }
+  }
+
   void _showInstructionsDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -2533,6 +2545,31 @@ class _RewardsPageState extends State<RewardsPage>
               "تأكد من العودة يومياً لتفعيل المكافآت الملكية يدوياً لضمان عدم ضياع النمو اليومي.",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white38, fontSize: 12),
+            ),
+            const SizedBox(height: 30),
+            const Divider(color: Colors.white10),
+            const SizedBox(height: 15),
+            const Text(
+              "هل تحتاج إلى مساعدة إضافية؟",
+              style: TextStyle(color: Colors.white60, fontSize: 13),
+            ),
+            const SizedBox(height: 15),
+            ElevatedButton.icon(
+              onPressed: () => _launchURL("https://t.me/royaldoor_bot"),
+              icon: const Icon(Icons.smart_toy_rounded, color: Colors.black),
+              label: const Text(
+                "تواصل مع بوت الدعم الفني",
+                style:
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.cyanAccent,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
             ),
           ],
         ),
@@ -2708,13 +2745,15 @@ class _RewardsPageState extends State<RewardsPage>
 
     double currentBalance = 0;
     if (currency == 'gems') {
-      currentBalance = (userData['harvestWallet'] ??
+      currentBalance = (userData['rewardGems'] ??
+              userData['harvestWallet'] ??
               userData['rewards_wallet_gems'] ??
               userData['harvest_wallet'] ??
               0)
           .toDouble();
     } else if (currency == 'stars') {
-      currentBalance = (userData['starsHarvestWallet'] ??
+      currentBalance = (userData['rewardStars'] ??
+              userData['starsHarvestWallet'] ??
               userData['rewards_wallet_stars'] ??
               userData['harvest_stars_wallet'] ??
               0)
@@ -2830,9 +2869,13 @@ class _RewardsPageState extends State<RewardsPage>
 
                 final userData =
                     userSnapshot.data!.data() as Map<String, dynamic>?;
-                final totalGems = (userData?['harvestWallet'] ?? 0).toDouble();
-                final totalStars =
-                    (userData?['starsHarvestWallet'] ?? 0).toDouble();
+                final totalGems =
+                    (userData?['rewardGems'] ?? userData?['harvestWallet'] ?? 0)
+                        .toDouble();
+                final totalStars = (userData?['rewardStars'] ??
+                        userData?['starsHarvestWallet'] ??
+                        0)
+                    .toDouble();
 
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 500),

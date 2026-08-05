@@ -25,7 +25,7 @@ class SocialProgressBar extends StatelessWidget {
         }
 
         final currentLevel = points.level;
-        final currentCoins = points.totalStars;
+        final currentCoins = points.totalCoins;
 
         // حساب التقدم بناءً على 50 كوينز 🪙 لكل مستوى
         const int pointsPerLevel = 50;

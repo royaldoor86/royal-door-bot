@@ -28,6 +28,101 @@ class LevelReward {
   LevelReward({required this.stars, required this.gems, required this.level});
 }
 
+class FamilyLevelConfig {
+  final int memberCount;
+  final int points;
+  final int gems;
+  final String levelName;
+
+  FamilyLevelConfig({
+    required this.memberCount,
+    required this.points,
+    required this.gems,
+    required this.levelName,
+  });
+
+  static List<FamilyLevelConfig> get levels => [
+        FamilyLevelConfig(
+          memberCount: 20,
+          points: 1,
+          gems: 2,
+          levelName: 'مبتدئ',
+        ),
+        FamilyLevelConfig(
+          memberCount: 50,
+          points: 10,
+          gems: 5,
+          levelName: 'متوسط',
+        ),
+        FamilyLevelConfig(
+          memberCount: 75,
+          points: 15,
+          gems: 15,
+          levelName: 'متقدم',
+        ),
+        FamilyLevelConfig(
+          memberCount: 100,
+          points: 20,
+          gems: 20,
+          levelName: 'خبير',
+        ),
+        FamilyLevelConfig(
+          memberCount: 150,
+          points: 25,
+          gems: 25,
+          levelName: 'محترف',
+        ),
+        FamilyLevelConfig(
+          memberCount: 200,
+          points: 30,
+          gems: 30,
+          levelName: 'ماهر',
+        ),
+        FamilyLevelConfig(
+          memberCount: 250,
+          points: 35,
+          gems: 35,
+          levelName: 'بارع',
+        ),
+        FamilyLevelConfig(
+          memberCount: 300,
+          points: 40,
+          gems: 40,
+          levelName: 'متميز',
+        ),
+        FamilyLevelConfig(
+          memberCount: 350,
+          points: 45,
+          gems: 45,
+          levelName: 'فخم',
+        ),
+        FamilyLevelConfig(
+          memberCount: 400,
+          points: 50,
+          gems: 50,
+          levelName: 'ملكي',
+        ),
+      ];
+
+  static FamilyLevelConfig? getLevelByMemberCount(int memberCount) {
+    for (int i = levels.length - 1; i >= 0; i--) {
+      if (memberCount >= levels[i].memberCount) {
+        return levels[i];
+      }
+    }
+    return null;
+  }
+
+  static FamilyLevelConfig? getLevelByPoints(int points) {
+    for (int i = levels.length - 1; i >= 0; i--) {
+      if (points >= levels[i].points) {
+        return levels[i];
+      }
+    }
+    return null;
+  }
+}
+
 class FamilyService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -231,11 +326,20 @@ class FamilyService {
         throw 'رصيدك غير كافٍ (${currency == 'gems' ? 'جواهر' : 'كوينز'})';
       }
 
+      // قراءة بيانات العضو قبل عمليات الكتابة
+      DocumentSnapshot? memberSnap;
+      if (userId != null) {
+        final memberRef = _db
+            .collection('families')
+            .doc(familyId)
+            .collection('members')
+            .doc(userId);
+        memberSnap = await tx.get(memberRef);
+      }
+
       // خصم من رصيد المستخدم
       tx.update(userRef, {
         currencyField: FieldValue.increment(-amount),
-        if (currency == 'coins')
-          'stars': FieldValue.increment(-amount), // Keep sync
       });
 
       String field = (warSnap.data()?['challengerId'] == familyId)
@@ -253,27 +357,22 @@ class FamilyService {
         tx.update(warRef, {'contributionPoints': currentContributions});
 
         // تحديث نقاط المساهمة في العائلة وتحديث الرتبة تلقائياً
-        final memberRef = _db
-            .collection('families')
-            .doc(familyId)
-            .collection('members')
-            .doc(userId);
-        final memberSnap = await tx.get(memberRef);
-        if (memberSnap.exists) {
-          final currentPoints = memberSnap.data()?['contributionPoints'] ?? 0;
+        if (memberSnap != null && memberSnap.exists) {
+          final memberData = memberSnap.data() as Map<String, dynamic>?;
+          final currentPoints = memberData?['contributionPoints'] ?? 0;
           final newPoints = currentPoints + warPoints;
 
-          tx.update(memberRef, {
+          tx.update(memberSnap.reference, {
             'contributionPoints': newPoints,
             'lastContributionAt': FieldValue.serverTimestamp(),
           });
 
           // تحديث الرتبة تلقائياً
           final newRank = MemberRankModel.getRankForPoints(newPoints);
-          final currentRankId = memberSnap.data()?['rankId'] ?? 'bronze';
+          final currentRankId = memberData?['rankId'] ?? 'bronze';
 
           if (newRank.id != currentRankId) {
-            tx.update(memberRef, {
+            tx.update(memberSnap.reference, {
               'rankId': newRank.id,
               'rankName': newRank.nameAr,
               'rankLevel': newRank.level,
@@ -314,7 +413,6 @@ class FamilyService {
           'warExp': FieldValue.increment(100),
           'warPoints': FieldValue.increment(100),
           'familyGems': FieldValue.increment(rewards['winnerGems'] ?? 500),
-          'familyStars': FieldValue.increment(rewards['winnerStars'] ?? 2500),
           'familyCoins': FieldValue.increment(rewards['winnerStars'] ?? 2500),
           'currentWarId': null,
         });
@@ -323,7 +421,6 @@ class FamilyService {
         tx.update(_db.collection('families').doc(loserId), {
           'warLosses': FieldValue.increment(1),
           'familyGems': FieldValue.increment(rewards['loserGems'] ?? 100),
-          'familyStars': FieldValue.increment(rewards['loserStars'] ?? 500),
           'familyCoins': FieldValue.increment(rewards['loserStars'] ?? 500),
           'currentWarId': null,
         });
@@ -347,13 +444,11 @@ class FamilyService {
         // تعادل
         tx.update(_db.collection('families').doc(cId), {
           'familyGems': FieldValue.increment(200),
-          'familyStars': FieldValue.increment(1000),
           'familyCoins': FieldValue.increment(1000),
           'currentWarId': null,
         });
         tx.update(_db.collection('families').doc(tId), {
           'familyGems': FieldValue.increment(200),
-          'familyStars': FieldValue.increment(1000),
           'familyCoins': FieldValue.increment(1000),
           'currentWarId': null,
         });
@@ -486,7 +581,6 @@ class FamilyService {
         'isVerified': false,
         'createdAt': FieldValue.serverTimestamp(),
         'familyGems': 0,
-        'familyStars': 0,
         'familyCoins': 0,
         'perks': {},
         'isPrivate': false,
@@ -533,7 +627,11 @@ class FamilyService {
       // إذا كان المؤسس، يعطيه دور القائد، وإلا دور العضو
       final role = isCreator ? 'leader' : 'member';
 
-      tx.update(familyRef, {'memberCount': FieldValue.increment(1)});
+      tx.update(familyRef, {
+        'memberCount': FieldValue.increment(1),
+        'familyGems': FieldValue.increment(2),
+        'familyCoins': FieldValue.increment(2),
+      });
       tx.update(userRef, {'familyId': familyId, 'familyRole': role});
       tx.set(familyRef.collection('members').doc(user.uid), {
         'uid': user.uid,
@@ -543,6 +641,9 @@ class FamilyService {
         'lastClaimedLevel': familySnap.data()?['level'] ?? 1,
       });
     });
+
+    // التحقق من الترقية التلقائية بعد انضمام عضو جديد
+    await checkFamilyLevelOnMemberJoin(familyId);
   }
 
   Future<void> leaveFamily(String familyId) async {
@@ -600,11 +701,15 @@ class FamilyService {
 
     await _db.runTransaction((tx) async {
       final userSnap = await tx.get(userRef);
-      int userBalance = (userSnap.data()?[currency] ?? 0);
+      // استخدام coins بدلاً من stars للكوينز
+      final currencyField = currency == 'gems' ? 'gems' : 'coins';
+      final rawBalance = userSnap.data()?[currencyField] ?? 0;
+      int userBalance =
+          rawBalance is int ? rawBalance : (rawBalance as num).toInt();
       if (userBalance < amount) throw 'رصيدك غير كافٍ';
 
       tx.update(userRef, {
-        currency: FieldValue.increment(-amount),
+        currencyField: FieldValue.increment(-amount),
       });
       tx.update(familyRef, {
         currency == 'gems' ? 'familyGems' : 'familyCoins':
@@ -624,9 +729,11 @@ class FamilyService {
       final familySnap = await tx.get(familyRef);
       if (!familySnap.exists) throw 'العائلة غير موجودة';
 
-      int currentBalance = (familySnap
+      final rawBalance = familySnap
               .data()?[currency == 'gems' ? 'familyGems' : 'familyCoins'] ??
-          0);
+          0;
+      int currentBalance =
+          rawBalance is int ? rawBalance : (rawBalance as num).toInt();
       if (currentBalance < cost) throw 'رصيد الخزينة غير كافٍ';
 
       Map<String, dynamic> perks =
@@ -636,9 +743,8 @@ class FamilyService {
       perks[perkId] = true;
 
       tx.update(familyRef, {
-        currency == 'gems' ? 'familyGems' : 'familyStars':
+        currency == 'gems' ? 'familyGems' : 'familyCoins':
             FieldValue.increment(-cost),
-        if (currency != 'gems') 'familyCoins': FieldValue.increment(-cost),
         'perks': perks,
       });
     });
@@ -709,7 +815,6 @@ class FamilyService {
 
       Map<String, dynamic> updates = {
         'familyGems': FieldValue.increment(gems),
-        'familyStars': FieldValue.increment(stars),
         'familyCoins': FieldValue.increment(stars),
         'totalExp': newTotalExp,
         'totalPoints': newTotalExp,
@@ -754,8 +859,11 @@ class FamilyService {
     int currentLevel = (familySnap.data()?['level'] ?? 1);
 
     await _db.runTransaction((tx) async {
-      tx.update(_db.collection('families').doc(familyId),
-          {'memberCount': FieldValue.increment(1)});
+      tx.update(_db.collection('families').doc(familyId), {
+        'memberCount': FieldValue.increment(1),
+        'familyGems': FieldValue.increment(2),
+        'familyCoins': FieldValue.increment(2),
+      });
       tx.update(_db.collection('users').doc(targetUserId),
           {'familyId': familyId, 'familyRole': 'member'});
       tx.set(
@@ -777,6 +885,9 @@ class FamilyService {
           .collection('requests')
           .doc(targetUserId));
     });
+
+    // التحقق من الترقية التلقائية بعد قبول طلب الانضمام
+    await checkFamilyLevelOnMemberJoin(familyId);
   }
 
   Future<void> rejectJoinRequest(String familyId, String targetUserId) async {
@@ -1038,7 +1149,6 @@ class FamilyService {
         if (currency == 'stars') 'coins': FieldValue.increment(-cost),
       });
       tx.update(familyRef, {
-        'familyStars': FieldValue.increment(cost * 2),
         'familyCoins': FieldValue.increment(cost * 2),
         'totalExp': FieldValue.increment(cost),
         'totalPoints': FieldValue.increment(cost), // Legacy sync
@@ -1530,7 +1640,7 @@ class FamilyService {
       }
 
       // خصم من العائلة
-      final familyCurrency = currency == 'gems' ? 'familyGems' : 'familyStars';
+      final familyCurrency = currency == 'gems' ? 'familyGems' : 'familyCoins';
       final currentBalance = familySnap.data()?[familyCurrency] ?? 0;
 
       if (currentBalance < amount) throw 'رصيد العائلة غير كافٍ';
@@ -1933,6 +2043,166 @@ class FamilyService {
     });
   }
 
+  Future<void> deleteFamilyInvitation(String invitationId) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    final inviteSnap =
+        await _db.collection('family_invitations').doc(invitationId).get();
+    if (!inviteSnap.exists) throw 'الدعوة غير موجودة';
+
+    final inviterId = inviteSnap.data()?['inviterId'];
+    if (inviterId != user.uid) throw 'لا يمكنك حذف دعوة الآخرين';
+
+    await _db.collection('family_invitations').doc(invitationId).delete();
+  }
+
+  Future<void> deactivateFamilyInvitation(String invitationId) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    final inviteSnap =
+        await _db.collection('family_invitations').doc(invitationId).get();
+    if (!inviteSnap.exists) throw 'الدعوة غير موجودة';
+
+    final inviterId = inviteSnap.data()?['inviterId'];
+    if (inviterId != user.uid) throw 'لا يمكنك تعطيل دعوة الآخرين';
+
+    await _db.collection('family_invitations').doc(invitationId).update({
+      'isActive': false,
+      'deactivatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> cleanupExpiredInvitations() async {
+    // حذف الدعوات المنتهية تلقائياً بعد 30 يوم
+    final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
+
+    final expiredInvitations = await _db
+        .collection('family_invitations')
+        .where('isActive', isEqualTo: false)
+        .where('deactivatedAt', isLessThan: Timestamp.fromDate(thirtyDaysAgo))
+        .get();
+
+    for (final doc in expiredInvitations.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  // --- نظام الترقية التلقائي بناءً على عدد الأعضاء ---
+
+  Future<FamilyLevelConfig?> checkAndUpgradeFamilyLevel(String familyId) async {
+    final familySnap = await _db.collection('families').doc(familyId).get();
+    if (!familySnap.exists) return null;
+
+    final familyData = familySnap.data() as Map<String, dynamic>;
+    final memberCount = familyData['memberCount'] ?? 0;
+    final currentLevel = familyData['level'] ?? 1;
+
+    // التحقق من المستوى الجديد بناءً على عدد الأعضاء
+    final newLevelConfig = FamilyLevelConfig.getLevelByMemberCount(memberCount);
+    if (newLevelConfig == null) return null;
+
+    // التحقق من وجود ترقية جديدة
+    if (newLevelConfig.points <= currentLevel) return null;
+
+    // تحديث مستوى العائلة
+    await _db.collection('families').doc(familyId).update({
+      'level': newLevelConfig.points,
+      'levelName': newLevelConfig.levelName,
+      'levelUpAt': FieldValue.serverTimestamp(),
+    });
+
+    // إضافة مكافآت الترقية لخزينة العائلة
+    await _db.collection('families').doc(familyId).update({
+      'familyGems': FieldValue.increment(newLevelConfig.gems),
+    });
+
+    // تسجيل الترقية في السجل
+    await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('level_history')
+        .add({
+      'level': newLevelConfig.points,
+      'levelName': newLevelConfig.levelName,
+      'memberCount': memberCount,
+      'gemsReward': newLevelConfig.gems,
+      'pointsReward': newLevelConfig.points,
+      'upgradedAt': FieldValue.serverTimestamp(),
+    });
+
+    // إرسال إشعار لمالك العائلة
+    await _sendLevelUpNotification(familyId, newLevelConfig, memberCount);
+
+    return newLevelConfig;
+  }
+
+  Future<void> _sendLevelUpNotification(
+      String familyId, FamilyLevelConfig levelConfig, int memberCount) async {
+    final familySnap = await _db.collection('families').doc(familyId).get();
+    if (!familySnap.exists) return;
+
+    final familyData = familySnap.data() as Map<String, dynamic>;
+    final familyName = familyData['name'] ?? 'عائلة';
+    final leaderId = familyData['leaderId'];
+
+    // إرسال إشعار للقائد
+    await _db
+        .collection('users')
+        .doc(leaderId)
+        .collection('notifications')
+        .add({
+      'title': '🎉 ترقية العائلة!',
+      'body':
+          'تهانينا! عائلتك "$familyName" وصلت لمستوى ${levelConfig.levelName} 🏆\n'
+              'عدد الأعضاء: $memberCount\n'
+              'المكافأة: ${levelConfig.gems} جوهرة 💎',
+      'type': 'family_level_up',
+      'familyId': familyId,
+      'level': levelConfig.points,
+      'levelName': levelConfig.levelName,
+      'gemsReward': levelConfig.gems,
+      'createdAt': FieldValue.serverTimestamp(),
+      'read': false,
+    });
+
+    // إرسال إشعار لجميع الأعضاء
+    final membersSnap = await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('members')
+        .get();
+
+    for (final memberDoc in membersSnap.docs) {
+      final memberId = memberDoc.id;
+      if (memberId == leaderId) continue; // تم إرسال إشعار للقائد بالفعل
+
+      await _db
+          .collection('users')
+          .doc(memberId)
+          .collection('notifications')
+          .add({
+        'title': '🎉 ترقية العائلة!',
+        'body':
+            'تهانينا! عائلتك "$familyName" وصلت لمستوى ${levelConfig.levelName} 🏆\n'
+                'عدد الأعضاء: $memberCount\n'
+                'المكافأة: ${levelConfig.gems} جوهرة 💎',
+        'type': 'family_level_up',
+        'familyId': familyId,
+        'level': levelConfig.points,
+        'levelName': levelConfig.levelName,
+        'gemsReward': levelConfig.gems,
+        'createdAt': FieldValue.serverTimestamp(),
+        'read': false,
+      });
+    }
+  }
+
+  Future<void> checkFamilyLevelOnMemberJoin(String familyId) async {
+    await checkAndUpgradeFamilyLevel(familyId);
+  }
+
   // --- نظام المتجر المتقدم ---
 
   Future<void> createFamilyStoreItem({
@@ -1967,31 +2237,83 @@ class FamilyService {
     final itemRef = _db.collection('family_store_items').doc(itemId);
     final familyRef = _db.collection('families').doc(familyId);
 
+    // الحصول على بيانات العنصر للتحقق قبل المعاملة
+    final itemSnap = await itemRef.get();
+    if (!itemSnap.exists) throw 'العنصر غير موجود';
+
+    final itemData = itemSnap.data() as Map<String, dynamic>;
+    final type = itemData['type'] ?? '';
+
+    // التحقق من توفر الإيدي خارج المعاملة
+    if (type == 'hand_id') {
+      final handNumber = (itemData['handNumber'] as String?)?.trim();
+      final handLetters = (itemData['handLetters'] as String?)?.trim();
+      final category = (itemData['category'] as String?)?.trim();
+
+      if ((handNumber == null || handNumber.isEmpty) &&
+          (handLetters == null || handLetters.isEmpty)) {
+        throw 'هذا الإيدي غير مكتمل ولا يمكن شراؤه';
+      }
+      if (category == null || category.isEmpty) {
+        throw 'يجب تحديد فئة الإيدي قبل الشراء';
+      }
+
+      // التحقق من أن الإيدي غير مستخدم من عائلة أخرى (خارج المعاملة)
+      final isAvailable = await isHandIdAvailable(
+        handNumber ?? '',
+        handLetters ?? '',
+      );
+      if (!isAvailable) {
+        throw 'هذا الإيدي مستخدم بالفعل من عائلة أخرى';
+      }
+    } else if (type == 'hand_effect') {
+      final effectId = (itemData['effectId'] as String?)?.trim();
+      if (effectId == null || effectId.isEmpty) {
+        throw 'هذا التأثير غير مكتمل ولا يمكن شراؤه';
+      }
+    }
+
     await _db.runTransaction((tx) async {
-      final itemSnap = await tx.get(itemRef);
+      final itemSnapTx = await tx.get(itemRef);
       final familySnap = await tx.get(familyRef);
 
-      if (!itemSnap.exists) throw 'العنصر غير موجود';
+      if (!itemSnapTx.exists) throw 'العنصر غير موجود';
       if (!familySnap.exists) throw 'العائلة غير موجودة';
 
-      final itemData = itemSnap.data() as Map<String, dynamic>;
+      final itemActive = itemSnapTx.data()?['isActive'] ?? true;
+      final itemSold = itemSnapTx.data()?['isSold'] ?? false;
+
+      if (!itemActive) throw 'هذا العنصر غير متاح للشراء حالياً';
+      if (itemSold) throw 'هذا العنصر تم بيعه بالفعل';
+
       final int originalCost = itemData['cost'] ?? 0;
       final int? saleCost = itemData['saleCost'];
       final int actualCost =
           (saleCost != null && saleCost > 0) ? saleCost : originalCost;
 
       final currency = itemData['currency'] ?? 'family_gems';
-      final type = itemData['type'] ?? '';
-      final currentBalance = familySnap.data()?[currency] ?? 0;
+      // Normalize currency values to supported set: family_gems or family_coins
+      final normalizedCurrency =
+          (currency == 'family_gems' || currency == 'family_coins')
+              ? currency
+              : 'family_coins';
+
+      // تحويل اسم العملة إلى اسم الحقل في العائلة
+      final familyCurrencyField =
+          normalizedCurrency == 'family_gems' ? 'familyGems' : 'familyCoins';
+
+      final currentBalance = familySnap.data()?[familyCurrencyField] ?? 0;
 
       if (currentBalance < actualCost) throw 'رصيد خزينة العائلة غير كافٍ';
 
       tx.update(familyRef, {
-        currency: FieldValue.increment(-actualCost),
+        familyCurrencyField: FieldValue.increment(-actualCost),
       });
 
       tx.update(itemRef, {
         'purchaseCount': FieldValue.increment(1),
+        // mark sold only for unique items like hand_id/hand_effect
+        if (type == 'hand_id' || type == 'hand_effect') 'isSold': true,
       });
 
       tx.set(familyRef.collection('purchased_items').doc(itemId), {
@@ -2007,24 +2329,310 @@ class FamilyService {
       });
 
       // إذا كان العنصر إيد، قم بتغيير إيد العائلة
+      // يجب أن يتم هذا قبل أي عمليات كتابة أخرى (تم بالفعل قراءة familySnap في البداية)
       if (type == 'hand_effect' || type == 'hand_id') {
         final handNumber = itemSnap.data()?['handNumber'];
         final handLetters = itemSnap.data()?['handLetters'];
 
-        if (handNumber != null || handLetters != null) {
-          Map<String, dynamic> handUpdates = {};
-          if (handNumber != null) handUpdates['familyHandNumber'] = handNumber;
-          if (handLetters != null) {
-            handUpdates['familyHandLetters'] = handLetters;
+        print(
+            'DEBUG: Purchasing hand ID - Number: $handNumber, Letters: $handLetters');
+        print('DEBUG: Type is: $type');
+
+        final numberNotEmpty = handNumber != null && handNumber.isNotEmpty;
+        final lettersNotEmpty = handLetters != null && handLetters.isNotEmpty;
+        print(
+            'DEBUG: numberNotEmpty: $numberNotEmpty, lettersNotEmpty: $lettersNotEmpty');
+
+        if (numberNotEmpty || lettersNotEmpty) {
+          // استخدام بيانات العائلة التي تم قراءتها بالفعل (familySnap)
+          final familyData = familySnap.data() as Map<String, dynamic>;
+          final oldItemId = familyData['lastHandIdItemId'] as String?;
+          final oldHandNumber = familyData['familyHandNumber'] as String?;
+          final oldHandLetters = familyData['familyHandLetters'] as String?;
+
+          print(
+              'DEBUG: oldItemId: $oldItemId, oldHandNumber: $oldHandNumber, oldHandLetters: $oldHandLetters');
+
+          // إذا كان هناك إيدي قديم، قم بإرجاعه للمتجر تلقائياً
+          if (oldItemId != null && oldItemId.isNotEmpty) {
+            print('DEBUG: Found old hand ID, returning to store...');
+            // إعادة تعيين isSold إلى false للإيدي القديم
+            final oldItemRef =
+                _db.collection('family_store_items').doc(oldItemId);
+            tx.update(oldItemRef, {'isSold': false});
+
+            // إزالة الإيدي القديم من purchased_items
+            tx.delete(familyRef.collection('purchased_items').doc(oldItemId));
+            print('DEBUG: Old hand ID returned to store');
           }
 
+          // تحديث الإيدي الجديد
+          print('DEBUG: Preparing hand ID updates...');
+          Map<String, dynamic> handUpdates = {
+            'familyHandNumber': handNumber,
+            'familyHandLetters': handLetters,
+            'lastHandIdUpdatedAt': FieldValue.serverTimestamp(),
+            'lastHandIdSource': 'purchase',
+            'lastHandIdItemId': itemId,
+          };
+
+          print('DEBUG: Updating family with hand ID: $handUpdates');
           tx.update(familyRef, handUpdates);
+          print('DEBUG: Family update completed');
+        } else {
+          print('DEBUG: Hand ID data is empty, skipping update');
         }
+      } else {
+        print(
+            'DEBUG: Item type is not hand_id or hand_effect, skipping hand ID update');
       }
     });
   }
 
   // --- نظام تأثيرات الإيدات ---
+
+  /// إرجاع الإيدي للمتجر (عند الإلغاء أو الاستبدال)
+  Future<void> returnHandIdToStore({
+    required String familyId,
+    required String itemId,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    final itemRef = _db.collection('family_store_items').doc(itemId);
+    final familyRef = _db.collection('families').doc(familyId);
+
+    await _db.runTransaction((tx) async {
+      final itemSnap = await tx.get(itemRef);
+      final familySnap = await tx.get(familyRef);
+
+      if (!itemSnap.exists) throw 'العنصر غير موجود';
+      if (!familySnap.exists) throw 'العائلة غير موجودة';
+
+      final itemData = itemSnap.data() as Map<String, dynamic>;
+      final type = itemData['type'] ?? '';
+
+      if (type != 'hand_id' && type != 'hand_effect') {
+        throw 'يمكن فقط إرجاع الإيديات والتأثيرات';
+      }
+
+      // إعادة تعيين isSold إلى false
+      tx.update(itemRef, {'isSold': false});
+
+      // إزالة من purchased_items
+      tx.delete(familyRef.collection('purchased_items').doc(itemId));
+
+      // إزالة من inventory المستخدم
+      final userRef = _db.collection('users').doc(user.uid);
+      tx.update(userRef, {
+        'inventory': FieldValue.arrayRemove([itemId]),
+      });
+
+      // إذا كان الإيدي الحالي للعائلة هو نفسه، قم بإزالته
+      final currentItemId = familySnap.data()?['lastHandIdItemId'];
+      if (currentItemId == itemId) {
+        tx.update(familyRef, {
+          'familyHandNumber': FieldValue.delete(),
+          'familyHandLetters': FieldValue.delete(),
+          'lastHandIdUpdatedAt': FieldValue.serverTimestamp(),
+          'lastHandIdSource': 'returned',
+          'lastHandIdItemId': FieldValue.delete(),
+        });
+      }
+    });
+  }
+
+  /// التحقق من توفر الإيدي (غير مستخدم من عائلة أخرى)
+  Future<bool> isHandIdAvailable(String handNumber, String handLetters) async {
+    final query = await _db
+        .collection('families')
+        .where('familyHandNumber', isEqualTo: handNumber)
+        .where('familyHandLetters', isEqualTo: handLetters)
+        .get();
+    return query.docs.isEmpty;
+  }
+
+  Future<Map<String, dynamic>> _updateFamilyHandIdInTransaction(
+    Transaction tx,
+    DocumentReference familyRef,
+    String? handNumber,
+    String? handLetters,
+    String? itemId,
+    String source,
+  ) async {
+    print('DEBUG: _updateFamilyHandIdInTransaction called');
+    print(
+        'DEBUG: handNumber: $handNumber, handLetters: $handLetters, itemId: $itemId, source: $source');
+
+    // الحصول على بيانات العائلة الحالية
+    print('DEBUG: Getting family snapshot...');
+    final familySnap = await tx.get(familyRef);
+    print('DEBUG: familySnap.exists: ${familySnap.exists}');
+    if (!familySnap.exists) {
+      print('DEBUG: Family does not exist, returning empty');
+      return {};
+    }
+
+    print('DEBUG: Family exists, getting data...');
+    final familyData = familySnap.data() as Map<String, dynamic>;
+    final oldItemId = familyData['lastHandIdItemId'] as String?;
+    final oldHandNumber = familyData['familyHandNumber'] as String?;
+    final oldHandLetters = familyData['familyHandLetters'] as String?;
+
+    print(
+        'DEBUG: oldItemId: $oldItemId, oldHandNumber: $oldHandNumber, oldHandLetters: $oldHandLetters');
+
+    // إذا كان هناك إيدي قديم، قم بإرجاعه للمتجر تلقائياً
+    if (oldItemId != null && oldItemId.isNotEmpty) {
+      print('DEBUG: Found old hand ID, returning to store...');
+      // إعادة تعيين isSold إلى false للإيدي القديم
+      final oldItemRef = _db.collection('family_store_items').doc(oldItemId);
+      tx.update(oldItemRef, {'isSold': false});
+
+      // إزالة الإيدي القديم من purchased_items
+      tx.delete(familyRef.collection('purchased_items').doc(oldItemId));
+      print('DEBUG: Old hand ID returned to store');
+    }
+
+    // تحديث الإيدي الجديد
+    print('DEBUG: Preparing hand ID updates...');
+    Map<String, dynamic> handUpdates = {
+      'familyHandNumber': handNumber,
+      'familyHandLetters': handLetters,
+      'lastHandIdUpdatedAt': FieldValue.serverTimestamp(),
+      'lastHandIdSource': source,
+      'lastHandIdItemId': itemId,
+    };
+
+    print('DEBUG: Updating family with hand ID: $handUpdates');
+    tx.update(familyRef, handUpdates);
+    print('DEBUG: Family update completed');
+
+    // إرجاع بيانات الإيدي القديم لحفظها في التاريخ بعد الـ transaction
+    print('DEBUG: Returning old hand ID data...');
+    return {
+      'oldItemId': oldItemId,
+      'oldHandNumber': oldHandNumber,
+      'oldHandLetters': oldHandLetters,
+    };
+  }
+
+  /// حفظ تاريخ الإيدي القديم قبل التحديث
+  Future<void> saveHandIdToHistory({
+    required String familyId,
+    required String? oldHandNumber,
+    required String? oldHandLetters,
+    required String source,
+    String? itemId,
+  }) async {
+    if ((oldHandNumber == null || oldHandNumber.isEmpty) &&
+        (oldHandLetters == null || oldHandLetters.isEmpty)) {
+      return;
+    }
+
+    await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('hand_id_history')
+        .add({
+      'handNumber': oldHandNumber,
+      'handLetters': oldHandLetters,
+      'changedAt': FieldValue.serverTimestamp(),
+      'source': source,
+      'itemId': itemId,
+    });
+  }
+
+  /// الحصول على تاريخ الإيدي للعائلة
+  Stream<QuerySnapshot> getHandIdHistory(String familyId) {
+    return _db
+        .collection('families')
+        .doc(familyId)
+        .collection('hand_id_history')
+        .orderBy('changedAt', descending: true)
+        .snapshots();
+  }
+
+  // --- نظام المفضلة في المتجر ---
+
+  /// تبديل حالة المفضلة لعنصر في المتجر
+  Future<void> toggleFavorite(String familyId, String itemId) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    final favRef = _db
+        .collection('families')
+        .doc(familyId)
+        .collection('favorites')
+        .doc(itemId);
+
+    if ((await favRef.get()).exists) {
+      await favRef.delete();
+    } else {
+      await favRef.set({
+        'addedAt': FieldValue.serverTimestamp(),
+        'addedBy': user.uid,
+      });
+    }
+  }
+
+  /// الحصول على قائمة المفضلة للعائلة
+  Stream<QuerySnapshot> getFavorites(String familyId) {
+    return _db
+        .collection('families')
+        .doc(familyId)
+        .collection('favorites')
+        .orderBy('addedAt', descending: true)
+        .snapshots();
+  }
+
+  /// التحقق من أن العنصر في المفضلة
+  Future<bool> isFavorite(String familyId, String itemId) async {
+    final doc = await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('favorites')
+        .doc(itemId)
+        .get();
+    return doc.exists;
+  }
+
+  Future<void> grantFamilyHandId({
+    required String familyId,
+    required String? handNumber,
+    required String? handLetters,
+    required String itemId,
+    required String source,
+  }) async {
+    if (handNumber == null && handLetters == null) {
+      throw 'يجب توفير رقم أو حروف الإيدي';
+    }
+
+    final familyRef = _db.collection('families').doc(familyId);
+
+    await _db.runTransaction((tx) async {
+      final oldHandData = await _updateFamilyHandIdInTransaction(
+        tx,
+        familyRef,
+        handNumber,
+        handLetters,
+        itemId,
+        source,
+      );
+
+      // حفظ الإيدي القديم في التاريخ بعد انتهاء الـ transaction
+      if (oldHandData['oldHandNumber'] != null ||
+          oldHandData['oldHandLetters'] != null) {
+        await saveHandIdToHistory(
+          familyId: familyId,
+          oldHandNumber: oldHandData['oldHandNumber'],
+          oldHandLetters: oldHandData['oldHandLetters'],
+          source: source,
+          itemId: oldHandData['oldItemId'],
+        );
+      }
+    });
+  }
 
   Future<void> createHandEffect({
     required String name,
@@ -3340,7 +3948,8 @@ class FamilyService {
       final familyRef = _db.collection('families').doc(data?['familyId']);
       tx.update(familyRef, {
         'familyGems': FieldValue.increment(rewards['familyGems'] ?? 0),
-        'familyStars': FieldValue.increment(rewards['familyStars'] ?? 0),
+        'familyCoins': FieldValue.increment(
+            rewards['familyCoins'] ?? rewards['familyStars'] ?? 0),
       });
     });
   }
@@ -3441,7 +4050,8 @@ class FamilyService {
       final familyRef = _db.collection('families').doc(data?['familyId']);
       tx.update(familyRef, {
         'familyGems': FieldValue.increment(rewards['familyGems'] ?? 0),
-        'familyStars': FieldValue.increment(rewards['familyStars'] ?? 0),
+        'familyCoins': FieldValue.increment(
+            rewards['familyCoins'] ?? rewards['familyStars'] ?? 0),
       });
     });
   }
@@ -4140,6 +4750,174 @@ class FamilyService {
     await _db.collection('recommendations').doc(recommendationId).update({
       'isAccepted': true,
       'acceptedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // حذف التوصية
+  Future<void> deleteRecommendation(String recommendationId) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    final recommendationSnap =
+        await _db.collection('recommendations').doc(recommendationId).get();
+    if (!recommendationSnap.exists) throw 'التوصية غير موجودة';
+
+    final familyId = recommendationSnap.data()?['familyId'];
+
+    // التحقق من أن المستخدم هو قائد العائلة
+    final memberSnap = await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('members')
+        .doc(user.uid)
+        .get();
+
+    if (!memberSnap.exists) throw 'أنت لست عضواً في هذه العائلة';
+
+    final role = memberSnap.data()?['role'];
+    if (role != 'leader' && role != 'co_leader') {
+      throw 'لا يمكنك حذف التوصيات';
+    }
+
+    await _db.collection('recommendations').doc(recommendationId).delete();
+  }
+
+  // حذف جميع التوصيات المشاهدة للعائلة
+  Future<void> clearViewedRecommendations(String familyId) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    // التحقق من أن المستخدم هو قائد العائلة
+    final memberSnap = await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('members')
+        .doc(user.uid)
+        .get();
+
+    if (!memberSnap.exists) throw 'أنت لست عضواً في هذه العائلة';
+
+    final role = memberSnap.data()?['role'];
+    if (role != 'leader' && role != 'co_leader') {
+      throw 'لا يمكنك حذف التوصيات';
+    }
+
+    final viewedRecommendations = await _db
+        .collection('recommendations')
+        .where('familyId', isEqualTo: familyId)
+        .where('isViewed', isEqualTo: true)
+        .get();
+
+    for (final doc in viewedRecommendations.docs) {
+      await doc.reference.delete();
+    }
+  }
+
+  // --- نظام قصة العائلة ---
+
+  Future<void> updateFamilyStory(String familyId, String story) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    // التحقق من صلاحيات المستخدم
+    final userSnap = await _db.collection('users').doc(user.uid).get();
+    final userRole = userSnap.data()?['role'] ?? 'user';
+
+    // التحقق من أن المستخدم لديه الصلاحية لتعديل القصة
+    // المدير والمسؤولون يمكنهم تعديل القصة
+    // القائد العام ونائب القائد يمكنهم كتابة القصة من الصفر
+    final memberSnap = await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('members')
+        .doc(user.uid)
+        .get();
+
+    if (!memberSnap.exists) {
+      // إذا لم يكن عضواً، التحقق من أنه مدير أو مسؤول
+      if (userRole != 'admin' &&
+          userRole != 'owner' &&
+          userRole != 'developer') {
+        throw 'لا يمكنك تعديل قصة العائلة';
+      }
+    } else {
+      final memberRole = memberSnap.data()?['role'];
+      // القائد العام ونائب القائد يمكنهم تعديل القصة
+      if (memberRole != 'leader' && memberRole != 'co_leader') {
+        throw 'لا يمكنك تعديل قصة العائلة';
+      }
+    }
+
+    // تحديث قصة العائلة
+    await _db.collection('families').doc(familyId).update({
+      'familyStory': story,
+      'storyUpdatedAt': FieldValue.serverTimestamp(),
+      'storyUpdatedBy': user.uid,
+    });
+  }
+
+  Future<String?> getFamilyStory(String familyId) async {
+    final familySnap = await _db.collection('families').doc(familyId).get();
+    if (!familySnap.exists) return null;
+
+    return familySnap.data()?['familyStory'];
+  }
+
+  // --- إدارة المزايا يدوياً للقادة ---
+
+  Future<void> addFamilyPerk(
+      String familyId, String perkName, String perkDescription) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    // التحقق من صلاحيات المستخدم
+    final memberSnap = await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('members')
+        .doc(user.uid)
+        .get();
+
+    if (!memberSnap.exists) throw 'أنت لست عضواً في هذه العائلة';
+
+    final role = memberSnap.data()?['role'];
+    if (role != 'leader' && role != 'co_leader') {
+      throw 'لا يمكنك إضافة مزايا للعائلة';
+    }
+
+    // إضافة الميزة
+    await _db.collection('families').doc(familyId).update({
+      'perks.$perkName': {
+        'name': perkName,
+        'description': perkDescription,
+        'addedAt': FieldValue.serverTimestamp(),
+        'addedBy': user.uid,
+      }
+    });
+  }
+
+  Future<void> removeFamilyPerk(String familyId, String perkName) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    // التحقق من صلاحيات المستخدم
+    final memberSnap = await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('members')
+        .doc(user.uid)
+        .get();
+
+    if (!memberSnap.exists) throw 'أنت لست عضواً في هذه العائلة';
+
+    final role = memberSnap.data()?['role'];
+    if (role != 'leader' && role != 'co_leader') {
+      throw 'لا يمكنك حذف مزايا من العائلة';
+    }
+
+    // حذف الميزة
+    await _db.collection('families').doc(familyId).update({
+      'perks.$perkName': FieldValue.delete(),
     });
   }
 
@@ -5158,12 +5936,16 @@ class FamilyService {
     // مستوى مشابه = توافق أعلى
     if (levelDiff.abs() <= 1) {
       score += 0.3;
-    } else if (levelDiff.abs() <= 2) score += 0.1;
+    } else if (levelDiff.abs() <= 2) {
+      score += 0.1;
+    }
 
     // عدد أعضاء مشابه = توافق أعلى
     if (memberDiff.abs() <= 5) {
       score += 0.2;
-    } else if (memberDiff.abs() <= 10) score += 0.1;
+    } else if (memberDiff.abs() <= 10) {
+      score += 0.1;
+    }
 
     return score.clamp(0.1, 1.0);
   }
@@ -5270,10 +6052,10 @@ class FamilyService {
 
     final members = membersSnap.docs;
     final totalMembers = members.length;
-    final totalExp = members.fold<int>(
-        0, (sum, doc) => sum + (doc.data()['totalExp'] as num? ?? 0).toInt());
+    final totalExp = members.fold<int>(0,
+        (total, doc) => total + (doc.data()['totalExp'] as num? ?? 0).toInt());
     final totalGems = members.fold<int>(
-        0, (sum, doc) => sum + (doc.data()['gems'] as num? ?? 0).toInt());
+        0, (total, doc) => total + (doc.data()['gems'] as num? ?? 0).toInt());
 
     // حساب النشاط الشهري
     final now = DateTime.now();
@@ -5297,7 +6079,7 @@ class FamilyService {
       'activityRate': monthlyActivity / 30, // متوسط النشاط اليومي
       'familyLevel': family['level'] ?? 1,
       'familyGems': family['familyGems'] ?? 0,
-      'familyStars': family['familyStars'] ?? 0,
+      'familyCoins': family['familyCoins'] ?? family['familyStars'] ?? 0,
     };
   }
 
@@ -5415,5 +6197,582 @@ class FamilyService {
       'data': itemData,
       'archivedAt': FieldValue.serverTimestamp(),
     });
+  }
+
+  // --- نظام التحكيم في الحروب ---
+
+  /// إنشاء نزاع حرب
+  Future<void> createWarDispute({
+    required String warId,
+    required String familyId,
+    required String reason,
+    required String description,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    await _db.collection('war_disputes').add({
+      'warId': warId,
+      'familyId': familyId,
+      'reason': reason,
+      'description': description,
+      'status': 'pending',
+      'createdAt': FieldValue.serverTimestamp(),
+      'createdBy': user.uid,
+      'responses': {},
+    });
+  }
+
+  /// الرد على نزاع حرب
+  Future<void> respondToDispute({
+    required String disputeId,
+    required String response,
+    required bool approve,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    await _db.collection('war_disputes').doc(disputeId).update({
+      'responses.${user.uid}': {
+        'response': response,
+        'approve': approve,
+        'timestamp': FieldValue.serverTimestamp(),
+      },
+    });
+  }
+
+  /// الحصول على النزاعات
+  Stream<QuerySnapshot> getWarDisputes(String warId) {
+    return _db
+        .collection('war_disputes')
+        .where('warId', isEqualTo: warId)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
+  // --- نظام تقييم جودة الإيدي ---
+
+  /// تقييم إيدي عائلة
+  Future<void> rateFamilyHandId({
+    required String familyId,
+    required int rating, // 1-5
+    required String comment,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+    if (rating < 1 || rating > 5) throw 'التقييم يجب أن يكون بين 1 و 5';
+
+    await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('hand_id_ratings')
+        .doc(user.uid)
+        .set({
+      'rating': rating,
+      'comment': comment,
+      'ratedAt': FieldValue.serverTimestamp(),
+      'ratedBy': user.uid,
+    });
+  }
+
+  /// الحصول على تقييمات إيدي العائلة
+  Stream<QuerySnapshot> getHandIdRatings(String familyId) {
+    return _db
+        .collection('families')
+        .doc(familyId)
+        .collection('hand_id_ratings')
+        .orderBy('ratedAt', descending: true)
+        .snapshots();
+  }
+
+  /// حساب متوسط تقييم الإيدي
+  Future<double> getAverageHandIdRating(String familyId) async {
+    final ratingsSnap = await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('hand_id_ratings')
+        .get();
+
+    if (ratingsSnap.docs.isEmpty) return 0.0;
+
+    final totalRating = ratingsSnap.docs
+        .fold<int>(0, (sum, doc) => sum + (doc.data()['rating'] as int));
+    return totalRating / ratingsSnap.docs.length;
+  }
+
+  // --- نظام استرجاع الإيدي القديم ---
+
+  /// استرجاع إيدي قديم من التاريخ
+  Future<void> restoreHandIdFromHistory({
+    required String familyId,
+    required String historyId,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) throw 'يجب تسجيل الدخول';
+
+    final historyDoc = await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('hand_id_history')
+        .doc(historyId)
+        .get();
+
+    if (!historyDoc.exists) throw 'السجل غير موجود';
+
+    final historyData = historyDoc.data()!;
+    final oldHandNumber = historyData['handNumber'];
+    final oldHandLetters = historyData['handLetters'];
+
+    // حفظ الإيدي الحالي في التاريخ قبل الاسترجاع
+    final familySnap = await _db.collection('families').doc(familyId).get();
+    if (familySnap.exists) {
+      await saveHandIdToHistory(
+        familyId: familyId,
+        oldHandNumber: familySnap.data()?['familyHandNumber'],
+        oldHandLetters: familySnap.data()?['familyHandLetters'],
+        source: 'restore',
+        itemId: historyId,
+      );
+    }
+
+    // استرجاع الإيدي القديم
+    await _db.collection('families').doc(familyId).update({
+      'familyHandNumber': oldHandNumber,
+      'familyHandLetters': oldHandLetters,
+      'lastHandIdUpdatedAt': FieldValue.serverTimestamp(),
+      'lastHandIdSource': 'restore',
+      'lastHandIdItemId': historyId,
+    });
+  }
+
+  // --- نظام الخصومات التلقائية في المتجر ---
+
+  /// إنشاء خصم تلقائي
+  Future<void> createAutoDiscount({
+    required String itemId,
+    required int discountPercentage,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    await _db.collection('family_store_items').doc(itemId).update({
+      'saleCost': FieldValue.increment(-discountPercentage),
+      'discountPercentage': discountPercentage,
+      'discountStartDate': Timestamp.fromDate(startDate),
+      'discountEndDate': Timestamp.fromDate(endDate),
+    });
+  }
+
+  /// إلغاء الخصم التلقائي
+  Future<void> removeAutoDiscount(String itemId) async {
+    await _db.collection('family_store_items').doc(itemId).update({
+      'saleCost': FieldValue.delete(),
+      'discountPercentage': FieldValue.delete(),
+      'discountStartDate': FieldValue.delete(),
+      'discountEndDate': FieldValue.delete(),
+    });
+  }
+
+  // --- نظام العناصر المميزة في المتجر ---
+
+  /// تعيين عنصر كمميز
+  Future<void> setFeaturedItem(String itemId, bool isFeatured) async {
+    await _db.collection('family_store_items').doc(itemId).update({
+      'isFeatured': isFeatured,
+      'featuredAt':
+          isFeatured ? FieldValue.serverTimestamp() : FieldValue.delete(),
+    });
+  }
+
+  /// الحصول على العناصر المميزة
+  Stream<QuerySnapshot> getFeaturedItems() {
+    return _db
+        .collection('family_store_items')
+        .where('isFeatured', isEqualTo: true)
+        .where('isActive', isEqualTo: true)
+        .snapshots();
+  }
+
+  // --- نظام تصفية العناصر حسب السعر ---
+
+  /// الحصول على العناصر حسب نطاق السعر
+  Stream<QuerySnapshot> getItemsByPriceRange({
+    required int minPrice,
+    required int maxPrice,
+    String? currency,
+  }) {
+    Query query = _db
+        .collection('family_store_items')
+        .where('isActive', isEqualTo: true)
+        .where('cost', isGreaterThanOrEqualTo: minPrice)
+        .where('cost', isLessThanOrEqualTo: maxPrice);
+
+    if (currency != null) {
+      query = query.where('currency', isEqualTo: currency);
+    }
+
+    return query.snapshots();
+  }
+
+  // --- نظام المصالحة التلقائية في الحروب ---
+
+  /// اقتراح مصالحة تلقائية
+  Future<void> proposeAutoReconciliation({
+    required String warId,
+    required String familyId,
+    required String reason,
+  }) async {
+    await _db.collection('war_reconciliations').add({
+      'warId': warId,
+      'familyId': familyId,
+      'reason': reason,
+      'status': 'pending',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // --- نظام التحكيم في الحروب ---
+
+  /// طلب تحكيم في نزاع حرب
+  Future<void> requestWarArbitration({
+    required String warId,
+    required String familyId,
+    required String reason,
+    required String description,
+  }) async {
+    await _db
+        .collection('family_wars')
+        .doc(warId)
+        .collection('arbitration_requests')
+        .add({
+      'familyId': familyId,
+      'reason': reason,
+      'description': description,
+      'status': 'pending',
+      'requestedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// الحصول على طلبات التحكيم
+  Stream<QuerySnapshot> getArbitrationRequests(String warId) {
+    return _db
+        .collection('family_wars')
+        .doc(warId)
+        .collection('arbitration_requests')
+        .orderBy('requestedAt', descending: true)
+        .snapshots();
+  }
+
+  /// قبول طلب التحكيم
+  Future<void> acceptArbitrationRequest({
+    required String warId,
+    required String requestId,
+    required String decision,
+    required String notes,
+  }) async {
+    await _db
+        .collection('family_wars')
+        .doc(warId)
+        .collection('arbitration_requests')
+        .doc(requestId)
+        .update({
+      'status': 'resolved',
+      'decision': decision,
+      'notes': notes,
+      'resolvedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // --- نظام المصالحة التلقائية ---
+
+  /// طلب مصالحة تلقائية
+  Future<void> requestAutoReconciliation({
+    required String warId,
+    required String familyId,
+    required String reason,
+  }) async {
+    await _db
+        .collection('family_wars')
+        .doc(warId)
+        .collection('reconciliation_requests')
+        .add({
+      'familyId': familyId,
+      'reason': reason,
+      'status': 'pending',
+      'requestedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// الحصول على طلبات المصالحة
+  Stream<QuerySnapshot> getReconciliationRequests(String warId) {
+    return _db
+        .collection('family_wars')
+        .doc(warId)
+        .collection('reconciliation_requests')
+        .orderBy('requestedAt', descending: true)
+        .snapshots();
+  }
+
+  /// قبول المصالحة وإنهاء الحرب
+  Future<void> acceptReconciliation({
+    required String warId,
+    required String requestId,
+    required String terms,
+  }) async {
+    final warRef = _db.collection('family_wars').doc(warId);
+
+    await _db.runTransaction((tx) async {
+      // تحديث حالة الحرب
+      tx.update(warRef, {
+        'status': 'reconciled',
+        'reconciliationTerms': terms,
+        'reconciledAt': FieldValue.serverTimestamp(),
+      });
+
+      // تحديث حالة الطلب
+      tx.update(warRef.collection('reconciliation_requests').doc(requestId), {
+        'status': 'accepted',
+        'terms': terms,
+        'acceptedAt': FieldValue.serverTimestamp(),
+      });
+    });
+  }
+
+  // --- نظام تسجيل تفاصيل المعركة ---
+
+  /// تسجيل تفاصيل معركة
+  Future<void> logBattleDetails({
+    required String warId,
+    required String battleId,
+    required Map<String, dynamic> battleData,
+  }) async {
+    await _db
+        .collection('family_wars')
+        .doc(warId)
+        .collection('battles')
+        .doc(battleId)
+        .set({
+      'battleData': battleData,
+      'loggedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// الحصول على تفاصيل المعارك
+  Stream<QuerySnapshot> getBattleDetails(String warId) {
+    return _db
+        .collection('family_wars')
+        .doc(warId)
+        .collection('battles')
+        .orderBy('loggedAt', descending: true)
+        .snapshots();
+  }
+
+  // --- نظام التحديات الموسمية في الحروب ---
+
+  /// إنشاء تحدي موسمي
+  Future<void> createSeasonalChallenge({
+    required String title,
+    required String description,
+    required int reward,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    await _db.collection('seasonal_challenges').add({
+      'title': title,
+      'description': description,
+      'reward': reward,
+      'startDate': Timestamp.fromDate(startDate),
+      'endDate': Timestamp.fromDate(endDate),
+      'status': 'active',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// الحصول على التحديات الموسمية النشطة
+  Stream<QuerySnapshot> getActiveSeasonalChallenges() {
+    final now = Timestamp.now();
+    return _db
+        .collection('seasonal_challenges')
+        .where('status', isEqualTo: 'active')
+        .where('startDate', isLessThanOrEqualTo: now)
+        .where('endDate', isGreaterThanOrEqualTo: now)
+        .snapshots();
+  }
+
+  // --- نظام المهام المشتركة بين التحالفات ---
+
+  /// إنشاء مهمة مشتركة بين التحالفات
+  Future<void> createAllianceTask({
+    required String allianceId,
+    required String title,
+    required String description,
+    required int reward,
+  }) async {
+    await _db.collection('alliance_tasks').add({
+      'allianceId': allianceId,
+      'title': title,
+      'description': description,
+      'reward': reward,
+      'status': 'active',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // --- نظام الدعم المتبادل للتحالفات ---
+
+  /// طلب دعم من تحالف
+  Future<void> requestAllianceSupport({
+    required String allianceId,
+    required String familyId,
+    required String supportType,
+    required String description,
+  }) async {
+    await _db.collection('alliance_support_requests').add({
+      'allianceId': allianceId,
+      'familyId': familyId,
+      'supportType': supportType,
+      'description': description,
+      'status': 'pending',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // --- نظام الاتصال المباشر بين التحالفات ---
+
+  /// إنشاء قناة اتصال بين التحالفات
+  Future<void> createAllianceChannel({
+    required String allianceId1,
+    required String allianceId2,
+  }) async {
+    await _db.collection('alliance_channels').add({
+      'allianceId1': allianceId1,
+      'allianceId2': allianceId2,
+      'createdAt': FieldValue.serverTimestamp(),
+      'status': 'active',
+    });
+  }
+
+  // --- نظام صلاحيات دقيقة لكل دور ---
+
+  /// تحديث صلاحيات دور مخصص
+  Future<void> updateCustomRolePermissions({
+    required String familyId,
+    required String roleId,
+    required List<String> permissions,
+  }) async {
+    await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('custom_roles')
+        .doc(roleId)
+        .update({
+      'permissions': permissions,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // --- نظام تاريخ تغيير الأدوار ---
+
+  /// تسجيل تغيير الدور
+  Future<void> logRoleChange({
+    required String familyId,
+    required String userId,
+    required String oldRole,
+    required String newRole,
+  }) async {
+    await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('role_change_history')
+        .add({
+      'userId': userId,
+      'oldRole': oldRole,
+      'newRole': newRole,
+      'changedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// الحصول على تاريخ تغيير الأدوار
+  Stream<QuerySnapshot> getRoleChangeHistory(String familyId) {
+    return _db
+        .collection('families')
+        .doc(familyId)
+        .collection('role_change_history')
+        .orderBy('changedAt', descending: true)
+        .snapshots();
+  }
+
+  // --- نظام المكافآت التراكمية في المهام ---
+
+  /// إضافة مكافأة تراكمية
+  Future<void> addCumulativeReward({
+    required String familyId,
+    required String taskId,
+    required int streakCount,
+    required int bonusReward,
+  }) async {
+    await _db
+        .collection('families')
+        .doc(familyId)
+        .collection('cumulative_rewards')
+        .doc(taskId)
+        .set({
+      'streakCount': streakCount,
+      'bonusReward': bonusReward,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // --- نظام المهام الموسمية ---
+
+  /// إنشاء مهمة موسمية
+  Future<void> createSeasonalTask({
+    required String familyId,
+    required String title,
+    required String description,
+    required int reward,
+    required String season,
+  }) async {
+    await _db.collection('seasonal_tasks').add({
+      'familyId': familyId,
+      'title': title,
+      'description': description,
+      'reward': reward,
+      'season': season,
+      'status': 'active',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // --- نظام الإشعارات المخصصة ---
+
+  /// إرسال إشعار مخصص
+  Future<void> sendCustomNotification({
+    required String familyId,
+    required String title,
+    required String message,
+    required String type,
+    Map<String, dynamic>? data,
+  }) async {
+    await _db.collection('family_notifications').add({
+      'familyId': familyId,
+      'title': title,
+      'message': message,
+      'type': type,
+      'data': data,
+      'createdAt': FieldValue.serverTimestamp(),
+      'isRead': false,
+      'isCustom': true,
+    });
+  }
+
+  // --- نظام تاريخ الإشعارات ---
+
+  /// الحصول على تاريخ الإشعارات
+  Stream<QuerySnapshot> getNotificationHistory(String familyId) {
+    return _db
+        .collection('family_notifications')
+        .where('familyId', isEqualTo: familyId)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
   }
 }

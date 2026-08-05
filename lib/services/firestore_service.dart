@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_model.dart';
 import '../models/post_model.dart';
 import '../models/story_model.dart';
@@ -11,6 +13,174 @@ class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   bool _isValidId(String id) => id.isNotEmpty && !id.contains('{');
+
+  static List<String> normalizeVisitedRoomIds(Map<String, dynamic>? data) {
+    if (data == null) return [];
+
+    final rawRooms = data['visitedRooms'] ?? data['joinedRooms'] ?? [];
+    if (rawRooms is! List) return [];
+
+    return rawRooms
+        .whereType<String>()
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toSet()
+        .toList();
+  }
+
+  Future<void> trackRoomVisit(
+      {required String userId, required String roomId}) async {
+    if (!_isValidId(userId) || !_isValidId(roomId)) return;
+
+    try {
+      await _db.collection('users').doc(userId).set({
+        'visitedRooms': FieldValue.arrayUnion([roomId]),
+        'lastRoomVisitAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      _handleError('trackRoomVisit', e);
+    }
+  }
+
+  // --- آلية معالجة الأخطاء الذكية لإظهار روابط الفهارس ---
+  void _handleError(String context, dynamic error) {
+    final errorStr = error.toString();
+    debugPrint("❌ Firestore Error [$context]: $errorStr");
+
+    // استخراج الرابط إذا وجد (رابط إنشاء الفهرس)
+    if (errorStr.contains("https://console.firebase.google.com")) {
+      final RegExp urlRegExp =
+          RegExp(r'https://console\.firebase\.google\.com/[^\s\n]+');
+      final match = urlRegExp.firstMatch(errorStr);
+      if (match != null) {
+        debugPrint("\n🔗 [رابط إنشاء الفهرس المطلوب]:");
+        debugPrint("👉 ${match.group(0)} 👈\n");
+        debugPrint(
+            "انقر على الرابط أعلاه لفتح صفحة Firebase وتفعيل البحث لهذا القسم.");
+      }
+    }
+  }
+
+  // --- نظام إدارة الأجهزة والحظر (Device Management) ---
+
+  /// تسجيل أو تحديث بيانات جهاز المستخدم
+  Future<void> registerUserDevice({
+    required String userId,
+    required String userName,
+    required String deviceId,
+    required String deviceName,
+    required String deviceIp,
+    String? userEmail,
+    String? userPhone,
+  }) async {
+    try {
+      final deviceRef =
+          _db.collection('user_devices').doc("${userId}_$deviceId");
+      await deviceRef.set({
+        'userId': userId,
+        'userName': userName,
+        'userEmail': userEmail ?? '',
+        'userPhone': userPhone ?? '',
+        'deviceIp': deviceIp,
+        'deviceId': deviceId,
+        'deviceName': deviceName,
+        'lastLogin': FieldValue.serverTimestamp(),
+        'isBanned': false,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      _handleError("registerUserDevice", e);
+    }
+  }
+
+  /// التحقق مما إذا كان الجهاز محظوراً
+  Future<bool> isDeviceBanned(String deviceId, String deviceIp) async {
+    try {
+      // البحث في كولكشن الأجهزة المحظورة
+      // ملاحظة: هذا الاستعلام قد يحتاج لـ Composite Index إذا أضفت orderBy
+      final bannedByDoc = await _db
+          .collection('banned_devices')
+          .where('deviceId', isEqualTo: deviceId)
+          .limit(1)
+          .get();
+
+      if (bannedByDoc.docs.isNotEmpty) return true;
+
+      final bannedByIp = await _db
+          .collection('banned_devices')
+          .where('deviceIp', isEqualTo: deviceIp)
+          .limit(1)
+          .get();
+
+      return bannedByIp.docs.isNotEmpty;
+    } catch (e) {
+      _handleError("isDeviceBanned", e);
+      return false;
+    }
+  }
+
+  /// حظر جهاز
+  Future<void> banDevice({
+    required String deviceId,
+    required String deviceIp,
+    required String userId,
+    required String userName,
+    required String reason,
+    required String bannedBy,
+  }) async {
+    try {
+      final batch = _db.batch();
+
+      // 1. إضافة للجهاز المحظور
+      final banRef = _db.collection('banned_devices').doc(deviceId);
+      batch.set(banRef, {
+        'deviceId': deviceId,
+        'deviceIp': deviceIp,
+        'userId': userId,
+        'userName': userName,
+        'reason': reason,
+        'bannedBy': bannedBy,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      // 2. تحديث حالة الحظر في سجلات الأجهزة لجميع المستخدمين الذين استخدموا هذا الجهاز
+      final matchingDevices = await _db
+          .collection('user_devices')
+          .where('deviceId', isEqualTo: deviceId)
+          .get();
+
+      for (var doc in matchingDevices.docs) {
+        batch.update(doc.reference, {'isBanned': true});
+      }
+
+      await batch.commit();
+    } catch (e) {
+      _handleError("banDevice", e);
+    }
+  }
+
+  /// فك حظر جهاز
+  Future<void> unbanDevice(String deviceId) async {
+    try {
+      final batch = _db.batch();
+
+      // 1. حذف من الأجهزة المحظورة
+      batch.delete(_db.collection('banned_devices').doc(deviceId));
+
+      // 2. تحديث الحالة في user_devices
+      final matchingDevices = await _db
+          .collection('user_devices')
+          .where('deviceId', isEqualTo: deviceId)
+          .get();
+
+      for (var doc in matchingDevices.docs) {
+        batch.update(doc.reference, {'isBanned': false});
+      }
+
+      await batch.commit();
+    } catch (e) {
+      _handleError("unbanDevice", e);
+    }
+  }
 
   // --- نظام خبرة الغرف (Room EXP System) ---
   Future<void> increaseRoomExp(String roomId, int amount) async {
@@ -40,38 +210,117 @@ class FirestoreService {
         }
       });
     } catch (e) {
-      debugPrint("Error increasing room exp: $e");
+      _handleError("increaseRoomExp", e);
     }
   }
 
+  // --- نظام XP المستخدم من أنشطة الغرف ---
+  static const int MIC_CHAT_XP = 5; // كل ساعة
+  static const int MESSAGE_XP = 1;
+  static const int JOIN_SHARE_XP = 5;
+  static const int GEM_GIFT_XP = 5;
+  static const int COIN_GIFT_XP = 5;
+  static const int THEME_PURCHASE_XP = 5;
+  static const int BATTLE_WIN_XP = 5;
+  static const int FAN_CLUB_JOIN_XP = 2;
+
+  /// كسب XP من الدردشة على المايك
+  static Future<void> earnMicChatXP(String roomId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'royalXP': FieldValue.increment(MIC_CHAT_XP),
+      'xp': FieldValue.increment(MIC_CHAT_XP),
+    });
+  }
+
+  /// كسب XP من إرسال رسائل
+  static Future<void> earnMessageXP(String roomId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'royalXP': FieldValue.increment(MESSAGE_XP),
+      'xp': FieldValue.increment(MESSAGE_XP),
+    });
+  }
+
+  /// كسب XP من مشاركة الغرفة والانضمام
+  static Future<void> earnJoinShareXP(String roomId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'royalXP': FieldValue.increment(JOIN_SHARE_XP),
+      'xp': FieldValue.increment(JOIN_SHARE_XP),
+    });
+  }
+
+  /// كسب XP من هدايا الجواهر
+  static Future<void> earnGemGiftXP(String roomId, int giftCount) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'royalXP': FieldValue.increment(GEM_GIFT_XP * giftCount),
+      'xp': FieldValue.increment(GEM_GIFT_XP * giftCount),
+    });
+  }
+
+  /// كسب XP من هدايا الكوينز
+  static Future<void> earnCoinGiftXP(String roomId, int giftCount) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'royalXP': FieldValue.increment(COIN_GIFT_XP * giftCount),
+      'xp': FieldValue.increment(COIN_GIFT_XP * giftCount),
+    });
+  }
+
+  /// كسب XP من الانضمام لنادي المعجبين
+  static Future<void> earnFanClubJoinXP(String roomId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'royalXP': FieldValue.increment(FAN_CLUB_JOIN_XP),
+      'xp': FieldValue.increment(FAN_CLUB_JOIN_XP),
+    });
+  }
+
+  /// كسب XP من شراء موضوع للغرفة
+  static Future<void> earnThemePurchaseXP(String roomId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'royalXP': FieldValue.increment(THEME_PURCHASE_XP),
+      'xp': FieldValue.increment(THEME_PURCHASE_XP),
+    });
+  }
+
+  /// كسب XP من الفوز بالمعركة
   static Future<void> earnBattleWinXP(String roomId) async {
-    final db = FirebaseFirestore.instance;
-    final roomRef = db.collection('rooms').doc(roomId);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-    try {
-      await db.runTransaction((transaction) async {
-        final roomSnap = await transaction.get(roomRef);
-        if (!roomSnap.exists) return;
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'royalXP': FieldValue.increment(BATTLE_WIN_XP),
+      'xp': FieldValue.increment(BATTLE_WIN_XP),
+    });
+  }
 
-        final data = roomSnap.data()!;
-        int currentExp = data['exp'] ?? 0;
-        int currentLevel = data['level'] ?? 1;
+  /// كسب XP عام (للاستخدام في الأنشطة المخصصة)
+  static Future<void> earnXP(String roomId, int xpAmount) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-        int newExp = currentExp + 500; // 500 XP for battle win
-        int nextLevelThreshold = currentLevel * 10000;
-
-        if (newExp >= nextLevelThreshold) {
-          transaction.update(roomRef, {
-            'exp': newExp - nextLevelThreshold,
-            'level': currentLevel + 1,
-          });
-        } else {
-          transaction.update(roomRef, {'exp': newExp});
-        }
-      });
-    } catch (e) {
-      debugPrint("Error earning battle win XP: $e");
-    }
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'royalXP': FieldValue.increment(xpAmount),
+      'xp': FieldValue.increment(xpAmount),
+    });
   }
 
   // --- المستخدمون ---
@@ -104,16 +353,16 @@ class FirestoreService {
 
   Future<void> saveUser(UserModel user) async {
     if (!_isValidId(user.uid)) return;
-    
+
     // منع الكتابة العرضية للآيدي إذا كان موجوداً مسبقاً في السيرفر
     // نقوم بحذف الحقل من الخريطة المرسلة لضمان عدم الكتابة فوق الآيدي المخصص
     final data = user.toMap();
-    
+
     // إذا كان المستخدم يملك آيدي بالفعل، لا نرسله في عمليات التحديث العادية
     // الآيدي يتغير فقط عبر العمليات المخصصة (شراء/منح)
     data.remove('royalId');
     data.remove('shortId');
-    
+
     await _db
         .collection('users')
         .doc(user.uid)
@@ -124,17 +373,6 @@ class FirestoreService {
       String uid, String field, dynamic value) async {
     if (!_isValidId(uid)) return;
     await _db.collection('users').doc(uid).update({field: value});
-  }
-
-  static List<String> normalizeVisitedRoomIds(Map<String, dynamic> userData) {
-    final visitedRooms = userData['visitedRooms'];
-    if (visitedRooms == null) return [];
-    
-    if (visitedRooms is List) {
-      return visitedRooms.map((e) => e.toString()).toList();
-    }
-    
-    return [];
   }
 
   // --- نظام الإشعارات ---
@@ -161,7 +399,6 @@ class FirestoreService {
         .add(notif);
   }
 
-
   // --- الدردشة ---
   Stream<List<ChatRoomModel>> streamChatRooms(String userId) {
     if (!_isValidId(userId)) return Stream.value([]);
@@ -175,7 +412,7 @@ class FirestoreService {
             .toList());
   }
 
-  Stream<List<MessageModel>> streamMessages(String roomId, {int limit = 20}) {
+  Stream<List<MessageModel>> streamMessages(String roomId, {int limit = 20, String? userId}) {
     if (!_isValidId(roomId)) return Stream.value([]);
     return _db
         .collection('chatRooms')
@@ -186,6 +423,13 @@ class FirestoreService {
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => MessageModel.fromMap(doc.data(), doc.id))
+            .where((msg) {
+              // Filter out messages deleted for the current user
+              if (userId != null && msg.deletedFor != null) {
+                return !msg.deletedFor!.contains(userId);
+              }
+              return true;
+            })
             .toList());
   }
 
@@ -245,7 +489,7 @@ class FirestoreService {
         await Future.wait(notificationTasks);
       }
     } catch (e) {
-      debugPrint("Error sending chat notification: $e");
+      _handleError("sendMessageNotification", e);
     }
   }
 
@@ -416,7 +660,7 @@ class FirestoreService {
         }
       }
     } catch (e) {
-      debugPrint("Error sending reaction notification: $e");
+      _handleError("addReactionNotification", e);
     }
   }
 
@@ -480,7 +724,8 @@ class FirestoreService {
       'timestamp': FieldValue.serverTimestamp(),
     });
     // مكافأة طلب الصداقة
-    await _rewardSocialAction(userId: senderId, actionType: 'friend_request', targetId: receiverId);
+    await _rewardSocialAction(
+        userId: senderId, actionType: 'friend_request', targetId: receiverId);
   }
 
   Future<void> acceptFriendRequest(
@@ -502,6 +747,48 @@ class FirestoreService {
         .collection('friendRequests')
         .doc(requestId)
         .update({'status': 'rejected'});
+  }
+
+  Future<void> cancelFriendRequest(String requestId) async {
+    await _db.collection('friendRequests').doc(requestId).delete();
+  }
+
+  Future<Map<String, dynamic>> getFriendshipState(
+      String currentUid, String otherUid) async {
+    final userDoc = await _db.collection('users').doc(currentUid).get();
+    final friends =
+        (userDoc.data()?['friends'] as List?)?.whereType<String>().toList() ??
+            <String>[];
+
+    if (friends.contains(otherUid)) {
+      return {'status': 'friends', 'requestId': null};
+    }
+
+    final pendingSent = await _db
+        .collection('friendRequests')
+        .where('senderId', isEqualTo: currentUid)
+        .where('receiverId', isEqualTo: otherUid)
+        .where('status', isEqualTo: 'pending')
+        .limit(1)
+        .get();
+
+    if (pendingSent.docs.isNotEmpty) {
+      return {'status': 'pending', 'requestId': pendingSent.docs.first.id};
+    }
+
+    final pendingIncoming = await _db
+        .collection('friendRequests')
+        .where('senderId', isEqualTo: otherUid)
+        .where('receiverId', isEqualTo: currentUid)
+        .where('status', isEqualTo: 'pending')
+        .limit(1)
+        .get();
+
+    if (pendingIncoming.docs.isNotEmpty) {
+      return {'status': 'incoming', 'requestId': pendingIncoming.docs.first.id};
+    }
+
+    return {'status': 'none', 'requestId': null};
   }
 
   // --- نظام المكافآت الاجتماعية (Social Rewards System) ---
@@ -538,7 +825,7 @@ class FirestoreService {
 
     try {
       final userRef = _db.collection('users').doc(userId);
-      
+
       await _db.runTransaction((tx) async {
         final userDoc = await tx.get(userRef);
         if (!userDoc.exists) return;
@@ -548,7 +835,7 @@ class FirestoreService {
           if (gemsReward > 0) 'gems': FieldValue.increment(gemsReward),
           if (coinsReward > 0) 'stars': FieldValue.increment(coinsReward),
           if (coinsReward > 0) 'coins': FieldValue.increment(coinsReward),
-          'agentData.friendlyPoints': FieldValue.increment(socialPointsReward),
+          'agentData.friendlyCoins': FieldValue.increment(socialPointsReward),
         });
 
         // إضافة سجل في التاريخ الاجتماعي
@@ -565,22 +852,22 @@ class FirestoreService {
       });
 
       // إشعار المستخدم بالمكافأة
-      NotificationsService.sendNotification(
+      NotificationsService.sendExtendedNotification(
         userId: userId,
+        type: NotificationType.general,
         title: 'مكافأة اجتماعية 🌟',
-        message: message,
-        type: 'social_reward',
+        body: message,
+        enablePush: true,
       );
-      
+
       // إذا كان هناك هدف (Target)، نمنحه نقاط اجتماعية أيضاً لزيادة شعبيته
       if (targetId != null && _isValidId(targetId)) {
         await _db.collection('users').doc(targetId).update({
-          'agentData.friendlyPoints': FieldValue.increment(socialPointsReward),
+          'agentData.friendlyCoins': FieldValue.increment(socialPointsReward),
         });
       }
-
     } catch (e) {
-      debugPrint("Error in rewardSocialAction: $e");
+      _handleError("_rewardSocialAction", e);
     }
   }
 
@@ -604,7 +891,8 @@ class FirestoreService {
         'following': FieldValue.arrayUnion([targetUid])
       });
       // مكافأة المتابعة
-      await _rewardSocialAction(userId: currentUid, actionType: 'follow', targetId: targetUid);
+      await _rewardSocialAction(
+          userId: currentUid, actionType: 'follow', targetId: targetUid);
     }
   }
 
@@ -646,14 +934,30 @@ class FirestoreService {
       String? roomImage,
       int? maxSeats}) async {
     final ref = _db.collection('rooms').doc();
+
+    // تحديد نمط المايكات بناءً على العدد
+    String micMode = '4-4';
+    int finalMaxSeats = maxSeats ?? 8;
+
+    if (finalMaxSeats > 8) {
+      micMode = 'grid'; // النمط الشبكي للغرف الكبيرة
+    }
+
     await ref.set({
       'ownerId': ownerId,
       'name': roomName,
       'image': roomImage ?? '',
       'createdAt': FieldValue.serverTimestamp(),
-      'maxSeats': maxSeats ?? 10,
+      'maxSeats': finalMaxSeats,
       'level': 1,
       'exp': 0,
+      'micMode': micMode,
+      'requireMicApproval': true, // تفعيل طلب الموافقة افتراضياً لضمان الاحترافية
+      'muteChat': false,
+      'mutePublic': false,
+      'adminOnlyMic': false,
+      'lockedSeats': [],
+      'moderators': [],
     });
     return ref.id;
   }
@@ -672,14 +976,61 @@ class FirestoreService {
 
   Stream<List<PostModel>> streamPostsFromAuthors(List<String> uids) {
     if (uids.isEmpty) return Stream.value([]);
-    return _db
-        .collection('posts')
-        .where('authorId', whereIn: uids.take(10).toList())
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snap) => snap.docs
-            .map((doc) => PostModel.fromMap(doc.data(), doc.id))
-            .toList());
+
+    final batches = <List<String>>[];
+    for (var i = 0; i < uids.length; i += 10) {
+      batches.add(uids.sublist(i, i + 10 > uids.length ? uids.length : i + 10));
+    }
+
+    if (batches.length == 1) {
+      return _db
+          .collection('posts')
+          .where('authorId', whereIn: batches.first)
+          .orderBy('createdAt', descending: true)
+          .snapshots()
+          .handleError((error) {
+        debugPrint('Error in streamPostsFromAuthors: $error');
+      }).map((snap) => snap.docs
+              .map((doc) => PostModel.fromMap(doc.data(), doc.id))
+              .toList());
+    }
+
+    final latestBatchResults = List<List<PostModel>>.filled(batches.length, []);
+    final subscriptions = <StreamSubscription<List<PostModel>>>[];
+    final controller = StreamController<List<PostModel>>.broadcast(
+      onListen: () {},
+      onCancel: () async {
+        await Future.wait(subscriptions.map((s) => s.cancel()));
+      },
+    );
+
+    for (var batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+      final batch = batches[batchIndex];
+      final sub = _db
+          .collection('posts')
+          .where('authorId', whereIn: batch)
+          .orderBy('createdAt', descending: true)
+          .snapshots()
+          .handleError((error) {
+            debugPrint('Error in streamPostsFromAuthors batch: $error');
+          })
+          .map((snap) => snap.docs
+              .map((doc) => PostModel.fromMap(doc.data(), doc.id))
+              .toList())
+          .listen((posts) {
+            latestBatchResults[batchIndex] = posts;
+            final merged = latestBatchResults.expand((list) => list).toList()
+              ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+            if (!controller.isClosed) {
+              controller.add(merged);
+            }
+          }, onError: (error) {
+            if (!controller.isClosed) controller.addError(error);
+          });
+      subscriptions.add(sub);
+    }
+
+    return controller.stream;
   }
 
   Future<PostModel?> getPostById(String postId) async {
@@ -701,31 +1052,13 @@ class FirestoreService {
     }
 
     if (isBanned) {
-      throw Exception('عذراً، يحتوي منشورك على كلمات تخالف قوانين رويال دور الملكية 🛡️');
+      throw Exception(
+          'عذراً، يحتوي منشورك على كلمات تخالف قوانين رويال دور الملكية 🛡️');
     }
 
-    final docRef = await _db.collection('posts').add(post.toMap());
+    await _db.collection('posts').add(post.toMap());
 
-    // إرسال إشعارات للأصدقاء
-    try {
-      final authorDoc = await _db.collection('users').doc(post.authorId).get();
-      final List<String> friends =
-          List<String>.from(authorDoc.data()?['friends'] ?? []);
-
-      List<Future> notificationTasks = [];
-      for (final friendUid in friends) {
-        notificationTasks.add(NotificationsService.sendPushNotification({
-          'targetUid': friendUid,
-          'title': 'يوميات جديدة 📝',
-          'body': 'قام ${post.authorName} بنشر يوميات جديدة',
-          'type': 'diary',
-          'postId': docRef.id,
-        }));
-      }
-      await Future.wait(notificationTasks);
-    } catch (e) {
-      debugPrint("Error sending post notification: $e");
-    }
+    // إشعار نشر اليوميات سيتم عبر Cloud Function بعد حفظ المنشور
   }
 
   Future<void> toggleLike(String postId, String userId) async {
@@ -742,7 +1075,8 @@ class FirestoreService {
         'likes': FieldValue.arrayUnion([userId])
       });
       // مكافأة الإعجاب بالمنشور
-      await _rewardSocialAction(userId: userId, actionType: 'like', targetId: data['authorId']);
+      await _rewardSocialAction(
+          userId: userId, actionType: 'like', targetId: data['authorId']);
     }
   }
 
@@ -837,7 +1171,9 @@ class FirestoreService {
         .where('createdAt',
             isGreaterThan: DateTime.now().subtract(const Duration(hours: 24)))
         .snapshots()
-        .map((snap) {
+        .handleError((error) {
+      _handleError("streamStories", error);
+    }).map((snap) {
       final list = snap.docs
           .map((doc) => StoryModel.fromMap(doc.data(), doc.id))
           .toList();
@@ -855,11 +1191,14 @@ class FirestoreService {
     String? videoUrl,
     String? imageStoragePath,
     String? videoStoragePath,
-    String? storyFilter,
+    String? postReference,
+    String? postContent,
+    String? postAuthorName,
     String? storyText,
     String? storyBackgroundColor,
+    String? storyFilter,
   }) async {
-    final docRef = await _db.collection('stories').add({
+    final storyData = {
       'userId': userId,
       'userName': userName,
       'userPic': userPic,
@@ -867,32 +1206,34 @@ class FirestoreService {
       'videoUrl': videoUrl,
       'imageStoragePath': imageStoragePath,
       'videoStoragePath': videoStoragePath,
-      'storyFilter': storyFilter,
-      'storyText': storyText,
-      'storyBackgroundColor': storyBackgroundColor,
-      'createdAt': FieldValue.serverTimestamp()
-    });
+      'createdAt': FieldValue.serverTimestamp(),
+    };
 
-    // إرسال إشعارات للأصدقاء
-    try {
-      final userDoc = await _db.collection('users').doc(userId).get();
-      final List<String> friends =
-          List<String>.from(userDoc.data()?['friends'] ?? []);
-
-      List<Future> notificationTasks = [];
-      for (final friendUid in friends) {
-        notificationTasks.add(NotificationsService.sendPushNotification({
-          'targetUid': friendUid,
-          'title': 'قصة جديدة 🌟',
-          'body': 'قام $userName بنشر قصة جديدة',
-          'type': 'story',
-          'storyId': docRef.id,
-        }));
-      }
-      await Future.wait(notificationTasks);
-    } catch (e) {
-      debugPrint("Error sending story notification: $e");
+    // إضافة حقول مرجع المنشور إذا وجدت
+    if (postReference != null) {
+      storyData['postReference'] = postReference;
     }
+    if (postContent != null) {
+      storyData['postContent'] = postContent;
+    }
+    if (postAuthorName != null) {
+      storyData['postAuthorName'] = postAuthorName;
+    }
+
+    // إضافة حقول القصة النصية إذا وجدت
+    if (storyText != null) {
+      storyData['storyText'] = storyText;
+    }
+    if (storyBackgroundColor != null) {
+      storyData['storyBackgroundColor'] = storyBackgroundColor;
+    }
+    if (storyFilter != null) {
+      storyData['storyFilter'] = storyFilter;
+    }
+
+    await _db.collection('stories').add(storyData);
+
+    // إشعار نشر القصة سيتم عبر Cloud Function بعد حفظ المستند
   }
 
   Future<void> markStoryViewed(String storyId, String userId) =>
@@ -911,6 +1252,31 @@ class FirestoreService {
         : await ref.update({
             'likes': FieldValue.arrayUnion([userId])
           });
+  }
+
+  Future<void> toggleStoryArchive(String storyId, String userId) async {
+    final ref = _db.collection('stories').doc(storyId);
+    final doc = await ref.get();
+    List archivedBy = List.from(doc.data()?['archivedBy'] ?? []);
+    archivedBy.contains(userId)
+        ? await ref.update({
+            'archivedBy': FieldValue.arrayRemove([userId])
+          })
+        : await ref.update({
+            'archivedBy': FieldValue.arrayUnion([userId])
+          });
+  }
+
+  Stream<List<StoryModel>> streamArchivedStories(String userId) {
+    return _db
+        .collection('stories')
+        .where('archivedBy', arrayContains: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) {
+              final data = doc.data();
+              return StoryModel.fromMap(data, doc.id);
+            }).toList());
   }
 
   Future<void> addStoryReply(String storyId, String userId, String name,
@@ -973,31 +1339,6 @@ class FirestoreService {
     }
   }
 
-  Future<void> toggleStoryArchive(String storyId, String userId) async {
-    if (!_isValidId(storyId) || !_isValidId(userId)) return;
-    
-    try {
-      final ref = _db.collection('stories').doc(storyId);
-      final doc = await ref.get();
-      
-      if (!doc.exists) return;
-      
-      List archivedBy = List.from(doc.data()?['archivedBy'] ?? []);
-      
-      if (archivedBy.contains(userId)) {
-        archivedBy.remove(userId);
-      } else {
-        archivedBy.add(userId);
-      }
-      
-      await ref.update({'archivedBy': archivedBy});
-    } catch (e) {
-      debugPrint('Error toggling story archive: $e');
-      rethrow;
-    }
-  }
-
-
   Future<void> sendGiftInChat(
       {required String roomId,
       required String senderId,
@@ -1038,7 +1379,8 @@ class FirestoreService {
         'profileLikes': FieldValue.arrayUnion([visitorId])
       });
       // مكافأة الإعجاب بالبروفايل
-      await _rewardSocialAction(userId: visitorId, actionType: 'like', targetId: targetUid);
+      await _rewardSocialAction(
+          userId: visitorId, actionType: 'like', targetId: targetUid);
     }
   }
 
@@ -1050,9 +1392,21 @@ class FirestoreService {
         .snapshots()
         .asyncMap((snap) async {
       List<UserModel> users = [];
+      final now = DateTime.now();
+      final twentyFourHoursAgo = now.subtract(const Duration(hours: 24));
+
       for (var d in snap.docs) {
-        var u = await _db.collection('users').doc(d.id).get();
-        if (u.exists) users.add(UserModel.fromMap(u.data()!, u.id));
+        final data = d.data();
+        final timestamp = data['timestamp'] as Timestamp?;
+
+        if (timestamp != null) {
+          final visitTime = timestamp.toDate();
+          // فلترة الزوار الذين زاروا خلال آخر 24 ساعة فقط
+          if (visitTime.isAfter(twentyFourHoursAgo)) {
+            var u = await _db.collection('users').doc(d.id).get();
+            if (u.exists) users.add(UserModel.fromMap(u.data()!, u.id));
+          }
+        }
       }
       return users;
     });

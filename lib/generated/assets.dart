@@ -30,7 +30,7 @@ class $AssetsImagesGen {
   final AssetGenImage backgammonRoyalBg =
       const AssetGenImage('assets/images/Backgammon_royal_bg.jpg');
   final AssetGenImage backgammonRoyalIcon =
-      const AssetGenImage('assets/images/Backgammon_royal_icon.jpg');
+      const AssetGenImage('assets/images/Backgammon_royal_icon.png');
   final AssetGenImage a = const AssetGenImage('assets/images/a.png');
   final AssetGenImage a1 = const AssetGenImage('assets/images/a1.png');
   final AssetGenImage appIcon =

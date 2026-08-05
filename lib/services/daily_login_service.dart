@@ -67,37 +67,42 @@ class DailyLoginService {
       final dayIndex = (streak - 1) % 7;
       int starReward = 0;
       int gemReward = 0;
+      int paperReward = 0;
 
       switch (dayIndex) {
-        case 0:
+        case 0: // اليوم الأول: 500 كوينز
           starReward = 500;
           break;
-        case 1:
+        case 1: // الثاني: 800 كوينز
           starReward = 800;
           break;
-        case 2:
+        case 2: // الثالث: 5 جواهر
           gemReward = 5;
           break;
-        case 3:
+        case 3: // الرابع: 1000 كوينز
           starReward = 1000;
           break;
-        case 4:
+        case 4: // الخامس: 1500 كوينز
           starReward = 1500;
           break;
-        case 5:
+        case 5: // السادس: 2000 كوينز
           starReward = 2000;
           break;
-        case 6:
+        case 6: // السابع: 2000 كوينز و 10 جوهرة
           starReward = 2000;
           gemReward = 10;
           break;
       }
 
+      // إضافة قصاصات الورق عند الاستلام
+      paperReward = 1;
+
       // تحديث بيانات المستخدم (تحديث جميع الحقول المحتملة للتوحيد)
       transaction.update(userRef, {
-        'stars': FieldValue.increment(starReward),
         'coins': FieldValue.increment(starReward),
+        'stars': FieldValue.increment(starReward),
         'gems': FieldValue.increment(gemReward),
+        'paperCoupons': FieldValue.increment(paperReward),
         'rewardStreak': streak,
         'dailyStreak': streak,
         'lastClaimedAt': FieldValue.serverTimestamp(),
@@ -118,6 +123,7 @@ class DailyLoginService {
         'streak': streak,
         'stars': starReward,
         'gems': gemReward,
+        'paperCoupons': paperReward,
       };
     });
   }

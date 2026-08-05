@@ -6,9 +6,12 @@ import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import '../../services/firestore_service.dart';
 import '../../services/storage_service.dart';
 import '../../models/post_model.dart';
+import '../../models/privacy_model.dart';
+import '../../widgets/privacy_selector.dart';
 import '../../app_theme.dart';
 
 class CreatePostPage extends StatefulWidget {
@@ -20,10 +23,11 @@ class CreatePostPage extends StatefulWidget {
 
 class _CreatePostPageState extends State<CreatePostPage> {
   final TextEditingController _textController = TextEditingController();
-  final List<File> _selectedImages = [];
-  File? _selectedVideo;
+  final List<dynamic> _selectedImages = []; // File on mobile, XFile on web
+  dynamic _selectedVideo; // File on mobile, XFile on web
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
+  PrivacyLevel _privacyLevel = PrivacyLevel.public;
 
   final AudioRecorder _audioRecorder = AudioRecorder();
   bool _isRecording = false;
@@ -46,7 +50,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
     if (images.isNotEmpty) {
       setState(() {
         _selectedVideo = null;
-        _selectedImages.addAll(images.map((img) => File(img.path)));
+        if (kIsWeb) {
+          _selectedImages.addAll(images); // XFile on web
+        } else {
+          _selectedImages.addAll(images.map((img) => File(img.path))); // File on mobile
+        }
       });
     }
   }
@@ -56,12 +64,25 @@ class _CreatePostPageState extends State<CreatePostPage> {
     if (video != null) {
       setState(() {
         _selectedImages.clear();
-        _selectedVideo = File(video.path);
+        if (kIsWeb) {
+          _selectedVideo = video; // XFile on web
+        } else {
+          _selectedVideo = File(video.path); // File on mobile
+        }
       });
     }
   }
 
   Future<void> _startRecording() async {
+    if (kIsWeb) {
+      // Recording not supported on web
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('التسجيل الصوتي غير مدعوم على الويب حالياً')));
+      }
+      return;
+    }
+    
     if (await _audioRecorder.hasPermission()) {
       final directory = await getApplicationDocumentsDirectory();
       final path = p.join(directory.path,
@@ -90,6 +111,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
         _selectedImages.isEmpty &&
         _selectedVideo == null &&
         _audioPath == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('أضف نصًا أو صورة أو فيديو أو تسجيل صوتي قبل النشر.')),
+        );
+      }
       return;
     }
     setState(() => _isLoading = true);
@@ -115,6 +143,14 @@ class _CreatePostPageState extends State<CreatePostPage> {
         videoUrl = await StorageService.uploadDailyPostVideo(_selectedVideo!);
       }
 
+      String? audioUrl;
+      if (_audioPath != null && !kIsWeb) {
+        final audioFile = File(_audioPath!);
+        if (await audioFile.exists()) {
+          audioUrl = await StorageService.uploadDailyPostAudio(audioFile);
+        }
+      }
+
       final newPost = PostModel(
         id: '',
         authorId: user.uid,
@@ -124,10 +160,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
         imageUrl: firstImageUrl,
         imageUrls: imageUrls,
         videoUrl: videoUrl,
-        audioUrl: _audioPath, // Assuming you handle audio upload or reference
-        audioDuration: _audioPath != null ? _recordDuration : null,
+        audioUrl: audioUrl,
+        audioDuration: audioUrl != null ? _recordDuration : null,
         createdAt: DateTime.now(),
         isVip: userSnap.accountLevel > 5,
+        privacy: _privacyLevel,
       );
 
       await _firestoreService.addPost(newPost);
@@ -237,15 +274,21 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 : null,
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(user?.displayName ?? 'مستخدم ملكي',
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold)),
-              const Text('عام',
-                  style: TextStyle(color: Colors.white38, fontSize: 12)),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(user?.displayName ?? 'مستخدم ملكي',
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold)),
+                PrivacyDropdown(
+                  selectedPrivacy: _privacyLevel,
+                  onPrivacyChanged: (level) {
+                    setState(() => _privacyLevel = level);
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -132,7 +132,7 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 14)),
-                Text('${frame.price} ⭐',
+                Text('${frame.price} كوينز',
                     style: TextStyle(
                         color: accentGold,
                         fontSize: 13,
@@ -145,7 +145,8 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                       const Icon(Icons.auto_awesome,
                           color: Colors.pinkAccent, size: 14),
                     if (frame.isFamilyFrame)
-                      const Icon(Icons.castle, color: Colors.cyanAccent, size: 14),
+                      const Icon(Icons.castle,
+                          color: Colors.cyanAccent, size: 14),
                     if (frame.minVipLevel != null)
                       Text(' VIP ${frame.minVipLevel}',
                           style: const TextStyle(
@@ -234,7 +235,7 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                 _buildRoyalTextField(
                     nameCtrl, 'مثال: إطار التنين الذهبي', Icons.edit),
                 const SizedBox(height: 15),
-                _buildFieldLabel('السعر بالنجوم ⭐'),
+                _buildFieldLabel('السعر بالكوينز'),
                 _buildRoyalTextField(priceCtrl, '0', Icons.stars,
                     isNumber: true),
                 const SizedBox(height: 15),
@@ -309,8 +310,10 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
                       'isActive': true,
                       'createdAt': FieldValue.serverTimestamp(),
                     });
+                    if (!mounted) return;
                     Navigator.pop(ctx);
                   } catch (e) {
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context)
                         .showSnackBar(SnackBar(content: Text('خطأ: $e')));
                   } finally {
@@ -331,7 +334,8 @@ class _AdminFramesPageState extends State<AdminFramesPage> {
   Widget _buildFieldLabel(String text) => Padding(
       padding: const EdgeInsets.only(bottom: 8, right: 5),
       child: Text(text,
-          style: TextStyle(color: accentGold.withValues(alpha: 0.7), fontSize: 12)));
+          style: TextStyle(
+              color: accentGold.withValues(alpha: 0.7), fontSize: 12)));
 
   Widget _buildRoyalTextField(
       TextEditingController ctrl, String hint, IconData icon,

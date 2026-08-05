@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../pages/admin/admin_payments_page.dart';
 import 'admin_special_ids_page.dart';
 import 'admin_recharge_packages_page.dart';
 import 'admin_rewards_wallet_mgmt_page.dart';
@@ -25,41 +24,56 @@ class AdminEconomyGrid extends StatelessWidget {
               style: TextStyle(color: goldColor, fontWeight: FontWeight.bold)),
           centerTitle: true,
         ),
-        body: GridView.count(
-          padding: const EdgeInsets.all(20),
-          crossAxisCount: 2,
-          mainAxisSpacing: 20,
-          crossAxisSpacing: 20,
-          children: [
-            _buildEconomyCard(context, 'طلبات الشحن', Icons.payments_rounded,
-                Colors.greenAccent, const AdminPaymentsPage()),
-            _buildEconomyCard(
-                context,
-                'شحن وتعديل الأرصدة',
-                Icons.account_balance_wallet_rounded,
-                Colors.green,
-                const AdminHarvestWalletMgmtPage()),
-            _buildEconomyCard(
-                context,
-                'باقات الحصاد الملكي',
-                Icons.workspace_premium_rounded,
-                Colors.amberAccent,
-                const AdminRewardsMgmtPage(type: 'harvest')),
-            _buildEconomyCard(
-                context,
-                'مصنع الهدايا',
-                Icons.card_giftcard_rounded,
-                Colors.pinkAccent,
-                const AdminGiftsPage(initialPlacement: 'chat')),
-            _buildEconomyCard(
-                context,
-                'باقات الشحن',
-                Icons.shopping_bag_rounded,
-                Colors.blueAccent,
-                const AdminRechargePackagesPage(initialType: 'gems')),
-            _buildEconomyCard(context, 'الآيدي المميز', Icons.badge_rounded,
-                Colors.orangeAccent, const AdminSpecialIdsPage()),
-          ],
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final screenWidth = MediaQuery.of(context).size.width;
+            int crossAxisCount;
+
+            if (screenWidth < 600) {
+              crossAxisCount = 2;
+            } else if (screenWidth < 900) {
+              crossAxisCount = 3;
+            } else if (screenWidth < 1200) {
+              crossAxisCount = 4;
+            } else {
+              crossAxisCount = 5;
+            }
+
+            return GridView.count(
+              padding: const EdgeInsets.all(20),
+              crossAxisCount: crossAxisCount,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              children: [
+                _buildEconomyCard(
+                    context,
+                    'شحن وتعديل الأرصدة الملكية',
+                    Icons.account_balance_wallet_rounded,
+                    Colors.green,
+                    const AdminHarvestWalletMgmtPage()),
+                _buildEconomyCard(
+                    context,
+                    'باقات المكافآت الملكية',
+                    Icons.workspace_premium_rounded,
+                    Colors.amberAccent,
+                    const AdminRewardsMgmtPage(type: 'harvest')),
+                _buildEconomyCard(
+                    context,
+                    'مصنع الهدايا',
+                    Icons.card_giftcard_rounded,
+                    Colors.pinkAccent,
+                    const AdminGiftsPage(initialPlacement: 'chat')),
+                _buildEconomyCard(
+                    context,
+                    'باقات الشحن',
+                    Icons.shopping_bag_rounded,
+                    Colors.blueAccent,
+                    const AdminRechargePackagesPage(initialType: 'gems')),
+                _buildEconomyCard(context, 'الآيدي المميز', Icons.badge_rounded,
+                    Colors.orangeAccent, const AdminSpecialIdsPage()),
+              ],
+            );
+          },
         ),
       ),
     );

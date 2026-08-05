@@ -61,7 +61,7 @@ class SocialService {
 
     // إضافة نجوم اجتماعية ونجوم ودية ⭐
     await addSocialPoints(currentUid, 'follow_given', 5);
-    await addSocialPoints(targetUid, 'follow_received', 10);
+    await addSocialPoints(targetUid, 'follow_received', 5);
 
     // ربط التحديات اليومية (تحدي المتابعات الجديدة)
     await ChallengesService.updateProgress(ChallengesService.typeFollow);
@@ -137,7 +137,7 @@ class SocialService {
       // 1. تحديث مستوى الكوينز الاجتماعي (تراكمية لا تنقص)
       final snap = await tx.get(pointsRef);
       int currentTotal =
-          (snap.data()?['totalStars'] ?? snap.data()?['totalPoints'] ?? 0)
+          (snap.data()?['totalCoins'] ?? snap.data()?['totalStars'] ?? snap.data()?['totalPoints'] ?? 0)
               .toInt();
       Map<String, int> pointsByType =
           Map<String, int>.from(snap.data()?['pointsByType'] ?? {});
@@ -151,7 +151,8 @@ class SocialService {
       tx.set(
           pointsRef,
           {
-            'totalStars': newTotal,
+            'totalCoins': newTotal,
+            'totalStars': newTotal, // Legacy sync
             'totalPoints': newTotal, // Legacy sync
             'level': newLevel,
             'pointsByType': pointsByType,
@@ -161,8 +162,7 @@ class SocialService {
 
       // 2. تحديث رصيد الكوينز الودية 🪙 (قابل للتحويل لكوينز ملكية 🪙)
       tx.update(userRef, {
-        'agentData.friendlyStars': FieldValue.increment(points),
-        'agentData.friendlyPoints': FieldValue.increment(points), // Legacy sync
+        'agentData.friendlyCoins': FieldValue.increment(points),
         'socialLevel': newLevel, // مزامنة المستوى في وثيقة المستخدم أيضاً
       });
 
@@ -228,9 +228,6 @@ class SocialService {
     final currentUid = _auth.currentUser?.uid;
     if (currentUid == null || currentUid == targetUid) return;
 
-    await addSocialPoints(currentUid, 'like_given', 2);
-    await addSocialPoints(targetUid, 'like_received', 5);
-
     // ربط التحديات اليومية (تحدي الإعجابات)
     await ChallengesService.updateProgress(ChallengesService.typeLike);
 
@@ -246,9 +243,6 @@ class SocialService {
     final currentUid = _auth.currentUser?.uid;
     if (currentUid == null || currentUid == targetUid) return;
 
-    await addSocialPoints(currentUid, 'comment_given', 5);
-    await addSocialPoints(targetUid, 'comment_received', 8);
-
     await sendNotification(
       targetUid: targetUid,
       title: 'تعليق جديد 💬',
@@ -260,9 +254,6 @@ class SocialService {
   static Future<void> shareUser(String targetUid) async {
     final currentUid = _auth.currentUser?.uid;
     if (currentUid == null || currentUid == targetUid) return;
-
-    await addSocialPoints(currentUid, 'share_given', 10);
-    await addSocialPoints(targetUid, 'share_received', 15);
 
     await sendNotification(
       targetUid: targetUid,

@@ -6,8 +6,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import '../app_theme.dart';
 import '../theme/reusable_widgets.dart';
+import '../services/telegram_web_app_service.dart';
 
 class DataSettingsPage extends StatefulWidget {
   const DataSettingsPage({super.key});
@@ -256,11 +258,15 @@ class _DataSettingsPageState extends State<DataSettingsPage> {
 
       if (mounted) {
         HapticFeedback.mediumImpact();
-        await Share.shareXFiles(
-          [XFile(file.path)],
-          text: 'نسخة من بياناتي الشخصية من تطبيق رويال دور 👑',
-          subject: 'تصدير بيانات رويال دور',
-        );
+        if (kIsWeb && TelegramWebAppService.isTelegramWebApp()) {
+          TelegramWebAppService.shareText('نسخة من بياناتي الشخصية من تطبيق رويال دور 👑');
+        } else {
+          await Share.shareXFiles(
+            [XFile(file.path)],
+            text: 'نسخة من بياناتي الشخصية من تطبيق رويال دور 👑',
+            subject: 'تصدير بيانات رويال دور',
+          );
+        }
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

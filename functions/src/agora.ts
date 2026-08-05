@@ -1,7 +1,14 @@
 import * as functions from "firebase-functions";
 import {RtcTokenBuilder, RtcRole} from "agora-token";
 
-export const generateAgoraToken = functions.https.onCall((data, context) => {
+export const generateAgoraToken = functions.https.onCall(async (data, context) => {
+  // التحقق من App Check
+  if (context.app) {
+    console.log('✅ App Check token received:', context.app.appId);
+  } else {
+    console.log('⚠️ No App Check token received (allowed for now)');
+  }
+
   // التحقق من تسجيل الدخول
   if (!context.auth) {
     throw new functions.https.HttpsError(
@@ -10,11 +17,11 @@ export const generateAgoraToken = functions.https.onCall((data, context) => {
     );
   }
 
-  const appId = "daed7a59dcbd4de2969b7504ae0843dc";
+  const appId = "2042a5996de7444e9a72babc8527b25e";
   // ملاحظة: يجب وضع App Certificate الخاص بك هنا ليعمل الأمان
   // يمكنك الحصول عليه من لوحة تحكم Agora
-  const appCertificate = "def60ed9868745069770195dd762f586"; 
-  
+  const appCertificate = "4b1952e689234f4fb5eb83a290b37581";
+
   const channelName = data.channelName;
   if (!channelName) {
     throw new functions.https.HttpsError(

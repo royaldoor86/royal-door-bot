@@ -1,13 +1,20 @@
 plugins {
     id("com.android.application") apply false
     id("com.android.library") apply false
-    id("org.jetbrains.kotlin.android") version "2.2.20" apply false
+    id("org.jetbrains.kotlin.android") version "2.1.0" apply false
 }
 
 allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://android-sdk.is.com/") }
+        maven { url = uri("https://repo.pubmatic.com/artifactory/public-repos") }
+        maven { url = uri("https://ysonetwork.s3.eu-west-3.amazonaws.com/sdk/android") }
+        maven { url = uri("https://jitpack.io") }
+        flatDir {
+            dirs("D:/royaldoor/lib/features/games/unityLibrary/libs")
+        }
     }
 }
 
@@ -29,16 +36,6 @@ subprojects {
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = "17"
         targetCompatibility = "17"
-    }
-    
-    // Configure Android library compile options using plugin manager
-    plugins.withType<com.android.build.gradle.LibraryPlugin>().configureEach {
-        extensions.configure<com.android.build.gradle.LibraryExtension> {
-            compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_17
-                targetCompatibility = JavaVersion.VERSION_17
-            }
-        }
     }
 }
 

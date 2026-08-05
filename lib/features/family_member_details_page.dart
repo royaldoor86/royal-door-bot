@@ -34,30 +34,40 @@ class _FamilyMemberDetailsPageState extends State<FamilyMemberDetailsPage> {
           elevation: 0,
           iconTheme: const IconThemeData(color: Colors.white),
         ),
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF3D0B16), Color(0xFF1A050E), Color(0x00000000)],
+        body: SafeArea(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF3D0B16),
+                  Color(0xFF1A050E),
+                  Color(0x00000000)
+                ],
+              ),
             ),
-          ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                _buildMemberHeader(),
-                const SizedBox(height: 20),
-                _buildContributionSection(),
-                const SizedBox(height: 20),
-                _buildJoinDateSection(),
-                const SizedBox(height: 20),
-                _buildPersonalStatsSection(),
-                const SizedBox(height: 20),
-                _buildFamilyRewardsSection(),
-                const SizedBox(height: 20),
-                _buildActivityChart(),
-              ],
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  _buildMemberHeader(),
+                  const SizedBox(height: 20),
+                  _buildRoleSection(),
+                  const SizedBox(height: 20),
+                  _buildContributionSection(),
+                  const SizedBox(height: 20),
+                  _buildJoinDateSection(),
+                  const SizedBox(height: 20),
+                  _buildPersonalStatsSection(),
+                  const SizedBox(height: 20),
+                  _buildTasksCompletedSection(),
+                  const SizedBox(height: 20),
+                  _buildFamilyRewardsSection(),
+                  const SizedBox(height: 20),
+                  _buildActivityChart(),
+                ],
+              ),
             ),
           ),
         ),
@@ -110,6 +120,167 @@ class _FamilyMemberDetailsPageState extends State<FamilyMemberDetailsPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildRoleSection() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _db
+          .collection('families')
+          .doc(widget.familyId)
+          .collection('members')
+          .doc(widget.memberId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox();
+        }
+
+        final memberData = snapshot.data!.data() as Map<String, dynamic>?;
+        final role = memberData?['role'] ?? 'member';
+
+        final roleNames = {
+          'leader': 'القائد',
+          'co-leader': 'نائب القائد',
+          'recruiter': 'المجند',
+          'general': 'القائد العام',
+          'member': 'عضو',
+        };
+
+        final roleIcons = {
+          'leader': Icons.emoji_events,
+          'co-leader': Icons.workspace_premium,
+          'recruiter': Icons.person_add,
+          'general': Icons.military_tech,
+          'member': Icons.person,
+        };
+
+        return AppTheme.glassContainer(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  roleIcons[role] ?? Icons.person,
+                  color: Colors.amber,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('الدور في العائلة',
+                        style: TextStyle(color: Colors.white38, fontSize: 12)),
+                    const SizedBox(height: 4),
+                    Text(
+                      roleNames[role] ?? role,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTasksCompletedSection() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _db
+          .collection('families')
+          .doc(widget.familyId)
+          .collection('members')
+          .doc(widget.memberId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox();
+        }
+
+        final memberData = snapshot.data!.data() as Map<String, dynamic>?;
+        final tasksCompleted = memberData?['tasksCompleted'] ?? 0;
+        final warsParticipated = memberData?['warsParticipated'] ?? 0;
+
+        return AppTheme.glassContainer(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('الإنجازات',
+                  style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+              const SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(
+                    child: _achievementCard(
+                      'المهام المكتملة',
+                      tasksCompleted.toString(),
+                      Icons.task_alt,
+                      Colors.green,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _achievementCard(
+                      'الحروب المشاركة',
+                      warsParticipated.toString(),
+                      Icons.military_tech,
+                      Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _achievementCard(
+      String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 32),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white70, fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 
@@ -282,12 +453,12 @@ class _FamilyMemberDetailsPageState extends State<FamilyMemberDetailsPage> {
         if (rewards.isEmpty) {
           return AppTheme.glassContainer(
             padding: const EdgeInsets.all(20),
-            child: Column(
+            child: const Column(
               children: [
-                const Icon(Icons.emoji_events_outlined,
+                Icon(Icons.emoji_events_outlined,
                     size: 50, color: Colors.white24),
-                const SizedBox(height: 10),
-                const Text('لا توجد جوائز بعد',
+                SizedBox(height: 10),
+                Text('لا توجد جوائز بعد',
                     style: TextStyle(color: Colors.white38)),
               ],
             ),
@@ -373,13 +544,13 @@ class _FamilyMemberDetailsPageState extends State<FamilyMemberDetailsPage> {
               color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Center(
+            child: const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.bar_chart, size: 50, color: Colors.white24),
-                  const SizedBox(height: 10),
-                  const Text('رسم بياني للنشاط',
+                  SizedBox(height: 10),
+                  Text('رسم بياني للنشاط',
                       style: TextStyle(color: Colors.white38)),
                 ],
               ),

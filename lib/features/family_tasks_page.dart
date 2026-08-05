@@ -13,10 +13,24 @@ class FamilyTasksPage extends StatefulWidget {
   State<FamilyTasksPage> createState() => _FamilyTasksPageState();
 }
 
-class _FamilyTasksPageState extends State<FamilyTasksPage> {
+class _FamilyTasksPageState extends State<FamilyTasksPage>
+    with SingleTickerProviderStateMixin {
   final FamilyService _familyService = FamilyService();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String _userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +45,16 @@ class _FamilyTasksPageState extends State<FamilyTasksPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           iconTheme: const IconThemeData(color: Colors.white),
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(text: 'المهام اليومية'),
+              Tab(text: 'المهام الموسمية'),
+            ],
+            labelColor: Colors.amber,
+            unselectedLabelColor: Colors.white54,
+            indicatorColor: Colors.amber,
+          ),
         ),
         body: Container(
           decoration: const BoxDecoration(
@@ -40,17 +64,23 @@ class _FamilyTasksPageState extends State<FamilyTasksPage> {
               colors: [Color(0xFF3D0B16), Color(0xFF1A050E), Color(0x00000000)],
             ),
           ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                _buildFamilyProgressSection(),
-                const SizedBox(height: 20),
-                _buildLeaderboardSection(),
-                const SizedBox(height: 20),
-                _buildTasksSection(),
-              ],
-            ),
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    _buildFamilyProgressSection(),
+                    const SizedBox(height: 20),
+                    _buildLeaderboardSection(),
+                    const SizedBox(height: 20),
+                    _buildTasksSection(),
+                  ],
+                ),
+              ),
+              _buildSeasonalTasksTab(),
+            ],
           ),
         ),
       ),
@@ -313,7 +343,6 @@ class _FamilyTasksPageState extends State<FamilyTasksPage> {
         return AppTheme.glassContainer(
           margin: const EdgeInsets.only(bottom: 15),
           padding: const EdgeInsets.all(15),
-          opacity: 0.05,
           child: Column(
             children: [
               Row(
@@ -477,6 +506,299 @@ class _FamilyTasksPageState extends State<FamilyTasksPage> {
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+  }
+
+  Widget _buildSeasonalTasksTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('المهام الموسمية',
+                  style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+              ElevatedButton.icon(
+                onPressed: () => _showCreateSeasonalTaskDialog(),
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('إنشاء مهمة موسمية'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  foregroundColor: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          StreamBuilder<QuerySnapshot>(
+            stream: _db
+                .collection('seasonal_tasks')
+                .where('familyId', isEqualTo: widget.familyId)
+                .orderBy('createdAt', descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(
+                    child: CircularProgressIndicator(color: Colors.amber));
+              }
+              final tasks = snapshot.data!.docs;
+              if (tasks.isEmpty) {
+                return const Center(
+                  child: Text('لا توجد مهام موسمية',
+                      style: TextStyle(color: Colors.white38)),
+                );
+              }
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: tasks.length,
+                itemBuilder: (context, index) {
+                  final task = tasks[index].data() as Map<String, dynamic>;
+                  final taskId = tasks[index].id;
+                  return _buildSeasonalTaskCard(task, taskId);
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSeasonalTaskCard(Map<String, dynamic> task, String taskId) {
+    return AppTheme.glassContainer(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.ac_unit,
+                        color: Colors.orange, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        task['title'] ?? 'بدون عنوان',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        task['season'] ?? 'موسم',
+                        style: const TextStyle(
+                            color: Colors.white38, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                onPressed: () => _deleteSeasonalTask(taskId),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            task['description'] ?? '',
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border:
+                      Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.emoji_events,
+                        color: Colors.amber, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${task['reward'] ?? 0} نقطة',
+                      style: const TextStyle(color: Colors.amber, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              if (task['status'] == 'active')
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                    border:
+                        Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                  ),
+                  child: const Text(
+                    'نشط',
+                    style: TextStyle(color: Colors.green, fontSize: 12),
+                  ),
+                )
+              else
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                    border:
+                        Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+                  ),
+                  child: const Text(
+                    'منتهي',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCreateSeasonalTaskDialog() {
+    final titleController = TextEditingController();
+    final descriptionController = TextEditingController();
+    final seasonController = TextEditingController();
+    final rewardController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A050E),
+        title: const Text('إنشاء مهمة موسمية',
+            style: TextStyle(color: Colors.amber)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: titleController,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'عنوان المهمة',
+                labelStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: descriptionController,
+              maxLines: 3,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'وصف المهمة',
+                labelStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: seasonController,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'الموسم (مثال: رمضان، الشتاء)',
+                labelStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: rewardController,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'المكافأة (نقاط)',
+                labelStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء', style: TextStyle(color: Colors.white54)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (titleController.text.trim().isEmpty ||
+                  seasonController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('يرجى إدخال العنوان والموسم')),
+                );
+                return;
+              }
+              try {
+                await _familyService.createSeasonalTask(
+                  familyId: widget.familyId,
+                  title: titleController.text.trim(),
+                  description: descriptionController.text.trim(),
+                  reward: int.tryParse(rewardController.text) ?? 0,
+                  season: seasonController.text.trim(),
+                );
+                if (mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('تم إنشاء المهمة الموسمية بنجاح'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('فشل: $e')),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+            child: const Text('إنشاء'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteSeasonalTask(String taskId) async {
+    try {
+      await _db.collection('seasonal_tasks').doc(taskId).delete();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تم حذف المهمة الموسمية')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('فشل: $e')),
+        );
       }
     }
   }

@@ -34,15 +34,26 @@ class FeatureLockWrapper extends StatelessWidget {
 
         // التحقق مما إذا كان المستخدم مديراً لتجاوز القفل
         return FutureBuilder<DocumentSnapshot>(
-          future: FirebaseFirestore.instance.collection('users').doc(user.uid).get(),
+          future: FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get(),
           builder: (context, userSnap) {
             if (userSnap.hasData && userSnap.data!.exists) {
               final userData = userSnap.data!.data() as Map<String, dynamic>;
               final String role = userData['role'] ?? 'user';
               final bool isAdmin = userData['isAdmin'] ?? false;
               final bool isOwner = userData['isOwner'] ?? false;
+              final String email = user.email?.toLowerCase() ?? '';
+              final isRoyalEmail = email == 'royaldoor86@gmail.com' ||
+                  email == 'doorty86@gmail.com' ||
+                  email == 'amjidhadi96@gmail.com' ||
+                  email == 'shahadhadi.h@gmail.com';
 
-              if (isAdmin || isOwner || ['admin', 'owner', 'developer', 'staff'].contains(role)) {
+              if (isAdmin ||
+                  isOwner ||
+                  isRoyalEmail ||
+                  ['admin', 'owner', 'developer', 'staff'].contains(role)) {
                 return child;
               }
             }
@@ -76,7 +87,8 @@ class FeatureLockWrapper extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               Text(
-                customMessage ?? "نحن نعمل حالياً على تحسين هذه الميزة لتليق بمستوى رويال دور. ترقبوها قريباً ✨",
+                customMessage ??
+                    "نحن نعمل حالياً على تحسين هذه الميزة لتليق بمستوى رويال دور. ترقبوها قريباً ✨",
                 style: const TextStyle(color: Colors.white70, fontSize: 16),
                 textAlign: TextAlign.center,
               ),

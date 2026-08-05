@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_player/video_player.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import '../../services/firestore_service.dart';
 import '../../models/chat_model.dart';
 import '../../models/user_model.dart';
@@ -37,6 +38,7 @@ class _GroupChatPageState extends State<GroupChatPage>
   final AudioPlayer _sfxPlayer = AudioPlayer();
   final ImagePicker _picker = ImagePicker();
   final RecordingService _recordingService = RecordingService();
+  bool _showEmojiPicker = false;
 
   StreamSubscription<List<MessageModel>>? _messageSubscription;
   StreamSubscription<DocumentSnapshot>? _roomSubscription;
@@ -99,7 +101,7 @@ class _GroupChatPageState extends State<GroupChatPage>
   void _setupMessageSubscription() {
     _messageSubscription?.cancel();
     _messageSubscription = _firestoreService
-        .streamMessages(_currentRoom.id, limit: _messageLimit)
+        .streamMessages(_currentRoom.id, limit: _messageLimit, userId: _currentUserId)
         .listen((messages) {
       if (messages.isNotEmpty) {
         final currentUid = FirebaseAuth.instance.currentUser?.uid;
@@ -412,7 +414,7 @@ class _GroupChatPageState extends State<GroupChatPage>
   Widget _buildMessagesList() {
     return StreamBuilder<List<MessageModel>>(
       stream: _firestoreService.streamMessages(_currentRoom.id,
-          limit: _messageLimit),
+          limit: _messageLimit, userId: _currentUserId),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
@@ -441,56 +443,76 @@ class _GroupChatPageState extends State<GroupChatPage>
               builder: (context, userSnap) {
                 String? avatar;
                 String? name;
+                String? chatBubble;
                 if (userSnap.hasData && userSnap.data!.exists) {
                   final data = userSnap.data!.data() as Map<String, dynamic>?;
                   avatar = data?['profilePic'];
                   name = data?['name'];
+                  chatBubble = data?['chatBubble'];
                 }
 
-                return ChatMessageBubble(
-                  message: message,
-                  isMe: isMe,
-                  senderAvatar: isMe ? null : avatar,
-                  senderName: isMe ? null : name,
-                  onAvatarTap: isMe
-                      ? null
-                      : () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  UserProfilePage(userId: message.senderId),
-                            ),
-                          );
-                        },
-                  onReply: () => setState(() => _replyingTo = message),
-                  onEdit: () {
-                    _messageController.text = message.text;
-                  },
-                  onForward: () {},
-                  onLongPress: () {},
-                  onTap: () {},
-                  onDoubleTap: () {
-                    _firestoreService.addReaction(
-                        _currentRoom.id, message.id, _currentUserId, '❤️');
-                  },
-                  onVideoTap: (url) => _openPiP(url),
-                  onImageTap: (url) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            FullScreenImageViewer(imageUrl: url),
-                      ),
+                return FutureBuilder<DocumentSnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(_currentUserId)
+                      .get(),
+                  builder: (context, currentUserSnap) {
+                    String? myChatBubble;
+                    if (currentUserSnap.hasData &&
+                        currentUserSnap.data!.exists) {
+                      final data =
+                          currentUserSnap.data!.data() as Map<String, dynamic>?;
+                      myChatBubble = data?['chatBubble'];
+                    }
+
+                    return ChatMessageBubble(
+                      message: message,
+                      isMe: isMe,
+                      senderAvatar: isMe ? null : avatar,
+                      senderName: isMe ? null : name,
+                      myChatBubble: myChatBubble,
+                      otherChatBubble: chatBubble,
+                      onAvatarTap: isMe
+                          ? null
+                          : () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UserProfilePage(userId: message.senderId),
+                                ),
+                              );
+                            },
+                      onReply: () => setState(() => _replyingTo = message),
+                      onEdit: () {
+                        _messageController.text = message.text;
+                      },
+                      onForward: () {},
+                      onLongPress: () {},
+                      onTap: () {},
+                      onDoubleTap: () {
+                        _firestoreService.addReaction(
+                            _currentRoom.id, message.id, _currentUserId, '❤️');
+                      },
+                      onVideoTap: (url) => _openPiP(url),
+                      onImageTap: (url) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                FullScreenImageViewer(imageUrl: url),
+                          ),
+                        );
+                      },
+                      isPlaying: _playingAudioUrl == message.audioUrl,
+                      onPlayVoice: message.audioUrl != null
+                          ? () => _playVoice(message.audioUrl!)
+                          : null,
+                      currentPosition: _playingAudioUrl == message.audioUrl
+                          ? _audioPosition
+                          : null,
                     );
                   },
-                  isPlaying: _playingAudioUrl == message.audioUrl,
-                  onPlayVoice: message.audioUrl != null
-                      ? () => _playVoice(message.audioUrl!)
-                      : null,
-                  currentPosition: _playingAudioUrl == message.audioUrl
-                      ? _audioPosition
-                      : null,
                 );
               },
             );
@@ -558,74 +580,110 @@ class _GroupChatPageState extends State<GroupChatPage>
 
         bool hasText = _messageController.text.trim().isNotEmpty;
 
-        return ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom + 10,
-                  left: 12,
-                  right: 12,
-                  top: 10),
-              decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  border: Border(
-                      top: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.05)))),
-              child: Row(
-                children: [
-                  IconButton(
-                      icon: const Icon(Icons.add_circle_outline_rounded,
-                          color: Colors.white70),
-                      onPressed: _uploadAndSendImage),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: TextField(
-                        controller: _messageController,
-                        onChanged: (v) => setState(() {}),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 15),
-                        decoration: const InputDecoration(
-                            hintText: 'اكتب رسالة...',
-                            hintStyle:
-                                TextStyle(color: Colors.white24, fontSize: 15),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10)),
-                      ),
+        return Column(
+          children: [
+            if (_showEmojiPicker)
+              Container(
+                height: 250,
+                color: Colors.black,
+                child: emoji.EmojiPicker(
+                  onEmojiSelected: (emoji.Category? category, emoji.Emoji emoji) {
+                    _messageController.text += emoji.emoji;
+                    _messageController.selection = TextSelection.fromPosition(
+                      TextPosition(offset: _messageController.text.length),
+                    );
+                  },
+                  config: const emoji.Config(
+                    height: 250,
+                    checkPlatformCompatibility: true,
+                    emojiViewConfig: emoji.EmojiViewConfig(
+                      emojiSizeMax: 32,
+                      columns: 8,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  !hasText
-                      ? VoiceRecordingButton(
-                          recordingService: _recordingService,
-                          roomId: _currentRoom.id,
-                          onRecordingStart: () {
-                            setState(() {});
-                          },
-                          onRecordingSent: _sendVoiceMessage,
-                          onRecordingCancelled: () {
-                            setState(() {});
-                          },
-                          onError: (errorMessage) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(errorMessage)),
-                            );
-                          },
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.send_rounded,
-                              color: AppTheme.royalGold),
-                          onPressed: _sendMessage),
-                ],
+                ),
+              ),
+            ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom + 10,
+                      left: 12,
+                      right: 12,
+                      top: 10),
+                  decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      border: Border(
+                          top: BorderSide(
+                              color: Colors.white.withValues(alpha: 0.05)))),
+                  child: Row(
+                    children: [
+                      IconButton(
+                          icon: const Icon(Icons.add_circle_outline_rounded,
+                              color: Colors.white70),
+                          onPressed: _uploadAndSendImage),
+                      IconButton(
+                          icon: Icon(
+                              _showEmojiPicker
+                                  ? Icons.keyboard_rounded
+                                  : Icons.emoji_emotions_outlined,
+                              color: Colors.white70),
+                          onPressed: () {
+                            setState(() {
+                              _showEmojiPicker = !_showEmojiPicker;
+                            });
+                          }),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: TextField(
+                            controller: _messageController,
+                            onChanged: (v) => setState(() {}),
+                            style:
+                                const TextStyle(color: Colors.white, fontSize: 15),
+                            decoration: const InputDecoration(
+                                hintText: 'اكتب رسالة...',
+                                hintStyle:
+                                    TextStyle(color: Colors.white24, fontSize: 15),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      !hasText
+                          ? VoiceRecordingButton(
+                              recordingService: _recordingService,
+                              roomId: _currentRoom.id,
+                              onRecordingStart: () {
+                                setState(() {});
+                              },
+                              onRecordingSent: _sendVoiceMessage,
+                              onRecordingCancelled: () {
+                                setState(() {});
+                              },
+                              onError: (errorMessage) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(errorMessage)),
+                                );
+                              },
+                            )
+                          : IconButton(
+                              icon: const Icon(Icons.send_rounded,
+                                  color: AppTheme.royalGold),
+                              onPressed: _sendMessage),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         );
       },
     );

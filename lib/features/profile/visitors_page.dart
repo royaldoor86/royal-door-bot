@@ -16,7 +16,8 @@ class VisitorsPage extends StatelessWidget {
       return const Scaffold(
         backgroundColor: Color(0xFF020617),
         body: Center(
-          child: Text('يرجى تسجيل الدخول', style: TextStyle(color: Colors.white)),
+          child:
+              Text('يرجى تسجيل الدخول', style: TextStyle(color: Colors.white)),
         ),
       );
     }
@@ -27,7 +28,8 @@ class VisitorsPage extends StatelessWidget {
         backgroundColor: const Color(0xFF020617),
         appBar: AppBar(
           title: const Text('زوار الملف الملكي',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           centerTitle: true,
           backgroundColor: const Color(0xFF1E293B),
           iconTheme: const IconThemeData(color: Colors.white),
@@ -36,7 +38,8 @@ class VisitorsPage extends StatelessWidget {
           stream: firestoreService.streamVisitors(user.uid),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator(color: Colors.amber));
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.amber));
             }
 
             final visitors = snapshot.data ?? [];
@@ -62,7 +65,8 @@ class VisitorsPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                          color: Colors.amber.withValues(alpha: 0.3), width: 1.5),
+                          color: Colors.amber.withValues(alpha: 0.3),
+                          width: 1.5),
                     ),
                     child: CircleAvatar(
                       radius: 28,
@@ -86,7 +90,8 @@ class VisitorsPage extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => UserDetailsViewPage(user: visitor)));
+                            builder: (_) =>
+                                UserDetailsViewPage(user: visitor)));
                   },
                 );
               },

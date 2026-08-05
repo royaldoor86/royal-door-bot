@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../features/voice_room_page.dart';
 
 class RoomPresenceService {
   static final RoomPresenceService _instance = RoomPresenceService._internal();
@@ -12,7 +11,7 @@ class RoomPresenceService {
 
   void minimizeRoom(
       BuildContext context, String roomId, String roomName, String? roomImage,
-      {VoidCallback? onRoomTap}) {
+      {required VoidCallback onRoomTap}) {
     if (_overlayEntry != null) return;
 
     _overlayEntry = OverlayEntry(
@@ -20,18 +19,9 @@ class RoomPresenceService {
         roomId: roomId,
         roomName: roomName,
         roomImage: roomImage,
-        onTap: onRoomTap ?? () {
+        onTap: () {
           closeMinimized();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => VoiceRoomPage(
-                roomId: roomId,
-                roomName: roomName,
-                roomImage: roomImage,
-              ),
-            ),
-          );
+          onRoomTap();
         },
       ),
     );
@@ -109,7 +99,7 @@ class _MinimizedRoomFloatingIconState extends State<_MinimizedRoomFloatingIcon>
                 image:
                     (widget.roomImage != null && widget.roomImage!.isNotEmpty)
                         ? NetworkImage(widget.roomImage!)
-                        : const AssetImage('assets/images/room_love.jpg')
+                        : const AssetImage('assets/images/room_global.jpg')
                             as ImageProvider,
                 fit: BoxFit.cover,
               ),
