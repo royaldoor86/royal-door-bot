@@ -1,0 +1,4504 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "أيهما أثقل؟",
+      "answers": ["ك غ الحديد", "ك غ القطن", "متساويان", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 2,
+      "question": "ما الشيء الذي كلما أخذت منه كبر؟",
+      "answers": ["البحر", "الحفرة", "الجبل", "الشجرة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 3,
+      "question": "أي باب لا يمكن فتحه؟",
+      "answers": ["المنزل", "السيارة", "المفتوح", "الوهمي"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 4,
+      "question": "إذا كان جميع القطط حيوانات، وبعض الحيوانات سوداء، فهل جميع القطط سوداء؟",
+      "answers": ["نعم", "لا", "أحيانًا", "لا أعرف"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 5,
+      "question": "ما الشيء الذي يمشي بلا أرجل؟",
+      "answers": ["الهواء", "الماء", "الوقت", "الضوء"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 6,
+      "question": "إذا كان أحمد أطول من علي، وعلي أطول من سالم، فمن الأطول؟",
+      "answers": ["سالم", "علي", "أحمد", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 7,
+      "question": "أي شهر يحتوي على 28 يومًا؟",
+      "answers": ["فبراير", "يناير", "ديسمبر", "كلها"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 8,
+      "question": "إذا سقطت طائرة على الحدود بين دولتين، فأين يُدفن الناجون؟",
+      "answers": ["الدولة الأولى", "الدولة الثانية", "على الحدود", "لا يُدفنون"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 9,
+      "question": "ما الذي يزداد كلما نقص؟",
+      "answers": ["العمر", "الظلام", "البحر", "المال"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 10,
+      "question": "إذا كان لديك شمعة وأطفأتها، فما الذي يبقى؟",
+      "answers": ["النار", "الضوء", "الشمعة", "الدخان"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 11,
+      "question": "ما الشيء الذي له عين ولا يرى؟",
+      "answers": ["الإنسان", "الإبرة", "القط", "الطائر"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 12,
+      "question": "إذا كان الأمس هو السبت، فما اليوم؟",
+      "answers": ["الجمعة", "السبت", "الأحد", "الاثنين"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 13,
+      "question": "أيهما يأتي أولًا؟",
+      "answers": ["البيضة", "الدجاجة", "لا يمكن الجزم", "كلاهما معًا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 14,
+      "question": "شيء إذا كسرته لا يعود كما كان؟",
+      "answers": ["الزجاج", "الثقة", "الورق", "القلم"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 15,
+      "question": "ما الذي يدخل الماء ولا يبتل؟",
+      "answers": ["السمكة", "الظل", "الحجر", "السفينة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 16,
+      "question": "إذا كان كل A هو B، وكل B هو C، فهل كل A هو C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 17,
+      "question": "شيء له أوراق لكنه ليس نباتًا؟",
+      "answers": ["الكتاب", "الشجرة", "العشب", "الزهرة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 18,
+      "question": "ما الشيء الذي كلما أسرعت خلفه ابتعد عنك؟",
+      "answers": ["الحلم", "الأفق", "السيارة", "الريح"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 19,
+      "question": "إذا كان لديك عود واحد، كم طرفًا له؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 20,
+      "question": "ما الشيء الذي لا يتكلم لكنه يجيب؟",
+      "answers": ["الهاتف", "الصدى", "الكتاب", "القلم"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 21,
+      "question": "إذا كان محمد أكبر من خالد بعامين، وبعد عشر سنوات، كم يبقى الفرق؟",
+      "answers": ["12 سنة", "10 سنوات", "سنتان", "سنة"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 22,
+      "question": "ما الشيء الذي تراه ولا يستطيع أن يراك؟",
+      "answers": ["المرآة", "الصورة", "الشمس", "القمر"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 23,
+      "question": "إذا كانت جميع الورود زهورًا، فهل جميع الزهور ورود؟",
+      "answers": ["نعم", "لا", "أحيانًا", "غير معروف"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 24,
+      "question": "شيء إذا وضعته في الثلاجة لا يبرد؟",
+      "answers": ["النار", "الفلفل", "الحرارة", "الماء"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 25,
+      "question": "ما الشيء الذي يولد كبيرًا ثم يصغر؟",
+      "answers": ["الشجرة", "الجبل", "الشمعة", "القمر"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 26,
+      "question": "إذا كان لديك ثلاثة تفاحات وأخذت اثنتين، كم بقي معك؟",
+      "answers": ["1", "2", "3", "5"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 27,
+      "question": "شيء يكتب ولا يقرأ؟",
+      "answers": ["القلم", "الكتاب", "لوحة السيارة", "الرسالة"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 28,
+      "question": "ما الشيء الذي لا يدخل إلا إذا خرج؟",
+      "answers": ["النفس", "الضوء", "الهواء", "المطر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 29,
+      "question": "إذا كان الباب مغلقًا بالمفتاح، فما أول شيء تفعله لفتحه؟",
+      "answers": ["دفع الباب", "سحب الباب", "المفتاح", "كسره"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 30,
+      "question": "أيهما أسرع؟",
+      "answers": ["الضوء", "الصوت", "الريح", "السيارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 31,
+      "question": "شيء لا وزن له لكن لا يستطيع أحد حمله طويلًا؟",
+      "answers": ["الريشة", "النفس", "الورقة", "الهواء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 32,
+      "question": "إذا كان لديك صندوق فارغ، كم شيء يوجد بداخله؟",
+      "answers": ["صفر", "واحد", "اثنان", "غير معروف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 33,
+      "question": "ما الشيء الذي إذا أكلته كله استفدت، وإذا أكلت نصفه مت؟",
+      "answers": ["السمسم", "السمكة", "السم", "البيضة"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 34,
+      "question": "شيء كل الناس يستخدمونه لكنه ليس ملكًا لأحد؟",
+      "answers": ["الوقت", "السيارة", "الهاتف", "المنزل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 35,
+      "question": "إذا كان اليوم الاثنين، فما اليوم بعد ثلاثة أيام؟",
+      "answers": ["الأربعاء", "الخميس", "الجمعة", "السبت"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 36,
+      "question": "شيء يطير بلا جناحين؟",
+      "answers": ["الطائرة", "الوقت", "الطائر", "السحاب"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 37,
+      "question": "إذا كانت الساعة تشير إلى الثالثة، فكم زاوية بين العقربين تقريبًا؟",
+      "answers": ["90°", "60°", "120°", "180°"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 38,
+      "question": "ما الشيء الذي له أسنان لكنه لا يأكل؟",
+      "answers": ["الأسد", "المشط", "الذئب", "الإنسان"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 39,
+      "question": "إذا كان لديك قفص فيه طائر واحد، ثم فتحته وخرج الطائر، ماذا بقي؟",
+      "answers": ["لا شيء", "القفص", "الريش", "الهواء فقط"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 40,
+      "question": "ما الشيء الذي كلما زاد نقص؟",
+      "answers": ["العمر", "المال", "الطعام", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 41,
+      "question": "إذا كان خالد أمام علي، فمن خلف خالد؟",
+      "answers": ["علي", "محمد", "سالم", "لا تحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 42,
+      "question": "شيء لا يمكن لمسه لكنه موجود؟",
+      "answers": ["الهواء", "الحجر", "الحديد", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 43,
+      "question": "ما الشيء الذي إذا ذكرته انكسر؟",
+      "answers": ["السر", "الزجاج", "الباب", "الحبل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 44,
+      "question": "إذا أطفأت المصباح، ماذا يختفي أولًا؟",
+      "answers": ["الضوء", "المصباح", "الكهرباء", "المفتاح"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 45,
+      "question": "ما الشيء الذي ينام مرتديًا حذاءه؟",
+      "answers": ["الإنسان", "الحصان", "الطائر", "القطة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 46,
+      "question": "إذا كان لديك كتابان وأعطيت أحدهما، كم بقي لديك؟",
+      "answers": ["صفر", "واحد", "اثنان", "ثلاثة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 47,
+      "question": "شيء لا نهاية له؟",
+      "answers": ["المستقيم", "الورقة", "العصا", "الحبل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 48,
+      "question": "ما الشيء الذي كلما جف ازداد بللًا؟",
+      "answers": ["المنشفة", "البحر", "الرمل", "الإسفنج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 49,
+      "question": "إذا كان كلب يجري خلف قطة، فمن أمام الآخر؟",
+      "answers": ["الكلب", "القطة", "متساويان", "لا تحديد"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 50,
+      "question": "ما الشيء الذي إذا نظرت إليه رأيتك؟",
+      "answers": ["المرآة", "النافذة", "البحر", "التلفاز"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 51,
+      "question": "إذا كانت جميع السيارات لها عجلات، وهذه المركبة ليس لها عجلات، فهل هي سيارة؟",
+      "answers": ["نعم", "لا", "أحيانًا", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 52,
+      "question": "ما الشيء الذي يمكنك كسره دون أن تلمسه؟",
+      "answers": ["الزجاج", "الوعد", "الحجر", "القلم"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 53,
+      "question": "إذا كانت الساعة 12 ظهرًا، فأين يكون عقربا الساعة؟",
+      "answers": ["متقابلين", "متطابقين", "بزاوية 90°", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 54,
+      "question": "شيء كلما استخدمته أصبح أقصر؟",
+      "answers": ["الشمعة", "العصا", "الحبل", "القلم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 55,
+      "question": "إذا كان أحمد يقف خلف علي، وعلي خلف سالم، فمن في المقدمة؟",
+      "answers": ["أحمد", "علي", "سالم", "لا شيء"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 56,
+      "question": "ما الشيء الذي لا يدخل إلا إذا كان مفتوحًا؟",
+      "answers": ["الباب", "النافذة", "الحقيبة", "الكتاب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 57,
+      "question": "إذا كانت كل الورود حمراء، وهذه الزهرة صفراء، فهي:",
+      "answers": ["وردة", "ليست وردة", "ربما وردة", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 58,
+      "question": "شيء له رأس ولا يملك جسمًا؟",
+      "answers": ["الإنسان", "الدبوس", "الطائر", "السمكة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 59,
+      "question": "إذا أخذت خطوة إلى الأمام ثم خطوتين إلى الخلف، فأنت:",
+      "answers": ["أمام مكانك", "خلفك بخطوة", "في مكانك", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 60,
+      "question": "ما الشيء الذي لا يمكنك رؤيته إلا إذا أغمضت عينيك؟",
+      "answers": ["الظلام", "الحلم", "الهواء", "الشمس"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 61,
+      "question": "إذا كان كل الطلاب ناجحين، وسامي طالب، فإن سامي:",
+      "answers": ["ناجح", "راسب", "لا نعرف", "غائب"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 62,
+      "question": "ما الشيء الذي له رقبة وليس له رأس؟",
+      "answers": ["الزجاجة", "الإنسان", "الحصان", "الشجرة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 63,
+      "question": "إذا كان لديك قلمان وأضفت إليهما ثلاثة، كم يصبح المجموع؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 64,
+      "question": "شيء تسمعه ولا تراه؟",
+      "answers": ["الصوت", "الريح", "الظل", "الشمس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 65,
+      "question": "إذا كان أمس قبل الخميس، فما اليوم؟",
+      "answers": ["الأربعاء", "الخميس", "الثلاثاء", "الجمعة"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 66,
+      "question": "ما الشيء الذي يمكنه ملء غرفة دون أن يشغل مساحة؟",
+      "answers": ["الضوء", "الماء", "الهواء", "الرمل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 67,
+      "question": "إذا كان خالد أصغر من علي، وعلي أصغر من أحمد، فمن الأكبر؟",
+      "answers": ["خالد", "علي", "أحمد", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 68,
+      "question": "شيء كلما زاد عدد ثقوبه بقي يؤدي عمله؟",
+      "answers": ["الإسفنج", "الورق", "الزجاج", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 69,
+      "question": "إذا كان لديك 5 شموع وانطفأت اثنتان، كم بقي؟",
+      "answers": ["2", "3", "5", "لا شيء"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 70,
+      "question": "ما الشيء الذي يمكن أن يدور حول البيت دون أن يتحرك؟",
+      "answers": ["السور", "السياج", "الشمس", "الجدار"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 71,
+      "question": "إذا كان كل الأطباء متعلمون، وبعض المتعلمين مهندسون، فهل كل الأطباء مهندسون؟",
+      "answers": ["نعم", "لا", "أحيانًا", "دائمًا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 72,
+      "question": "ما الشيء الذي يزداد كلما شاركته؟",
+      "answers": ["المال", "المعرفة", "الطعام", "الماء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 73,
+      "question": "إذا نظرت إلى شخص في المرآة ورفع يده اليمنى، فأي يد تراها مرفوعة؟",
+      "answers": ["اليمنى", "اليسرى", "الاثنتان", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 74,
+      "question": "شيء لا يستطيع المشي لكنه يسافر؟",
+      "answers": ["الطريق", "الرسالة", "الجبل", "الشجرة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 75,
+      "question": "إذا كان اليوم الثلاثاء، فما اليوم قبل يومين؟",
+      "answers": ["الأحد", "الاثنين", "السبت", "الجمعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 76,
+      "question": "ما الشيء الذي كلما زاد نوره زادت رؤيتك؟",
+      "answers": ["المصباح", "الورقة", "الباب", "الحبل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 77,
+      "question": "إذا فتحت كتابًا، فما أول صفحة تقابلها؟",
+      "answers": ["الأخيرة", "الأولى", "الوسطى", "الفهرس"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 78,
+      "question": "شيء لا يعيش إلا إذا أكل، وإذا شرب مات؟",
+      "answers": ["النار", "الإنسان", "النبات", "الطائر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 79,
+      "question": "إذا كان لديك أربعة صناديق فارغة، ثم وضعت كرة في أحدها، كم صندوقًا بقي فارغًا؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 80,
+      "question": "ما الشيء الذي يخرج من الماء مبللًا ثم يجف؟",
+      "answers": ["المنشفة", "الإنسان", "الحجر", "السمكة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 81,
+      "question": "إذا كانت جميع الطيور تبيض، والعصفور طائر، فالعصفور:",
+      "answers": ["يبيض", "لا يبيض", "لا نعرف", "يلد"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 82,
+      "question": "شيء إذا قلبته لا يتغير شكله؟",
+      "answers": ["الكرة", "الكوب", "الكتاب", "الكرسي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 83,
+      "question": "إذا كان محمد أمام علي، وعلي أمام خالد، فمن في الخلف؟",
+      "answers": ["محمد", "علي", "خالد", "لا تحديد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 84,
+      "question": "شيء يمكن أن تسمعه دائمًا لكنه لا يسمعك؟",
+      "answers": ["الراديو", "الهاتف", "الإنسان", "الطائر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 85,
+      "question": "إذا كان لديك ثلاثة مفاتيح وباب واحد، كم مفتاحًا تحتاج لفتح الباب إذا كان أحدها صحيحًا؟",
+      "answers": ["واحد", "اثنان", "ثلاثة", "أربعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 86,
+      "question": "شيء كلما زاد حمله أصبح أخف؟",
+      "answers": ["البالون", "السيارة", "الصخرة", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 87,
+      "question": "إذا كان كلب أمام كلب، وكلب خلف كلب، وكلب في الوسط، فكم عدد الكلاب؟",
+      "answers": ["2", "3", "4", "5"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 88,
+      "question": "ما الشيء الذي لا يمكنك الاحتفاظ به بعد أن تعطيه؟",
+      "answers": ["الوعد", "الكلمة", "الكتاب", "المال"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 89,
+      "question": "إذا وضعت مكعب ثلج في ماء ساخن، فما أول ما يحدث؟",
+      "answers": ["يتجمد", "يبدأ بالذوبان", "يتبخر", "يغرق فورًا"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 90,
+      "question": "شيء يمر عبر الزجاج دون أن يكسره؟",
+      "answers": ["الضوء", "الحجر", "الحديد", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 91,
+      "question": "إذا كان لديك قلم واحد وكسرته نصفين، كم قطعة أصبحت؟",
+      "answers": ["قطعة", "قطعتين", "ثلاث قطع", "أربع قطع"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 92,
+      "question": "ما الشيء الذي كل الناس يملكونه لكنه يختلف من شخص لآخر؟",
+      "answers": ["الاسم", "الهواء", "الشمس", "الليل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 93,
+      "question": "إذا ركضت في سباق وتجاوزت صاحب المركز الثاني، فما مركزك؟",
+      "answers": ["الأول", "الثاني", "الثالث", "الرابع"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 94,
+      "question": "شيء إذا نطقت باسمه اختفى؟",
+      "answers": ["الصمت", "الهواء", "الصوت", "الليل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 95,
+      "question": "إذا كان لديك بابان، أحدهما مفتوح والآخر مغلق، فأيهما تدخل منه بسهولة؟",
+      "answers": ["المفتوح", "المغلق", "كلاهما", "لا شيء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 96,
+      "question": "ما الشيء الذي كلما أخذت منه ازداد؟",
+      "answers": ["الحفرة", "الماء", "الرمل", "الهواء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 97,
+      "question": "إذا كان سعيد أكبر من كريم، وكريم أكبر من عمر، فمن الأصغر؟",
+      "answers": ["سعيد", "كريم", "عمر", "لا تحديد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 98,
+      "question": "شيء لا يتنفس لكنه يحتاج الهواء؟",
+      "answers": ["النار", "الحجر", "الماء", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 99,
+      "question": "إذا كانت السيارة تتحرك بسرعة ثابتة، فمتى تكون سرعتها صفرًا؟",
+      "answers": ["الوقوف", "الانطلاق", "الالتفاف", "التسارع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 100,
+      "question": "ما الشيء الذي كلما عرفه الناس قلّت قيمته؟",
+      "answers": ["السر", "الذهب", "الماء", "الطعام"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 101,
+      "question": "إذا تجاوزت العداء الأخير في سباق، فأي مركز أصبحت؟",
+      "answers": ["الأول", "قبل الأخير", "الأخير", "مستحيل"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 102,
+      "question": "شيء له مفاتيح لكنه لا يفتح الأقفال؟",
+      "answers": ["البيانو", "الخزانة", "السيارة", "الباب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 103,
+      "question": "إذا كانت جميع النسور طيورًا، وليس كل الطيور نسورًا، فهل الحمامة نسر؟",
+      "answers": ["نعم", "لا", "ربما", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 104,
+      "question": "ما الشيء الذي يسبقك دائمًا ولا يمكنك اللحاق به؟",
+      "answers": ["المستقبل", "الماضي", "الظل", "الريح"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 105,
+      "question": "إذا كان لديك ثلاثة أكواب مقلوبة وقلبت اثنين منها، كم بقي مقلوبًا؟",
+      "answers": ["صفر", "واحد", "اثنان", "ثلاثة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 106,
+      "question": "ما الشيء الذي كلما نظفته أصبح أكثر اتساخًا؟",
+      "answers": ["المكنسة", "الصحن", "النافذة", "السيارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 107,
+      "question": "إذا كان علي يسكن شمال حسن، وحسن شمال كريم، فمن الأبعد جنوبًا؟",
+      "answers": ["علي", "حسن", "كريم", "لا شيء"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 108,
+      "question": "شيء يملك فمًا لكنه لا يأكل؟",
+      "answers": ["النهر", "الإنسان", "السمكة", "الطائر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 109,
+      "question": "إذا كانت جميع الدوائر مغلقة، وهذا الشكل مفتوح، فهو:",
+      "answers": ["دائرة", "ليس دائرة", "نصف دائرة", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 110,
+      "question": "شيء كلما ازداد عدد مستخدميه لم ينقص؟",
+      "answers": ["المعرفة", "الطعام", "المال", "الوقود"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 111,
+      "question": "إذا كان خالد يقف بين أحمد وسعيد، فمن على يمين خالد؟",
+      "answers": ["أحمد", "سعيد", "لا شيء", "خالد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 112,
+      "question": "ما الشيء الذي يُكسر قبل استخدامه؟",
+      "answers": ["البيضة", "الزجاج", "الحجر", "الباب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 113,
+      "question": "إذا خرجت من المنزل في الليل وعدت في الليل، فما الذي تغيّر؟",
+      "answers": ["الوقت", "المنزل", "الباب", "الطريق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 114,
+      "question": "شيء لا يمكن رؤيته إلا بوجود الضوء؟",
+      "answers": ["الظل", "الهواء", "الصوت", "الرائحة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 115,
+      "question": "إذا كان كل مازن ذكيًا، وبعض الأذكياء رياضيون، فهل مازن رياضي؟",
+      "answers": ["نعم", "لا", "ربما", "مستحيل"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 116,
+      "question": "شيء إذا فقدته مرة لا يعود كما كان؟",
+      "answers": ["الوقت", "الهاتف", "السيارة", "الحذاء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 117,
+      "question": "إذا وضعت كتابًا فوق كتاب، فأي كتاب يلامس الطاولة؟",
+      "answers": ["العلوي", "السفلي", "كلاهما", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 118,
+      "question": "شيء له وجه ويدان لكنه بلا أرجل؟",
+      "answers": ["الساعة", "الإنسان", "الدمية", "الروبوت"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 119,
+      "question": "إذا كانت نافذتان مفتوحتين وواحدة مغلقة، كم نافذة مفتوحة؟",
+      "answers": ["واحدة", "اثنتان", "ثلاث", "صفر"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 120,
+      "question": "ما الشيء الذي إذا استعملته مرة واحدة لا يعود جديدًا؟",
+      "answers": ["الورقة", "القلم", "الإبرة", "أي شيء"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 121,
+      "question": "إذا كان كل الأحمر ملونًا، وكل الأزرق ملونًا، فهل الأحمر أزرق؟",
+      "answers": ["نعم", "لا", "أحيانًا", "دائمًا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 122,
+      "question": "شيء كلما اقتربت منه ابتعد؟",
+      "answers": ["الأفق", "البحر", "الجبل", "السيارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 123,
+      "question": "إذا كان لديك صندوقان، أحدهما ممتلئ والآخر فارغ، فأيهما أخف؟",
+      "answers": ["الممتلئ", "الفارغ", "متساويان", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 124,
+      "question": "شيء لا يسمع لكنه يستجيب؟",
+      "answers": ["المرآة", "الحاسوب", "الجبل", "الشجرة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 125,
+      "question": "إذا وقف خمسة أشخاص في صف، فمن في الوسط؟",
+      "answers": ["الأول", "الثاني", "الثالث", "الرابع"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 126,
+      "question": "ما الشيء الذي يزداد كلما طال عمره؟",
+      "answers": ["الخبرة", "الطول", "الوزن", "السرعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 127,
+      "question": "إذا كان كل مربع مستطيلًا، فهل كل مستطيل مربع؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 128,
+      "question": "شيء يمكن أن تراه في الماء لكنه لا يبتل؟",
+      "answers": ["الانعكاس", "الحجر", "السمكة", "القارب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 129,
+      "question": "إذا كان اليوم الجمعة، فما اليوم بعد أسبوع؟",
+      "answers": ["الخميس", "الجمعة", "السبت", "الأحد"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 130,
+      "question": "شيء إذا نظرت إليه من الخلف بقي كما هو؟",
+      "answers": ["الكرة", "الكرسي", "السيارة", "التلفاز"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 131,
+      "question": "إذا كانت ثلاث شمعات مشتعلة وانطفأت واحدة، كم بقي مشتعلاً؟",
+      "answers": ["واحدة", "اثنتان", "ثلاث", "صفر"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 132,
+      "question": "ما الشيء الذي لا يستطيع أحد رؤيته وهو نائم؟",
+      "answers": ["عيناه", "الحلم", "الليل", "الوسادة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 133,
+      "question": "إذا كان أحمد أمام خالد، وخالد أمام علي، فمن في المؤخرة؟",
+      "answers": ["أحمد", "خالد", "علي", "لا شيء"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 134,
+      "question": "شيء كلما كبر صغر؟",
+      "answers": ["العمر", "الجبل", "البحر", "الكتاب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 135,
+      "question": "إذا فتحت مظلة داخل المنزل، هل تمطر؟",
+      "answers": ["نعم", "لا", "أحيانًا", "حسب الطقس"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 136,
+      "question": "شيء له نهاية لكنه ليس طريقًا؟",
+      "answers": ["القصة", "النهر", "الشارع", "الجسر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 137,
+      "question": "إذا كان كل الأطفال صغار السن، وهذا الشخص كبير السن، فهو:",
+      "answers": ["طفل", "ليس طفلًا", "ربما طفل", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 138,
+      "question": "شيء يمكنك رؤيته مرة واحدة في الدقيقة، ومرتين في اللحظة، ولا تراه في الساعة؟",
+      "answers": ["حرف اللام", "حرف السين", "حرف الميم", "حرف النون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 139,
+      "question": "إذا أغلقت جميع الأبواب، فمن أين تدخل؟",
+      "answers": ["من الباب", "لا تدخل", "من النافذة", "من السقف"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 140,
+      "question": "شيء لا يحتاج إلى عينين ليرى؟",
+      "answers": ["الكاميرا", "الإنسان", "القط", "الحصان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 141,
+      "question": "إذا كان كل الأرانب حيوانات، فهل كل الحيوانات أرانب؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 142,
+      "question": "شيء إذا وقف لا يمشي، وإذا مشى لا يقف؟",
+      "answers": ["عقرب الساعة", "السيارة", "الإنسان", "الطائر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 143,
+      "question": "إذا كان لديك كتاب مفتوح، فما الصفحة التي لا تراها؟",
+      "answers": ["الصفحة التالية", "الصفحة السابقة", "الغلاف الخلفي", "الصفحة اليمنى"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 144,
+      "question": "شيء لا ينام لكنه يرتاح؟",
+      "answers": ["القلب", "الحجر", "البحر", "القلم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 145,
+      "question": "إذا كان هناك أربعة كراسٍ وجلس عليها أربعة أشخاص، كم كرسي بقي فارغًا؟",
+      "answers": ["صفر", "واحد", "اثنان", "أربعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 146,
+      "question": "شيء له بداية وليس له نهاية؟",
+      "answers": ["المستقيم", "الدائرة", "الكرة", "المربع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 147,
+      "question": "إذا كان شخص ينظر إلى صورتك، فمن يرى؟",
+      "answers": ["نفسه", "أنت", "لا أحد", "المصور"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 148,
+      "question": "شيء كلما استخدمته أصبح أكثر فائدة؟",
+      "answers": ["العقل", "الورقة", "البطارية", "الشمعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 149,
+      "question": "إذا كان لديك مفتاح صحيح ومئة باب، فكم بابًا تستطيع فتحه؟",
+      "answers": ["واحد", "عشرة", "خمسون", "مئة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 150,
+      "question": "ما الشيء الذي لا يمكن أن يكون في مكانين مختلفين في الوقت نفسه؟",
+      "answers": ["الجسم", "الضوء", "الصوت", "الظل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 151,
+      "question": "إذا كانت كل الورود أزهارًا، وكل الأزهار نباتات، فالورود هي:",
+      "answers": ["أشجار", "نباتات", "فواكه", "أعشاب"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 152,
+      "question": "ما الشيء الذي يزداد وضوحًا كلما ابتعدت عنه؟",
+      "answers": ["الصورة", "الحشرة", "الذرة", "الرمل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 153,
+      "question": "إذا كان أمامك ثلاثة صناديق، واحد فقط يحتوي على الجائزة، فما عدد الصناديق الخاسرة؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 154,
+      "question": "شيء كلما نظرت إليه في الظلام لم تره؟",
+      "answers": ["الظلام", "القمر", "النجوم", "النار"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 155,
+      "question": "إذا كانت جميع الأسماك تعيش في الماء، فهذا الحيوان يعيش على اليابسة، إذًا هو:",
+      "answers": ["سمكة", "ليس سمكة", "ربما سمكة", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 156,
+      "question": "ما الشيء الذي كلما استخدمته ازداد لمعانًا؟",
+      "answers": ["الحذاء", "الفحم", "الورق", "الحجر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 157,
+      "question": "إذا كان علي يقف يسار حسن، وحسن يسار كريم، فمن يقف أقصى اليمين؟",
+      "answers": ["علي", "حسن", "كريم", "لا شيء"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 158,
+      "question": "شيء إذا أعطيته لشخص يبقى لديك أيضًا؟",
+      "answers": ["الابتسامة", "المال", "الهاتف", "القلم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 159,
+      "question": "إذا كان كل A هو B، ولا يوجد B هو C، فهل يمكن أن يكون A هو C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 160,
+      "question": "ما الشيء الذي يزداد صغرًا كلما اقتربت نهايته؟",
+      "answers": ["الشمعة", "الشجرة", "الجبل", "الباب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 161,
+      "question": "إذا كان في الصف 9 طلاب، فمن يقف في المنتصف؟",
+      "answers": ["الرابع", "الخامس", "السادس", "السابع"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 162,
+      "question": "شيء يملك أجنحة لكنه لا يطير؟",
+      "answers": ["المروحة", "العصفور", "الفراشة", "النسر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 163,
+      "question": "إذا كانت جميع الكتب على الرف، وهذا الشيء ليس على الرف، فهو:",
+      "answers": ["كتاب", "ليس كتابًا", "ربما كتاب", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 164,
+      "question": "شيء إذا فقدته عرفت قيمته؟",
+      "answers": ["الصحة", "الورقة", "القلم", "الحقيبة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 165,
+      "question": "إذا كان أحمد أطول من سالم، وسالم أطول من يوسف، فمن الأقصر؟",
+      "answers": ["أحمد", "سالم", "يوسف", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 166,
+      "question": "شيء لا يبتل مهما غمرته بالماء؟",
+      "answers": ["الضوء", "الورق", "الإسفنج", "القماش"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 167,
+      "question": "إذا كان لديك باب واحد وثلاثة مفاتيح، وواحد فقط يفتحه، فما أقل عدد محاولات في أسوأ احتمال؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 168,
+      "question": "شيء إذا نزعته أصبح أكبر؟",
+      "answers": ["الحفرة", "الورقة", "الصندوق", "الكوب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 169,
+      "question": "إذا كان كل الأسود حيوانات، وبعض الحيوانات أليفة، فهل كل الأسود أليفة؟",
+      "answers": ["نعم", "لا", "أحيانًا", "دائمًا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 170,
+      "question": "شيء له بداية ونهاية لكنه بلا وسط؟",
+      "answers": ["الدائرة", "المستقيم", "الحلقة", "النقطة"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 171,
+      "question": "إذا كان لديك 10 مصابيح وأطفأت 7 منها، كم بقي مضاءً؟",
+      "answers": ["3", "7", "10", "صفر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 172,
+      "question": "شيء كلما اقتربت منه أصبح أكبر في عينك؟",
+      "answers": ["أمامك", "القمر", "النجمة", "الهواء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 173,
+      "question": "إذا كان كل الأطباء متعلمين، وهذا الشخص غير متعلم، فهو:",
+      "answers": ["طبيب", "ليس طبيبًا", "ربما طبيب", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 174,
+      "question": "شيء تملكه أكثر مما يملكه غيرك لكنه يستخدمه غيرك أكثر منك؟",
+      "answers": ["اسمك", "هاتفك", "منزلك", "سيارتك"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 175,
+      "question": "إذا كان اليوم الأحد، فما اليوم قبل ثلاثة أيام؟",
+      "answers": ["الخميس", "الجمعة", "السبت", "الأربعاء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 176,
+      "question": "شيء له أوراق كثيرة وليس شجرة؟",
+      "answers": ["الكتاب", "الزهرة", "الغابة", "العشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 177,
+      "question": "إذا كان لديك أربعة أقلام وأخذ صديقك قلمًا، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "5"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 178,
+      "question": "شيء يملأ المكان لكنه لا يُرى؟",
+      "answers": ["الهواء", "الحديد", "الخشب", "الرمل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 179,
+      "question": "إذا كان كل المربعات لها أربعة أضلاع، فهل كل شكل له أربعة أضلاع مربع؟",
+      "answers": ["نعم", "لا", "دائمًا", "أحيانًا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 180,
+      "question": "شيء لا يصدر صوتًا لكنه يوصل الأصوات؟",
+      "answers": ["الهاتف", "الورق", "الحجر", "الزجاج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 181,
+      "question": "إذا كان أحمد في المركز الثالث، وتجاوز صاحب المركز الثاني، فأصبح في:",
+      "answers": ["الأول", "الثاني", "الثالث", "الرابع"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 182,
+      "question": "شيء كلما زاد نقصت قيمته؟",
+      "answers": ["العمر", "الذهب", "الألماس", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 183,
+      "question": "إذا كان بابان مفتوحان وباب مغلق، فكم بابًا يمكن المرور منه؟",
+      "answers": ["1", "2", "3", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 184,
+      "question": "شيء لا يملك لسانًا لكنه يتحدث؟",
+      "answers": ["الكتاب", "الشجرة", "البحر", "الجبل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 185,
+      "question": "إذا كان كل الطلاب في الصف، ومحمد ليس في الصف، فهو:",
+      "answers": ["طالب", "ليس طالبًا", "غائب", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 186,
+      "question": "شيء كلما زاد استخدامه أصبح أسهل؟",
+      "answers": ["المهارة", "الصخرة", "الخشب", "الزجاج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 187,
+      "question": "إذا كان لديك ثلاثة أبواب، واثنان مغلقان، فكم بابًا مفتوحًا؟",
+      "answers": ["صفر", "واحد", "اثنان", "ثلاثة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 188,
+      "question": "شيء لا يمكن أن تراه مرتين بالطريقة نفسها؟",
+      "answers": ["النهر الجاري", "الجبل", "المنزل", "الطريق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 189,
+      "question": "إذا كان سعيد أطول من عمر، وعمر أطول من علي، فمن الأوسط طولًا؟",
+      "answers": ["سعيد", "عمر", "علي", "متساوون"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 190,
+      "question": "شيء كلما زادت سرعته قلّ الوقت اللازم للوصول؟",
+      "answers": ["المركبة", "الجبل", "الكتاب", "الشجرة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 191,
+      "question": "إذا كان هناك ستة أشخاص حول طاولة دائرية، فكم شخصًا يجلس بجانب كل شخص؟",
+      "answers": ["1", "2", "3", "5"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 192,
+      "question": "شيء إذا فتحته أغلقته؟",
+      "answers": ["البرنامج", "الباب", "الصندوق", "النافذة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 193,
+      "question": "إذا كانت جميع السيارات وسائل نقل، وهذه طائرة، فهي:",
+      "answers": ["سيارة", "ليست سيارة", "سيارة كبيرة", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 194,
+      "question": "شيء يزداد كلما تعلمت؟",
+      "answers": ["المعرفة", "العمر", "الوزن", "المال"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 195,
+      "question": "إذا كان لديك 12 شهرًا، كم شهرًا يحتوي على 30 يومًا؟",
+      "answers": ["4", "11", "6", "12"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 196,
+      "question": "شيء لا يملك ذاكرة لكنه يخزن المعلومات؟",
+      "answers": ["القرص", "الورقة", "القلم", "الساعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 197,
+      "question": "إذا كان كل البحارة يعرفون السباحة، وهذا الشخص لا يعرف السباحة، فهو:",
+      "answers": ["بحار", "ليس بحارًا", "ربما بحار", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 198,
+      "question": "شيء كلما أعطيته اهتمامًا أصبح أفضل؟",
+      "answers": ["العلاقة", "الحجر", "الرمل", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 199,
+      "question": "إذا كان شخص يقف في آخر الصف، فكم شخصًا خلفه؟",
+      "answers": ["واحد", "اثنان", "لا أحد", "ثلاثة"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 200,
+      "question": "ما الشيء الذي يفتح لك أبوابًا كثيرة دون أن يكون مفتاحًا؟",
+      "answers": ["العلم", "المطرقة", "الحبل", "المصباح"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 201,
+      "question": "إذا كانت جميع الأقلام أدوات كتابة، وهذه أداة رسم فقط، فهي:",
+      "answers": ["قلم", "ليست قلمًا", "ربما قلم", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 202,
+      "question": "ما الشيء الذي يمكن رؤيته ولا يمكن الإمساك به؟",
+      "answers": ["الظل", "الحجر", "الكرة", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 203,
+      "question": "إذا كان أحمد أمام سعيد، وسعيد أمام علي، فمن في الوسط؟",
+      "answers": ["أحمد", "سعيد", "علي", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 204,
+      "question": "شيء إذا ازداد عدد مستخدميه لم ينقص منه شيء؟",
+      "answers": ["الفكرة", "الطعام", "الوقود", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 205,
+      "question": "إذا كان لديك ثلاثة مفاتيح لثلاثة أبواب، وكل مفتاح يفتح بابًا واحدًا فقط، فما عدد الأبواب التي يمكن فتحها؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 206,
+      "question": "ما الشيء الذي لا يمكن كسره إلا بعد امتلاكه؟",
+      "answers": ["الوعد", "الزجاج", "القلم", "الباب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 207,
+      "question": "إذا كان خالد يسير شرقًا ثم استدار 180 درجة، فأي اتجاه أصبح يسير؟",
+      "answers": ["شمال", "جنوب", "غرب", "شرق"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 208,
+      "question": "شيء كلما ازداد نقصت المسافة إليه؟",
+      "answers": ["الهدف", "البحر", "الجبل", "الشمس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 209,
+      "question": "إذا كان كل A هو B، وبعض B هو C، فهل كل A هو C؟",
+      "answers": ["نعم", "لا", "دائمًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 210,
+      "question": "شيء لا يعيش لكنه ينمو؟",
+      "answers": ["البلورة", "الحجر", "الحديد", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 211,
+      "question": "إذا وقف سبعة أشخاص في صف، فمن يقف في المنتصف؟",
+      "answers": ["الثالث", "الرابع", "الخامس", "السادس"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 212,
+      "question": "ما الشيء الذي يختفي إذا قلت الحقيقة؟",
+      "answers": ["الكذبة", "الهواء", "الماء", "الظل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 213,
+      "question": "إذا كان لديك كوب فارغ ثم ملأته بالماء، ماذا فقد؟",
+      "answers": ["لونه", "فراغه", "حجمه", "شكله"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 214,
+      "question": "شيء كلما نظرت إليه من بعيد بدا أصغر؟",
+      "answers": ["أي جسم", "الظل", "الوقت", "الصوت"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 215,
+      "question": "إذا كان كل العلماء متعلمون، وهذا الشخص غير متعلم، فهو:",
+      "answers": ["عالم", "ليس عالمًا", "ربما عالم", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 216,
+      "question": "شيء لا يمكن سماعه لكنه قد يسبب الضجيج؟",
+      "answers": ["الفكرة", "الحجر", "الخشب", "الرمل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 217,
+      "question": "إذا كان محمد أطول من كريم، وكريم أطول من فهد، فمن في المنتصف؟",
+      "answers": ["محمد", "كريم", "فهد", "متساوون"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 218,
+      "question": "شيء له بداية ووسط ونهاية؟",
+      "answers": ["الكلمة", "النقطة", "الدائرة", "المستقيم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 219,
+      "question": "إذا كان لديك خمس تفاحات وأخذت واحدة، كم تفاحة أخذت؟",
+      "answers": ["واحدة", "أربع", "خمس", "لا شيء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 220,
+      "question": "شيء لا يمكن رؤيته إلا بعد حدوثه؟",
+      "answers": ["الأثر", "الهواء", "الضوء", "الظل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 221,
+      "question": "إذا كانت جميع السيارات تتحرك، وهذه المركبة ثابتة، فهي:",
+      "answers": ["سيارة", "ليست سيارة", "سيارة متوقفة", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 222,
+      "question": "شيء كلما زاد ترتيبه صغر رقمه؟",
+      "answers": ["مركز السباق", "العمر", "المال", "الوزن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 223,
+      "question": "إذا كان شخص ينظر إليك من خلال مرآة، فمن يرى؟",
+      "answers": ["نفسه", "انعكاسك", "شخصًا آخر", "لا أحد"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 224,
+      "question": "شيء إذا انقطع توقف كل شيء؟",
+      "answers": ["الكهرباء", "الورق", "الزجاج", "الهواء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 225,
+      "question": "إذا كان كل المستطيلات لها أربعة أضلاع، فهل كل شكل له أربعة أضلاع مستطيل؟",
+      "answers": ["نعم", "لا", "دائمًا", "أحيانًا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 226,
+      "question": "شيء كلما طال عمره قل عمره المتبقي؟",
+      "answers": ["الإنسان", "الجبل", "البحر", "الشجرة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 227,
+      "question": "إذا كان لديك أربعة كرات وأعطيت اثنتين، كم بقي لديك؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 228,
+      "question": "شيء لا يلمسه أحد لكنه يغيّر الجميع؟",
+      "answers": ["الزمن", "الحجر", "الحديد", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 229,
+      "question": "إذا كان أحمد يقف بين خالد وسعيد، فمن في الوسط؟",
+      "answers": ["أحمد", "خالد", "سعيد", "لا يحدد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 230,
+      "question": "شيء كلما استخدمته أكثر أصبحت أسرع فيه؟",
+      "answers": ["المهارة", "الحقيبة", "الورقة", "الزجاج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 231,
+      "question": "إذا كان لديك ثلاثة أبواب، وكلها مغلقة، فكم بابًا مفتوحًا؟",
+      "answers": ["صفر", "واحد", "اثنان", "ثلاثة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 232,
+      "question": "شيء ينعكس لكنه لا يتغير؟",
+      "answers": ["الضوء", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 233,
+      "question": "إذا كان علي أقصر من سالم، وسالم أقصر من أحمد، فمن الأطول؟",
+      "answers": ["علي", "سالم", "أحمد", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 234,
+      "question": "شيء إذا فقدته فقدت اتجاهك؟",
+      "answers": ["البوصلة", "القلم", "الورقة", "الحقيبة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 235,
+      "question": "إذا كان لديك عشرة كتب وأخذ صديقك ثلاثة، كم بقي لديك؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 236,
+      "question": "شيء لا يحتاج إلى وقود لكنه يتحرك؟",
+      "answers": ["الريح", "السيارة", "الطائرة", "السفينة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 237,
+      "question": "إذا كان كل الموز فاكهة، وكل الفاكهة نباتية، فالموز:",
+      "answers": ["نباتي", "حيوان", "معدن", "لا يحدد"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 238,
+      "question": "شيء إذا أخفيته أصبح العثور عليه أصعب؟",
+      "answers": ["المفتاح", "الصوت", "الضوء", "الظل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 239,
+      "question": "إذا كان في الصف 11 شخصًا، فمن في المنتصف؟",
+      "answers": ["الخامس", "السادس", "السابع", "الثامن"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 240,
+      "question": "شيء كلما ارتفع قل الضغط عليه؟",
+      "answers": ["على الجبل", "الحجر", "الطاولة", "الباب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 241,
+      "question": "إذا كان كل المهندسين متعلمون، وبعض المتعلمين أطباء، فهل كل المهندسين أطباء؟",
+      "answers": ["نعم", "لا", "دائمًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 242,
+      "question": "شيء لا يحتاج إلى لسان ليعبّر؟",
+      "answers": ["الوجه", "القلم", "الهاتف", "الورقة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 243,
+      "question": "إذا كان لديك مصباح مطفأ، فماذا ينقصه ليضيء؟",
+      "answers": ["الطاقة", "الهواء", "الماء", "الضوء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 244,
+      "question": "شيء إذا سقط لا يصدر صوتًا؟",
+      "answers": ["الظل", "الحجر", "الحديد", "الزجاج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 245,
+      "question": "إذا كان أحمد في المركز الأول، فمن أمامه؟",
+      "answers": ["لا أحد", "شخص واحد", "شخصان", "آخر متسابق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 246,
+      "question": "شيء كلما عرفته أكثر أدركت أنك لا تعرف الكثير؟",
+      "answers": ["العلم", "الطعام", "المال", "الرياضة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 247,
+      "question": "إذا كان لديك ثلاثة مصابيح، وأطفأت واحدًا، كم بقي مضاءً؟",
+      "answers": ["1", "2", "3", "صفر"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 248,
+      "question": "شيء يربط بين الناس دون أن يُرى؟",
+      "answers": ["الثقة", "الحديد", "الخيط", "الزجاج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 249,
+      "question": "إذا كان كل النمور حيوانات، وهذا الكائن ليس حيوانًا، فهو:",
+      "answers": ["نمر", "ليس نمرًا", "ربما نمر", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 250,
+      "question": "ما الشيء الذي إذا تعلمته مرة بقي معك مدى الحياة غالبًا؟",
+      "answers": ["الدراجة", "عود ثقاب", "فتح الباب", "شرب الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 251,
+      "question": "إذا كان كل المثلثات لها ثلاثة أضلاع، وهذا الشكل له أربعة أضلاع، فهو:",
+      "answers": ["مثلث", "ليس مثلثًا", "نصف مثلث", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 252,
+      "question": "ما الشيء الذي لا تستطيع رؤيته إلا إذا كان أمامك ضوء؟",
+      "answers": ["الظل", "الهواء", "الرائحة", "الصوت"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 253,
+      "question": "إذا كان أحمد شمال خالد، وخالد شمال سالم، فمن يقع أقصى الجنوب؟",
+      "answers": ["أحمد", "خالد", "سالم", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 254,
+      "question": "شيء كلما كبر قلّ عمره المتبقي؟",
+      "answers": ["الإنسان", "الجبل", "النهر", "البحر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 255,
+      "question": "إذا كان لديك ثلاثة أكواب، اثنان ممتلئان وواحد فارغ، فكم كوبًا يحتوي على ماء؟",
+      "answers": ["1", "2", "3", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 256,
+      "question": "شيء لا يمكن أن تكسره إذا لم تملكه؟",
+      "answers": ["الوعد", "الحجر", "الزجاج", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 257,
+      "question": "إذا كان كل الطيور تملك أجنحة، وهذا الحيوان بلا أجنحة، فهو:",
+      "answers": ["طائر", "ليس طائرًا", "ربما طائر", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 258,
+      "question": "شيء كلما ازداد عدد مستخدميه ازدادت فائدته؟",
+      "answers": ["اللغة", "الطعام", "الوقود", "الورق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 259,
+      "question": "إذا كان علي أمام حسن، وحسن أمام كريم، فمن الأخير؟",
+      "answers": ["علي", "حسن", "كريم", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 260,
+      "question": "شيء يمكن أن يُسمع ولا يمكن رؤيته؟",
+      "answers": ["الصوت", "الحجر", "الضوء", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 261,
+      "question": "إذا كان كل A هو B، وكل B هو C، فأي عبارة صحيحة؟",
+      "answers": ["كل A هو C", "كل C هو A", "لا علاقة", "كل C هو B"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 262,
+      "question": "شيء إذا استخدمته بشكل صحيح أصبح أسهل مع الوقت؟",
+      "answers": ["المهارة", "الحقيبة", "الطاولة", "الزجاج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 263,
+      "question": "إذا كان لديك خمسة أبواب وأربعة منها مغلقة، فكم بابًا مفتوحًا؟",
+      "answers": ["صفر", "واحد", "اثنان", "خمسة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 264,
+      "question": "شيء كلما ابتعدت عنه بدا أصغر؟",
+      "answers": ["أي جسم", "الوقت", "الريح", "الصوت"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 265,
+      "question": "إذا كان محمد أطول من سامي، وسامي أطول من كريم، فمن الأقصر؟",
+      "answers": ["محمد", "سامي", "كريم", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 266,
+      "question": "شيء إذا وضعته في الماء لا يبتل؟",
+      "answers": ["الانعكاس", "الورق", "القماش", "الإسفنج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 267,
+      "question": "إذا كان لديك أربعة كتب وأخذت واحدًا، كم كتابًا أخذت؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 268,
+      "question": "شيء لا يتغير مهما تغير مكانه؟",
+      "answers": ["اسمه", "حجمه", "ظله", "لونه"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 269,
+      "question": "إذا كانت كل الزرافات حيوانات، وبعض الحيوانات أليفة، فهل كل الزرافات أليفة؟",
+      "answers": ["نعم", "لا", "دائمًا", "أحيانًا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 270,
+      "question": "شيء كلما زاد استخدامه زادت خبرتك فيه؟",
+      "answers": ["العقل", "الحجر", "الرمل", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 271,
+      "question": "إذا كان في الصف 13 شخصًا، فمن يقف في المنتصف؟",
+      "answers": ["السادس", "السابع", "الثامن", "التاسع"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 272,
+      "question": "شيء له بداية ونهاية ويمكن قراءته؟",
+      "answers": ["الكتاب", "الكرة", "الحجر", "المفتاح"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 273,
+      "question": "إذا كان كل الطلاب في المدرسة، وأحمد خارج المدرسة، فهو:",
+      "answers": ["ليس طالبًا", "غائب", "معلم", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 274,
+      "question": "شيء إذا عرفته شاركته بسهولة؟",
+      "answers": ["المعلومة", "الذهب", "الحجر", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 275,
+      "question": "إذا كان أحمد في المركز الثاني وتجاوز الأول، فأصبح:",
+      "answers": ["الأول", "الثاني", "الثالث", "الرابع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 276,
+      "question": "شيء لا يُقاس بالمسطرة؟",
+      "answers": ["الوقت", "الورق", "الخشب", "الحبل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 277,
+      "question": "إذا كان لديك ست شمعات وأطفأت ثلاثًا، كم بقي مضاءً؟",
+      "answers": ["2", "3", "4", "6"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 278,
+      "question": "شيء إذا رأيته في المرآة فهو ليس حقيقيًا؟",
+      "answers": ["الانعكاس", "الشخص", "الضوء", "الزجاج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 279,
+      "question": "إذا كان خالد أقصر من أحمد، وأطول من علي، فمن في الوسط؟",
+      "answers": ["أحمد", "خالد", "علي", "متساوون"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 280,
+      "question": "شيء يزداد كلما تعلمت؟",
+      "answers": ["الأسئلة", "الجهل", "النوم", "الطعام"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 281,
+      "question": "إذا كان كل الأطباء جامعيين، وهذا الشخص ليس جامعيًا، فهو:",
+      "answers": ["طبيب", "ليس طبيبًا", "ربما طبيب", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 282,
+      "question": "شيء يمكن أن يكون أمامك وخلفك في الوقت نفسه؟",
+      "answers": ["المرآة", "الباب", "الكرسي", "الجدار"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 283,
+      "question": "إذا كان لديك ثلاثة مفاتيح وثلاثة أقفال متطابقة، فما أقل عدد مفاتيح تحتاجه إذا عرفت المفتاح الصحيح؟",
+      "answers": ["واحد", "اثنان", "ثلاثة", "أربعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 284,
+      "question": "شيء كلما اقتربت نهايته أصبح أقصر؟",
+      "answers": ["قلم الرصاص", "الجبل", "النهر", "الطريق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 285,
+      "question": "إذا كانت جميع الورود نباتات، وجميع النباتات كائنات حية، فالورود:",
+      "answers": ["جمادات", "كائنات حية", "حيوانات", "معادن"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 286,
+      "question": "شيء إذا اختفى عرفت أهميته؟",
+      "answers": ["الصحة", "الورقة", "الكوب", "القلم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 287,
+      "question": "إذا كان سعيد يقف بين أحمد وخالد، فمن في الوسط؟",
+      "answers": ["أحمد", "سعيد", "خالد", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 288,
+      "question": "شيء يمر أمام الشمس ولا يحجبها دائمًا؟",
+      "answers": ["السحاب", "الجبل", "البحر", "الطريق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 289,
+      "question": "إذا كان لديك صندوق مغلق، فماذا تحتاج أولًا لمعرفة ما بداخله؟",
+      "answers": ["فتحه", "حمله", "هزه", "النظر إليه"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 290,
+      "question": "شيء كلما ازداد عدد قرائه لم ينقص؟",
+      "answers": ["الإلكتروني", "الطعام", "الماء", "الورق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 291,
+      "question": "إذا كان كل الأسود قططًا كبيرة، فهل كل القطط الكبيرة أسود؟",
+      "answers": ["نعم", "لا", "دائمًا", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 292,
+      "question": "شيء لا يحتاج إلى أرجل لينتقل؟",
+      "answers": ["الصوت", "الطاولة", "الصخرة", "الكرسي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 293,
+      "question": "إذا كان أحمد خلف سالم، وسالم خلف علي، فمن في المقدمة؟",
+      "answers": ["أحمد", "سالم", "علي", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 294,
+      "question": "شيء إذا أعطيته للناس بقي عندك؟",
+      "answers": ["النصيحة", "المال", "السيارة", "المفتاح"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 295,
+      "question": "إذا كان لديك خمسة أقلام وكسر أحدها، كم قلمًا بقي؟",
+      "answers": ["4", "5", "3", "2"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 296,
+      "question": "شيء كلما ازداد الضوء حوله أصبح أوضح؟",
+      "answers": ["اللون", "الصوت", "الرائحة", "الحرارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 297,
+      "question": "إذا كان اليوم الأربعاء، فما اليوم بعد أربعة أيام؟",
+      "answers": ["السبت", "الأحد", "الاثنين", "الجمعة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 298,
+      "question": "شيء إذا استخدمه الجميع لم ينقص؟",
+      "answers": ["الإنترنت", "الطعام", "الوقود", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 299,
+      "question": "إذا كان كل المهندسين يعملون، وهذا الشخص لا يعمل، فهل هو مهندس؟",
+      "answers": ["نعم", "لا", "ربما", "مستحيل"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 300,
+      "question": "ما الشيء الذي كلما زادت خبرتك فيه أدركت أن أمامك المزيد لتتعلمه؟",
+      "answers": ["العلم", "النوم", "الطعام", "السفر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 301,
+      "question": "إذا كان كل A هو B، وبعض B ليس C، فهل يمكن أن يكون A هو C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 302,
+      "question": "شيء لا يحتاج إلى أرجل للسير؟",
+      "answers": ["الوقت", "الإنسان", "الحصان", "الطائر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 303,
+      "question": "إذا كان أحمد أمام خالد، وخالد أمام علي، فمن في المؤخرة؟",
+      "answers": ["أحمد", "خالد", "علي", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 304,
+      "question": "شيء إذا أعطيته للآخرين بقي عندك؟",
+      "answers": ["الابتسامة", "المال", "السيارة", "المفتاح"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 305,
+      "question": "إذا كان لديك أربعة أقلام وكسر أحدها، كم قلمًا بقي؟",
+      "answers": ["3", "4", "5", "2"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 306,
+      "question": "شيء كلما ازداد الضوء حوله أصبح أوضح؟",
+      "answers": ["اللون", "الصوت", "الرائحة", "الحرارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 307,
+      "question": "إذا كان اليوم الخميس، فما اليوم بعد خمسة أيام؟",
+      "answers": ["الثلاثاء", "الأربعاء", "الجمعة", "السبت"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 308,
+      "question": "شيء إذا استخدمه الجميع لم ينقص؟",
+      "answers": ["المعرفة", "الطعام", "الوقود", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 309,
+      "question": "إذا كان كل المربعات مستطيلات، فهل كل المستطيلات مربعات؟",
+      "answers": ["نعم", "لا", "دائمًا", "أحيانًا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 310,
+      "question": "ما الشيء الذي يملأ المكان ولا يشغل مساحة؟",
+      "answers": ["الهواء", "الماء", "الرمل", "الحجر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 311,
+      "question": "إذا كان لديك ثلاثة كتب وأعطيت اثنين، كم بقي لديك؟",
+      "answers": ["1", "2", "3", "5"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 312,
+      "question": "شيء لا يملكه أحد لكنه يملك الجميع؟",
+      "answers": ["الوقت", "المال", "السيارة", "المنزل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 313,
+      "question": "إذا كان محمد أطول من علي، وعلي أطول من سالم، فمن الأوسط؟",
+      "answers": ["محمد", "علي", "سالم", "متساوون"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 314,
+      "question": "شيء كلما زاد استخدامه أصبح أقوى؟",
+      "answers": ["العضلة", "الورق", "الزجاج", "الحجر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 315,
+      "question": "إذا كان لديك خمسة أبواب، ثلاثة مفتوحة واثنان مغلقان، فكم بابًا مفتوحًا؟",
+      "answers": ["2", "3", "5", "صفر"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 316,
+      "question": "شيء إذا نظرت إليه رأيت نفسك؟",
+      "answers": ["المرآة", "النافذة", "البحر", "التلفاز"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 317,
+      "question": "إذا كان كل A هو B، وكل B هو C، فهل كل C هو A؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 318,
+      "question": "شيء لا يمكن رؤيته لكنه يُشعر به؟",
+      "answers": ["الهواء", "الحجر", "الحديد", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 319,
+      "question": "إذا كان أحمد في المركز الرابع، فكم شخصًا أمامه؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 320,
+      "question": "شيء كلما زادت سرعته قلّ الوقت؟",
+      "answers": ["السفر", "النوم", "الأكل", "القراءة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 321,
+      "question": "إذا كان لديك ستة كرات وأخذت ثلاثة، كم بقي لديك؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 322,
+      "question": "شيء لا يملك قيمة مادية لكنه غالي؟",
+      "answers": ["الوقت", "الذهب", "الماس", "الفضة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 323,
+      "question": "إذا كان خالد شمال أحمد، وأحمد شمال سالم، فمن أقصى الجنوب؟",
+      "answers": ["خالد", "أحمد", "سالم", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 324,
+      "question": "شيء كلما استخدمته أصبح أقل؟",
+      "answers": ["الوقت", "المال", "المعرفة", "القوة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 325,
+      "question": "إذا كان لديك سبعة كتب وأعطيت أربعة، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "7"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 326,
+      "question": "شيء لا يمكن شراؤه بالمال؟",
+      "answers": ["الوقت", "السيارة", "المنزل", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 327,
+      "question": "إذا كان كل A هو B، وبعض B ليس A، فهل كل B هو A؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 328,
+      "question": "شيء إذا أضفته إلى أي شيء زادت قيمته؟",
+      "answers": ["الخبرة", "الماء", "الهواء", "الرمل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 329,
+      "question": "إذا كان علي أقصر من سالم، وسالم أقصر من أحمد، فمن في المنتصف؟",
+      "answers": ["علي", "سالم", "أحمد", "متساوون"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 330,
+      "question": "شيء كلما زاد عدد مستخدميه لم ينقص؟",
+      "answers": ["الفكرة", "الطعام", "الوقود", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 331,
+      "question": "إذا كان لديك ثمانية أقلام وأخذت خمسة، كم بقي لديك؟",
+      "answers": ["3", "4", "5", "8"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 332,
+      "question": "شيء لا يمكن سرقته؟",
+      "answers": ["المعرفة", "المال", "السيارة", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 333,
+      "question": "إذا كان محمد أمام سعيد، وسعيد أمام علي، فمن في الوسط؟",
+      "answers": ["محمد", "سعيد", "علي", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 334,
+      "question": "شيء كلما زاد استخدامه أصبح أفضل؟",
+      "answers": ["المهارة", "الورق", "الزجاج", "الحجر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 335,
+      "question": "إذا كان لديك تسعة كرات وأعطيت ستًا، كم بقي لديك؟",
+      "answers": ["3", "4", "5", "9"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 336,
+      "question": "شيء لا يمكن بيعه؟",
+      "answers": ["السمعة", "السيارة", "المنزل", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 337,
+      "question": "إذا كان كل A هو B، ولا يوجد B هو C، فهل يمكن أن يكون A هو C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 338,
+      "question": "شيء إذا فقدته لا يمكنك استعادته؟",
+      "answers": ["الوقت", "المال", "السيارة", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 339,
+      "question": "إذا كان أحمد في المركز الخامس، فكم شخصًا خلفه؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 340,
+      "question": "شيء كلما زادت سرعته زادت المسافات؟",
+      "answers": ["السفر", "الوقوف", "النوم", "القراءة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 341,
+      "question": "إذا كان لديك عشرة كتب وأعطيت سبعة، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "10"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 342,
+      "question": "شيء لا يمكن إيقافه؟",
+      "answers": ["الوقت", "السيارة", "الطائرة", "القطار"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 343,
+      "question": "إذا كان خالد أطول من علي، وعلي أطول من سالم، فمن الأقصر؟",
+      "answers": ["خالد", "علي", "سالم", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 344,
+      "question": "شيء كلما زاد استخدامه أصبح أقل؟",
+      "answers": ["الوقت", "المعرفة", "القوة", "السرعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 345,
+      "question": "إذا كان لديك أحد عشر كرة وأخذت ثمانيًا، كم بقي لديك؟",
+      "answers": ["3", "4", "5", "11"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 346,
+      "question": "شيء لا يمكن تخزينه؟",
+      "answers": ["الوقت", "المال", "الطعام", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 347,
+      "question": "إذا كان كل A هو B، وبعض B هو C، فهل كل C هو B؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 348,
+      "question": "شيء إذا استخدمته بشكل صحيح أصبح أقوى؟",
+      "answers": ["العقل", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 349,
+      "question": "إذا كان محمد في المركز السادس، فكم شخصًا أمامه؟",
+      "answers": ["4", "5", "6", "7"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 350,
+      "question": "شيء كلما زادت سرعته قلّ الوقت؟",
+      "answers": ["الإنترنت", "الوقوف", "النوم", "الأكل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 351,
+      "question": "إذا كان لديك اثني عشر قلمًا وأخذت تسعة، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "12"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 352,
+      "question": "شيء لا يمكن نسخه؟",
+      "answers": ["الشخصية", "المستند", "الصورة", "الفيديو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 353,
+      "question": "إذا كان أحمد شمال خالد، وخالد شمال سالم، فمن أقصى الشمال؟",
+      "answers": ["أحمد", "خالد", "سالم", "لا يحدد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 354,
+      "question": "شيء كلما زاد استخدامه أصبح أسرع؟",
+      "answers": ["الممارسة", "الورق", "الحجر", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 355,
+      "question": "إذا كان لديك ثلاثة عشر كتابًا وأعطيت عشرة، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "13"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 356,
+      "question": "شيء لا يمكن تكراره؟",
+      "answers": ["اللحظة", "الكلمة", "الصورة", "الفيديو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 357,
+      "question": "إذا كان كل A هو B، وكل B هو C، فهل كل A ليس C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 358,
+      "question": "شيء إذا استخدمته بشكل خاطئ أصبح أضعف؟",
+      "answers": ["الثقة", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 359,
+      "question": "إذا كان علي في المركز السابع، فكم شخصًا خلفه؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 360,
+      "question": "شيء كلما زادت سرعته زادت المخاطر؟",
+      "answers": ["القيادة", "المشي", "الوقوف", "النوم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 361,
+      "question": "إذا كان لديك أربعة عشر كرة وأخذت أحد عشرة، كم بقي لديك؟",
+      "answers": ["3", "4", "5", "14"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 362,
+      "question": "شيء لا يمكن إلغاؤه؟",
+      "answers": ["الماضي", "الحجز", "الطلب", "المعاملة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 363,
+      "question": "إذا كان محمد أطول من سالم، وسالم أطول من علي، فمن الأوسط؟",
+      "answers": ["محمد", "سالم", "علي", "متساوون"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 364,
+      "question": "شيء كلما زاد استخدامه أصبح أقل؟",
+      "answers": ["الوقت", "المعرفة", "القوة", "المهارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 365,
+      "question": "إذا كان لديك خمسة عشر قلمًا وأخذت اثني عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "15"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 366,
+      "question": "شيء لا يمكن تغييره؟",
+      "answers": ["الماضي", "المستقبل", "الحاضر", "الوقت"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 367,
+      "question": "إذا كان كل A هو B، وبعض B ليس A، فهل كل A ليس B؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 368,
+      "question": "شيء إذا استخدمته بشكل صحيح أصبح أكثر قيمة؟",
+      "answers": ["المال", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 369,
+      "question": "إذا كان خالد في المركز الثامن، فكم شخصًا أمامه؟",
+      "answers": ["6", "7", "8", "9"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 370,
+      "question": "شيء كلما زادت سرعته قلّ الوقت؟",
+      "answers": ["التواصل", "الوقوف", "النوم", "الأكل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 371,
+      "question": "إذا كان لديك ستة عشر كتابًا وأعطيت ثلاثة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "16"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 372,
+      "question": "شيء لا يمكن إرجاعه؟",
+      "answers": ["الكلمة", "المال", "السيارة", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 373,
+      "question": "إذا كان أحمد جنوب علي، وعلي جنوب سالم، فمن أقصى الشمال؟",
+      "answers": ["أحمد", "علي", "سالم", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 374,
+      "question": "شيء كلما زاد استخدامه أصبح أقوى؟",
+      "answers": ["الإرادة", "الورق", "الحجر", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 375,
+      "question": "إذا كان لديك سبعة عشر كرة وأخذت أربعة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "17"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 376,
+      "question": "شيء لا يمكن حذفه؟",
+      "answers": ["الذاكرة", "الملف", "الصورة", "الفيديو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 377,
+      "question": "إذا كان كل A هو B، وبعض B هو C، فهل كل A ليس C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 378,
+      "question": "شيء إذا استخدمته بشكل خاطئ أصبح أقل قيمة؟",
+      "answers": ["السمعة", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 379,
+      "question": "إذا كان سعيد في المركز التاسع، فكم شخصًا خلفه؟",
+      "answers": ["7", "8", "9", "10"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 380,
+      "question": "شيء كلما زادت سرعته زادت المسافات؟",
+      "answers": ["الإنترنت", "الوقوف", "النوم", "الأكل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 381,
+      "question": "إذا كان لديك ثمانية عشر قلمًا وأخذت خمسة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "18"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 382,
+      "question": "شيء لا يمكن نسيانه؟",
+      "answers": ["الخبرة", "الاسم", "العنوان", "الرقم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 383,
+      "question": "إذا كان علي أقصر من محمد، ومحمد أقصر من سالم، فمن الأطول؟",
+      "answers": ["علي", "محمد", "سالم", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 384,
+      "question": "شيء كلما زاد استخدامه أصبح أسرع؟",
+      "answers": ["التعلم", "الورق", "الحجر", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 385,
+      "question": "إذا كان لديك تسعة عشر كتابًا وأعطيت ستة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "19"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 386,
+      "question": "شيء لا يمكن إخفاؤه؟",
+      "answers": ["الحقيقة", "المال", "السيارة", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 387,
+      "question": "إذا كان كل A هو B، وكل B هو C، فهل كل C هو B؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 388,
+      "question": "شيء إذا استخدمته بشكل صحيح أصبح أقوى؟",
+      "answers": ["الثقة", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 389,
+      "question": "إذا كان محمد في المركز العاشر، فكم شخصًا أمامه؟",
+      "answers": ["8", "9", "10", "11"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 390,
+      "question": "شيء كلما زادت سرعته قلّ الوقت؟",
+      "answers": ["التكنولوجيا", "الوقوف", "النوم", "الأكل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 391,
+      "question": "إذا كان لديك عشرون كرة وأخذت سبعة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "20"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 392,
+      "question": "شيء لا يمكن تزويره؟",
+      "answers": ["الشخصية", "التوقيع", "الصورة", "الفيديو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 393,
+      "question": "إذا كان خالد شرق أحمد، وأحمد شرق سالم، فمن أقصى الغرب؟",
+      "answers": ["خالد", "أحمد", "سالم", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 394,
+      "question": "شيء كلما زاد استخدامه أصبح أقل؟",
+      "answers": ["الوقت", "المعرفة", "القوة", "المهارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 395,
+      "question": "إذا كان لديك واحد وعشرون قلمًا وأخذت ثمانية عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "21"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 396,
+      "question": "شيء لا يمكن شراؤه؟",
+      "answers": ["السعادة", "السيارة", "المنزل", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 397,
+      "question": "إذا كان كل A هو B، وبعض B ليس C، فهل كل A هو C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 398,
+      "question": "شيء إذا استخدمته بشكل خاطئ أصبح أضعف؟",
+      "answers": ["الثقة بالنفس", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 399,
+      "question": "إذا كان علي في المركز الحادي عشر، فكم شخصًا خلفه؟",
+      "answers": ["9", "10", "11", "12"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 400,
+      "question": "شيء كلما زادت سرعته زادت المخاطر؟",
+      "answers": ["التطور", "المشي", "الوقوف", "النوم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 401,
+      "question": "إذا كان كل A هو B، ولا يوجد A هو C، فهل يمكن أن يكون B هو C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 402,
+      "question": "شيء لا يحتاج إلى مكان للوجود؟",
+      "answers": ["الفكرة", "الماء", "الهواء", "الضوء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 403,
+      "question": "إذا كان أحمد أمام خالد، وخالد أمام علي، فمن في المنتصف؟",
+      "answers": ["أحمد", "خالد", "علي", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 404,
+      "question": "شيء إذا أعطيته للآخرين زاد عندك؟",
+      "answers": ["المعرفة", "المال", "السيارة", "المفتاح"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 405,
+      "question": "إذا كان لديك خمسة كتب وأعطيت ثلاثة، كم بقي لديك؟",
+      "answers": ["1", "2", "3", "5"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 406,
+      "question": "شيء كلما ازداد الضوء حوله أصبح أوضح؟",
+      "answers": ["الصورة", "الصوت", "الرائحة", "الحرارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 407,
+      "question": "إذا كان اليوم الجمعة، فما اليوم بعد ستة أيام؟",
+      "answers": ["الأربعاء", "الخميس", "الجمعة", "السبت"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 408,
+      "question": "شيء إذا استخدمه الجميع ازداد؟",
+      "answers": ["الشبكة", "الطعام", "الوقود", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 409,
+      "question": "إذا كان كل الدوائر مغلقة، وهذا الشكل مفتوح، فهو:",
+      "answers": ["دائرة", "ليس دائرة", "نصف دائرة", "لا شيء"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 410,
+      "question": "ما الشيء الذي يملأ المكان ولا يشغل مساحة؟",
+      "answers": ["الضوء", "الماء", "الرمل", "الحجر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 411,
+      "question": "إذا كان لديك ستة كتب وأعطيت أربعة، كم بقي لديك؟",
+      "answers": ["1", "2", "3", "6"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 412,
+      "question": "شيء لا يملكه أحد لكنه يملك الجميع؟",
+      "answers": ["المستقبل", "المال", "السيارة", "المنزل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 413,
+      "question": "إذا كان محمد أطول من علي، وعلي أطول من سالم، فمن الأقصر؟",
+      "answers": ["محمد", "علي", "سالم", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 414,
+      "question": "شيء كلما زاد استخدامه أصبح أقوى؟",
+      "answers": ["الصبر", "الورق", "الزجاج", "الحجر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 415,
+      "question": "إذا كان لديك سبعة أبواب، أربعة مفتوحة وثلاثة مغلقة، فكم بابًا مفتوحًا؟",
+      "answers": ["3", "4", "7", "صفر"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 416,
+      "question": "شيء إذا نظرت إليه رأيت انعكاسك؟",
+      "answers": ["الماء الصافي", "النافذة", "البحر", "التلفاز"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 417,
+      "question": "إذا كان كل A هو B، وكل B هو C، فهل كل A هو C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 418,
+      "question": "شيء لا يمكن رؤيته لكنه يُشعر به؟",
+      "answers": ["الحرارة", "الحجر", "الحديد", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 419,
+      "question": "إذا كان أحمد في المركز الخامس، فكم شخصًا خلفه؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 420,
+      "question": "شيء كلما زادت سرعته قلّ الوقت؟",
+      "answers": ["العمل", "الوقوف", "النوم", "الأكل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 421,
+      "question": "إذا كان لديك سبعة كرات وأخذت أربعة، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "7"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 422,
+      "question": "شيء لا يملك قيمة مادية لكنه غالي؟",
+      "answers": ["الصحة", "الذهب", "الماس", "الفضة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 423,
+      "question": "إذا كان خالد شمال أحمد، وأحمد شمال سالم، فمن في المنتصف؟",
+      "answers": ["خالد", "أحمد", "سالم", "لا يحدد"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 424,
+      "question": "شيء كلما استخدمته أصبح أقل؟",
+      "answers": ["الوقت", "المال", "المعرفة", "القوة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 425,
+      "question": "إذا كان لديك ثمانية كتب وأعطيت خمسة، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "8"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 426,
+      "question": "شيء لا يمكن شراؤه بالمال؟",
+      "answers": ["الحب", "السيارة", "المنزل", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 427,
+      "question": "إذا كان كل A هو B، وبعض B ليس A، فهل كل B هو A؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 428,
+      "question": "شيء إذا أضفته إلى أي شيء زادت قيمته؟",
+      "answers": ["الجهد", "الماء", "الهواء", "الرمل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 429,
+      "question": "إذا كان علي أقصر من سالم، وسالم أقصر من أحمد، فمن الأطول؟",
+      "answers": ["علي", "سالم", "أحمد", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 430,
+      "question": "شيء كلما زاد عدد مستخدميه لم ينقص؟",
+      "answers": ["الخبرة", "الطعام", "الوقود", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 431,
+      "question": "إذا كان لديك تسعة أقلام وأخذت ستة، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "9"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 432,
+      "question": "شيء لا يمكن سرقته؟",
+      "answers": ["الموهبة", "المال", "السيارة", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 433,
+      "question": "إذا كان محمد أمام سعيد، وسعيد أمام علي، فمن في المؤخرة؟",
+      "answers": ["محمد", "سعيد", "علي", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 434,
+      "question": "شيء كلما زاد استخدامه أصبح أفضل؟",
+      "answers": ["التدريب", "الورق", "الزجاج", "الحجر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 435,
+      "question": "إذا كان لديك عشرة كرات وأعطيت سبعة، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "10"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 436,
+      "question": "شيء لا يمكن بيعه؟",
+      "answers": ["الشرف", "السيارة", "المنزل", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 437,
+      "question": "إذا كان كل A هو B، ولا يوجد B هو C، فهل يمكن أن يكون A هو C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 438,
+      "question": "شيء إذا فقدته لا يمكنك استعادته؟",
+      "answers": ["الفرصة", "المال", "السيارة", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 439,
+      "question": "إذا كان أحمد في المركز السادس، فكم شخصًا أمامه؟",
+      "answers": ["4", "5", "6", "7"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 440,
+      "question": "شيء كلما زادت سرعته زادت المسافات؟",
+      "answers": ["السفر", "الوقوف", "النوم", "القراءة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 441,
+      "question": "إذا كان لديك أحد عشر كتابًا وأعطيت ثمانية، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "11"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 442,
+      "question": "شيء لا يمكن إيقافه؟",
+      "answers": ["التطور", "السيارة", "الطائرة", "القطار"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 443,
+      "question": "إذا كان خالد أطول من علي، وعلي أطول من سالم، فمن الأوسط؟",
+      "answers": ["خالد", "علي", "سالم", "متساوون"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 444,
+      "question": "شيء كلما زاد استخدامه أصبح أقل؟",
+      "answers": ["الوقت", "المعرفة", "القوة", "السرعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 445,
+      "question": "إذا كان لديك اثني عشر كرة وأخذت تسعًا، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "12"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 446,
+      "question": "شيء لا يمكن تخزينه؟",
+      "answers": ["اللحظة", "المال", "الطعام", "الماء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 447,
+      "question": "إذا كان كل A هو B، وبعض B هو C، فهل كل C هو B؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 448,
+      "question": "شيء إذا استخدمته بشكل صحيح أصبح أقوى؟",
+      "answers": ["العزيمة", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 449,
+      "question": "إذا كان محمد في المركز السابع، فكم شخصًا خلفه؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 450,
+      "question": "شيء كلما زادت سرعته قلّ الوقت؟",
+      "answers": ["الإنترنت", "الوقوف", "النوم", "الأكل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 451,
+      "question": "إذا كان لديك ثلاثة عشر قلمًا وأخذت عشرة، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "13"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 452,
+      "question": "شيء لا يمكن نسخه؟",
+      "answers": ["الإبداع", "المستند", "الصورة", "الفيديو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 453,
+      "question": "إذا كان أحمد شمال خالد، وخالد شمال سالم، فمن أقصى الجنوب؟",
+      "answers": ["أحمد", "خالد", "سالم", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 454,
+      "question": "شيء كلما زاد استخدامه أصبح أسرع؟",
+      "answers": ["الخبرة", "الورق", "الحجر", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 455,
+      "question": "إذا كان لديك أربعة عشر كتابًا وأعطيت أحد عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "14"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 456,
+      "question": "شيء لا يمكن تكراره؟",
+      "answers": ["الحدث", "الكلمة", "الصورة", "الفيديو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 457,
+      "question": "إذا كان كل A هو B، وكل B هو C، فهل كل A ليس C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 458,
+      "question": "شيء إذا استخدمته بشكل خاطئ أصبح أضعف؟",
+      "answers": ["الثقة", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 459,
+      "question": "إذا كان علي في المركز الثامن، فكم شخصًا أمامه؟",
+      "answers": ["6", "7", "8", "9"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 460,
+      "question": "شيء كلما زادت سرعته زادت المخاطر؟",
+      "answers": ["التقدم", "المشي", "الوقوف", "النوم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 461,
+      "question": "إذا كان لديك خمسة عشر كرة وأخذت اثني عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "15"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 462,
+      "question": "شيء لا يمكن إلغاؤه؟",
+      "answers": ["التاريخ", "الحجز", "الطلب", "المعاملة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 463,
+      "question": "إذا كان محمد أطول من سالم، وسالم أطول من علي، فمن الأوسط؟",
+      "answers": ["محمد", "سالم", "علي", "متساوون"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 464,
+      "question": "شيء كلما زاد استخدامه أصبح أقل؟",
+      "answers": ["الوقت", "المعرفة", "القوة", "المهارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 465,
+      "question": "إذا كان لديك ستة عشر قلمًا وأخذت ثلاثة، كم بقي لديك؟",
+      "answers": ["11", "12", "13", "16"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 466,
+      "question": "شيء لا يمكن تغييره؟",
+      "answers": ["الماضي", "المستقبل", "الحاضر", "الوقت"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 467,
+      "question": "إذا كان كل A هو B، وبعض B ليس A، فهل كل A ليس B؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 468,
+      "question": "شيء إذا استخدمته بشكل صحيح أصبح أكثر قيمة؟",
+      "answers": ["الوقت", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 469,
+      "question": "إذا كان خالد في المركز التاسع، فكم شخصًا أمامه؟",
+      "answers": ["7", "8", "9", "10"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 470,
+      "question": "شيء كلما زادت سرعته قلّ الوقت؟",
+      "answers": ["التواصل", "الوقوف", "النوم", "الأكل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 471,
+      "question": "إذا كان لديك سبعة عشر كتابًا وأعطيت أربعة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "17"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 472,
+      "question": "شيء لا يمكن إرجاعه؟",
+      "answers": ["الكلمة", "المال", "السيارة", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 473,
+      "question": "إذا كان أحمد جنوب علي، وعلي جنوب سالم، فمن أقصى الشمال؟",
+      "answers": ["أحمد", "علي", "سالم", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 474,
+      "question": "شيء كلما زاد استخدامه أصبح أقوى؟",
+      "answers": ["الإرادة", "الورق", "الحجر", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 475,
+      "question": "إذا كان لديك ثمانية عشر كرة وأخذت خمسة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "18"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 476,
+      "question": "شيء لا يمكن حذفه؟",
+      "answers": ["الذاكرة", "الملف", "الصورة", "الفيديو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 477,
+      "question": "إذا كان كل A هو B، وبعض B هو C، فهل كل A ليس C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 478,
+      "question": "شيء إذا استخدمته بشكل خاطئ أصبح أقل قيمة؟",
+      "answers": ["السمعة", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 479,
+      "question": "إذا كان سعيد في المركز العاشر، فكم شخصًا خلفه؟",
+      "answers": ["8", "9", "10", "11"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 480,
+      "question": "شيء كلما زادت سرعته زادت المسافات؟",
+      "answers": ["الإنترنت", "الوقوف", "النوم", "الأكل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 481,
+      "question": "إذا كان لديك تسعة عشر قلمًا وأخذت ستة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "19"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 482,
+      "question": "شيء لا يمكن نسيانه؟",
+      "answers": ["الخبرة", "الاسم", "العنوان", "الرقم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 483,
+      "question": "إذا كان علي أقصر من محمد، ومحمد أقصر من سالم، فمن الأطول؟",
+      "answers": ["علي", "محمد", "سالم", "متساوون"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 484,
+      "question": "شيء كلما زاد استخدامه أصبح أسرع؟",
+      "answers": ["التعلم", "الورق", "الحجر", "الخشب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 485,
+      "question": "إذا كان لديك عشرون كتابًا وأعطيت سبعة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "20"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 486,
+      "question": "شيء لا يمكن إخفاؤه؟",
+      "answers": ["الحقيقة", "المال", "السيارة", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 487,
+      "question": "إذا كان كل A هو B، وكل B هو C، فهل كل C هو B؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 488,
+      "question": "شيء إذا استخدمته بشكل صحيح أصبح أقوى؟",
+      "answers": ["الثقة", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 489,
+      "question": "إذا كان محمد في المركز الحادي عشر، فكم شخصًا أمامه؟",
+      "answers": ["9", "10", "11", "12"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 490,
+      "question": "شيء كلما زادت سرعته قلّ الوقت؟",
+      "answers": ["التكنولوجيا", "الوقوف", "النوم", "الأكل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 491,
+      "question": "إذا كان لديك واحد وعشرون كرة وأخذت ثمانية عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "21"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 492,
+      "question": "شيء لا يمكن تزويره؟",
+      "answers": ["الشخصية", "التوقيع", "الصورة", "الفيديو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 493,
+      "question": "إذا كان خالد شرق أحمد، وأحمد شرق سالم، فمن أقصى الغرب؟",
+      "answers": ["خالد", "أحمد", "سالم", "لا يحدد"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 494,
+      "question": "شيء كلما زاد استخدامه أصبح أقل؟",
+      "answers": ["الوقت", "المعرفة", "القوة", "المهارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 495,
+      "question": "إذا كان لديك اثنان وعشرون قلمًا وأخذت تسعة عشر، كم بقي لديك؟",
+      "answers": ["2", "3", "4", "22"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 496,
+      "question": "شيء لا يمكن شراؤه؟",
+      "answers": ["السعادة", "السيارة", "المنزل", "الهاتف"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 497,
+      "question": "إذا كان كل A هو B، وبعض B ليس C، فهل كل A هو C؟",
+      "answers": ["نعم", "لا", "أحيانًا", "مستحيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 498,
+      "question": "شيء إذا استخدمته بشكل خاطئ أصبح أضعف؟",
+      "answers": ["الثقة بالنفس", "الحجر", "الخشب", "الحديد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 499,
+      "question": "إذا كان علي في المركز الثاني عشر، فكم شخصًا خلفه؟",
+      "answers": ["10", "11", "12", "13"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    },
+    {
+      "id": 500,
+      "question": "شيء كلما زادت سرعته زادت المخاطر؟",
+      "answers": ["التطور", "المشي", "الوقوف", "النوم"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "intelligence_logic"
+    }
+  ]
+}

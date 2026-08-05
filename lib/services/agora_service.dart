@@ -25,6 +25,12 @@ class AgoraService {
   final _musicPositionController = StreamController<int>.broadcast();
   Stream<int> get musicPositionStream => _musicPositionController.stream;
 
+  final _audioBlockedController = StreamController<bool>.broadcast();
+  Stream<bool> get audioBlockedStream => _audioBlockedController.stream;
+
+  final _mixingStateController = StreamController<String>.broadcast();
+  Stream<String> get mixingStateStream => _mixingStateController.stream;
+
   static String get appId =>
       dotenv.env['AGORA_APP_ID'] ?? "daed7a59dcbd4de2969b7504ae0843dc";
 
@@ -171,6 +177,20 @@ class AgoraService {
     await _engine?.muteLocalAudioStream(muted);
   }
 
+  Future<void> toggleMuteFromChat(bool muted) async {
+    await _engine?.muteLocalAudioStream(muted);
+  }
+
+  Future<void> resumeAudio() async {
+    await _engine?.enableLocalAudio(true);
+    await _engine?.muteLocalAudioStream(false);
+  }
+
+  Future<void> setBackgroundMode(bool enabled) async {
+    // Placeholder for background mode
+    debugPrint('Background mode set to: $enabled');
+  }
+
   Future<void> toggleAllRemoteAudio(bool muted) async {
     await _engine?.muteAllRemoteAudioStreams(muted);
   }
@@ -263,6 +283,8 @@ class AgoraService {
     _volumeController.close();
     _connectionController.close();
     _musicPositionController.close();
+    _audioBlockedController.close();
+    _mixingStateController.close();
     _musicTimer?.cancel();
   }
 }

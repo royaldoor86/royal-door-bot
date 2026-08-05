@@ -1,0 +1,4504 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "أين تقع الأهرامات؟",
+      "answers": ["العراق", "مصر", "الأردن", "السودان"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 2,
+      "question": "أي حضارة بنت الأهرامات؟",
+      "answers": ["الرومانية", "المصرية", "الإغريقية", "الفارسية"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 3,
+      "question": "ما اسم أشهر تمثال بجوار الأهرامات؟",
+      "answers": ["أبو الهول", "زيوس", "داود", "نفرتيتي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 4,
+      "question": "أين تقع مدينة بابل الأثرية؟",
+      "answers": ["العراق", "سوريا", "مصر", "إيران"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 5,
+      "question": "من بنى حدائق بابل المعلقة وفق الروايات القديمة؟",
+      "answers": ["نبوخذ نصر", "حمورابي", "سرجون الأكدي", "قورش"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 6,
+      "question": "كم عدد عجائب الدنيا السبع القديمة؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 7,
+      "question": "أي عجائب الدنيا القديمة لا تزال قائمة حتى اليوم؟",
+      "answers": ["منارة الإسكندرية", "أهرامات الجيزة", "حدائق بابل", "تمثال زيوس"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 8,
+      "question": "أين يقع سور الصين العظيم؟",
+      "answers": ["اليابان", "الصين", "كوريا", "منغوليا"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 9,
+      "question": "ما الحضارة التي اشتهرت بمدينة ماتشو بيتشو؟",
+      "answers": ["الأزتك", "الإنكا", "المايا", "الرومان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 10,
+      "question": "في أي دولة تقع ماتشو بيتشو؟",
+      "answers": ["المكسيك", "بيرو", "البرازيل", "تشيلي"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 11,
+      "question": "ما الحضارة التي بنت مدينة البتراء؟",
+      "answers": ["الأنباط", "الرومان", "الفرس", "الفينيقيون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 12,
+      "question": "أين تقع مدينة البتراء؟",
+      "answers": ["الأردن", "سوريا", "لبنان", "العراق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 13,
+      "question": "ما اسم الحضارة التي ازدهرت في جنوب العراق؟",
+      "answers": ["السومرية", "الإغريقية", "الرومانية", "الهندية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 14,
+      "question": "ما أول حضارة عرفت الكتابة المسمارية؟",
+      "answers": ["السومريون", "الرومان", "الفرس", "المصريون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 15,
+      "question": "على أي مادة كان السومريون يكتبون غالبًا؟",
+      "answers": ["الورق", "الطين", "الحجر", "الجلد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 16,
+      "question": "أين نشأت الحضارة الفرعونية؟",
+      "answers": ["نهر النيل", "نهر دجلة", "نهر الفرات", "نهر السند"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 17,
+      "question": "ما اسم أشهر ملوك مصر القديمة؟",
+      "answers": ["رمسيس الثاني", "قورش", "الإسكندر", "يوليوس قيصر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 18,
+      "question": "أين يقع معبد الكرنك؟",
+      "answers": ["الأقصر", "القاهرة", "أسوان", "الإسكندرية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 19,
+      "question": "ما الحضارة التي اشتهرت بمدينة تدمر؟",
+      "answers": ["التدمرية", "الفارسية", "الميدية", "الحثية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 20,
+      "question": "أين تقع مدينة تدمر؟",
+      "answers": ["سوريا", "العراق", "الأردن", "تركيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 21,
+      "question": "أين تقع مدينة روما القديمة؟",
+      "answers": ["إيطاليا", "فرنسا", "اليونان", "إسبانيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 22,
+      "question": "ما اسم المدرج الشهير في روما؟",
+      "answers": ["الكولوسيوم", "الأكروبوليس", "البانثيون", "ستونهنج"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 23,
+      "question": "ما الحضارة التي اشتهرت بالفلسفة وأولمبياد؟",
+      "answers": ["اليونانية", "الرومانية", "البابلية", "الفينيقية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 24,
+      "question": "أين يقع الأكروبوليس؟",
+      "answers": ["أثينا", "إسبرطة", "روما", "الإسكندرية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 25,
+      "question": "ما اسم المعبد الشهير فوق الأكروبوليس؟",
+      "answers": ["البارثينون", "الكولوسيوم", "الكرنك", "أبو سمبل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 26,
+      "question": "أين تقع مدينة أنغكور وات؟",
+      "answers": ["كمبوديا", "تايلاند", "الصين", "فيتنام"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 27,
+      "question": "ما أكبر معبد ديني في العالم؟",
+      "answers": ["أنغكور وات", "الكرنك", "البارثينون", "أبو سمبل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 28,
+      "question": "أين يقع تمثال المسيح الفادي؟",
+      "answers": ["البرازيل", "الأرجنتين", "تشيلي", "المكسيك"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 29,
+      "question": "في أي مدينة يوجد تمثال المسيح الفادي؟",
+      "answers": ["ريو دي جانيرو", "برازيليا", "ساو باولو", "ليما"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 30,
+      "question": "أين يقع تاج محل؟",
+      "answers": ["الهند", "باكستان", "إيران", "نيبال"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 31,
+      "question": "من بنى تاج محل؟",
+      "answers": ["شاه جهان", "أكبر", "همايون", "بابر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 32,
+      "question": "لماذا بُني تاج محل؟",
+      "answers": ["قصر ملكي", "ضريح", "معبد", "قلعة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 33,
+      "question": "أين تقع مدينة تشيتشن إيتزا؟",
+      "answers": ["المكسيك", "بيرو", "البرازيل", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 34,
+      "question": "أي حضارة بنت تشيتشن إيتزا؟",
+      "answers": ["المايا", "الإنكا", "الأزتك", "الرومان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 35,
+      "question": "ما الحضارة التي عاشت في المكسيك قبل الإسبان؟",
+      "answers": ["الأزتك", "الفرس", "الفينيقيون", "السومريون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 36,
+      "question": "أين تقع ستونهنج؟",
+      "answers": ["إنجلترا", "اسكتلندا", "أيرلندا", "فرنسا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 37,
+      "question": "مم يتكون ستونهنج أساسًا؟",
+      "answers": ["أحجار ضخمة", "طوب", "خشب", "رخام"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 38,
+      "question": "أين تقع مدينة البومبي الأثرية؟",
+      "answers": ["إيطاليا", "اليونان", "تركيا", "إسبانيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 39,
+      "question": "ما سبب دفن مدينة بومبي؟",
+      "answers": ["زلزال", "ثوران بركان", "فيضان", "حرب"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 40,
+      "question": "أين يقع جبل فيزوف؟",
+      "answers": ["إيطاليا", "اليونان", "تركيا", "فرنسا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 41,
+      "question": "ما اسم أقدم القوانين المكتوبة في التاريخ؟",
+      "answers": ["شريعة حمورابي", "القانون الروماني", "قوانين صولون", "الماجنا كارتا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 42,
+      "question": "من أصدر شريعة حمورابي؟",
+      "answers": ["حمورابي", "سرجون", "نبوخذ نصر", "آشور بانيبال"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 43,
+      "question": "أين عُثر على حجر رشيد؟",
+      "answers": ["مصر", "العراق", "سوريا", "اليونان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 44,
+      "question": "ما أهمية حجر رشيد؟",
+      "answers": ["فك رموز", "بناء الأهرامات", "تحديد الفصول", "صناعة الورق"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 45,
+      "question": "من فك رموز الهيروغليفية؟",
+      "answers": ["شامبليون", "هيرودوت", "أرسطو", "سقراط"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 46,
+      "question": "أين كانت مكتبة الإسكندرية القديمة؟",
+      "answers": ["مصر", "اليونان", "إيطاليا", "العراق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 47,
+      "question": "ما الحضارة التي اشتهرت بالملاحة البحرية والتجارة؟",
+      "answers": ["الفينيقية", "السومرية", "المايا", "الحثية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 48,
+      "question": "أين نشأت الحضارة الفينيقية؟",
+      "answers": ["بلاد الشام", "العراق", "مصر", "الهند"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 49,
+      "question": "ما اسم أشهر مدينة فينيقية؟",
+      "answers": ["صور", "بابل", "أور", "ممفيس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 50,
+      "question": "أي حضارة اشتهرت بالكتابة الهيروغليفية؟",
+      "answers": ["المصرية القديمة", "الرومانية", "الإغريقية", "الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 51,
+      "question": "ما اسم العاصمة القديمة للإمبراطورية البيزنطية؟",
+      "answers": ["أثينا", "القسطنطينية", "روما", "دمشق"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 52,
+      "question": "أين تقع مدينة الأقصر الأثرية؟",
+      "answers": ["مصر", "السودان", "الأردن", "ليبيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 53,
+      "question": "ما اسم المعبد الذي أنقذته اليونسكو من الغرق بعد بناء السد العالي؟",
+      "answers": ["أبو سمبل", "الكرنك", "الأقصر", "إدفو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 54,
+      "question": "في أي دولة تقع مدينة ميتيورا التاريخية؟",
+      "answers": ["اليونان", "إيطاليا", "ألبانيا", "بلغاريا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 55,
+      "question": "أي حضارة بنت مدينة أور؟",
+      "answers": ["السومرية", "الآشورية", "الرومانية", "الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 56,
+      "question": "أين تقع مدينة أور الأثرية؟",
+      "answers": ["العراق", "سوريا", "إيران", "تركيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 57,
+      "question": "ما اسم أشهر بوابة في مدينة بابل؟",
+      "answers": ["بوابة عشتار", "بوابة السلام", "بوابة الشمس", "بوابة النصر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 58,
+      "question": "أين تُعرض بوابة عشتار الأصلية اليوم؟",
+      "answers": ["ألمانيا", "العراق", "مصر", "فرنسا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 59,
+      "question": "ما اسم الحضارة التي اشتهرت بعاصمتها نينوى؟",
+      "answers": ["الآشورية", "السومرية", "البابلية", "الفينيقية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 60,
+      "question": "أين تقع نينوى التاريخية؟",
+      "answers": ["العراق", "سوريا", "إيران", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 61,
+      "question": "من هو الملك الآشوري الذي أنشأ مكتبة نينوى الشهيرة؟",
+      "answers": ["آشور بانيبال", "سرجون", "حمورابي", "نبوخذ نصر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 62,
+      "question": "أين يقع قصر الحمراء؟",
+      "answers": ["إسبانيا", "المغرب", "البرتغال", "فرنسا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 63,
+      "question": "في أي مدينة يوجد قصر الحمراء؟",
+      "answers": ["غرناطة", "مدريد", "إشبيلية", "قرطبة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 64,
+      "question": "ما اسم المدينة الرومانية المدفونة بسبب ثوران بركاني؟",
+      "answers": ["بومبي", "روما", "ميلانو", "بيزا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 65,
+      "question": "أين يقع برج بيزا المائل؟",
+      "answers": ["إيطاليا", "فرنسا", "إسبانيا", "سويسرا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 66,
+      "question": "ما سبب شهرة برج بيزا؟",
+      "answers": ["ميلانه", "ارتفاعه", "لونه", "عمره"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 67,
+      "question": "أين يقع قصر فرساي؟",
+      "answers": ["فرنسا", "ألمانيا", "بلجيكا", "هولندا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 68,
+      "question": "من أشهر ملوك فرنسا المرتبطين بقصر فرساي؟",
+      "answers": ["لويس 14", "نابليون", "شارلمان", "لويس 16"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 69,
+      "question": "أين يقع معبد البارثينون؟",
+      "answers": ["اليونان", "تركيا", "إيطاليا", "قبرص"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 70,
+      "question": "ما اسم التل الذي يقع عليه البارثينون؟",
+      "answers": ["الأكروبوليس", "الأوليمب", "سيناء", "الكابيتول"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 71,
+      "question": "أين تقع مدينة أفسس الأثرية؟",
+      "answers": ["تركيا", "اليونان", "قبرص", "بلغاريا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 72,
+      "question": "ما الحضارة التي بنت مدينة أفسس في ازدهارها؟",
+      "answers": ["الإغريقية", "الفارسية", "السومرية", "الهندية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 73,
+      "question": "أين يقع تمثال الحرية؟",
+      "answers": ["الولايات المتحدة", "كندا", "فرنسا", "بريطانيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 74,
+      "question": "في أي مدينة يوجد تمثال الحرية؟",
+      "answers": ["نيويورك", "واشنطن", "شيكاغو", "بوسطن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 75,
+      "question": "أي دولة قدمت تمثال الحرية هدية للولايات المتحدة؟",
+      "answers": ["فرنسا", "بريطانيا", "إيطاليا", "إسبانيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 76,
+      "question": "أين تقع مدينة البندقية التاريخية؟",
+      "answers": ["إيطاليا", "فرنسا", "إسبانيا", "اليونان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 77,
+      "question": "بماذا تشتهر مدينة البندقية؟",
+      "answers": ["القنوات المائية", "الأهرامات", "الصحارى", "البراكين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 78,
+      "question": "أين تقع مدينة كيوسكو التاريخية؟",
+      "answers": ["بيرو", "المكسيك", "تشيلي", "بوليفيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 79,
+      "question": "كانت كيوسكو عاصمة أي حضارة؟",
+      "answers": ["الإنكا", "المايا", "الأزتك", "الرومان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 80,
+      "question": "أين يقع معبد الأقصر؟",
+      "answers": ["مصر", "السودان", "ليبيا", "الجزائر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 81,
+      "question": "ما اسم أشهر مدينة أثرية منحوتة في الصخور بالأردن؟",
+      "answers": ["البتراء", "جرش", "العقبة", "مادبا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 82,
+      "question": "أين تقع مدينة جرش الأثرية؟",
+      "answers": ["الأردن", "سوريا", "لبنان", "العراق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 83,
+      "question": "تشتهر مدينة جرش بآثار أي حضارة؟",
+      "answers": ["الرومانية", "السومرية", "الفرعونية", "الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 84,
+      "question": "ما اسم أشهر معبد في مدينة أبو سمبل؟",
+      "answers": ["معبد رمسيس", "معبد آمون", "معبد حورس", "معبد إيزيس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 85,
+      "question": "أين يقع وادي الملوك؟",
+      "answers": ["مصر", "السودان", "الأردن", "العراق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 86,
+      "question": "ماذا يضم وادي الملوك؟",
+      "answers": ["مقابر الفراعنة", "معابد رومانية", "قصور ملكية", "قلاع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 87,
+      "question": "أين اكتُشف قبر توت عنخ آمون؟",
+      "answers": ["وادي الملوك", "الجيزة", "ممفيس", "الكرنك"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 88,
+      "question": "من اكتشف قبر توت عنخ آمون عام 1922؟",
+      "answers": ["هوارد كارتر", "شامبليون", "هيرودوت", "نابليون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 89,
+      "question": "أين يقع تمثال أبو الهول؟",
+      "answers": ["الجيزة", "الأقصر", "أسوان", "القاهرة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 90,
+      "question": "ما جسم تمثال أبو الهول؟",
+      "answers": ["أسد", "حصان", "نسر", "جمل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 91,
+      "question": "ما الحضارة التي بنت المدرجات الرومانية؟",
+      "answers": ["الرومانية", "السومرية", "الفارسية", "المايا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 92,
+      "question": "أين تقع مدينة تيوتيهواكان؟",
+      "answers": ["المكسيك", "بيرو", "البرازيل", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 93,
+      "question": "بماذا تشتهر مدينة تيوتيهواكان؟",
+      "answers": ["أهراماتها", "قنواتها", "قصورها", "حدائقها"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 94,
+      "question": "أين تقع جزيرة الفصح؟",
+      "answers": ["تشيلي", "البرازيل", "الأرجنتين", "المكسيك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 95,
+      "question": "بماذا تشتهر جزيرة الفصح؟",
+      "answers": ["تماثيل المواي", "الأهرامات", "القلاع", "المساجد"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 96,
+      "question": "ما اسم التماثيل الحجرية العملاقة في جزيرة الفصح؟",
+      "answers": ["المواي", "أبو الهول", "زيوس", "أطلس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 97,
+      "question": "أين تقع مدينة ممفيس القديمة؟",
+      "answers": ["مصر", "العراق", "سوريا", "اليونان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 98,
+      "question": "كانت ممفيس عاصمة لأي حضارة؟",
+      "answers": ["المصرية", "الرومانية", "الآشورية", "الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 99,
+      "question": "أين يقع معبد حتشبسوت؟",
+      "answers": ["الأقصر", "القاهرة", "أسوان", "الإسكندرية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 100,
+      "question": "أي منظمة دولية تُعنى بحماية مواقع التراث العالمي؟",
+      "answers": ["اليونسكو", "الأمم المتحدة", "جامعة الدول العربية", "الإنتربول"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 101,
+      "question": "أين تقع مدينة ماري الأثرية؟",
+      "answers": ["سوريا", "العراق", "الأردن", "لبنان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 102,
+      "question": "ما الحضارة التي ازدهرت في مدينة ماري؟",
+      "answers": ["الأمورية", "الرومانية", "الفارسية", "الإغريقية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 103,
+      "question": "أين تقع مدينة الحضر الأثرية؟",
+      "answers": ["العراق", "سوريا", "إيران", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 104,
+      "question": "ما الذي اشتهرت به مدينة الحضر؟",
+      "answers": ["معابدها", "الأهرامات", "القنوات المائية", "الحدائق المعلقة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 105,
+      "question": "أين تقع مدينة نمرود الأثرية؟",
+      "answers": ["العراق", "تركيا", "سوريا", "مصر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 106,
+      "question": "إلى أي حضارة تنتمي مدينة نمرود؟",
+      "answers": ["الآشورية", "السومرية", "البابلية", "الفينيقية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 107,
+      "question": "أين تقع مدينة آشور الأثرية؟",
+      "answers": ["العراق", "إيران", "سوريا", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 108,
+      "question": "كانت مدينة آشور عاصمة لأي حضارة؟",
+      "answers": ["الآشورية", "البابلية", "السومرية", "المصرية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 109,
+      "question": "أين تقع مدينة سبأ التاريخية؟",
+      "answers": ["اليمن", "عمان", "السعودية", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 110,
+      "question": "ما الحضارة التي اشتهرت بمملكة سبأ؟",
+      "answers": ["اليمنية", "الفارسية", "الرومانية", "الحثية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 111,
+      "question": "ما اسم السد الشهير في مملكة سبأ؟",
+      "answers": ["سد مأرب", "سد الموصل", "السد العالي", "سد أتاتورك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 112,
+      "question": "أين يقع سد مأرب؟",
+      "answers": ["اليمن", "العراق", "السعودية", "مصر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 113,
+      "question": "أين تقع مدينة جرهاء التاريخية؟",
+      "answers": ["السعودية", "الكويت", "العراق", "قطر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 114,
+      "question": "اشتهرت مدينة جرهاء قديمًا بـ:",
+      "answers": ["التجارة", "التعدين", "الزراعة", "صناعة السفن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 115,
+      "question": "أين تقع مدينة أفاميا الأثرية؟",
+      "answers": ["سوريا", "لبنان", "العراق", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 116,
+      "question": "ما الحضارة التي ازدهرت في أفاميا؟",
+      "answers": ["اليونانية", "السومرية", "الفارسية", "الهندية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 117,
+      "question": "أين تقع مدينة بعلبك؟",
+      "answers": ["لبنان", "سوريا", "الأردن", "فلسطين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 118,
+      "question": "تشتهر بعلبك بـ:",
+      "answers": ["المعابد الرومانية", "الأهرامات", "القلاع الإسلامية", "المسلات"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 119,
+      "question": "أين يقع معبد جوبيتر الشهير؟",
+      "answers": ["بعلبك", "روما", "أثينا", "دمشق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 120,
+      "question": "أين تقع مدينة لبدة الكبرى؟",
+      "answers": ["ليبيا", "تونس", "الجزائر", "المغرب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 121,
+      "question": "إلى أي حضارة تنتمي آثار لبدة الكبرى؟",
+      "answers": ["الرومانية", "الفينيقية", "السومرية", "المصرية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 122,
+      "question": "أين تقع مدينة قرطاج؟",
+      "answers": ["تونس", "الجزائر", "المغرب", "ليبيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 123,
+      "question": "من أسس مدينة قرطاج؟",
+      "answers": ["الفينيقيون", "الرومان", "الإغريق", "الفرس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 124,
+      "question": "من أشهر قادة قرطاج؟",
+      "answers": ["هانيبال", "يوليوس قيصر", "الإسكندر الأكبر", "قورش"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 125,
+      "question": "أين يقع قوس النصر الشهير؟",
+      "answers": ["فرنسا", "إيطاليا", "ألمانيا", "إسبانيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 126,
+      "question": "في أي مدينة يقع قوس النصر؟",
+      "answers": ["باريس", "روما", "مدريد", "برلين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 127,
+      "question": "أين يقع قصر باكنغهام؟",
+      "answers": ["بريطانيا", "فرنسا", "إسبانيا", "هولندا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 128,
+      "question": "في أي مدينة يقع قصر باكنغهام؟",
+      "answers": ["لندن", "مانشستر", "ليفربول", "إدنبرة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 129,
+      "question": "أين تقع مدينة كابادوكيا التاريخية؟",
+      "answers": ["تركيا", "اليونان", "بلغاريا", "جورجيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 130,
+      "question": "تشتهر كابادوكيا بـ:",
+      "answers": ["المداخن الأرضية", "الأهرامات", "البراكين", "الجزر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 131,
+      "question": "أين تقع مدينة البندقية؟",
+      "answers": ["إيطاليا", "فرنسا", "إسبانيا", "اليونان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 132,
+      "question": "ما وسيلة النقل الأشهر في البندقية؟",
+      "answers": ["القوارب", "القطارات", "الحافلات", "المترو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 133,
+      "question": "أين تقع قلعة إدنبرة؟",
+      "answers": ["اسكتلندا", "إنجلترا", "ويلز", "أيرلندا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 134,
+      "question": "أين تقع قلعة براغ؟",
+      "answers": ["التشيك", "بولندا", "النمسا", "المجر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 135,
+      "question": "ما اسم المدينة القديمة المنحوتة في الصخور بتركيا؟",
+      "answers": ["ديرينكويو", "إسطنبول", "أنقرة", "بورصة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 136,
+      "question": "أين تقع مدينة موهينجو دارو؟",
+      "answers": ["باكستان", "الهند", "أفغانستان", "نيبال"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 137,
+      "question": "إلى أي حضارة تنتمي موهينجو دارو؟",
+      "answers": ["وادي السند", "المايا", "الإنكا", "الفينيقية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 138,
+      "question": "أين تقع مدينة هارابا؟",
+      "answers": ["باكستان", "الهند", "إيران", "الصين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 139,
+      "question": "ما الحضارة التي اشتهرت بمدينتي هارابا وموهينجو دارو؟",
+      "answers": ["وادي السند", "السومرية", "المصرية", "الرومانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 140,
+      "question": "أين يقع الجيش الطيني الشهير؟",
+      "answers": ["الصين", "اليابان", "كوريا", "منغوليا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 141,
+      "question": "الجيش الطيني بُني لحراسة قبر:",
+      "answers": ["الإمبراطور", "جنكيز خان", "كونفوشيوس", "ماو تسي تونغ"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 142,
+      "question": "أين تقع المدينة المحرمة؟",
+      "answers": ["بكين", "طوكيو", "سيؤول", "شنغهاي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 143,
+      "question": "كانت المدينة المحرمة مقرًا لـ:",
+      "answers": ["أباطرة الصين", "ملوك اليابان", "قياصرة روسيا", "العثمانيين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 144,
+      "question": "أين يقع قصر بوتالا؟",
+      "answers": ["التبت", "الصين", "الهند", "نيبال"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 145,
+      "question": "كان قصر بوتالا مقرًا لـ:",
+      "answers": ["الدالاي لاما", "الإمبراطور الصيني", "ملك نيبال", "ملك بوتان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 146,
+      "question": "أين تقع مدينة بوروبودور؟",
+      "answers": ["إندونيسيا", "ماليزيا", "تايلاند", "الفلبين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 147,
+      "question": "تشتهر بوروبودور بـ:",
+      "answers": ["أكبر معبد بوذي", "أكبر مسجد", "أكبر كنيسة", "أكبر قلعة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 148,
+      "question": "أين يقع معبد باجان التاريخي؟",
+      "answers": ["ميانمار", "تايلاند", "لاوس", "كمبوديا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 149,
+      "question": "تشتهر مدينة باجان بـ:",
+      "answers": ["آلاف المعابد", "الأهرامات", "القلاع", "الحدائق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 150,
+      "question": "أي حضارة اشتهرت ببناء الزقورات؟",
+      "answers": ["السومرية", "الرومانية", "اليونانية", "الأزتكية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 151,
+      "question": "ما هي الزقورة؟",
+      "answers": ["معبد مدرج", "قصر ملكي", "مسرح روماني", "جسر حجري"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 152,
+      "question": "أين تقع زقورة أور الشهيرة؟",
+      "answers": ["العراق", "سوريا", "إيران", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 153,
+      "question": "أين تقع مدينة نيبور الأثرية؟",
+      "answers": ["العراق", "مصر", "تركيا", "إيران"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 154,
+      "question": "اشتهرت مدينة نيبور بأنها:",
+      "answers": ["مركز ديني", "ميناء بحري", "عاصمة رومانية", "مدينة تجارية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 155,
+      "question": "أين يقع قصر كنوسوس؟",
+      "answers": ["جزيرة كريت", "قبرص", "إيطاليا", "تركيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 156,
+      "question": "ارتبط قصر كنوسوس بأي حضارة؟",
+      "answers": ["المينوية", "الرومانية", "الفارسية", "المصرية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 157,
+      "question": "أين يقع معبد دلفي؟",
+      "answers": ["اليونان", "إيطاليا", "تركيا", "بلغاريا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 158,
+      "question": "اشتهر معبد دلفي بـ:",
+      "answers": ["وحي أبولو", "تمثال زيوس", "الألعاب الأولمبية", "المسرح الروماني"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 159,
+      "question": "أين يقع جبل الأولمب؟",
+      "answers": ["اليونان", "تركيا", "ألبانيا", "إيطاليا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 160,
+      "question": "حسب الأساطير اليونانية، كان جبل الأولمب مقر:",
+      "answers": ["الآلهة", "الملوك", "الفلاسفة", "الجنود"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 161,
+      "question": "أين تقع مدينة طروادة الأثرية؟",
+      "answers": ["تركيا", "اليونان", "إيطاليا", "قبرص"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 162,
+      "question": "ارتبطت مدينة طروادة بـ:",
+      "answers": ["حرب طروادة", "الحروب الصليبية", "الفتح الإسلامي", "الحرب البونيقية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 163,
+      "question": "أين يقع معبد أرتميس؟",
+      "answers": ["تركيا", "اليونان", "مصر", "إيطاليا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 164,
+      "question": "كان معبد أرتميس يعد:",
+      "answers": ["من عجائب الدنيا", "أكبر مسجد", "أكبر قلعة", "أكبر قصر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 165,
+      "question": "أين كان يقع تمثال زيوس الشهير؟",
+      "answers": ["أولمبيا", "روما", "أثينا", "إسطنبول"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 166,
+      "question": "تمثال زيوس كان من:",
+      "answers": ["عجائب الدنيا", "المعابد", "مواقع التراث", "القلاع الأوروبية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 167,
+      "question": "أين كانت تقع منارة الإسكندرية؟",
+      "answers": ["مصر", "ليبيا", "اليونان", "تركيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 168,
+      "question": "كانت منارة الإسكندرية تعد:",
+      "answers": ["من عجائب الدنيا", "أعلى جبل", "أكبر معبد", "أقدم مسجد"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 169,
+      "question": "أين كان يقع ضريح موسولوس؟",
+      "answers": ["تركيا", "اليونان", "مصر", "العراق"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 170,
+      "question": "كلمة \"ضريح\" باللغات الأوروبية (Mausoleum) مشتقة من اسم:",
+      "answers": ["موسولوس", "حمورابي", "رمسيس", "داريوس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 171,
+      "question": "أين كان يقع تمثال رودس العملاق؟",
+      "answers": ["اليونان", "إيطاليا", "تركيا", "مصر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 172,
+      "question": "تمثال رودس كان يمثل الإله:",
+      "answers": ["هيليوس", "زيوس", "بوسيدون", "أبولو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 173,
+      "question": "أين تقع مدينة هيرابوليس؟",
+      "answers": ["تركيا", "اليونان", "بلغاريا", "سوريا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 174,
+      "question": "تشتهر هيرابوليس بـ:",
+      "answers": ["آثارها الرومانية", "الأهرامات", "القلاع", "الحدائق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 175,
+      "question": "أين تقع باموكالي؟",
+      "answers": ["تركيا", "إيطاليا", "اليونان", "جورجيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 176,
+      "question": "تشتهر باموكالي بـ:",
+      "answers": ["المدرجات البيضاء", "الكثبان الرملية", "البراكين", "الغابات"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 177,
+      "question": "أين يقع جبل راشمور؟",
+      "answers": ["الولايات المتحدة", "كندا", "المكسيك", "فرنسا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 178,
+      "question": "ماذا نُحت على جبل راشمور؟",
+      "answers": ["أربعة رؤساء أمريكيين", "تماثيل فرعونية", "قلعة رومانية", "معبد بوذي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 179,
+      "question": "أين يقع قصر سانسوسي؟",
+      "answers": ["ألمانيا", "فرنسا", "النمسا", "سويسرا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 180,
+      "question": "أين تقع مدينة كاهوكيا الأثرية؟",
+      "answers": ["الولايات المتحدة", "كندا", "المكسيك", "البرازيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 181,
+      "question": "اشتهرت كاهوكيا بـ:",
+      "answers": ["التلال الأثرية", "الأهرامات", "القلاع", "المعابد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 182,
+      "question": "أين تقع مدينة تيكال؟",
+      "answers": ["غواتيمالا", "المكسيك", "بيرو", "كولومبيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 183,
+      "question": "إلى أي حضارة تنتمي تيكال؟",
+      "answers": ["المايا", "الأزتك", "الإنكا", "الرومان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 184,
+      "question": "أين تقع مدينة بالينكي؟",
+      "answers": ["المكسيك", "بيرو", "البرازيل", "تشيلي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 185,
+      "question": "اشتهرت بالينكي بأنها من مدن:",
+      "answers": ["المايا", "الإنكا", "الأزتك", "الفينيقيين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 186,
+      "question": "أين تقع مدينة أوكسمال؟",
+      "answers": ["المكسيك", "غواتيمالا", "بيرو", "بوليفيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 187,
+      "question": "أوكسمال تعد من آثار حضارة:",
+      "answers": ["المايا", "الإنكا", "الرومان", "الفرس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 188,
+      "question": "أين تقع مدينة ساكسايهامان؟",
+      "answers": ["بيرو", "تشيلي", "البرازيل", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 189,
+      "question": "إلى أي حضارة تنتمي ساكسايهامان؟",
+      "answers": ["الإنكا", "المايا", "الأزتك", "الإغريق"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 190,
+      "question": "ما الغرض من وادي الملوك؟",
+      "answers": ["دفن الملوك", "إقامة المعابد", "التجارة", "التدريب العسكري"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 191,
+      "question": "أين يقع معبد إدفو؟",
+      "answers": ["مصر", "السودان", "ليبيا", "تونس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 192,
+      "question": "معبد إدفو مخصص للإله:",
+      "answers": ["حورس", "آمون", "رع", "أوزوريس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 193,
+      "question": "أين يقع معبد فيلة؟",
+      "answers": ["أسوان", "القاهرة", "الأقصر", "الإسكندرية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 194,
+      "question": "معبد فيلة كان مخصصًا للإلهة:",
+      "answers": ["إيزيس", "حتحور", "ماعت", "باستت"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 195,
+      "question": "أين يقع معبد كوم أمبو؟",
+      "answers": ["مصر", "السودان", "ليبيا", "الجزائر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 196,
+      "question": "معبد كوم أمبو مميز لأنه:",
+      "answers": ["مخصص لإلهين", "داخل جبل", "مبني من الخشب", "تحت الأرض"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 197,
+      "question": "أي حضارة تُعد من أقدم الحضارات في بلاد الرافدين؟",
+      "answers": ["السومرية", "الرومانية", "البيزنطية", "العثمانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 198,
+      "question": "ما المنطقة التي عُرفت تاريخيًا باسم \"مهد الحضارات\"؟",
+      "answers": ["بلاد الرافدين", "شبه الجزيرة الإيبيرية", "أوروبا", "أستراليا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 199,
+      "question": "ما الإله الذي خُصص له معظم مجمع معابد الكرنك؟",
+      "answers": ["آمون رع", "حورس", "أوزوريس", "تحوت"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 200,
+      "question": "أي ملك فرعوني ارتبط ببناء أجزاء كبيرة من معبد الأقصر؟",
+      "answers": ["رمسيس الثاني", "توت عنخ آمون", "أخناتون", "خوفو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 201,
+      "question": "أين يقع معبد دندرة؟",
+      "answers": ["مصر", "السودان", "ليبيا", "تونس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 202,
+      "question": "معبد دندرة مخصص للإلهة:",
+      "answers": ["حتحور", "إيزيس", "ماعت", "نفتيس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 203,
+      "question": "كانت ممفيس أول عاصمة لـ:",
+      "answers": ["مصر", "الرومانية", "البيزنطية", "الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 204,
+      "question": "أين يقع هرم زوسر المدرج؟",
+      "answers": ["سقارة", "الجيزة", "دهشور", "الأقصر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 205,
+      "question": "من صمم هرم زوسر المدرج؟",
+      "answers": ["إمحوتب", "رمسيس", "سنفرو", "خوفو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 206,
+      "question": "ما أول هرم حجري كبير في التاريخ؟",
+      "answers": ["هرم زوسر", "هرم خوفو", "هرم خفرع", "هرم منقرع"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 207,
+      "question": "أين يقع الهرم المنحني؟",
+      "answers": ["دهشور", "الجيزة", "سقارة", "الأقصر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 208,
+      "question": "من هو الملك الذي بنى الهرم المنحني؟",
+      "answers": ["سنفرو", "خوفو", "رمسيس الثاني", "زوسر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 209,
+      "question": "أين يقع الهرم الأحمر؟",
+      "answers": ["دهشور", "الجيزة", "أسوان", "الأقصر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 210,
+      "question": "الهرم الأحمر بُني في عهد:",
+      "answers": ["سنفرو", "خفرع", "منقرع", "بيبي الأول"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 211,
+      "question": "أين تقع مدينة هاتوشا؟",
+      "answers": ["تركيا", "سوريا", "العراق", "إيران"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 212,
+      "question": "كانت هاتوشا عاصمة:",
+      "answers": ["الحيثيين", "الآشوريين", "البابليين", "الفينيقيين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 213,
+      "question": "أين تقع مدينة برسيبوليس؟",
+      "answers": ["إيران", "العراق", "تركيا", "أفغانستان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 214,
+      "question": "برسيبوليس كانت عاصمة:",
+      "answers": ["الأخمينية", "الساسانية", "السلوقية", "العثمانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 215,
+      "question": "من أمر ببناء مدينة برسيبوليس؟",
+      "answers": ["داريوس الأول", "قورش الكبير", "خشايارشا", "قمبيز"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 216,
+      "question": "من الذي أحرق برسيبوليس؟",
+      "answers": ["الإسكندر الأكبر", "يوليوس قيصر", "هانيبال", "قورش"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 217,
+      "question": "أين تقع مدينة باسارغاد؟",
+      "answers": ["إيران", "العراق", "سوريا", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 218,
+      "question": "تضم مدينة باسارغاد ضريح:",
+      "answers": ["قورش الكبير", "داريوس الأول", "خشايارشا", "قمبيز"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 219,
+      "question": "أين تقع مدينة سوسة القديمة؟",
+      "answers": ["إيران", "العراق", "مصر", "تركيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 220,
+      "question": "كانت مدينة سوسة من أهم مدن:",
+      "answers": ["العيلاميين", "الرومان", "الإغريق", "المايا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 221,
+      "question": "أين تقع مدينة إيبلا الأثرية؟",
+      "answers": ["سوريا", "العراق", "لبنان", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 222,
+      "question": "اشتهرت مدينة إيبلا بـ:",
+      "answers": ["أرشيفها الضخم", "أهراماتها", "حدائقها", "معابدها فقط"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 223,
+      "question": "أين تقع مدينة أوغاريت؟",
+      "answers": ["سوريا", "العراق", "الأردن", "تركيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 224,
+      "question": "ما الذي اشتهرت به أوغاريت؟",
+      "answers": ["أقدم الأبجديات", "الأهرامات", "الزقورات", "المسارح"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 225,
+      "question": "أين تقع مدينة جبيل التاريخية؟",
+      "answers": ["لبنان", "سوريا", "الأردن", "فلسطين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 226,
+      "question": "تُعد جبيل من:",
+      "answers": ["أقدم المدن المأهولة", "أحدث المدن", "مدينة رومانية", "مدينة إسلامية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 227,
+      "question": "أين تقع مدينة صور التاريخية؟",
+      "answers": ["لبنان", "سوريا", "العراق", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 228,
+      "question": "اشتهرت مدينة صور بـ:",
+      "answers": ["التجارة الفينيقية", "صناعة الحديد", "تعدين الذهب", "الزراعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 229,
+      "question": "أين تقع مدينة صيدا؟",
+      "answers": ["لبنان", "سوريا", "مصر", "الأردن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 230,
+      "question": "كانت صيدا من أهم مدن:",
+      "answers": ["الفينيقيين", "الرومان", "الفرس", "السومريين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 231,
+      "question": "تشتهر جرش بـ:",
+      "answers": ["آثارها الرومانية", "الأهرامات", "الزقورات", "القلاع الصليبية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 232,
+      "question": "أين تقع مدينة أم قيس؟",
+      "answers": ["الأردن", "سوريا", "العراق", "لبنان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 233,
+      "question": "كان اسم أم قيس قديمًا:",
+      "answers": ["جدارا", "بصرى", "تدمر", "أفاميا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 234,
+      "question": "أين تقع مدينة بصرى الشام؟",
+      "answers": ["سوريا", "الأردن", "لبنان", "العراق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 235,
+      "question": "تشتهر بصرى بـ:",
+      "answers": ["المسرح الروماني", "الأهرامات", "المعابد البابلية", "الزقورات"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 236,
+      "question": "أين تقع مدينة قورينا الأثرية؟",
+      "answers": ["ليبيا", "تونس", "الجزائر", "مصر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 237,
+      "question": "أسس مدينة قورينا:",
+      "answers": ["الإغريق", "الرومان", "الفينيقيون", "القرطاجيون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 238,
+      "question": "أين يقع قصر توبكابي؟",
+      "answers": ["إسطنبول", "أنقرة", "بورصة", "إزمير"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 239,
+      "question": "كان قصر توبكابي مقرًا لـ:",
+      "answers": ["سلاطين العثمانيين", "أباطرة الرومان", "ملوك فرنسا", "قياصرة روسيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 240,
+      "question": "أين يقع آيا صوفيا؟",
+      "answers": ["إسطنبول", "أثينا", "روما", "صوفيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 241,
+      "question": "بُنيت آيا صوفيا في الأصل كـ:",
+      "answers": ["كاتدرائية", "مسجد", "معبد وثني", "قصر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 242,
+      "question": "أين يقع قصر دولمة بهجة؟",
+      "answers": ["إسطنبول", "أنقرة", "أزمير", "بورصة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 243,
+      "question": "أي حضارة تُعرف بأنها أول من ابتكر الأبجدية بشكلها المبسط الذي أثر في الأبجديات اللاحقة؟",
+      "answers": ["الفينيقية", "السومرية", "المصرية", "الحيثية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 244,
+      "question": "أين تقع مدينة سمرقند التاريخية؟",
+      "answers": ["أوزبكستان", "كازاخستان", "إيران", "أفغانستان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 245,
+      "question": "اشتهرت سمرقند بأنها محطة مهمة على:",
+      "answers": ["طريق الحرير", "طريق البخور", "طريق التوابل", "طريق الرومان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 246,
+      "question": "أين تقع مدينة بخارى التاريخية؟",
+      "answers": ["أوزبكستان", "طاجيكستان", "إيران", "الصين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 247,
+      "question": "تشتهر بخارى بـ:",
+      "answers": ["مدارسها الإسلامية", "الأهرامات", "المعابد", "القلاع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 248,
+      "question": "أين تقع مدينة خيوة التاريخية؟",
+      "answers": ["أوزبكستان", "كازاخستان", "تركمانستان", "إيران"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 249,
+      "question": "ما اسم المدينة القديمة المسورة في خيوة؟",
+      "answers": ["إيتشان قلعة", "القلعة الحمراء", "المدينة المحرمة", "الكرملين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 250,
+      "question": "أين يقع الكرملين؟",
+      "answers": ["موسكو", "سانت بطرسبرغ", "كييف", "مينسك"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 251,
+      "question": "الكرملين هو:",
+      "answers": ["مجمع قصور وحصون", "معبد", "متحف", "مسرح"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 252,
+      "question": "أين تقع كاتدرائية القديس باسيل؟",
+      "answers": ["موسكو", "كييف", "وارسو", "براغ"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 253,
+      "question": "تشتهر كاتدرائية القديس باسيل بـ:",
+      "answers": ["قبابها الملونة", "برجها المائل", "تماثيلها", "حدائقها"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 254,
+      "question": "ما اسم المبنى الأشهر في البتراء؟",
+      "answers": ["الخزنة", "الدير", "المسرح", "القصر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 255,
+      "question": "أين يقع الدير في البتراء؟",
+      "answers": ["الأردن", "العراق", "سوريا", "مصر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 256,
+      "question": "للوصول إلى الدير في البتراء يجب صعود:",
+      "answers": ["الدرجات", "نفق", "جسر معلق", "مصعد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 257,
+      "question": "أين تقع مدينة مادائن صالح؟",
+      "answers": ["السعودية", "الأردن", "اليمن", "العراق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 258,
+      "question": "تُعرف مادائن صالح أيضًا باسم:",
+      "answers": ["الحجر", "العلا", "تيماء", "دومة الجندل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 259,
+      "question": "من الذي بنى آثار مادائن صالح؟",
+      "answers": ["الأنباط", "الرومان", "الفينيقيون", "الآشوريون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 260,
+      "question": "أين تقع مدينة العلا؟",
+      "answers": ["السعودية", "الأردن", "العراق", "سوريا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 261,
+      "question": "تشتهر العلا بـ:",
+      "answers": ["آثارها", "الأهرامات", "القلاع", "الزقورات"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 262,
+      "question": "أين تقع مدينة تيماء التاريخية؟",
+      "answers": ["السعودية", "الكويت", "العراق", "قطر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 263,
+      "question": "اشتهرت تيماء قديمًا بأنها:",
+      "answers": ["محطة تجارية", "ميناء بحري", "عاصمة رومانية", "مدينة يونانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 264,
+      "question": "أين تقع مدينة دومة الجندل؟",
+      "answers": ["السعودية", "الأردن", "العراق", "سوريا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 265,
+      "question": "ما أشهر معالم دومة الجندل؟",
+      "answers": ["قلعة مارد", "برج بيزا", "الكولوسيوم", "سور الصين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 266,
+      "question": "بُني سور الصين العظيم أساسًا من أجل:",
+      "answers": ["الدفاع", "الزراعة", "التجارة", "تخزين الحبوب"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 267,
+      "question": "كم استُخدمت المدينة المحرمة مقرًا للأباطرة تقريبًا؟",
+      "answers": ["نحو 500 عام", "100 عام", "1000 عام", "50 عامًا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 268,
+      "question": "أين يقع معبد السماء؟",
+      "answers": ["بكين", "طوكيو", "سيؤول", "هانوي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 269,
+      "question": "كان أباطرة الصين يستخدمون معبد السماء من أجل:",
+      "answers": ["الطقوس الدينية", "السكن", "التدريب العسكري", "التجارة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 270,
+      "question": "كم يقدر عدد تماثيل الجيش الطيني؟",
+      "answers": ["8000", "500", "1200", "2500"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 271,
+      "question": "أين تقع مدينة كيوتو التاريخية؟",
+      "answers": ["اليابان", "الصين", "كوريا الجنوبية", "تايلاند"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 272,
+      "question": "كانت كيوتو عاصمة:",
+      "answers": ["اليابان قديمًا", "الصين", "كوريا", "فيتنام"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 273,
+      "question": "أين يقع قلعة هيميجي؟",
+      "answers": ["اليابان", "الصين", "كوريا الجنوبية", "تايوان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 274,
+      "question": "تُعرف قلعة هيميجي باسم:",
+      "answers": ["القلعة البيضاء", "القلعة الحمراء", "القلعة الذهبية", "قلعة التنين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 275,
+      "question": "كان معبد أنغكور وات مخصصًا في البداية لـ:",
+      "answers": ["الهندوسية", "البوذية", "المسيحية", "الإسلام"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 276,
+      "question": "أين تقع مدينة أنغكور ثوم؟",
+      "answers": ["كمبوديا", "تايلاند", "الصين", "ماليزيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 277,
+      "question": "ما أشهر معابد أنغكور ثوم؟",
+      "answers": ["بايون", "بوروبودور", "الكرنك", "البارثينون"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 278,
+      "question": "يشتهر معبد بايون بـ:",
+      "answers": ["الوجوه الحجرية", "الأهرامات", "القباب", "الأعمدة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 279,
+      "question": "يُعد بوروبودور أكبر:",
+      "answers": ["معبد بوذي", "مسجد", "كنيسة", "قصر"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 280,
+      "question": "تشتهر مدينة باغان بوجود:",
+      "answers": ["المعابد", "الأهرامات", "القلاع", "المدرجات"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 281,
+      "question": "أين يقع معبد شويداغون؟",
+      "answers": ["ميانمار", "تايلاند", "كمبوديا", "الصين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 282,
+      "question": "ما لون القبة الرئيسية لمعبد شويداغون؟",
+      "answers": ["ذهبية", "فضية", "زرقاء", "سوداء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 283,
+      "question": "أين تقع مدينة أيوثايا التاريخية؟",
+      "answers": ["تايلاند", "كمبوديا", "ماليزيا", "فيتنام"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 284,
+      "question": "كانت أيوثايا عاصمة:",
+      "answers": ["مملكة سيام", "الصين", "كمبوديا", "لاوس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 285,
+      "question": "أين يقع قصر غيونغبوك؟",
+      "answers": ["كوريا", "اليابان", "الصين", "منغوليا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 286,
+      "question": "كان قصر غيونغبوك المقر الرئيسي لملوك:",
+      "answers": ["سلالة جوسون الكورية", "سلالة مينغ", "الساموراي", "المغول"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 287,
+      "question": "كم رئيسًا أمريكيًا نُحتت وجوههم على جبل رشمور؟",
+      "answers": ["4", "3", "5", "6"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 288,
+      "question": "أين تقع مدينة ميسا فيردي الأثرية؟",
+      "answers": ["الولايات المتحدة", "كندا", "المكسيك", "بيرو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 289,
+      "question": "تشتهر ميسا فيردي بـ:",
+      "answers": ["مساكنها الصخرية", "الأهرامات", "القلاع", "المعابد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 290,
+      "question": "أين تقع مدينة تشاكو كانيون الأثرية؟",
+      "answers": ["الولايات المتحدة", "كندا", "المكسيك", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 291,
+      "question": "اشتهرت تشاكو كانيون بـ:",
+      "answers": ["المباني الأثرية الكبيرة", "الأهرامات", "المعابد", "الزقورات"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 292,
+      "question": "كانت كوسكو عاصمة:",
+      "answers": ["حضارة الإنكا", "المايا", "الأزتك", "الرومان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 293,
+      "question": "أين تقع قلعة أولانتايتامبو؟",
+      "answers": ["بيرو", "بوليفيا", "الإكوادور", "كولومبيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 294,
+      "question": "تعود قلعة أولانتايتامبو إلى حضارة:",
+      "answers": ["الإنكا", "الأزتك", "المايا", "الفينيقيين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 295,
+      "question": "أين تقع مدينة ناسكا؟",
+      "answers": ["بيرو", "تشيلي", "البرازيل", "فنزويلا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 296,
+      "question": "تشتهر ناسكا بـ:",
+      "answers": ["الخطوط الأرضية", "الأهرامات", "القلاع", "الحدائق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 297,
+      "question": "أين تقع مدينة تيواناكو؟",
+      "answers": ["بوليفيا", "بيرو", "تشيلي", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 298,
+      "question": "تشتهر تيواناكو بـ:",
+      "answers": ["آثار الإنكا", "المعابد", "الزقورات", "القلاع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 299,
+      "question": "أين تقع مدينة سان أوغستين الأثرية؟",
+      "answers": ["كولومبيا", "فنزويلا", "البرازيل", "الإكوادور"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 300,
+      "question": "تشتهر سان أوغستين بـ:",
+      "answers": ["التماثيل الحجرية", "الأهرامات", "القلاع", "المساجد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 301,
+      "question": "تنتمي تيكال إلى حضارة:",
+      "answers": ["المايا", "الإنكا", "الأزتك", "الرومان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 302,
+      "question": "أين تقع مدينة كوبان؟",
+      "answers": ["هندوراس", "غواتيمالا", "المكسيك", "بنما"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 303,
+      "question": "اشتهرت مدينة كوبان بـ:",
+      "answers": ["النقوش والآثار", "القلاع", "المعابد", "الأهرامات"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 304,
+      "question": "تنتمي مدينة بالينكي إلى:",
+      "answers": ["حضارة المايا", "الإنكا", "الأزتك", "الفرس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 305,
+      "question": "تنتمي مونتي ألبان إلى حضارة:",
+      "answers": ["الزابوتيك", "المايا", "الإنكا", "الأزتك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 306,
+      "question": "أين تقع مدينة إل تاجين؟",
+      "answers": ["المكسيك", "غواتيمالا", "هندوراس", "بنما"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 307,
+      "question": "تشتهر مدينة إل تاجين بـ:",
+      "answers": ["هرم الكوات", "الأهرامات", "القلاع", "الزقورات"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 308,
+      "question": "كان برج لندن يستخدم قديمًا كـ:",
+      "answers": ["قلعة وسجن", "معبد", "جامعة", "مسرح"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 309,
+      "question": "تُعد قلعة وندسور:",
+      "answers": ["أ oldest قصور ملكية مأهولة", "أكبر هرم", "أقدم مسجد", "أقدم كنيسة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 310,
+      "question": "بُنيت كاتدرائية نوتردام على الطراز:",
+      "answers": ["القوطي", "الروماني", "الإسلامي", "البيزنطي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 311,
+      "question": "قبل أن يصبح اللوفر متحفًا، كان:",
+      "answers": ["قصرًا ملكيًا", "معبدًا", "قلعة حربية", "جامعة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 312,
+      "question": "بيغ بن هو الاسم الشائع لـ:",
+      "answers": ["جرس البرج", "البرج فقط", "القصر", "البرلمان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 313,
+      "question": "كان قصر شونبرون مقرًا لـ:",
+      "answers": ["أسرة هابسبورغ", "القياصرة الروس", "ملوك فرنسا", "ملوك إسبانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 314,
+      "question": "تُعرف قلعة نويشفانشتاين بأنها:",
+      "answers": ["مصدر إلهام لقلع ديزني", "أ oldest قلعة", "أكبر حصن", "معبد بوذي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 315,
+      "question": "بُني قصر الحمراء في عهد:",
+      "answers": ["الدولة النصرية", "الدولة الرومانية", "الدولة البيزنطية", "الدولة الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 316,
+      "question": "ما الذي يميز مسجد قرطبة؟",
+      "answers": ["أعمدته الكثيرة", "قبابه الذهبية", "مئذنته العالية", "بنائه الخشبي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 317,
+      "question": "اشتهرت مدينة توليدو بـ:",
+      "answers": ["تعدد الحضارات", "الأهرامات", "الزقورات", "البراكين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 318,
+      "question": "تشتهر دوبروفنيك بـ:",
+      "answers": ["أسوارها القديمة", "الأهرامات", "المعابد", "القلاع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 319,
+      "question": "ما أشهر معالم مدينة موستار؟",
+      "answers": ["الجسر القديم", "الكولوسيوم", "برج بيزا", "سور الصين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 320,
+      "question": "يشتهر مونت سان ميشيل بأنه:",
+      "answers": ["دير على جزيرة", "هرم قديم", "قلعة رومانية", "معبد يوناني"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 321,
+      "question": "كانت قرطبة عاصمة:",
+      "answers": ["الأندلس", "الرومانيين", "الفارسيين", "اليونانيين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 322,
+      "question": "بُني تاج محل باستخدام:",
+      "answers": ["الرخام الأبيض", "الذهب الخالص", "الخشب", "النحاس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 323,
+      "question": "تُعد فاراناسي مدينة مقدسة لدى:",
+      "answers": ["الهندوس", "الرومان", "الفراعنة", "الإغريق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 324,
+      "question": "تشتهر لالبيلا بـ:",
+      "answers": ["الكنائس المنحوتة في الصخر", "الأهرامات", "القلاع الرومانية", "المعابد اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 325,
+      "question": "اشتهرت أكسوم بـ:",
+      "answers": ["المسلات الحجرية", "سور الصين", "الأهرامات", "المدرجات الرومانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 326,
+      "question": "تشتهر مروي بـ:",
+      "answers": ["الأهرامات النوبية", "القلاع الأوروبية", "المعابد الرومانية", "المدن المعلقة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 327,
+      "question": "ارتبطت كرمة بحضارة:",
+      "answers": ["كوش", "روما", "اليونان", "فارس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 328,
+      "question": "اشتهرت زنجبار قديمًا بـ:",
+      "answers": ["تجارة التوابل", "صناعة الحديد", "الأهرامات", "الذهب فقط"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 329,
+      "question": "تشتهر لامو بـ:",
+      "answers": ["العمارة السواحلية", "القلاع الرومانية", "الزقورات", "المعابد الفرعونية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 330,
+      "question": "ما أشهر معالم مومباسا؟",
+      "answers": ["حصن يسوع", "تاج محل", "الكولوسيوم", "برج بيزا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 331,
+      "question": "تشتهر مراكش بـ:",
+      "answers": ["الأسواق التاريخية", "الأهرامات", "المعابد الرومانية", "سور الصين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 332,
+      "question": "تشتهر فاس بـ:",
+      "answers": ["جامعة القرويين", "الكولوسيوم", "الأهرامات", "سور الصين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 333,
+      "question": "تُعد القيروان من:",
+      "answers": ["أ oldest المدن الإسلامية", "المدن الرومانية", "المدن الفرعونية", "المدن اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 334,
+      "question": "تشتهر القصبة بـ:",
+      "answers": ["أزقتها وعمارتها", "الأهرامات", "القلاع الصليبية", "المعابد القديمة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 335,
+      "question": "جامع الزيتونة يوجد في:",
+      "answers": ["تونس", "القاهرة", "فاس", "دمشق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 336,
+      "question": "تشتهر صنعاء القديمة بـ:",
+      "answers": ["المباني الطينية", "الأهرامات", "القصور الرومانية", "المعابد اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 337,
+      "question": "تُعرف شبام باسم:",
+      "answers": ["مانهاتن الصحراء", "مدينة الذهب", "مدينة الجليد", "مدينة الشمس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 338,
+      "question": "ارتبطت قلعة البحرين بحضارة:",
+      "answers": ["دلمون", "الرومان", "الفراعنة", "المايا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 339,
+      "question": "ما الحضارة التي تركت آثارًا كبيرة في جرش؟",
+      "answers": ["الرومانية", "السومرية", "المصرية", "الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 340,
+      "question": "من أشهر ملكات تدمر؟",
+      "answers": ["زنوبيا", "كليوباترا", "نفرتيتي", "سميراميس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 341,
+      "question": "من أشهر ملوك بابل؟",
+      "answers": ["نبوخذ نصر", "يوليوس قيصر", "الإسكندر", "قورش"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 342,
+      "question": "ما اسم الكتابة القديمة في بلاد الرافدين؟",
+      "answers": ["المسمارية", "الهيروغليفية", "اللاتينية", "السنسكريتية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 343,
+      "question": "ما أشهر لوحة في متحف اللوفر؟",
+      "answers": ["الموناليزا", "ليلة النجوم", "الصرخة", "غيرنيكا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 344,
+      "question": "من رسم لوحة الموناليزا؟",
+      "answers": ["دا فينشي", "بيكاسو", "فان غوخ", "مايكل أنجلو"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 345,
+      "question": "في أي مدينة يوجد متحف المتروبوليتان؟",
+      "answers": ["نيويورك", "واشنطن", "شيكاغو", "بوسطن"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 346,
+      "question": "تشتهر كنيسة سيستينا في الفاتيكان بـ:",
+      "answers": ["لوحة مايكل أنجلو في السقف", "الأهرامات", "التماثيل", "القلاع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 347,
+      "question": "ما البركان الذي دفن مدينة بومبي؟",
+      "answers": ["فيزوف", "إتنا", "كراكاتوا", "فوجي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 348,
+      "question": "جبل فوجي هو:",
+      "answers": ["أعلى جبل في اليابان", "أطول نهر", "أكبر صحراء", "أقدم معبد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 349,
+      "question": "اشتهرت غالاباغوس بسبب:",
+      "answers": ["نظريات داروين", "الأهرامات", "القلاع", "المدن القديمة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 350,
+      "question": "تشتهر يلوستون بـ:",
+      "answers": ["الينابيع الحارة", "الأهرامات", "المعابد", "القلاع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 351,
+      "question": "ما اسم أشهر نبع حار في يلوستون؟",
+      "answers": ["أولد فيثفول", "نهر النيل", "عين زبيدة", "عين الصحراء"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 352,
+      "question": "شلالات نياجارا تتكون من:",
+      "answers": ["3 شلالات", "شلال واحد", "عشرة شلالات", "شلالين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 353,
+      "question": "جبل كليمنجارو هو أعلى جبل في:",
+      "answers": ["أفريقيا", "آسيا", "أوروبا", "أمريكا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 354,
+      "question": "تُعد أتاكاما من:",
+      "answers": ["أصح الصحاري في العالم", "أكبر غابة", "أبرد منطقة", "أعلى جبل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 355,
+      "question": "تُعرف الأمازون بأنها:",
+      "answers": ["أكبر غابة استوائية", "أكبر صحراء", "أطول جبل", "أ oldest مدينة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 356,
+      "question": "الحاجز المرجاني العظيم هو:",
+      "answers": ["أكبر نظام مرجاني", "جبل", "صحراء", "مدينة أثرية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 357,
+      "question": "تشتهر بالي بـ:",
+      "answers": ["الطبيعة والثقافة", "الأهرامات", "القلاع الرومانية", "الزقورات"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 358,
+      "question": "تشتهر المالديف بـ:",
+      "answers": ["الجزر المرجانية", "الجبال العالية", "الصحارى", "القلاع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 359,
+      "question": "بحر قزوين يُعد:",
+      "answers": ["بحيرة مغلقة", "أصغر بحر", "أعمق محيط", "نهرًا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 360,
+      "question": "ما أكبر محيط في العالم؟",
+      "answers": ["المحيط الهادئ", "الأطلسي", "الهندي", "المتجمد الشمالي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 361,
+      "question": "ما أكبر قارة في العالم؟",
+      "answers": ["آسيا", "أفريقيا", "أوروبا", "أستراليا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 362,
+      "question": "ما أصغر قارة؟",
+      "answers": ["أستراليا", "أوروبا", "أفريقيا", "آسيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 363,
+      "question": "ما أعلى جبل في العالم؟",
+      "answers": ["إيفرست", "كليمنجارو", "فوجي", "مون بلان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 364,
+      "question": "أين يقع جبل إيفرست؟",
+      "answers": ["نيبال والصين", "الهند فقط", "اليابان", "روسيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 365,
+      "question": "ما أطول نهر في العالم حسب كثير من القياسات؟",
+      "answers": ["نهر النيل", "الأمازون", "اليانغتسي", "المسيسيبي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 366,
+      "question": "أين يقع نهر النيل؟",
+      "answers": ["أفريقيا", "أوروبا", "آسيا", "أمريكا الجنوبية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 367,
+      "question": "ما أكبر صحراء حارة في العالم؟",
+      "answers": ["الصحراء الكبرى", "أتاكاما", "غوبي", "كالاهاري"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 368,
+      "question": "أين تقع الصحراء الكبرى؟",
+      "answers": ["شمال أفريقيا", "آسيا", "أوروبا", "أستراليا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 369,
+      "question": "ما أكبر جزيرة في العالم؟",
+      "answers": ["غرينلاند", "مدغشقر", "اليابان", "بريطانيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 370,
+      "question": "أين تقع غرينلاند؟",
+      "answers": ["القطب الشمالي", "أفريقيا", "آسيا", "أستراليا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 371,
+      "question": "ما أ oldest جامعة ما زالت تعمل في العالم حسب كثير من التصنيفات؟",
+      "answers": ["القرويين", "أكسفورد", "السوربون", "بولونيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 372,
+      "question": "أين تقع جامعة القرويين؟",
+      "answers": ["فاس", "القاهرة", "بغداد", "دمشق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 373,
+      "question": "أين تقع جامعة الأزهر؟",
+      "answers": ["مصر", "العراق", "المغرب", "سوريا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 374,
+      "question": "تأسست مدينة بغداد على يد:",
+      "answers": ["العباسيين", "الرومان", "الفراعنة", "الفرس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 375,
+      "question": "ما اسم المكتبة العلمية الشهيرة في بغداد العباسية؟",
+      "answers": ["بيت الحكمة", "الإسكندرية", "دار الكتب", "مكتبة نينوى"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 376,
+      "question": "ما أشهر معلم في سامراء؟",
+      "answers": ["الملوية", "برج بيزا", "الكولوسيوم", "تاج محل"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 377,
+      "question": "تشتهر دمشق القديمة بـ:",
+      "answers": ["آثارها التاريخية", "الأهرامات", "الزقورات", "المعابد اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 378,
+      "question": "ما اسم الطريق التجاري القديم الذي ربط الصين بالغرب؟",
+      "answers": ["طريق الحرير", "طريق الذهب", "طريق الملوك", "البحر الأسود"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 379,
+      "question": "ما الحضارة التي بنت مدينة ماتشو بيتشو؟",
+      "answers": ["الإنكا", "المايا", "الأزتك", "الرومان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 380,
+      "question": "ما اسم المدينة القديمة التي كانت عاصمة الأزتك؟",
+      "answers": ["تينوتشتيتلان", "كوسكو", "تيكال", "بابل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 381,
+      "question": "أين كانت تقع تينوتشتيتلان؟",
+      "answers": ["المكسيك", "بيرو", "كولومبيا", "بوليفيا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 382,
+      "question": "ما الحضارة التي بنت مدينة تينوتشتيتلان؟",
+      "answers": ["الأزتك", "الإنكا", "المايا", "الفينيقيون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 383,
+      "question": "أين يقع معبد الشمس في مدينة تيوتيهواكان؟",
+      "answers": ["المكسيك", "بيرو", "مصر", "اليونان"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 384,
+      "question": "ما اسم أكبر أهرامات المكسيك القديمة؟",
+      "answers": ["هرم الشمس", "هرم خوفو", "هرم زوسر", "هرم خفرع"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 385,
+      "question": "من القائد القرطاجي الذي حارب روما؟",
+      "answers": ["هانيبال", "يوليوس قيصر", "أغسطس", "الإسكندر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 386,
+      "question": "أين وقعت معركة كاناي الشهيرة؟",
+      "answers": ["إيطاليا", "مصر", "اليونان", "فرنسا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 387,
+      "question": "ما الحضارة التي أسست مدينة روما؟",
+      "answers": ["الرومان", "الفرس", "السومريون", "الفينيقيون"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 388,
+      "question": "ما اسم الطريق الروماني الشهير؟",
+      "answers": ["طريق أبيان", "طريق الحرير", "طريق البخور", "طريق الملوك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 389,
+      "question": "كان البانثيون في الأصل:",
+      "answers": ["معبدًا رومانيًا", "قلعة", "قصرًا ملكيًا", "سوقًا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 390,
+      "question": "كان المنتدى الروماني:",
+      "answers": ["مركز الحياة العامة", "معبدًا مصريًا", "قلعة عسكرية", "ميناءً تجاريًا"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 391,
+      "question": "ما لقب البتراء؟",
+      "answers": ["المدينة الوردية", "المدينة الذهبية", "مدينة الشمس", "مدينة الجليد"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 392,
+      "question": "من نحت معابد البتراء؟",
+      "answers": ["الأنباط", "الرومان", "الفراعنة", "السومريون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 393,
+      "question": "ما الاسم القديم لإسطنبول؟",
+      "answers": ["القسطنطينية", "بابل", "أنطاكية", "نينوى"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 394,
+      "question": "كانت القسطنطينية عاصمة:",
+      "answers": ["الإمبراطورية البيزنطية", "المصرية", "الفارسية", "الرومانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 395,
+      "question": "يُعرف جامع السلطان أحمد باسم:",
+      "answers": ["الجامع الأزرق", "الجامع الكبير", "الجامع الأبيض", "جامع النور"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 396,
+      "question": "من أشهر معالم مدينة القدس القديمة؟",
+      "answers": ["قبة الصخرة", "الكولوسيوم", "تاج محل", "سور الصين"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 397,
+      "question": "ما اسم السور التاريخي الشهير حول القدس القديمة؟",
+      "answers": ["سور القدس", "سور الصين", "سور بابل", "سور روما"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 398,
+      "question": "ما اسم المدينة الأثرية التي تحتوي على بوابة عشتار؟",
+      "answers": ["بابل", "نينوى", "أور", "آشور"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 399,
+      "question": "ما أ oldest عجائب الدنيا السبع القديمة؟",
+      "answers": ["أهرامات الجيزة", "حدائق بابل", "سور الصين", "تمثال رودس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 400,
+      "question": "من الحضارات التي استخدمت الكتابة الهيروغليفية؟",
+      "answers": ["المصريون", "الرومان", "السومريون", "الفرس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 401,
+      "question": "ما اسم الكتابة القديمة في مصر القديمة؟",
+      "answers": ["الهيروغليفية", "المسمارية", "الفينيقية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 402,
+      "question": "ما اسم الكتابة المبسطة في مصر القديمة؟",
+      "answers": ["الهيراطيقية", "الهيروغليفية", "المسمارية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 403,
+      "question": "ما اسم الكتابة الشعبية في مصر القديمة؟",
+      "answers": ["الديموطيقية", "الهيروغليفية", "المسمارية", "الفينيقية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 404,
+      "question": "ما اسم ورق البردي المستخدم قديمًا؟",
+      "answers": ["البردي", "الورق العادي", "الجلد", "النحاس"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 405,
+      "question": "من اخترع الورق حسب التاريخ؟",
+      "answers": ["الصينيون", "المصريون", "الرومان", "الإغريق"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 406,
+      "question": "ما اسم الأبجدية العربية القديمة؟",
+      "answers": ["النبطية", "الفينيقية", "السريانية", "العبرية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 407,
+      "question": "ما اسم الأبجدية التي استخدمت في جنوب الجزيرة العربية قديمًا؟",
+      "answers": ["المسند", "النبطية", "الفينيقية", "السريانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 408,
+      "question": "ما اسم الكتابة المستخدمة في اليمن القديم؟",
+      "answers": ["الخط المسند", "الهيروغليفية", "المسمارية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 409,
+      "question": "ما اسم الكتابة السريانية؟",
+      "answers": ["السريانية", "العربية", "الفارسية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 410,
+      "question": "ما اسم الكتابة العبرية القديمة؟",
+      "answers": ["العبرية", "السريانية", "الفينيقية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 411,
+      "question": "ما اسم الكتابة اليونانية القديمة؟",
+      "answers": ["اليونانية", "اللاتينية", "السريانية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 412,
+      "question": "ما اسم الكتابة اللاتينية؟",
+      "answers": ["اللاتينية", "اليونانية", "العربية", "السريانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 413,
+      "question": "ما اسم الكتابة القبطية؟",
+      "answers": ["القبطية", "العربية", "اليونانية", "السريانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 414,
+      "question": "ما اسم الكتابة الأرمنية؟",
+      "answers": ["الأرمنية", "العربية", "السريانية", "الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 415,
+      "question": "ما اسم الكتابة الجورجية؟",
+      "answers": ["الجورجية", "الأرمنية", "العربية", "السريانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 416,
+      "question": "ما اسم الكتابة السنسكريتية؟",
+      "answers": ["السنسكريتية", "الهندية", "الفارسية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 417,
+      "question": "ما اسم الكتابة البالية؟",
+      "answers": ["البالية", "السنسكريتية", "الهندية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 418,
+      "question": "ما اسم الكتابة التاميلية؟",
+      "answers": ["التاميلية", "الهندية", "السنسكريتية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 419,
+      "question": "ما اسم الكتابة الصينية القديمة؟",
+      "answers": ["الصينية", "اليابانية", "الكورية", "الفيتنامية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 420,
+      "question": "ما اسم الكتابة اليابانية؟",
+      "answers": ["اليابانية", "الصينية", "الكورية", "الفيتنامية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 421,
+      "question": "ما اسم الكتابة الكورية؟",
+      "answers": ["الكورية", "اليابانية", "الصينية", "الفيتنامية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 422,
+      "question": "ما اسم الكتابة الفيتنامية؟",
+      "answers": ["الفيتنامية", "الصينية", "اليابانية", "الكورية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 423,
+      "question": "ما اسم الكتابة التايلاندية؟",
+      "answers": ["التايلاندية", "الخميرية", "البورمية", "اللاوية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 424,
+      "question": "ما اسم الكتابة الخميرية؟",
+      "answers": ["الخميرية", "التايلاندية", "البورمية", "اللاوية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 425,
+      "question": "ما اسم الكتابة البورمية؟",
+      "answers": ["البورمية", "التايلاندية", "الخميرية", "اللاوية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 426,
+      "question": "ما اسم الكتابة اللاوية؟",
+      "answers": ["اللاوية", "البورمية", "التايلاندية", "الخميرية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 427,
+      "question": "ما اسم الكتابة المالايوية؟",
+      "answers": ["المالايوية", "الجاوية", "السوندانية", "البالي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 428,
+      "question": "ما اسم الكتابة الجاوية؟",
+      "answers": ["الجاوية", "المالايوية", "السوندانية", "البالي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 429,
+      "question": "ما اسم الكتابة السوندانية؟",
+      "answers": ["السوندانية", "الجاوية", "المالايوية", "البالي"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 430,
+      "question": "ما اسم الكتابة التبتية؟",
+      "answers": ["التبتية", "الصينية", "المنغولية", "الهندية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 431,
+      "question": "ما اسم الكتابة المنغولية؟",
+      "answers": ["المنغولية", "التبتية", "الصينية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 432,
+      "question": "ما اسم الكتابة الفارسية؟",
+      "answers": ["الفارسية", "العربية", "التركية", "الكردية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 433,
+      "question": "ما اسم الكتابة التركية؟",
+      "answers": ["التركية", "العربية", "الفارسية", "الكردية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 434,
+      "question": "ما اسم الكتابة الكردية؟",
+      "answers": ["الكردية", "العربية", "الفارسية", "التركية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 435,
+      "question": "ما اسم الكتابة الأمازيغية؟",
+      "answers": ["الأمازيغية", "العربية", "اللاتينية", "الفينيقية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 436,
+      "question": "ما اسم الكتابة الحبشية؟",
+      "answers": ["الحبشية", "العربية", "السريانية", "القبطية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 437,
+      "question": "ما اسم الكتابة السومالية؟",
+      "answers": ["السومالية", "العربية", "اللاتينية", "الحبشية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 438,
+      "question": "ما اسم الكتابة السواحلية؟",
+      "answers": ["السواحلية", "العربية", "اللاتينية", "السومالية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 439,
+      "question": "ما اسم الكتابة الهوساوية؟",
+      "answers": ["الهوساوية", "العربية", "اللاتينية", "السواحلية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 440,
+      "question": "ما اسم الكتابة اليوروبية؟",
+      "answers": ["اللاتينية", "اليونانية", "السيريلية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 441,
+      "question": "ما اسم الكتابة السيريلية؟",
+      "answers": ["السيريلية", "اللاتينية", "اليونانية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 442,
+      "question": "من اخترع الكتابة السيريلية؟",
+      "answers": ["الإخوان كيريل وميثوديوس", "يوليوس قيصر", "الإسكندر", "قورش"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 443,
+      "question": "ما اسم الكتابة الجلاغولية؟",
+      "answers": ["الجلاغولية", "السيريلية", "اللاتينية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 444,
+      "question": "ما اسم الكتابة الأوغاريتية؟",
+      "answers": ["الأوغاريتية", "الفينيقية", "العبرية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 445,
+      "question": "ما اسم الكتابة الكنعانية؟",
+      "answers": ["الكنعانية", "الفينيقية", "العبرية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 446,
+      "question": "ما اسم الكتابة الأكادية؟",
+      "answers": ["الأكادية", "السومرية", "البابلية", "الآشورية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 447,
+      "question": "ما اسم الكتابة العيلامية؟",
+      "answers": ["العيلامية", "السومرية", "الأكادية", "البابلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 448,
+      "question": "ما اسم الكتابة الحثية؟",
+      "answers": ["الحثية", "السومرية", "الأكادية", "البابلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 449,
+      "question": "ما اسم الكتابة الحورية؟",
+      "answers": ["الحورية", "الحثية", "السومرية", "الأكادية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 450,
+      "question": "ما اسم الكتابة الأورارتية؟",
+      "answers": ["الأورارتية", "الحثية", "الحورية", "السومرية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 451,
+      "question": "ما اسم الكتابة الفريجية؟",
+      "answers": ["الفريجية", "الحثية", "اليونانية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 452,
+      "question": "ما اسم الكتابة الليدية؟",
+      "answers": ["الليدية", "الفريجية", "الحثية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 453,
+      "question": "ما اسم الكتابة الكارية؟",
+      "answers": ["الكارية", "الليدية", "الفريجية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 454,
+      "question": "ما اسم الكتابة الليسية؟",
+      "answers": ["الليسية", "الكارية", "الليدية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 455,
+      "question": "ما اسم الكتابة البامية؟",
+      "answers": ["البامية", "الليسية", "الكارية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 456,
+      "question": "ما اسم الكتابة الإيبيرية؟",
+      "answers": ["الإيبيرية", "اللاتينية", "اليونانية", "الفينيقية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 457,
+      "question": "ما اسم الكتابة التاراسكية؟",
+      "answers": ["التاراسكية", "الإيبيرية", "اللاتينية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 458,
+      "question": "ما اسم الكتابة الأستورية؟",
+      "answers": ["الأستورية", "الإيبيرية", "اللاتينية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 459,
+      "question": "ما اسم الكتابة الكنتبرية؟",
+      "answers": ["الكنتبرية", "الأستورية", "الإيبيرية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 460,
+      "question": "ما اسم الكتابة الكلتية؟",
+      "answers": ["الكلتية", "اللاتينية", "اليونانية", "الإيبيرية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 461,
+      "question": "ما اسم الكتابة الأوغامية؟",
+      "answers": ["الأوغامية", "الكلتية", "اللاتينية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 462,
+      "question": "ما اسم الكتابة الرونية؟",
+      "answers": ["الرونية", "الأوغامية", "الكلتية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 463,
+      "question": "ما اسم الكتابة الجوثية؟",
+      "answers": ["الجوثية", "الرونية", "اللاتينية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 464,
+      "question": "ما اسم الكتابة الأرامية؟",
+      "answers": ["الأرامية", "العبرية", "السريانية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 465,
+      "question": "ما اسم الكتابة الماندية؟",
+      "answers": ["الماندية", "الأرامية", "العبرية", "السريانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 466,
+      "question": "ما اسم الكتابة التوفالية؟",
+      "answers": ["التوفالية", "الماندية", "الأرامية", "العبرية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 467,
+      "question": "ما اسم الكتابة الساسانية؟",
+      "answers": ["الساسانية", "الفارسية", "الأرامية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 468,
+      "question": "ما اسم الكتابة البهلوية؟",
+      "answers": ["البهلوية", "الساسانية", "الفارسية", "العربية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 469,
+      "question": "ما اسم الكتابة السغدية؟",
+      "answers": ["السغدية", "البهلوية", "الساسانية", "الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 470,
+      "question": "ما اسم الكتابة الخوارزمية؟",
+      "answers": ["الخوارزمية", "السغدية", "البهلوية", "الفارسية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 471,
+      "question": "ما اسم الكتابة الأويغورية القديمة؟",
+      "answers": ["الأويغورية", "الخوارزمية", "السغدية", "البهلوية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 472,
+      "question": "ما اسم الكتابة التركية القديمة؟",
+      "answers": ["التركية القديمة", "الأويغورية", "الخوارزمية", "السغدية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 473,
+      "question": "ما اسم الكتابة المجرية القديمة؟",
+      "answers": ["المجرية القديمة", "الرونية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 474,
+      "question": "ما اسم الكتابة الفنلندية القديمة؟",
+      "answers": ["الفنلندية القديمة", "الرونية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 475,
+      "question": "ما اسم الكتابة الإستونية القديمة؟",
+      "answers": ["الإستونية القديمة", "الرونية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 476,
+      "question": "ما اسم الكتابة الليتوانية القديمة؟",
+      "answers": ["الليتوانية القديمة", "الرونية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 477,
+      "question": "ما اسم الكتابة اللاتفية القديمة؟",
+      "answers": ["اللاتفية القديمة", "الرونية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 478,
+      "question": "ما اسم الكتابة البروسية القديمة؟",
+      "answers": ["البروسية القديمة", "الرونية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 479,
+      "question": "ما اسم الكتابة السلافية القديمة؟",
+      "answers": ["السلافية القديمة", "السيريلية", "الجلاغولية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 480,
+      "question": "ما اسم الكتابة البلغارية القديمة؟",
+      "answers": ["البلغارية القديمة", "السيريلية", "الجلاغولية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 481,
+      "question": "ما اسم الكتابة الصربية القديمة؟",
+      "answers": ["الصربية القديمة", "السيريلية", "الجلاغولية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 482,
+      "question": "ما اسم الكتابة الكرواتية القديمة؟",
+      "answers": ["الكرواتية القديمة", "الجلاغولية", "السيريلية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 483,
+      "question": "ما اسم الكتابة السلوفينية القديمة؟",
+      "answers": ["السلوفينية القديمة", "الجلاغولية", "السيريلية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 484,
+      "question": "ما اسم الكتابة البوسنية القديمة؟",
+      "answers": ["البوسنية القديمة", "الجلاغولية", "السيريلية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 485,
+      "question": "ما اسم الكتابة المقدونية القديمة؟",
+      "answers": ["المقدونية القديمة", "السيريلية", "الجلاغولية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 486,
+      "question": "ما اسم الكتابة الجبلية القديمة؟",
+      "answers": ["الجبلية القديمة", "السيريلية", "الجلاغولية", "اللاتينية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 487,
+      "question": "ما اسم الكتابة الألبانية القديمة؟",
+      "answers": ["الألبانية القديمة", "اللاتينية", "السيريلية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 488,
+      "question": "ما اسم الكتابة الرومانية القديمة؟",
+      "answers": ["الرومانية القديمة", "اللاتينية", "السيريلية", "اليونانية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 489,
+      "question": "ما اسم الكتابة الإغريقية القديمة؟",
+      "answers": ["الإغريقية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 490,
+      "question": "ما اسم الكتابة المقدونية القديمة؟",
+      "answers": ["المقدونية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 491,
+      "question": "ما اسم الكتابة التراقية القديمة؟",
+      "answers": ["التراقية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 492,
+      "question": "ما اسم الكتابة الإيليرية القديمة؟",
+      "answers": ["الإيليرية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 493,
+      "question": "ما اسم الكتابة الداسية القديمة؟",
+      "answers": ["الداسية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 494,
+      "question": "ما اسم الكتابة الميسية القديمة؟",
+      "answers": ["الميسية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 495,
+      "question": "ما اسم الكتابة البانونية القديمة؟",
+      "answers": ["البانونية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 496,
+      "question": "ما اسم الكتابة السكيثية القديمة؟",
+      "answers": ["السكيثية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 497,
+      "question": "ما اسم الكتابة السارماتية القديمة؟",
+      "answers": ["السارماتية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 498,
+      "question": "ما اسم الكتابة الألانية القديمة؟",
+      "answers": ["الألانية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 499,
+      "question": "ما اسم الكتابة الهونية القديمة؟",
+      "answers": ["الهونية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    },
+    {
+      "id": 500,
+      "question": "ما اسم الكتابة الأفارية القديمة؟",
+      "answers": ["الأفارية القديمة", "اليونانية", "اللاتينية", "السيريلية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 200,
+      "category": "civilizations_antiquities"
+    }
+  ]
+}

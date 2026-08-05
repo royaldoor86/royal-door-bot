@@ -48,7 +48,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> with TickerProviderStateM
     String? winner = widget.gameData['winner'];
 
     return ScaleTransition(
-      scale: CurvedAnimation(parent: _animController, curve: Curves.backOut),
+      scale: CurvedAnimation(parent: _animController, curve: Curves.easeOutBack),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
         padding: const EdgeInsets.all(20),
@@ -89,7 +89,7 @@ class _TicTacToeGameState extends State<TicTacToeGame> with TickerProviderStateM
       } else {
         bool iWon = winner == _myUid;
         title = iWon ? "لقد فزت! 🏆👑" : "حظاً أوفر! 🚩";
-        titleColor = iWon ? Colors.goldAccent : Colors.redAccent;
+        titleColor = iWon ? const Color(0xFFFFD700) : Colors.redAccent;
       }
     }
 

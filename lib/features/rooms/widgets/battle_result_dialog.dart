@@ -4,7 +4,11 @@ import 'package:confetti/confetti.dart';
 class BattleResultDialog extends StatefulWidget {
   final int redPoints;
   final int bluePoints;
-  const BattleResultDialog({super.key, required this.redPoints, required this.bluePoints});
+  final Color? redColor;
+  final Color? blueColor;
+  final String? redName;
+  final String? blueName;
+  const BattleResultDialog({super.key, required this.redPoints, required this.bluePoints, this.redColor, this.blueColor, this.redName, this.blueName});
 
   @override
   State<BattleResultDialog> createState() => _BattleResultDialogState();
@@ -36,7 +40,9 @@ class _BattleResultDialogState extends State<BattleResultDialog> with SingleTick
   Widget build(BuildContext context) {
     bool isRedWinner = widget.redPoints > widget.bluePoints;
     bool isDraw = widget.redPoints == widget.bluePoints;
-    Color winnerColor = isDraw ? Colors.amber : (isRedWinner ? Colors.red : Colors.blue);
+    Color redTeamColor = widget.redColor ?? Colors.red;
+    Color blueTeamColor = widget.blueColor ?? Colors.blue;
+    Color winnerColor = isDraw ? Colors.amber : (isRedWinner ? redTeamColor : blueTeamColor);
     String winnerText = isDraw ? "تعادل!" : (isRedWinner ? "الفريق الأحمر فاز!" : "الفريق الأزرق فاز!");
 
     return Dialog(
@@ -81,9 +87,9 @@ class _BattleResultDialogState extends State<BattleResultDialog> with SingleTick
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _buildScoreItem("الأزرق", widget.bluePoints, Colors.blue),
+                          _buildScoreItem("الأزرق", widget.bluePoints, blueTeamColor),
                           const Text("VS", style: TextStyle(color: Colors.white24, fontWeight: FontWeight.bold)),
-                          _buildScoreItem("الأحمر", widget.redPoints, Colors.red),
+                          _buildScoreItem("الأحمر", widget.redPoints, redTeamColor),
                         ],
                       ),
                       const SizedBox(height: 30),

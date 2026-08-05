@@ -246,7 +246,7 @@ class _BackgammonGameState extends State<BackgammonGame> {
           // Close button overlay
           Positioned(
             top: 16,
-            right: 16,
+            left: 16,
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.5),

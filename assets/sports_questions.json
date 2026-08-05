@@ -1,0 +1,2704 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "من هو فريق كرة القدم الأكثر فوزاً بكأس العالم؟",
+      "answers": ["ألمانيا", "البرازيل", "إيطاليا", "الأرجنتين"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 2,
+      "question": "كم عدد لاعبي فريق كرة القدم في الملعب؟",
+      "answers": ["9", "10", "11", "12"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 3,
+      "question": "ما هي مدة المباراة في كرة القدم؟",
+      "answers": ["80 دقيقة", "90 دقيقة", "100 دقيقة", "120 دقيقة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 200,
+      "category": "sports"
+    },
+    {
+      "id": 4,
+      "question": "من هو الهداف التاريخي لكأس العالم؟",
+      "answers": ["ميسي", "رونالدو", "كرويف", "مولر"],
+      "correctAnswer": 3,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 5,
+      "question": "في أي دولة أقيمت أول كأس العالم؟",
+      "answers": ["البرازيل", "إيطاليا", "الأوروغواي", "فرنسا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 6,
+      "question": "كم عدد بطولات دوري أبطال أوروبا لريال مدريد؟",
+      "answers": ["12", "13", "14", "15"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 7,
+      "question": "من هو أسرع عداء في العالم؟",
+      "answers": ["يوسين بولت", "كارل لويس", "تايسون غاي", "جاستن غاتلين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 8,
+      "question": "ما هو الرقم القياسي لسباق 100 متر؟",
+      "answers": ["9.58 ثانية", "9.63 ثانية", "9.69 ثانية", "9.72 ثانية"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 9,
+      "question": "كم عدد اللاعبين في فريق كرة السلة؟",
+      "answers": ["4", "5", "6", "7"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 10,
+      "question": "من هو أفضل لاعب كرة قدم في العالم عام 2022؟",
+      "answers": ["ميسي", "رونالدو", "نيمار", "مبابي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 11,
+      "question": "في أي دولة يقع ملعب سانتياغو برنابيو؟",
+      "answers": ["إيطاليا", "إنجلترا", "إسبانيا", "ألمانيا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 12,
+      "question": "كم عدد بطولات كأس العالم للبرازيل؟",
+      "answers": ["4", "5", "6", "7"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 13,
+      "question": "من هو أكثر لاعب تسجيلاً في تاريخ دوري أبطال أوروبا؟",
+      "answers": ["ميسي", "رونالدو", "راؤول", "ليفاندوفسكي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 14,
+      "question": "ما هي مدة المباراة في كرة السلة؟",
+      "answers": ["40 دقيقة", "48 دقيقة", "50 دقيقة", "60 دقيقة"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 15,
+      "question": "من هو الفائز بكأس العالم 2022؟",
+      "answers": ["فرنسا", "الأرجنتين", "البرازيل", "ألمانيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 16,
+      "question": "في أي دولة يقع ملعب كامب نو؟",
+      "answers": ["إسبانيا", "فرنسا", "إيطاليا", "إنجلترا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 17,
+      "question": "كم عدد بطولات كأس العالم لألمانيا؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 18,
+      "question": "من هو أكثر لاعب فوزاً بالكرة الذهبية؟",
+      "answers": ["ميسي", "رونالدو", "كرويف", "بكنباور"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 19,
+      "question": "ما هو اسم ملعب مانشستر يونايتد؟",
+      "answers": ["أنفيلد", "أولد ترافورد", "إتيهاد", "ستامفورد بريدج"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 20,
+      "question": "كم عدد اللاعبين في فريق كرة اليد؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 21,
+      "question": "من هو أكثر لاعب تتويجًا بكأس العالم لكرة القدم؟",
+      "answers": ["بيليه", "مارادونا", "ميسي", "كافو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 22,
+      "question": "أي منتخب فاز بأول بطولة كأس عالم عام 1930؟",
+      "answers": ["الأرجنتين", "أوروغواي", "البرازيل", "إيطاليا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 23,
+      "question": "كم لاعبًا يضم الفريق داخل الملعب في كرة اليد؟",
+      "answers": ["6", "7", "8", "9"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 24,
+      "question": "ما الدولة التي استضافت أول دورة ألعاب أولمبية حديثة؟",
+      "answers": ["فرنسا", "اليونان", "بريطانيا", "إيطاليا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 25,
+      "question": "كم يبلغ ارتفاع سلة كرة السلة عن الأرض؟",
+      "answers": ["3.05 م", "3.00 م", "3.20 م", "2.95 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 26,
+      "question": "في أي رياضة يُستخدم مصطلح \"Ace\"؟",
+      "answers": ["كرة السلة", "التنس", "الطائرة", "البيسبول"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 27,
+      "question": "من أكثر منتخب فوزًا بكأس العالم لكرة القدم؟",
+      "answers": ["ألمانيا", "البرازيل", "إيطاليا", "الأرجنتين"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 28,
+      "question": "كم عدد الحلقات الأولمبية؟",
+      "answers": ["4", "5", "6", "7"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 29,
+      "question": "في أي رياضة يُستخدم جهاز يسمى \"العارضة المتوازية\"؟",
+      "answers": ["الجمباز", "الغطس", "التزلج", "المبارزة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 30,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 100 متر رجال؟",
+      "answers": ["كارل لويس", "يوسين بولت", "تايسون غاي", "يوهان بليك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 31,
+      "question": "كم شوطًا في مباراة الملاكمة الاحترافية القصوى؟",
+      "answers": ["10", "12", "15", "8"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 32,
+      "question": "أي دولة فازت بكأس العالم 2010؟",
+      "answers": ["هولندا", "إسبانيا", "ألمانيا", "البرازيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 33,
+      "question": "كم عدد اللاعبين الأساسيين في فريق الكرة الطائرة؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 34,
+      "question": "أين أقيمت أول بطولة لكأس العالم؟",
+      "answers": ["البرازيل", "أوروغواي", "فرنسا", "إيطاليا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 35,
+      "question": "من أكثر لاعب تسجيلًا للأهداف الدولية مع المنتخبات؟",
+      "answers": ["علي دائي", "كريستيانو", "ليونيل ميسي", "بيليه"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 36,
+      "question": "كم طول مضمار ألعاب القوى القياسي؟",
+      "answers": ["500 م", "400 م", "300 م", "200 م"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 37,
+      "question": "أي رياضة تعتمد على الضرب بالإرسال ثم التبادل فوق الشبكة؟",
+      "answers": ["الريشة الطائرة", "التنس", "الكرة الطائرة", "الاسكواش"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 38,
+      "question": "من فاز بكأس العالم 2022؟",
+      "answers": ["فرنسا", "الأرجنتين", "كرواتيا", "المغرب"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 39,
+      "question": "ما الدولة التي اخترعت رياضة الجودو؟",
+      "answers": ["الصين", "اليابان", "كوريا", "تايلاند"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 40,
+      "question": "كم دقيقة زمن المباراة في كرة السلة الدولية؟",
+      "answers": ["48", "40", "60", "45"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 41,
+      "question": "في أي رياضة يُستخدم مصطلح \"Birdie\"؟",
+      "answers": ["الجولف", "التنس", "الهوكي", "البولينغ"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 42,
+      "question": "من أكثر لاعب فاز بالكرة الذهبية حتى الآن؟",
+      "answers": ["كريستيانو", "ميسي", "بلاتيني", "كرويف"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 43,
+      "question": "كم عدد الأشواط في مباراة الكرة الطائرة؟",
+      "answers": ["3", "5", "4", "6"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 44,
+      "question": "أي دولة استضافت أولمبياد 2008؟",
+      "answers": ["اليابان", "الصين", "كوريا الجنوبية", "أستراليا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 45,
+      "question": "من صاحب أسرع هدف في تاريخ كأس العالم؟",
+      "answers": ["رونالدو", "شوكور", "كلوزه", "ميروسلاف"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 46,
+      "question": "كم لاعبًا في فريق الرجبي (يونيون) داخل الملعب؟",
+      "answers": ["13", "15", "11", "9"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 47,
+      "question": "في أي رياضة يستخدم اللاعب القفازات والخوذة والعصا؟",
+      "answers": ["الهوكي", "البيسبول", "الكريكيت", "الجولف"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 48,
+      "question": "من أكثر منتخب فوزًا بكأس الأمم الإفريقية؟",
+      "answers": ["الكاميرون", "مصر", "نيجيريا", "الجزائر"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 49,
+      "question": "كم يبلغ ارتفاع شبكة الرجال في الكرة الطائرة؟",
+      "answers": ["2.43 م", "2.35 م", "2.50 م", "2.30 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 50,
+      "question": "أين تقام بطولة ويمبلدون؟",
+      "answers": ["فرنسا", "إنجلترا", "الولايات المتحدة", "أستراليا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 51,
+      "question": "من أكثر لاعب مشاركة في كأس العالم؟",
+      "answers": ["ميسي", "رونالدو", "ماتيوس", "كلوزه"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 52,
+      "question": "أي دولة فازت بأول بطولة أمم أوروبا؟",
+      "answers": ["فرنسا", "الاتحاد السوفيتي", "إيطاليا", "ألمانيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 53,
+      "question": "كم عدد الحكام داخل الملعب في مباراة كرة القدم؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 54,
+      "question": "في أي رياضة يستخدم اللاعبون \"البيادق\"؟",
+      "answers": ["الشطرنج", "البولينغ", "السنوكر", "الكيرلنغ"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 55,
+      "question": "من أكثر لاعب تتويجًا بدوري أبطال أوروبا؟",
+      "answers": ["ميسي", "كريستيانو", "مودريتش", "راموس"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 56,
+      "question": "كم عدد الثقوب في الجولة الكاملة للجولف؟",
+      "answers": ["12", "18", "20", "24"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 57,
+      "question": "ما الدولة التي استضافت كأس العالم 2014؟",
+      "answers": ["جنوب إفريقيا", "البرازيل", "روسيا", "ألمانيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 58,
+      "question": "من صاحب الرقم القياسي في القفز بالزانة رجال؟",
+      "answers": ["دوبلانتيس", "سيرغي بوبكا", "رينو لافيلني", "سام كندريكس"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 59,
+      "question": "كم لاعبًا في فريق البيسبول داخل الملعب؟",
+      "answers": ["8", "9", "10", "11"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 60,
+      "question": "من أكثر لاعب تتويجًا ببطولات الجراند سلام في التنس (رجال)؟",
+      "answers": ["فيدرر", "ديوكوفيتش", "نادال", "سامبراس"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 61,
+      "question": "أي رياضة تستخدم فيها أحزمة ملونة للدلالة على المستوى؟",
+      "answers": ["الجودو", "الملاكمة", "المبارزة", "المصارعة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 62,
+      "question": "كم زمن الشوط الواحد في كرة القدم؟",
+      "answers": ["40 دقيقة", "45 دقيقة", "50 دقيقة", "30 دقيقة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 63,
+      "question": "من أول منتخب عربي بلغ نصف نهائي كأس العالم؟",
+      "answers": ["السعودية", "المغرب", "الجزائر", "تونس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 64,
+      "question": "كم عدد اللاعبين الأساسيين في فريق الهوكي على الجليد؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 65,
+      "question": "أين تقام بطولة رولان غاروس؟",
+      "answers": ["لندن", "باريس", "مدريد", "روما"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 66,
+      "question": "من أكثر منتخب فوزًا بكأس آسيا؟",
+      "answers": ["اليابان", "السعودية", "كوريا الجنوبية", "إيران"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 67,
+      "question": "كم يبلغ وزن الكرة الرسمية لكرة القدم تقريبًا؟",
+      "answers": ["250–300 غ", "410–450 غ", "500–550 غ", "600–650 غ"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 68,
+      "question": "في أي رياضة يستخدم مصطلح \"Checkmate\"؟",
+      "answers": ["الشطرنج", "المبارزة", "السنوكر", "البولينغ"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 69,
+      "question": "من أول لاعب يسجل في خمس نسخ مختلفة من كأس العالم؟",
+      "answers": ["ميسي", "كريستيانو", "كلوزه", "بيليه"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 70,
+      "question": "ما الدولة التي فازت بأول بطولة كأس آسيا لكرة القدم؟",
+      "answers": ["كوريا الجنوبية", "اليابان", "إيران", "السعودية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 71,
+      "question": "من أكثر منتخب تتويجًا بكأس أمم أوروبا (اليورو)؟",
+      "answers": ["فرنسا", "ألمانيا وإسبانيا", "إيطاليا", "البرتغال"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 72,
+      "question": "كم يبلغ طول ملعب كرة القدم وفق قانون الفيفا في المباريات الدولية (الحد الأقصى)؟",
+      "answers": ["100 م", "105 م", "110 م", "120 م"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 73,
+      "question": "من أول لاعب عربي يفوز بدوري أبطال أوروبا؟",
+      "answers": ["محمد صلاح", "رابح ماجر", "رياض محرز", "أشرف حكيمي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 74,
+      "question": "في أي رياضة يُستخدم مصطلح \"هاتريك\" أيضًا؟",
+      "answers": ["الهوكي على الجليد", "السلة", "التنس", "الجولف"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 75,
+      "question": "من صاحب أكبر عدد من ألقاب بطولة ويمبلدون للرجال؟",
+      "answers": ["سامبراس", "روجر فيدرر", "ديوكوفيتش", "بيورن بورغ"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 76,
+      "question": "ما الدولة التي فازت بأول كأس أمم إفريقيا؟",
+      "answers": ["مصر", "السودان", "إثيوبيا", "غانا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 77,
+      "question": "كم لاعبًا داخل الملعب في فريق الكريكيت؟",
+      "answers": ["9", "10", "11", "12"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 78,
+      "question": "من أكثر لاعب صناعةً للأهداف في تاريخ دوري أبطال أوروبا؟",
+      "answers": ["تشافي", "ميسي", "كريستيانو", "دي بروين"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 79,
+      "question": "أين أقيمت أول بطولة لكأس آسيا؟",
+      "answers": ["اليابان", "هونغ كونغ", "كوريا الجنوبية", "إيران"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 80,
+      "question": "من أكثر منتخب فوزًا مكأس كوبا أمريكا؟",
+      "answers": ["الأرجنتين", "أوروغواي", "البرازيل", "الأرجنتين وأوروغواي"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 81,
+      "question": "كم عدد اللاعبين الأساسيين في فريق كرة الماء؟",
+      "answers": ["6", "7", "8", "9"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 82,
+      "question": "من أول منتخب إفريقي يصل إلى نصف نهائي كأس العالم؟",
+      "answers": ["الكاميرون", "المغرب", "السنغال", "غانا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 83,
+      "question": "أي دولة استضافت كأس العالم 1994؟",
+      "answers": ["المكسيك", "الولايات المتحدة", "فرنسا", "إيطاليا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 84,
+      "question": "ما الرياضة التي يُستخدم فيها جهاز \"الحصان\"؟",
+      "answers": ["الجمباز", "الفروسية", "القفز", "المصارعة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 85,
+      "question": "من صاحب الرقم القياسي في أكثر أهداف كأس العالم؟",
+      "answers": ["رونالدو", "ميروسلاف", "جيرد مولر", "بيليه"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 86,
+      "question": "كم دقيقة زمن مباراة كرة اليد؟",
+      "answers": ["50", "60", "70", "80"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 87,
+      "question": "أين تقام بطولة أمريكا المفتوحة للتنس؟",
+      "answers": ["لوس أنجلوس", "نيويورك", "شيكاغو", "ميامي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 88,
+      "question": "من أول منتخب آسيوي يصل إلى نصف نهائي كأس العالم؟",
+      "answers": ["اليابان", "كوريا الجنوبية", "السعودية", "إيران"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 89,
+      "question": "كم عدد الحكام في مباراة كرة السلة داخل الملعب؟",
+      "answers": ["2", "3", "4", "5"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 90,
+      "question": "في أي رياضة يستخدم مصطلح \"إيكو\" (Ippon)؟",
+      "answers": ["الجودو", "التايكوندو", "الكاراتيه", "المبارزة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 91,
+      "question": "من أكثر منتخب مشاركة في نهائيات كأس العالم؟",
+      "answers": ["ألمانيا", "البرازيل", "إيطاليا", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 92,
+      "question": "أي دولة استضافت أول كأس عالم للسيدات؟",
+      "answers": ["الصين", "الولايات المتحدة", "ألمانيا", "السويد"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 93,
+      "question": "كم شوطًا في مباراة التنس للرجال في بطولات الجراند سلام؟",
+      "answers": ["3", "5", "4", "6"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 94,
+      "question": "من صاحب الرقم القياسي في سباق 200 متر رجال؟",
+      "answers": ["يوسين بولت", "مايكل جونسون", "نواه لايلز", "يوهان بليك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 95,
+      "question": "ما الدولة التي اخترعت كرة السلة؟",
+      "answers": ["الولايات المتحدة", "كندا", "بريطانيا", "فرنسا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 96,
+      "question": "من أول لاعب يسجل 100 هدف في دوري أبطال أوروبا؟",
+      "answers": ["ليونيل", "رونالدو", "ليفاندوفسكي", "بنزيما"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 97,
+      "question": "كم عدد اللاعبين الأساسيين في فريق الرجبي (ليغ)؟",
+      "answers": ["11", "13", "15", "17"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 98,
+      "question": "أين أقيمت أول بطولة أولمبية شتوية؟",
+      "answers": ["النرويج", "فرنسا", "سويسرا", "السويد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 99,
+      "question": "من أكثر منتخب فوزًا بكأس العالم للسيدات؟",
+      "answers": ["ألمانيا", "الولايات المتحدة", "النرويج", "اليابان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 100,
+      "question": "في أي رياضة يستخدم مصطلح \"Bullseye\"؟",
+      "answers": ["الرماية بالسهام", "المبارزة", "التنس", "الجولف"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 101,
+      "question": "من أول منتخب إفريقي تأهل إلى كأس العالم لكرة القدم؟",
+      "answers": ["مصر", "المغرب", "تونس", "الكاميرون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 102,
+      "question": "أي دولة استضافت كأس العالم 1978؟",
+      "answers": ["الأرجنتين", "إسبانيا", "ألمانيا", "المكسيك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 103,
+      "question": "كم يبلغ عرض مرمى كرة القدم؟",
+      "answers": ["7.32 م", "7.00 م", "7.50 م", "8.00 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 104,
+      "question": "في أي رياضة يُستخدم مصطلح \"Knockout\" بشكل أساسي؟",
+      "answers": ["الملاكمة", "التنس", "الجودو", "المبارزة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 105,
+      "question": "كم لاعبًا في فريق كرة القاعدة (Baseball)؟",
+      "answers": ["8", "9", "10", "11"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 106,
+      "question": "من أول منتخب فاز بكأس العالم مرتين؟",
+      "answers": ["البرازيل", "إيطاليا", "أوروغواي", "ألمانيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 107,
+      "question": "أي دولة استضافت كأس العالم 1966؟",
+      "answers": ["فرنسا", "إنجلترا", "ألمانيا", "السويد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 108,
+      "question": "ما الدولة التي اخترعت رياضة الكريكيت؟",
+      "answers": ["أستراليا", "إنجلترا", "الهند", "نيوزيلندا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 109,
+      "question": "من صاحب الرقم القياسي في القفز العالي رجال؟",
+      "answers": ["خافيير", "عيسى برشم", "تامبيري", "ستيف هولم"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 110,
+      "question": "كم يبلغ ارتفاع مرمى كرة القدم؟",
+      "answers": ["2.44 م", "2.50 م", "2.30 م", "2.60 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 111,
+      "question": "من أكثر منتخب فوزًا بكأس الكونكاكاف الذهبية؟",
+      "answers": ["الولايات المتحدة", "المكسيك", "كندا", "كوستاريكا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 112,
+      "question": "في أي رياضة يستخدم مصطلح \"Grand Slam\"؟",
+      "answers": ["التنس", "الكرة الطائرة", "السباحة", "الهوكي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 113,
+      "question": "من أول لاعب عربي يشارك في الدوري الإنجليزي الممتاز؟",
+      "answers": ["محمد صلاح", "هاني رمزي", "رياض محرز", "نور الدين النيبت"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 114,
+      "question": "كم عدد الحكام المساعدين في مباراة كرة القدم؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 115,
+      "question": "أي دولة فازت بأول بطولة كوبا أمريكا؟",
+      "answers": ["الأرجنتين", "أوروغواي", "البرازيل", "تشيلي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 116,
+      "question": "من أكثر لاعب تسجيلًا في تاريخ كأس العالم للأندية؟",
+      "answers": ["كريم بنزيما", "كريستيانو", "ميسي", "غاريث بيل"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 117,
+      "question": "كم يبلغ قطر دائرة منتصف ملعب كرة القدم؟",
+      "answers": ["9.15 م", "10 م", "8 م", "11 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 118,
+      "question": "في أي رياضة يُستخدم مصطلح \"Love\"؟",
+      "answers": ["التنس", "الجولف", "السنوكر", "الريشة الطائرة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 119,
+      "question": "من أكثر منتخب فوزًا ببطولة كأس الخليج قبل 2026؟",
+      "answers": ["العراق", "الكويت", "قطر", "السعودية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 120,
+      "question": "أي دولة استضافت أولمبياد لندن؟",
+      "answers": ["1908", "1948", "2012", "جميع ما سبق"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 121,
+      "question": "من أول لاعب يحصل على 8 كرات ذهبية؟",
+      "answers": ["رونالدو", "ليونيل ميسي", "كرويف", "بلاتيني"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 122,
+      "question": "كم عدد اللاعبين في فريق الشطرنج؟",
+      "answers": ["لاعب واحد", "لاعبان", "أربعة", "خمسة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "sports"
+    },
+    {
+      "id": 123,
+      "question": "أي دولة استضافت كأس العالم 1982؟",
+      "answers": ["إسبانيا", "المكسيك", "فرنسا", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 124,
+      "question": "من أكثر لاعب تتويجًا بكأس العالم للأندية؟",
+      "answers": ["كريستيانو", "توني كروس", "مودريتش", "راموس"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 125,
+      "question": "في أي رياضة يُستخدم جهاز \"عارضة التوازن\"؟",
+      "answers": ["الجمباز", "الغطس", "الوثب", "الفروسية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 126,
+      "question": "كم عدد الأشواط في مباراة كرة الطاولة؟",
+      "answers": ["3", "5", "7", "9"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 127,
+      "question": "من أول منتخب آسيوي يفوز بكأس آسيا؟",
+      "answers": ["كوريا الجنوبية", "اليابان", "إيران", "السعودية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 128,
+      "question": "أي دولة استضافت كأس العالم 1998؟",
+      "answers": ["ألمانيا", "فرنسا", "إيطاليا", "اليابان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 129,
+      "question": "من صاحب الرقم القياسي العالمي في رمي الرمح رجال؟",
+      "answers": ["يان زيليزني", "يوهانس فيتر", "ثوركيلدسن", "نيراج تشوبرا"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 130,
+      "question": "كم لاعبًا داخل الملعب في كرة القدم الشاطئية؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 131,
+      "question": "من أكثر منتخب فوزًا ببطولة أمم أوقيانوسيا؟",
+      "answers": ["نيوزيلندا", "أستراليا", "فيجي", "تاهيتي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 132,
+      "question": "في أي رياضة يُستخدم مصطلح \"Putt\"؟",
+      "answers": ["الجولف", "التنس", "البيسبول", "البولينغ"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 133,
+      "question": "من أول لاعب يسجل في نهائي كأس العالم بقارتين مختلفتين؟",
+      "answers": ["بيليه", "زيدان", "مبابي", "ميسي"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 134,
+      "question": "كم عدد أشواط مباراة الريشة الطائرة؟",
+      "answers": ["2", "3", "5", "7"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 135,
+      "question": "أي دولة استضافت أولمبياد ريو 2016؟",
+      "answers": ["الأرجنتين", "البرازيل", "تشيلي", "المكسيك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 136,
+      "question": "من أكثر لاعب تسجيلًا في تاريخ منتخب البرتغال؟",
+      "answers": ["لويس فيغو", "كريستيانو", "أوزيبيو", "نونو غوميش"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 137,
+      "question": "ما طول ملعب كرة القدم الخماسية (الحد الأقصى)؟",
+      "answers": ["42 م", "40 م", "45 م", "38 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 138,
+      "question": "في أي رياضة يُستخدم مصطلح \"Spare\"؟",
+      "answers": ["البولينغ", "السنوكر", "الكيرلنغ", "الرماية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 139,
+      "question": "من أول منتخب فاز بكأس القارات؟",
+      "answers": ["السعودية", "الأرجنتين", "البرازيل", "فرنسا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 140,
+      "question": "كم عدد الكرات المستخدمة في لعبة السنوكر؟",
+      "answers": ["21", "22", "20", "24"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 141,
+      "question": "من صاحب الرقم القياسي العالمي في رمي القرص رجال؟",
+      "answers": ["يورغن شولت", "فيرجيليجوس", "دانيال ستول", "أليكنا"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 142,
+      "question": "أي دولة فازت بأول بطولة دوري أمم أوروبا؟",
+      "answers": ["البرتغال", "فرنسا", "إسبانيا", "هولندا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 143,
+      "question": "من أكثر منتخب وصولًا إلى نهائي كأس العالم؟",
+      "answers": ["ألمانيا", "البرازيل", "إيطاليا", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 144,
+      "question": "كم لاعبًا في فريق كرة السلة 3×3 داخل الملعب؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 145,
+      "question": "في أي رياضة يستخدم مصطلح \"Frame\"؟",
+      "answers": ["السنوكر", "الشطرنج", "التنس", "الجولف"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 146,
+      "question": "من أول منتخب عربي شارك في كأس العالم؟",
+      "answers": ["مصر", "المغرب", "العراق", "تونس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 147,
+      "question": "أي دولة استضافت كأس العالم 1954؟",
+      "answers": ["سويسرا", "السويد", "فرنسا", "ألمانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 148,
+      "question": "من أكثر لاعب مشاركة في تاريخ دوري أبطال أوروبا؟",
+      "answers": ["إيكر كاسياس", "كريستيانو رونالدو", "ميسي", "تشافي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 149,
+      "question": "أي رياضة تُعرف بأنها \"رياضة الملوك\"؟",
+      "answers": ["الفروسية", "الجولف", "التنس", "البولو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 150,
+      "question": "من أول منتخب يفوز بكأس العالم خارج قارته الأصلية؟",
+      "answers": ["البرازيل", "ألمانيا", "إيطاليا", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 151,
+      "question": "كم يبلغ وزن الكرة الرسمية لكرة السلة (للرجال) تقريبًا؟",
+      "answers": ["450 غ", "620 غ", "750 غ", "900 غ"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 152,
+      "question": "من أكثر لاعب تتويجًا بلقب هداف دوري أبطال أوروبا؟",
+      "answers": ["ميسي", "كريستيانو", "روبرت", "غونزاليس"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 153,
+      "question": "أي دولة استضافت كأس العالم 1974؟",
+      "answers": ["ألمانيا الغربية", "هولندا", "الأرجنتين", "المكسيك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 154,
+      "question": "في أي رياضة يُستخدم مصطلح Break؟",
+      "answers": ["السنوكر", "الجودو", "الملاكمة", "كرة اليد"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 155,
+      "question": "كم عدد اللاعبين الأساسيين في فريق البولو؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 156,
+      "question": "من صاحب الرقم القياسي العالمي في الوثب الطويل للرجال؟",
+      "answers": ["كارل لويس", "مايك باول", "بوب بيمون", "إيفان بيدروسو"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 157,
+      "question": "أي دولة فازت بأول بطولة كأس القارات باسمها الجديد؟",
+      "answers": ["البرازيل", "فرنسا", "الأرجنتين", "ألمانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 158,
+      "question": "كم يبلغ قطر دائرة الرمية الحرة في كرة السلة؟",
+      "answers": ["3.6 م", "3.6 م تقريبًا (نصف قطر 1.80 م)", "4.2 م", "5 م"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 159,
+      "question": "من أكثر لاعب فوزًا بجائزة الحذاء الذهبي الأوروبي؟",
+      "answers": ["ميسي", "كريستيانو", "تييري هنري", "سواريز"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 160,
+      "question": "أي دولة استضافت كأس العالم 1958؟",
+      "answers": ["السويد", "سويسرا", "تشيلي", "البرازيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 161,
+      "question": "في أي رياضة يُستخدم مصطلح Takedown؟",
+      "answers": ["المصارعة", "التنس", "الكرة الطائرة", "السباحة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 162,
+      "question": "من أكثر منتخب فوزًا ببطولة أمريكا الجنوبية للشباب؟",
+      "answers": ["البرازيل", "الأرجنتين", "أوروغواي", "كولومبيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 163,
+      "question": "كم عدد الكرات الملونة في السنوكر؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 164,
+      "question": "من أول لاعب يسجل 50 هدفًا في موسم واحد من الدوري الإسباني؟",
+      "answers": ["كريستيانو رونالدو", "ليونيل ميسي", "هوغو سانشيز", "روماريو"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 165,
+      "question": "أي دولة استضافت كأس العالم 1962؟",
+      "answers": ["تشيلي", "البرازيل", "المكسيك", "إنجلترا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 166,
+      "question": "كم يبلغ ارتفاع شبكة الريشة الطائرة عند العمود؟",
+      "answers": ["1.55 م", "1.45 م", "1.65 م", "1.75 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 167,
+      "question": "من أكثر منتخب تتويجًا بكأس العالم تحت 20 سنة؟",
+      "answers": ["الأرجنتين", "البرازيل", "صربيا", "فرنسا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 168,
+      "question": "في أي رياضة يُستخدم مصطلح Albatross؟",
+      "answers": ["الجولف", "التنس", "البولينغ", "الرماية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 169,
+      "question": "من أكثر لاعب مشاركة مع منتخب إسبانيا؟",
+      "answers": ["تشافي", "سيرخيو راموس", "كاسياس", "إنييستا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 170,
+      "question": "أي دولة استضافت كأس العالم 1950؟",
+      "answers": ["البرازيل", "إيطاليا", "فرنسا", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 171,
+      "question": "كم عدد اللاعبين في فريق الكيرلنغ؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 172,
+      "question": "من صاحب الرقم القياسي العالمي في دفع الجلة رجال؟",
+      "answers": ["رايان كراوزر", "جو كوفاكس", "أولف تيمرمان", "توماس ماجير"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 173,
+      "question": "في أي رياضة يُستخدم مصطلح Mulligan؟",
+      "answers": ["الجولف", "السنوكر", "الشطرنج", "الكرة الطائرة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 174,
+      "question": "من أكثر لاعب تسجيلًا في تاريخ الدوري الإسباني؟",
+      "answers": ["كريستيانو", "ميسي", "تيلمو زارا", "بنزيما"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 175,
+      "question": "أي دولة استضافت كأس العالم 1938؟",
+      "answers": ["فرنسا", "إيطاليا", "ألمانيا", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 176,
+      "question": "كم يبلغ طول مضمار سباق الدراجات الأولمبي الداخلي؟",
+      "answers": ["250 م", "300 م", "400 م", "500 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 177,
+      "question": "من أكثر منتخب تتويجًا بكأس العالم تحت 17 سنة؟",
+      "answers": ["نيجيريا", "البرازيل", "ألمانيا", "المكسيك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 178,
+      "question": "في أي رياضة يُستخدم مصطلح Scrum؟",
+      "answers": ["الرجبي", "الهوكي", "البيسبول", "كرة اليد"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 179,
+      "question": "من أكثر لاعب تسجيلًا في تاريخ الدوري الإنجليزي الممتاز؟",
+      "answers": ["واين روني", "آلان شيرر", "هاري كين", "سيرخيو"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 180,
+      "question": "أي دولة استضافت كأس العالم 1934؟",
+      "answers": ["إيطاليا", "فرنسا", "ألمانيا", "البرازيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 181,
+      "question": "كم عدد اللاعبين في فريق الاسكواش؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 182,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 400 متر رجال؟",
+      "answers": ["وايد فان", "جونسون", "جيمس", "ستيفن"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 183,
+      "question": "في أي رياضة يُستخدم مصطلح Pin؟",
+      "answers": ["المصارعة", "التنس", "الريشة الطائرة", "الكرة الطائرة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 184,
+      "question": "من أكثر منتخب تتويجًا بكأس العالم لكرة القدم داخل الصالات؟",
+      "answers": ["البرازيل", "إسبانيا", "الأرجنتين", "البرتغال"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 185,
+      "question": "كم عدد الكرات الحمراء في السنوكر؟",
+      "answers": ["12", "15", "18", "20"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 186,
+      "question": "من أكثر لاعب تسجيلًا في تاريخ منتخب الأرجنتين؟",
+      "answers": ["باتيستوتا", "ميسي", "أغويرو", "مارادونا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 187,
+      "question": "أي دولة استضافت كأس العالم 1986؟",
+      "answers": ["المكسيك", "الأرجنتين", "إسبانيا", "الولايات المتحدة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 188,
+      "question": "في أي رياضة يُستخدم مصطلح Strike؟",
+      "answers": ["البولينغ", "التنس", "الهوكي", "السباحة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 189,
+      "question": "من أكثر منتخب فوزًا ببطولة أوروبا لكرة السلة (يورو باسكت)؟",
+      "answers": ["الاتحاد السوفيتي", "إسبانيا", "يوغوسلافيا", "ليتوانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 190,
+      "question": "كم لاعبًا في فريق كرة القدم الأمريكية داخل الملعب؟",
+      "answers": ["9", "11", "13", "15"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 191,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 800 متر رجال؟",
+      "answers": ["ديفيد روديشا", "سيباستيان كو", "ويلسون كيبكيتر", "دونوفان برازير"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 192,
+      "question": "أي دولة استضافت كأس العالم 1990؟",
+      "answers": ["إيطاليا", "ألمانيا", "إسبانيا", "فرنسا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 193,
+      "question": "في أي رياضة يُستخدم مصطلح Home Run؟",
+      "answers": ["البيسبول", "الكريكيت", "الرجبي", "الهوكي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 194,
+      "question": "من أكثر لاعب تتويجًا ببطولة أستراليا المفتوحة؟",
+      "answers": ["فيدرر", "ديوكوفيتش", "رافاييل", "أندريه"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 195,
+      "question": "كم عدد اللاعبين في فريق لاكروس داخل الملعب؟",
+      "answers": ["8", "10", "12", "14"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 196,
+      "question": "من أول منتخب يفوز بكأس آسيا ثلاث مرات؟",
+      "answers": ["السعودية", "إيران", "اليابان", "كوريا الجنوبية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 197,
+      "question": "أي دولة استضافت كأس العالم 2006؟",
+      "answers": ["ألمانيا", "فرنسا", "إيطاليا", "اليابان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 198,
+      "question": "في أي رياضة يُستخدم مصطلح Chukker؟",
+      "answers": ["البولو", "الكريكيت", "الجولف", "الرجبي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 199,
+      "question": "من أكثر منتخب تتويجًا ببطولة كأس العالم للشباب تحت 20 سنة؟",
+      "answers": ["الأرجنتين", "البرازيل", "البرتغال", "صربيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 200,
+      "question": "من أول منتخب أوروبي يفوز بكأس العالم خارج أوروبا؟",
+      "answers": ["ألمانيا", "إسبانيا", "إيطاليا", "فرنسا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 201,
+      "question": "كم عدد اللاعبين الأساسيين في فريق كرة القدم الشاطئية؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 202,
+      "question": "من صاحب أكبر عدد من الأهداف في تاريخ دوري أبطال أوروبا؟",
+      "answers": ["ميسي", "كريستيانو", "روبرت", "بنزيما"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 203,
+      "question": "أي دولة استضافت كأس العالم 1970؟",
+      "answers": ["المكسيك", "البرازيل", "الأرجنتين", "ألمانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 204,
+      "question": "في أي رياضة يُستخدم مصطلح Deuce؟",
+      "answers": ["التنس", "السنوكر", "الجولف", "كرة اليد"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 205,
+      "question": "كم عدد اللاعبين داخل الملعب في فريق الكريكيت؟",
+      "answers": ["9", "11", "12", "13"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 206,
+      "question": "من أكثر لاعب مشاركة في تاريخ منتخب البرتغال؟",
+      "answers": ["فيغو", "كريستيانو", "بيبي", "ناني"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 207,
+      "question": "ما الدولة التي استضافت أولمبياد طوكيو 2020 (أقيمت 2021)؟",
+      "answers": ["الصين", "اليابان", "كوريا الجنوبية", "سنغافورة"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 208,
+      "question": "كم يبلغ طول ملعب الكرة الطائرة؟",
+      "answers": ["16 م", "18 م", "20 م", "22 م"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 209,
+      "question": "من أكثر منتخب فوزًا ببطولة أمم أوروبا تحت 21 سنة؟",
+      "answers": ["فرنسا", "إسبانيا", "إيطاليا", "إسبانيا وإيطاليا"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 210,
+      "question": "في أي رياضة يُستخدم مصطلح Bogey؟",
+      "answers": ["الجولف", "التنس", "الهوكي", "السباحة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 211,
+      "question": "من أول لاعب يحقق 100 انتصار في بطولات الجراند سلام؟",
+      "answers": ["روجر فيدرر", "ديوكوفيتش", "رافاييل", "سامبراس"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 212,
+      "question": "كم يبلغ عرض ملعب الكرة الطائرة؟",
+      "answers": ["8 م", "9 م", "10 م", "12 م"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 213,
+      "question": "أي دولة استضافت كأس العالم 1954؟",
+      "answers": ["سويسرا", "السويد", "فرنسا", "إيطاليا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 214,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 1500 متر رجال؟",
+      "answers": ["هشام", "يعقوب", "نوح نغيني", "شيريوت"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 215,
+      "question": "في أي رياضة يُستخدم مصطلح Forehand؟",
+      "answers": ["التنس", "السباحة", "المصارعة", "المبارزة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 216,
+      "question": "من أكثر منتخب فوزًا بكأس العالم للناشئين تحت 17 سنة؟",
+      "answers": ["نيجيريا", "البرازيل", "ألمانيا", "المكسيك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 217,
+      "question": "كم عدد الحكام في مباراة الكرة الطائرة؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 218,
+      "question": "أي دولة فازت بأول ذهبية أولمبية عربية؟",
+      "answers": ["مصر", "العراق", "المغرب", "تونس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 219,
+      "question": "من أكثر لاعب تسجيلًا في تاريخ منتخب فرنسا؟",
+      "answers": ["أوليفييه", "هنري", "مبابي", "غريزمان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 220,
+      "question": "كم عدد الأشواط في مباراة الجودو؟",
+      "answers": ["شوط واحد", "شوطان", "ثلاثة", "أربعة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 221,
+      "question": "في أي رياضة يُستخدم مصطلح Smash؟",
+      "answers": ["التنس والريشة", "السباحة", "الملاكمة", "الرماية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 222,
+      "question": "من أكثر لاعب مشاركة في تاريخ منتخب إيطاليا؟",
+      "answers": ["بوفون", "مالديني", "كانافارو", "بيرلو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 223,
+      "question": "ما الدولة التي استضافت كأس العالم 1938؟",
+      "answers": ["فرنسا", "إيطاليا", "ألمانيا", "البرازيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 224,
+      "question": "كم عدد اللاعبين في فريق كرة الماء؟",
+      "answers": ["6", "7", "8", "9"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 225,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 5000 متر رجال؟",
+      "answers": ["جوشوا تشيبتيغي", "كينينيسا بيكيلي", "مو فرح", "هيلا جبريسلاسي"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 226,
+      "question": "في أي رياضة يُستخدم مصطلح Check؟",
+      "answers": ["الهوكي", "التنس", "الكرة الطائرة", "الملاكمة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 227,
+      "question": "من أكثر منتخب تتويجًا بكأس العالم لكرة اليد رجال؟",
+      "answers": ["فرنسا", "السويد", "الدنمارك", "رومانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 228,
+      "question": "كم عدد الثقوب في ملعب الجولف القياسي؟",
+      "answers": ["9", "18", "24", "27"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 229,
+      "question": "من أول منتخب آسيوي يتأهل للأدوار الإقصائية في كأس العالم؟",
+      "answers": ["اليابان", "كوريا الجنوبية", "السعودية", "إيران"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 230,
+      "question": "أي دولة استضافت كأس العالم 2018؟",
+      "answers": ["روسيا", "ألمانيا", "فرنسا", "إنجلترا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 231,
+      "question": "في أي رياضة يُستخدم مصطلح Rally؟",
+      "answers": ["الكرة الطائرة والتنس", "الملاكمة", "السباحة", "المصارعة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 232,
+      "question": "من أكثر لاعب تسجيلًا في تاريخ منتخب إنجلترا؟",
+      "answers": ["واين روني", "هاري كين", "غاري لينيكر", "تشارلتون"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 233,
+      "question": "كم عدد اللاعبين في فريق الريشة الطائرة الزوجي؟",
+      "answers": ["2", "4", "6", "8"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 234,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 10000 متر رجال؟",
+      "answers": ["تشيبتيغي", "بيكيلي", "مو فرح", "تيرغات"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 235,
+      "question": "في أي رياضة يُستخدم مصطلح Tie-break؟",
+      "answers": ["التنس", "الجولف", "الملاكمة", "الشطرنج"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 236,
+      "question": "من أكثر منتخب تتويجًا ببطولة العالم للكرة الطائرة رجال؟",
+      "answers": ["روسيا (الاتحاد السوفيتي)", "البرازيل", "إيطاليا", "بولندا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 237,
+      "question": "كم دقيقة زمن الشوط في كرة الماء؟",
+      "answers": ["6", "8", "10", "12"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 238,
+      "question": "أي دولة استضافت أولمبياد باريس 2024؟",
+      "answers": ["فرنسا", "إيطاليا", "ألمانيا", "إسبانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 239,
+      "question": "من أكثر لاعب تتويجًا ببطولة رولان غاروس؟",
+      "answers": ["رافاييل", "ديوكوفيتش", "روجر فيدرر", "بيورن بورغ"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 240,
+      "question": "كم عدد اللاعبين في فريق الرجبي السباعي؟",
+      "answers": ["5", "7", "9", "11"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 241,
+      "question": "في أي رياضة يُستخدم مصطلح Par؟",
+      "answers": ["الجولف", "التنس", "السنوكر", "البولينغ"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 242,
+      "question": "من أكثر لاعب مشاركة في تاريخ كأس العالم؟",
+      "answers": ["ميسي", "ماتيوس", "رونالدو", "كلوزه"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 243,
+      "question": "أي دولة استضافت كأس العالم 2002 بالاشتراك مع اليابان؟",
+      "answers": ["الصين", "كوريا الجنوبية", "تايلاند", "ماليزيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 244,
+      "question": "كم يبلغ ارتفاع شبكة الكرة الطائرة للسيدات؟",
+      "answers": ["2.24 م", "2.30 م", "2.18 م", "2.40 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 245,
+      "question": "من صاحب الرقم القياسي العالمي في الماراثون رجال؟",
+      "answers": ["كيبتوم", "كيبتشوج", "بيكيلي", "سيساي"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 246,
+      "question": "في أي رياضة يُستخدم مصطلح Hook؟",
+      "answers": ["الملاكمة", "التنس", "الهوكي", "السباحة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 247,
+      "question": "من أكثر منتخب تتويجًا ببطولة العالم لكرة السلة رجال؟",
+      "answers": ["الولايات المتحدة", "يوغوسلافيا", "روسيا", "إسبانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 248,
+      "question": "كم عدد الكرات المستخدمة في البلياردو الإنجليزي؟",
+      "answers": ["16", "22", "3", "15"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 249,
+      "question": "من أول لاعب عربي يفوز بالحذاء الذهبي للدوري الإنجليزي الممتاز؟",
+      "answers": ["محمد صلاح", "رياض محرز", "ياسين بونو", "أشرف حكيمي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 250,
+      "question": "من أكثر منتخب فوزًا ببطولة كوبا أمريكا حتى عام 2024؟",
+      "answers": ["البرازيل", "الأرجنتين", "أوروغواي", "تشيلي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 251,
+      "question": "كم عدد اللاعبين الأساسيين في فريق الهوكي الميداني؟",
+      "answers": ["10", "11", "12", "13"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 252,
+      "question": "من أول لاعب يسجل في خمس نسخ مختلفة من كأس العالم؟",
+      "answers": ["ليونيل", "كريستيانو", "بيليه", "ميروسلاف"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 253,
+      "question": "أي دولة استضافت كأس العالم 2010؟",
+      "answers": ["مصر", "جنوب إفريقيا", "المغرب", "نيجيريا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 254,
+      "question": "في أي رياضة يُستخدم مصطلح Birdie؟",
+      "answers": ["الجولف", "التنس", "الهوكي", "الرماية"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 255,
+      "question": "كم يبلغ طول ملعب كرة السلة (FIBA)؟",
+      "answers": ["26 م", "28 م", "30 م", "32 م"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 256,
+      "question": "من أكثر لاعب تتويجًا بلقب هداف الدوري الإسباني؟",
+      "answers": ["كريستيانو", "ميسي", "زارا", "بنزيما"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 257,
+      "question": "أي دولة استضافت كأس العالم 2006؟",
+      "answers": ["إيطاليا", "ألمانيا", "فرنسا", "البرتغال"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 258,
+      "question": "في أي رياضة يُستخدم مصطلح Frame؟",
+      "answers": ["السنوكر", "التنس", "الجولف", "المبارزة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 259,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 110 م حواجز؟",
+      "answers": ["ميريت", "هولواي", "جاكسون", "ديفون"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 260,
+      "question": "كم يبلغ عرض ملعب كرة السلة؟",
+      "answers": ["14 م", "15 م", "16 م", "18 م"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 261,
+      "question": "من أكثر منتخب فوزًا بكأس آسيا؟",
+      "answers": ["السعودية", "اليابان", "إيران", "كوريا الجنوبية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 262,
+      "question": "في أي رياضة يُستخدم مصطلح Hole in One؟",
+      "answers": ["الجولف", "البولينغ", "السنوكر", "الكيرلنغ"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 263,
+      "question": "من أكثر لاعب مشاركة في تاريخ منتخب البرازيل؟",
+      "answers": ["كافو", "داني ألفيس", "نيمار", "بيليه"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 264,
+      "question": "كم عدد أشواط مباراة الكرة الطائرة القصوى؟",
+      "answers": ["3", "5", "6", "7"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 265,
+      "question": "أي دولة استضافت كأس العالم 1998؟",
+      "answers": ["فرنسا", "ألمانيا", "البرازيل", "إيطاليا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 266,
+      "question": "من صاحب الرقم القياسي العالمي في الوثب الثلاثي؟",
+      "answers": ["جوناثان", "بيدرو", "تايلور", "ويل كلاي"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 267,
+      "question": "في أي رياضة يُستخدم مصطلح Double Fault؟",
+      "answers": ["التنس", "الريشة الطائرة", "الكرة الطائرة", "البيسبول"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 268,
+      "question": "من أكثر منتخب تتويجًا بكأس العالم لكرة القدم داخل الصالات؟",
+      "answers": ["البرازيل", "إسبانيا", "البرتغال", "الأرجنتين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 269,
+      "question": "كم عدد اللاعبين الأساسيين في فريق كرة القدم الأمريكية؟",
+      "answers": ["9", "11", "13", "15"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 270,
+      "question": "من أكثر لاعب تتويجًا ببطولة ويمبلدون للرجال؟",
+      "answers": ["روجر فيدرر", "ديوكوفيتش", "سامبراس", "بيورن بورغ"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 271,
+      "question": "أي دولة استضافت كأس العالم 2014؟",
+      "answers": ["الأرجنتين", "البرازيل", "تشيلي", "المكسيك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 272,
+      "question": "في أي رياضة يُستخدم مصطلح Spare؟",
+      "answers": ["البولينغ", "السنوكر", "التنس", "الهوكي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 273,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 400 م حواجز؟",
+      "answers": ["كارستن", "بنجامين", "كيفن يونغ", "سانتوس"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 274,
+      "question": "كم عدد اللاعبين الأساسيين في فريق البيسبول؟",
+      "answers": ["8", "9", "10", "11"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 275,
+      "question": "من أكثر لاعب تسجيلًا في تاريخ الدوري الإيطالي؟",
+      "answers": ["توتي", "بيولا", "ديل بييرو", "روبرتو"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 276,
+      "question": "أي دولة استضافت كأس العالم 1994؟",
+      "answers": ["الولايات المتحدة", "المكسيك", "فرنسا", "البرازيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 277,
+      "question": "في أي رياضة يُستخدم مصطلح Pinfall؟",
+      "answers": ["المصارعة", "الملاكمة", "الجودو", "الكاراتيه"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 278,
+      "question": "من أكثر منتخب تتويجًا بكأس الأمم الإفريقية؟",
+      "answers": ["الكاميرون", "مصر", "نيجيريا", "الجزائر"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 279,
+      "question": "كم دقيقة زمن المباراة في الهوكي على الجليد؟",
+      "answers": ["45", "60", "70", "90"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 280,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 3000 م موانع؟",
+      "answers": ["جيرما", "لامين", "لاميشا", "سعيد"],
+      "correctAnswer": 3,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 281,
+      "question": "في أي رياضة يُستخدم مصطلح Power Play؟",
+      "answers": ["الهوكي", "التنس", "السباحة", "الجولف"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 282,
+      "question": "من أكثر لاعب مشاركة في تاريخ منتخب ألمانيا؟",
+      "answers": ["ماتيوس", "كلوزه", "مانويل", "مولر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 283,
+      "question": "أي دولة استضافت كأس العالم 1986؟",
+      "answers": ["المكسيك", "إيطاليا", "إسبانيا", "ألمانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 284,
+      "question": "كم عدد اللاعبين في فريق الكيرلنغ؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 285,
+      "question": "من أكثر لاعب تتويجًا ببطولة أمريكا المفتوحة للتنس؟",
+      "answers": ["كونرز", "فيدرر", "ديوكوفيتش", "سامبراس"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 286,
+      "question": "في أي رياضة يُستخدم مصطلح Try؟",
+      "answers": ["الرجبي", "الهوكي", "البيسبول", "كرة اليد"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 287,
+      "question": "من أكثر منتخب تتويجًا ببطولة أوروبا لكرة السلة؟",
+      "answers": ["السوفيت", "إسبانيا", "يوغوسلافيا", "ليتوانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 288,
+      "question": "كم عدد اللاعبين في فريق الرجبي يونيون؟",
+      "answers": ["13", "15", "11", "9"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 289,
+      "question": "من صاحب الرقم القياسي العالمي في سباق 200 م رجال؟",
+      "answers": ["يوسين", "نواه لايلز", "جونسون", "يوهان"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 290,
+      "question": "أي دولة استضافت كأس العالم 1978؟",
+      "answers": ["الأرجنتين", "إسبانيا", "ألمانيا", "البرازيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 291,
+      "question": "في أي رياضة يُستخدم مصطلح Face-off؟",
+      "answers": ["الهوكي", "التنس", "السباحة", "البولينغ"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 292,
+      "question": "من أكثر لاعب تسجيلًا في تاريخ منتخب فرنسا؟",
+      "answers": ["أوليفييه", "هنري", "مبابي", "غريزمان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 293,
+      "question": "كم عدد اللاعبين الأساسيين في فريق كرة القدم داخل الصالات؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 294,
+      "question": "من أكثر لاعب تتويجًا ببطولة رولان غاروس؟",
+      "answers": ["رافاييل", "ديوكوفيتش", "فيدرر", "بورغ"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "sports"
+    },
+    {
+      "id": 295,
+      "question": "أي دولة استضافت كأس العالم 1958؟",
+      "answers": ["السويد", "سويسرا", "فرنسا", "البرازيل"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 296,
+      "question": "في أي رياضة يُستخدم مصطلح Lay-up؟",
+      "answers": ["كرة السلة", "الكرة الطائرة", "التنس", "البيسبول"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 297,
+      "question": "من أكثر منتخب تتويجًا بكأس العالم لكرة اليد؟",
+      "answers": ["فرنسا", "السويد", "الدنمارك", "ألمانيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 298,
+      "question": "كم يبلغ ارتفاع شبكة كرة الطائرة للرجال؟",
+      "answers": ["2.43 م", "2.35 م", "2.50 م", "2.30 م"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "sports"
+    },
+    {
+      "id": 299,
+      "question": "من أول منتخب عربي تأهل إلى نهائي بطولة كأس آسيا؟",
+      "answers": ["السعودية", "الكويت", "العراق", "قطر"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    },
+    {
+      "id": 300,
+      "question": "من أول منتخب يفوز بكأس العالم ثلاث مرات؟",
+      "answers": ["ألمانيا", "البرازيل", "إيطاليا", "الأرجنتين"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "sports"
+    }
+  ]
+}

@@ -44,6 +44,36 @@ class FirestoreService {
     }
   }
 
+  static Future<void> earnBattleWinXP(String roomId) async {
+    final db = FirebaseFirestore.instance;
+    final roomRef = db.collection('rooms').doc(roomId);
+
+    try {
+      await db.runTransaction((transaction) async {
+        final roomSnap = await transaction.get(roomRef);
+        if (!roomSnap.exists) return;
+
+        final data = roomSnap.data()!;
+        int currentExp = data['exp'] ?? 0;
+        int currentLevel = data['level'] ?? 1;
+
+        int newExp = currentExp + 500; // 500 XP for battle win
+        int nextLevelThreshold = currentLevel * 10000;
+
+        if (newExp >= nextLevelThreshold) {
+          transaction.update(roomRef, {
+            'exp': newExp - nextLevelThreshold,
+            'level': currentLevel + 1,
+          });
+        } else {
+          transaction.update(roomRef, {'exp': newExp});
+        }
+      });
+    } catch (e) {
+      debugPrint("Error earning battle win XP: $e");
+    }
+  }
+
   // --- المستخدمون ---
   Future<UserModel?> getUserByRoyalId(String royalId) async {
     final snap = await _db
@@ -94,6 +124,17 @@ class FirestoreService {
       String uid, String field, dynamic value) async {
     if (!_isValidId(uid)) return;
     await _db.collection('users').doc(uid).update({field: value});
+  }
+
+  static List<String> normalizeVisitedRoomIds(Map<String, dynamic> userData) {
+    final visitedRooms = userData['visitedRooms'];
+    if (visitedRooms == null) return [];
+    
+    if (visitedRooms is List) {
+      return visitedRooms.map((e) => e.toString()).toList();
+    }
+    
+    return [];
   }
 
   // --- نظام الإشعارات ---
@@ -814,6 +855,9 @@ class FirestoreService {
     String? videoUrl,
     String? imageStoragePath,
     String? videoStoragePath,
+    String? storyFilter,
+    String? storyText,
+    String? storyBackgroundColor,
   }) async {
     final docRef = await _db.collection('stories').add({
       'userId': userId,
@@ -823,6 +867,9 @@ class FirestoreService {
       'videoUrl': videoUrl,
       'imageStoragePath': imageStoragePath,
       'videoStoragePath': videoStoragePath,
+      'storyFilter': storyFilter,
+      'storyText': storyText,
+      'storyBackgroundColor': storyBackgroundColor,
       'createdAt': FieldValue.serverTimestamp()
     });
 
@@ -922,6 +969,30 @@ class FirestoreService {
       await _db.collection('stories').doc(storyId).delete();
     } catch (e) {
       debugPrint('خطأ في حذف القصة: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> toggleStoryArchive(String storyId, String userId) async {
+    if (!_isValidId(storyId) || !_isValidId(userId)) return;
+    
+    try {
+      final ref = _db.collection('stories').doc(storyId);
+      final doc = await ref.get();
+      
+      if (!doc.exists) return;
+      
+      List archivedBy = List.from(doc.data()?['archivedBy'] ?? []);
+      
+      if (archivedBy.contains(userId)) {
+        archivedBy.remove(userId);
+      } else {
+        archivedBy.add(userId);
+      }
+      
+      await ref.update({'archivedBy': archivedBy});
+    } catch (e) {
+      debugPrint('Error toggling story archive: $e');
       rethrow;
     }
   }

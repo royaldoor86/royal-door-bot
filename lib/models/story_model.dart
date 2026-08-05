@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'privacy_model.dart';
 
 class StoryModel {
   final String id;
@@ -11,6 +12,13 @@ class StoryModel {
   final List<String> viewers;
   final List<String> likes;
   final int replyCount;
+  final String? storyText;
+  final String? postContent;
+  final String? postAuthorName;
+  final List<String> archivedBy;
+  final PrivacyLevel privacy;
+  final String? postReference;
+  final String? storyBackgroundColor;
 
   StoryModel({
     required this.id,
@@ -23,6 +31,13 @@ class StoryModel {
     this.viewers = const [],
     this.likes = const [],
     this.replyCount = 0,
+    this.storyText,
+    this.postContent,
+    this.postAuthorName,
+    this.archivedBy = const [],
+    this.privacy = PrivacyLevel.public,
+    this.postReference,
+    this.storyBackgroundColor,
   });
 
   factory StoryModel.fromMap(Map<String, dynamic> data, String documentId) {
@@ -37,6 +52,13 @@ class StoryModel {
       viewers: List<String>.from(data['viewers'] ?? []),
       likes: List<String>.from(data['likes'] ?? []),
       replyCount: data['replyCount'] ?? data['repliesCount'] ?? 0,
+      storyText: data['storyText'],
+      postContent: data['postContent'],
+      postAuthorName: data['postAuthorName'],
+      archivedBy: List<String>.from(data['archivedBy'] ?? []),
+      privacy: PrivacyLevelExtension.fromString(data['privacy'] ?? 'public'),
+      postReference: data['postReference'],
+      storyBackgroundColor: data['storyBackgroundColor'],
     );
   }
 
@@ -51,6 +73,13 @@ class StoryModel {
       'viewers': viewers,
       'likes': likes,
       'replyCount': replyCount,
+      'storyText': storyText,
+      'postContent': postContent,
+      'postAuthorName': postAuthorName,
+      'archivedBy': archivedBy,
+      'privacy': privacy.value,
+      'postReference': postReference,
+      'storyBackgroundColor': storyBackgroundColor,
     };
   }
 
@@ -65,6 +94,13 @@ class StoryModel {
     List<String>? viewers,
     List<String>? likes,
     int? replyCount,
+    String? storyText,
+    String? postContent,
+    String? postAuthorName,
+    List<String>? archivedBy,
+    PrivacyLevel? privacy,
+    String? postReference,
+    String? storyBackgroundColor,
   }) {
     return StoryModel(
       id: id ?? this.id,
@@ -77,6 +113,13 @@ class StoryModel {
       viewers: viewers ?? List<String>.from(this.viewers),
       likes: likes ?? List<String>.from(this.likes),
       replyCount: replyCount ?? this.replyCount,
+      storyText: storyText ?? this.storyText,
+      postContent: postContent ?? this.postContent,
+      postAuthorName: postAuthorName ?? this.postAuthorName,
+      archivedBy: archivedBy ?? List<String>.from(this.archivedBy),
+      privacy: privacy ?? this.privacy,
+      postReference: postReference ?? this.postReference,
+      storyBackgroundColor: storyBackgroundColor ?? this.storyBackgroundColor,
     );
   }
 }

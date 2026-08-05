@@ -1,0 +1,2029 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "في أي عام تأسست منظمة الأمم المتحدة؟",
+      "answers": ["1943", "1945", "1947", "1949"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 2,
+      "question": "ما هي عاصمة مصر القديمة؟",
+      "answers": ["القاهرة", "الإسكندرية", "منف", "طيبة"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 3,
+      "question": "من هو أول رئيس للولايات المتحدة؟",
+      "answers": ["توماس جيفرسون", "جورج واشنطن", "أبراهام لينكولن", "جون آدمز"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 4,
+      "question": "في أي دولة تقع مدينة بابل التاريخية؟",
+      "answers": ["مصر", "العراق", "سوريا", "إيران"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 5,
+      "question": "ما هي أطول نهر في العالم؟",
+      "answers": ["الأمازون", "النيل", "المسيسيبي", "اليانغتسي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 6,
+      "question": "من هو مؤسس الدولة الأموية؟",
+      "answers": ["معاوية بن أبي سفيان", "عبد الملك بن مروان", "عمر بن عبد العزيز", "هشام بن عبد الملك"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 7,
+      "question": "ما هي عاصمة الإمبراطورية البيزنطية؟",
+      "answers": ["روما", "أثينا", "القسطنطينية", "أنطاكية"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 8,
+      "question": "في أي عام سقطت الدولة العثمانية؟",
+      "answers": ["1918", "1920", "1922", "1924"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 9,
+      "question": "ما هي أكبر صحراء في العالم؟",
+      "answers": ["الصحراء الكبرى", "صحراء غوبي", "صحراء أتاكاما", "صحراء كالاهاري"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 10,
+      "question": "من هو مؤسس الدولة العباسية؟",
+      "answers": ["أبو العباس", "أبو جعفر المنصور", "هارون الرشيد", "المأمون"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 11,
+      "question": "ما أقدم عاصمة مأهولة باستمرار في العالم؟",
+      "answers": ["بغداد", "السعودية", "تركيا", "دمشق"],
+      "correctAnswer": 3,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "historyGeography"
+    },
+    {
+      "id": 12,
+      "question": "في أي سنة سقطت القسطنطينية؟",
+      "answers": ["1943", "1730", "1920", "1453"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 13,
+      "question": "ما أكبر جزيرة في البحر المتوسط؟",
+      "answers": ["جزر القمر", "صقلية", "جزر غينيا", "المالديف"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 14,
+      "question": "من أول إمبراطور روماني؟",
+      "answers": ["أغسطس", "يوليوس", "قيصر", "تراجان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 15,
+      "question": "ما أعمق بحيرة في العالم؟",
+      "answers": ["الامازون", "بايكال", "قزوين", "سوبيريور"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 16,
+      "question": "ما الدولة التي كانت تُعرف قديمًا باسم سيام؟",
+      "answers": ["اسكوتلندا", "باناما", "تايلاند", "ايطاليا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 17,
+      "question": "كم يبلغ عدد ولايات البرازيل؟",
+      "answers": ["22", "32", "17", "26"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 18,
+      "question": "أين تقع هضبة الدكن؟",
+      "answers": ["باكستان", "افغانستان", "الهند", "تركمانستان"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 19,
+      "question": "من مؤسس الدولة الأموية؟",
+      "answers": ["هارون", "الامين", "المأمون", "معاويه"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 20,
+      "question": "ما أطول نهر في أوروبا؟",
+      "answers": ["الدانوب", "الراين", "اللوار", "الفولغا"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 21,
+      "question": "ما عاصمة منغوليا؟",
+      "answers": ["إردينت", "أولانباتور", "مورون", "دارخان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 22,
+      "question": "في أي سنة بدأت الحرب العالمية الأولى؟",
+      "answers": ["1920", "1917", "1914", "1937"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 23,
+      "question": "من آخر ملوك بابل؟",
+      "answers": ["نبوخذ نصر", "حمورابي", "سومو أبوم", "نبونيد"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 24,
+      "question": "كم يبلغ عدد جزر اليابان الرئيسية؟",
+      "answers": ["3", "4", "5", "7"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 25,
+      "question": "ما أطول نهر في آسيا؟",
+      "answers": ["الفرات", "لينا", "الغانج", "اليانغتسي"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 26,
+      "question": "أين يقع مضيق ملقا؟",
+      "answers": ["ماليزيا", "النرويج", "كندا", "استراليا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 27,
+      "question": "ما أعلى جبل في إفريقيا؟",
+      "answers": ["إفرست", "كانغشينجونغا", "كليمنجارو", "جبل كي 2"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 28,
+      "question": "ما عاصمة بوليفيا الدستورية؟",
+      "answers": ["لاباز", "سوكري", "سانتا كروز", "كوتشابامبا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 29,
+      "question": "ما أكبر خليج في العالم؟",
+      "answers": ["البنغال", "عدن", "هدسون", "بافين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 30,
+      "question": "كم عدد دول أمريكا الجنوبية؟",
+      "answers": ["10", "12", "14", "18"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 31,
+      "question": "ما البحر الذي يفصل أوروبا عن إفريقيا؟",
+      "answers": ["الاطلسي", "المتوسط", "الميت", "الاسود"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 32,
+      "question": "من قاد المغول إلى أوروبا؟",
+      "answers": ["هولاكو", "باتو", "الخان", "ساندشي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 33,
+      "question": "ما عاصمة نيبال؟",
+      "answers": ["بوخارا", "كاتماندو", "لاليتبور", "بهاراتبور"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 34,
+      "question": "في أي سنة اكتشف كولومبوس أمريكا؟",
+      "answers": ["1492", "1942", "1294", "1924"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 35,
+      "question": "ما الدولة التي تضم أكبر عدد من البراكين النشطة؟",
+      "answers": ["امريكا", "اسبانيا", "افريقا", "اندونيسيا"],
+      "correctAnswer": 3,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 36,
+      "question": "ما اسم الإمبراطور الفرنسي الذي هُزم في واترلو؟",
+      "answers": ["كلوفيس", "كلوتير", "نابليون", "لويس"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 37,
+      "question": "كم عدد دول البلطيق؟",
+      "answers": ["3", "5", "7", "9"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 38,
+      "question": "ما أعلى شلال في العالم؟",
+      "answers": ["فيكتوريا", "نياجرا", "آنجل", "توغيلا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 39,
+      "question": "من آخر سلاطين الدولة العثمانية؟",
+      "answers": ["عثمان", "وحيدالدين", "اورهان", "ارسلان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 40,
+      "question": "ما عاصمة سورينام؟",
+      "answers": ["باراماريبو", "ليليدورب", "أ Albِينا", "نيو نيكيري"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 41,
+      "question": "ما أطول نهر في أمريكا الشمالية؟",
+      "answers": ["الأمازون", "ميسوري", "المسيسيبي", "موسيلشيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 42,
+      "question": "كم عدد الدول التي يمر بها نهر الدانوب؟",
+      "answers": ["8", "10", "12", "15"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 43,
+      "question": "ما أكبر بحر مغلق في العالم؟",
+      "answers": ["آرال", "الميت", "قزوين", "الاسود"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 44,
+      "question": "ما أقدم جامعة ما زالت تعمل حتى اليوم؟",
+      "answers": ["الزيتونة", "الأزهر", "أكسفورد", "القرويين"],
+      "correctAnswer": 3,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 45,
+      "question": "ما الدولة التي تضم أكبر عدد من الجزر؟",
+      "answers": ["اندونيسيا", "افريقا", "السويد", "امريكا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 46,
+      "question": "أي دولة لا تطل على بحر قزوين؟",
+      "answers": ["أذربيجان", "جورجيا", "إيران", "كازاخستان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 47,
+      "question": "ما أعلى بركان نشط في أوروبا؟",
+      "answers": ["فيزوف", "إتنا", "سترومبولي", "هيكلا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 48,
+      "question": "أي دولة تُلقب بأرض الألف بحيرة؟",
+      "answers": ["السويد", "النرويج", "فنلندا", "كندا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 49,
+      "question": "من آخر سلاطين الدولة العثمانية؟",
+      "answers": ["عبد الحميد الثاني", "محمد السادس", "محمد الخامس", "مراد الخامس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 50,
+      "question": "أين تقع صحراء أتاكاما؟",
+      "answers": ["الأرجنتين", "تشيلي", "بيرو", "بوليفيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 51,
+      "question": "من أول إمبراطور روماني؟",
+      "answers": ["نيرون", "أغسطس", "يوليوس قيصر", "تيبيريوس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 52,
+      "question": "ما أطول سلسلة جبال في العالم؟",
+      "answers": ["الهيمالايا", "الألب", "الأنديز", "الروكي"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 53,
+      "question": "أي حضارة بنت مدينة ماتشو بيتشو؟",
+      "answers": ["الأزتك", "المايا", "الإنكا", "الفينيقيون"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 54,
+      "question": "ما عاصمة جمهورية مولدوفا؟",
+      "answers": ["مينسك", "كيشيناو", "ريغا", "فيلنيوس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 55,
+      "question": "أي مضيق يفصل آسيا عن أمريكا الشمالية؟",
+      "answers": ["جبل طارق", "باب المندب", "بيرينغ", "ملقا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 56,
+      "question": "في أي سنة انتهت حرب المئة عام؟",
+      "answers": ["1453", "1492", "1415", "1448"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 57,
+      "question": "ما أكبر جزيرة في اليابان؟",
+      "answers": ["هوكايدو", "كيوشو", "هونشو", "شيكوكو"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 58,
+      "question": "من قاد الفتح الإسلامي للأندلس؟",
+      "answers": ["موسى بن نصير", "طارق بن زياد", "خالد بن الوليد", "عقبة بن نافع"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 59,
+      "question": "ما عاصمة منغوليا؟",
+      "answers": ["عشق آباد", "أولان باتور", "بيشكيك", "طشقند"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 60,
+      "question": "أي نهر يمر بمدينة بودابست؟",
+      "answers": ["الراين", "الدانوب", "الفولغا", "الدنيبر"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 61,
+      "question": "أي دولة كانت تُعرف باسم الحبشة؟",
+      "answers": ["إريتريا", "إثيوبيا", "الصومال", "السودان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 62,
+      "question": "ما أعلى جبل في اليابان؟",
+      "answers": ["آسو", "فوجي", "تاكاو", "هاكو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 63,
+      "question": "ما عاصمة سلوفينيا؟",
+      "answers": ["زغرب", "ليوبليانا", "سراييفو", "براتيسلافا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 64,
+      "question": "في أي قارة تقع دولة غيانا؟",
+      "answers": ["إفريقيا", "آسيا", "أمريكا الجنوبية", "أوروبا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 65,
+      "question": "ما اسم أقدم حضارة في بلاد الرافدين؟",
+      "answers": ["الآشورية", "البابلية", "السومرية", "الكلدانية"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 66,
+      "question": "ما أطول نهر في الصين؟",
+      "answers": ["النهر الأصفر", "اليانغتسي", "ميكونغ", "آمور"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 67,
+      "question": "ما عاصمة ألبانيا؟",
+      "answers": ["سكوبيه", "تيرانا", "بلغراد", "بودغوريتسا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 68,
+      "question": "أي بحر يقع بين السعودية ومصر؟",
+      "answers": ["بحر العرب", "البحر الأحمر", "بحر قزوين", "البحر الأسود"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 69,
+      "question": "في أي سنة اكتشف فاسكو دا غاما طريق رأس الرجاء الصالح إلى الهند؟",
+      "answers": ["1498", "1492", "1519", "1506"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 70,
+      "question": "ما أكبر دولة في أمريكا الجنوبية مساحةً؟",
+      "answers": ["الأرجنتين", "البرازيل", "بيرو", "كولومبيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 71,
+      "question": "ما عاصمة قرغيزستان؟",
+      "answers": ["دوشنبه", "بشكيك", "عشق آباد", "طشقند"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 72,
+      "question": "ما عاصمة دولة ليسوتو؟",
+      "answers": ["ماسيرو", "مبابان", "غابورون", "ويندهوك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 73,
+      "question": "أي مضيق يفصل جزيرة تسمانيا عن أستراليا؟",
+      "answers": ["باس", "ملقا", "بيرينغ", "توريس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 74,
+      "question": "ما عاصمة مالاوي؟",
+      "answers": ["ليلونغوي", "لوساكا", "هراري", "مابوتو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 75,
+      "question": "في أي سنة وقعت معركة حطين؟",
+      "answers": ["1187", "1099", "1212", "1258"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 76,
+      "question": "أي دولة تُعرف باسم أرض الشمس المشرقة؟",
+      "answers": ["الصين", "اليابان", "كوريا", "تايلاند"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 77,
+      "question": "من آخر خلفاء الدولة العباسية في بغداد؟",
+      "answers": ["المستعصم بالله", "المستنصر بالله", "الناصر لدين الله", "المقتدر بالله"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 78,
+      "question": "ما عاصمة بوركينا فاسو؟",
+      "answers": ["واغادوغو", "باماكو", "نيامي", "لومي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 79,
+      "question": "في أي سنة تأسست الدولة العثمانية؟",
+      "answers": ["1299", "1258", "1352", "1453"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 80,
+      "question": "ما أعلى قمة في أمريكا الشمالية؟",
+      "answers": ["لوغان", "دينالي", "إلبروس", "أكونكاغوا"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 81,
+      "question": "ما عاصمة جيبوتي؟",
+      "answers": ["جيبوتي", "مقديشو", "أسمرة", "أديس أبابا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 82,
+      "question": "من قاد جيش المسلمين في معركة عين جالوت؟",
+      "answers": ["قطز", "بيبرس", "صلاح الدين", "سيف الدين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 83,
+      "question": "ما البحر الذي يفصل أوروبا عن آسيا في منطقة إسطنبول؟",
+      "answers": ["مرمرة", "إيجة", "الأسود", "الأدرياتيكي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 84,
+      "question": "ما عاصمة موزمبيق؟",
+      "answers": ["مابوتو", "هراري", "لواندا", "لوساكا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 85,
+      "question": "أي حضارة شيّدت حدائق بابل المعلقة؟",
+      "answers": ["الآشورية", "البابلية", "السومرية", "الحثية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 86,
+      "question": "ما أكبر جزيرة في البحر الكاريبي؟",
+      "answers": ["جامايكا", "كوبا", "هايتي", "بورتوريكو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 87,
+      "question": "ما عاصمة بنين؟",
+      "answers": ["بورتو نوفو", "كوتونو", "لومي", "أكرا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 88,
+      "question": "من أول ملوك الدولة البابلية القديمة؟",
+      "answers": ["نبوخذ نصر", "حمورابي", "سرجون", "آشور بانيبال"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 89,
+      "question": "ما أعمق نقطة في محيطات العالم؟",
+      "answers": ["خندق بورتوريكو", "خندق ماريانا", "خندق تونغا", "خندق اليابان"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 90,
+      "question": "في أي سنة قامت الثورة الفرنسية؟",
+      "answers": ["1776", "1789", "1815", "1848"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 91,
+      "question": "ما عاصمة توغو؟",
+      "answers": ["لومي", "نيامي", "واغادوغو", "أكرا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 92,
+      "question": "من مؤسس الإمبراطورية المغولية؟",
+      "answers": ["قبلاي خان", "جنكيز خان", "هولاكو", "تيمورلنك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 93,
+      "question": "ما أطول سلسلة جبلية تحت سطح البحر؟",
+      "answers": ["جبال الأنديز", "حيد", "الروكي", "الهيمالايا"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 94,
+      "question": "في أي سنة سقطت الأندلس نهائيًا؟",
+      "answers": ["1453", "1492", "1517", "1480"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 95,
+      "question": "أي إمبراطورية حكمها الإمبراطور قسطنطين الأول؟",
+      "answers": ["البيزنطية", "الرومانية", "الفارسية", "المقدونية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 96,
+      "question": "ما المضيق الذي يصل البحر الأسود ببحر مرمرة؟",
+      "answers": ["الدردنيل", "البوسفور", "هرمز", "جبل طارق"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 97,
+      "question": "ما أعلى جبل في أوروبا؟",
+      "answers": ["مون بلان", "إلبروس", "ماترهورن", "أوليمبوس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 98,
+      "question": "ما عاصمة النيجر؟",
+      "answers": ["باماكو", "نيامي", "واغادوغو", "داكار"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 99,
+      "question": "في أي سنة انتهت الحرب الباردة؟",
+      "answers": ["1989", "1991", "1993", "1987"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 100,
+      "question": "أي دولة تضم صحراء كالاهاري؟",
+      "answers": ["أنغولا", "بوتسوانا", "السودان", "تشاد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 101,
+      "question": "ما عاصمة فيجي؟",
+      "answers": ["هونيارا", "سوفا", "أبيا", "نوكوالوفا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 102,
+      "question": "من بنى مدينة بغداد؟",
+      "answers": ["المنصور", "الرشيد", "المأمون", "السفاح"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 103,
+      "question": "في أي سنة تأسست جامعة القرويين؟",
+      "answers": ["859", "970", "711", "1055"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 104,
+      "question": "ما أطول نهر في روسيا؟",
+      "answers": ["الفولغا", "ينيسي", "لينا", "أوب"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 105,
+      "question": "ما عاصمة غينيا بيساو؟",
+      "answers": ["بيساو", "كوناكري", "داكار", "بانجول"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 106,
+      "question": "من هزم نابليون في معركة واترلو؟",
+      "answers": ["ويلينغتون", "نلسون", "كرومويل", "بلوتشر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 107,
+      "question": "ما عاصمة فانواتو؟",
+      "answers": ["بورت مورسبي", "بورت فيلا", "سوفا", "أبيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 108,
+      "question": "أي دولة كانت تُعرف قديمًا باسم روديسيا؟",
+      "answers": ["زامبيا", "زيمبابوي", "مالاوي", "موزمبيق"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 109,
+      "question": "ما أكبر جزيرة في كندا؟",
+      "answers": ["إليسمير", "بافن", "فيكتوريا", "نيوفاوندلاند"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 110,
+      "question": "ما عاصمة بالاو؟",
+      "answers": ["كورور", "نغيرولمود", "ماجورو", "يارين"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 111,
+      "question": "أي دولة يمر بها خط الاستواء وخط غرينتش معًا؟",
+      "answers": ["غانا", "ساو تومي", "لا توجد دولة", "الغابون"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 112,
+      "question": "في أي سنة انتهت الإمبراطورية البيزنطية؟",
+      "answers": ["1492", "1453", "1517", "1526"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 113,
+      "question": "ما أطول نهر في فرنسا؟",
+      "answers": ["السين", "الرون", "اللوار", "الجارون"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 114,
+      "question": "ما عاصمة كيريباتي؟",
+      "answers": ["تاراوا الجنوبية", "فونافوتي", "يارين", "سوفا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 115,
+      "question": "من مؤسس الإمبراطورية الأخمينية؟",
+      "answers": ["داريوس الأول", "قورش الأكبر", "قمبيز الثاني", "خشايارشا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 116,
+      "question": "أي بحر يفصل السويد عن فنلندا؟",
+      "answers": ["بحر الشمال", "خليج بوثنيا", "بحر البلطيق", "بحر النرويج"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 117,
+      "question": "ما أعلى قمة في القارة القطبية الجنوبية؟",
+      "answers": ["فينسون", "كوسيوسكو", "إلبروس", "كينيا"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 118,
+      "question": "ما عاصمة توفالو؟",
+      "answers": ["فونافوتي", "تاراوا", "بورت فيلا", "يارين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 119,
+      "question": "أي دولة تُلقب بسقف العالم؟",
+      "answers": ["نيبال", "التبت", "بوتان", "منغوليا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 120,
+      "question": "ما عاصمة الرأس الأخضر؟",
+      "answers": ["مينديلو", "برايا", "بيساو", "بانجول"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 121,
+      "question": "في أي سنة تأسست مدينة بغداد؟",
+      "answers": ["750", "762", "732", "786"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 122,
+      "question": "ما أعمق نقطة في البحر المتوسط؟",
+      "answers": ["كاليبسو", "بويرتو", "ليفانت", "سردينيا"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 123,
+      "question": "ما عاصمة ناورو؟",
+      "answers": ["يارين", "نغيرولمود", "فونافوتي", "تاراوا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 124,
+      "question": "ما عاصمة ميكرونيزيا؟",
+      "answers": ["باليكير", "كورور", "ماجورو", "تاراوا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 125,
+      "question": "أي بحر يفصل السعودية عن السودان؟",
+      "answers": ["بحر العرب", "البحر الأحمر", "بحر قزوين", "البحر الأسود"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 126,
+      "question": "في أي سنة انتهت الدولة الفاطمية؟",
+      "answers": ["1099", "1171", "1258", "1260"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 127,
+      "question": "ما أعلى جبل في قارة أستراليا؟",
+      "answers": ["كوسيوسكو", "فينسون", "كينيا", "إلبروس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 128,
+      "question": "ما عاصمة غينيا الاستوائية؟",
+      "answers": ["مالابو", "باتا", "ليبرفيل", "ياوندي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 129,
+      "question": "ما أطول نهر في ألمانيا؟",
+      "answers": ["الدانوب", "الراين", "الإلبه", "الأودر"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 130,
+      "question": "ما عاصمة سان مارينو؟",
+      "answers": ["سان مارينو", "فاليتا", "أندورا لا فيلا", "ليوبليانا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 131,
+      "question": "أي إمبراطورية حكمها شارلمان؟",
+      "answers": ["البيزنطية", "الكارولنجية", "الرومانية", "العثمانية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 132,
+      "question": "ما أكبر جزيرة في الفلبين؟",
+      "answers": ["لوزون", "مينداناو", "سيبو", "بالاوان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 133,
+      "question": "ما عاصمة سيراليون؟",
+      "answers": ["مونروفيا", "فريتاون", "بانجول", "كوناكري"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 134,
+      "question": "أي دولة يطلق عليها بلاد الأرز؟",
+      "answers": ["سوريا", "لبنان", "الأردن", "قبرص"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 135,
+      "question": "في أي سنة تأسست الدولة العباسية؟",
+      "answers": ["661", "750", "711", "762"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 136,
+      "question": "ما أكبر بحيرة في أوروبا؟",
+      "answers": ["لادوغا", "أونيغا", "جنيف", "بالاتون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 137,
+      "question": "ما المضيق الذي يربط البحر المتوسط بالمحيط الأطلسي؟",
+      "answers": ["باب المندب", "جبل طارق", "البوسفور", "الدردنيل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 138,
+      "question": "ما عاصمة جزر سليمان؟",
+      "answers": ["هونيارا", "بورت فيلا", "سوفا", "أبيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 139,
+      "question": "أي دولة كانت تُعرف باسم فارس؟",
+      "answers": ["العراق", "إيران", "أفغانستان", "أرمينيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 140,
+      "question": "ما أعلى قمة في جبال الأطلس؟",
+      "answers": ["توبقال", "شمس", "أرارات", "كينيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 141,
+      "question": "ما عاصمة دومينيكا؟",
+      "answers": ["كاستريس", "روزو", "سانت جونز", "كينغستاون"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 142,
+      "question": "أي نهر يعبر مدينة براغ؟",
+      "answers": ["الإلبه", "الفلتافا", "الدانوب", "الأودر"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 143,
+      "question": "في أي سنة وقعت معركة عين جالوت؟",
+      "answers": ["1248", "1258", "1260", "1265"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 144,
+      "question": "ما أكبر جزيرة في البحر الأدرياتيكي؟",
+      "answers": ["كرك", "كورسيكا", "كريت", "رودس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 145,
+      "question": "من مؤسس مدينة الإسكندرية؟",
+      "answers": ["بطليموس الأول", "الإسكندر الأكبر", "فيليب الثاني", "أغسطس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 146,
+      "question": "ما أعلى قمة في جبال القوقاز؟",
+      "answers": ["أرارات", "إلبروس", "كازبيك", "مون بلان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 147,
+      "question": "أي بحر تقع فيه جزر الكناري؟",
+      "answers": ["البحر المتوسط", "المحيط الأطلسي", "البحر الأحمر", "بحر العرب"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 148,
+      "question": "في أي سنة أُسست جامعة الأزهر؟",
+      "answers": ["970", "859", "1095", "762"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 149,
+      "question": "ما عاصمة تيمور الشرقية؟",
+      "answers": ["ديلي", "جاكرتا", "داروين", "كوبانغ"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 150,
+      "question": "أي دولة تُعرف باسم أرض النار والجليد؟",
+      "answers": ["النرويج", "آيسلندا", "فنلندا", "السويد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 151,
+      "question": "من آخر ملوك الدولة الأيوبية؟",
+      "answers": ["الصالح أيوب", "توران شاه", "الكامل", "العادل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 152,
+      "question": "ما أكبر شبه جزيرة في أوروبا؟",
+      "answers": ["البلقان", "إيبيريا", "إسكندنافيا", "إيطاليا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 153,
+      "question": "ما عاصمة غرينادا؟",
+      "answers": ["سانت جورج", "كينغستاون", "روزو", "كاستريس"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 154,
+      "question": "أي نهر يمر بمدينة باريس؟",
+      "answers": ["الراين", "السين", "اللوار", "الرون"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 155,
+      "question": "في أي سنة توحدت ألمانيا الحديثة؟",
+      "answers": ["1871", "1815", "1918", "1945"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 156,
+      "question": "ما أكبر جزيرة في البحر الأسود؟",
+      "answers": ["زميني", "قبرص", "كريت", "سردينيا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 157,
+      "question": "ما عاصمة ليختنشتاين؟",
+      "answers": ["فادوز", "برن", "لوكسمبورغ", "إنسبروك"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 158,
+      "question": "أي حضارة بنت مدينة البتراء؟",
+      "answers": ["الأنباط", "الرومان", "الآشوريون", "الفينيقيون"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 159,
+      "question": "ما عاصمة بليز؟",
+      "answers": ["بلموبان", "بليز سيتي", "ماناغوا", "تيغوسيغالبا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 160,
+      "question": "أي مضيق يفصل أوروبا عن إفريقيا؟",
+      "answers": ["باب المندب", "جبل طارق", "هرمز", "البوسفور"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 161,
+      "question": "في أي سنة وقعت معركة اليرموك؟",
+      "answers": ["632", "636", "640", "651"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 162,
+      "question": "ما أكبر جزيرة في بحر اليابان؟",
+      "answers": ["هوكايدو", "سخالين", "هونشو", "أوكيناوا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 163,
+      "question": "ما عاصمة سلوفاكيا؟",
+      "answers": ["براغ", "بودابست", "براتيسلافا", "ليوبليانا"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 164,
+      "question": "من أول ملوك الدولة_Sلوقية؟",
+      "answers": ["أنطيوخس الأول", "سلوقس الأول", "بطليموس الأول", "فيليب الثاني"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 165,
+      "question": "ما أطول نهر في شبه الجزيرة الإيطالية؟",
+      "answers": ["التيبر", "البو", "الأرنو", "أديجي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 166,
+      "question": "ما عاصمة جزر المالديف؟",
+      "answers": ["ماليه", "كولومبو", "فيكتوريا", "ديلي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 167,
+      "question": "أي دولة تقع بين فرنسا وإسبانيا؟",
+      "answers": ["موناكو", "أندورا", "لوكسمبورغ", "ليختنشتاين"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 168,
+      "question": "في أي سنة بدأت الحرب العالمية الثانية؟",
+      "answers": ["1918", "1939", "1941", "1945"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 169,
+      "question": "ما عاصمة كوسوفو؟",
+      "answers": ["سكوبيه", "بريشتينا", "بلغراد", "سراييفو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 170,
+      "question": "ما أعلى قمة في جبال البرانس؟",
+      "answers": ["أنيتو", "مون بلان", "توبقال", "ماترهورن"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 171,
+      "question": "من مؤسس الإمبراطورية المقدونية؟",
+      "answers": ["الإسكندر الأكبر", "فيليب الثاني", "بطليموس", "بيروس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 172,
+      "question": "ما أكبر جزيرة في بحر البلطيق؟",
+      "answers": ["أولاند", "غوتلاند", "بورنهولم", "روغن"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 173,
+      "question": "ما عاصمة زامبيا؟",
+      "answers": ["هراري", "لوساكا", "ليلونغوي", "غابورون"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 174,
+      "question": "أي نهر يمر بمدينة روما؟",
+      "answers": ["البو", "التيبر", "السين", "الدانوب"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 175,
+      "question": "في أي سنة سقطت غرناطة؟",
+      "answers": ["1453", "1492", "1517", "1487"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 176,
+      "question": "ما أكبر بحيرة في أمريكا الجنوبية؟",
+      "answers": ["تيتيكاكا", "ماراكايبو", "بووبو", "باتوس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 177,
+      "question": "ما عاصمة لوكسمبورغ؟",
+      "answers": ["بوروكسل", "لوكسمبورغ", "لييج", "ستراسبورغ"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 178,
+      "question": "أي حضارة استخدمت الكتابة المسمارية أولًا؟",
+      "answers": ["البابلية", "السومرية", "الآشورية", "الحثية"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 179,
+      "question": "أي نهر يمر بمدينة بغداد؟",
+      "answers": ["الفرات", "دجلة", "النيل", "الأردن"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 180,
+      "question": "في أي سنة انتهت الحرب العالمية الأولى؟",
+      "answers": ["1916", "1918", "1919", "1920"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 181,
+      "question": "ما أكبر جزيرة في اليونان؟",
+      "answers": ["رودس", "كريت", "كورفو", "إيفيا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 182,
+      "question": "ما عاصمة النيبال؟",
+      "answers": ["ثيمفو", "كاتماندو", "دلهي", "دكا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 183,
+      "question": "ما أعلى جبل في إيران؟",
+      "answers": ["زردكوه", "دماوند", "سبلان", "سهند"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 184,
+      "question": "ما عاصمة الجبل الأسود؟",
+      "answers": ["بودغوريتسا", "بلغراد", "سراييفو", "زغرب"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 185,
+      "question": "أي دولة تُعرف باسم بلاد التوليب؟",
+      "answers": ["بلجيكا", "هولندا", "الدنمارك", "سويسرا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 186,
+      "question": "في أي سنة اكتشف كريستوفر كولومبوس أمريكا؟",
+      "answers": ["1453", "1492", "1500", "1519"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 187,
+      "question": "ما عاصمة لاتفيا؟",
+      "answers": ["تالين", "فيلنيوس", "ريغا", "هلسنكي"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 188,
+      "question": "ما أكبر جزيرة في بحر إيجة؟",
+      "answers": ["رودس", "كريت", "ليسبوس", "خيوس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 189,
+      "question": "أي نهر يمر بمدينة القاهرة؟",
+      "answers": ["دجلة", "النيل", "السنغال", "الكونغو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 190,
+      "question": "في أي سنة فُتحت مكة؟",
+      "answers": ["630", "622", "624", "632"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 191,
+      "question": "ما أعلى جبل في تركيا؟",
+      "answers": ["أولوداغ", "أرارات", "إرجييس", "حسن"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 192,
+      "question": "ما عاصمة مالطا؟",
+      "answers": ["فاليتا", "نيقوسيا", "نابولي", "باليرمو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 193,
+      "question": "ما عاصمة أرمينيا؟",
+      "answers": ["تبليسي", "يريفان", "باكو", "طهران"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 194,
+      "question": "أي نهر يمر بمدينة الخرطوم؟",
+      "answers": ["النيل", "النيجر", "الكونغو", "الزمبيزي"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 195,
+      "question": "في أي سنة سقطت الإمبراطورية الرومانية الغربية؟",
+      "answers": ["395", "410", "476", "527"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 196,
+      "question": "ما أكبر جزيرة في البحر الأحمر؟",
+      "answers": ["دهلك", "فرسان", "سقطرى", "تيران"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 197,
+      "question": "ما عاصمة أوزبكستان؟",
+      "answers": ["عشق آباد", "طشقند", "دوشنبه", "بيشكيك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 198,
+      "question": "أي مضيق يصل البحر الأسود ببحر مرمرة؟",
+      "answers": ["الدردنيل", "البوسفور", "هرمز", "باب المندب"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 199,
+      "question": "في أي سنة تأسست الدولة السعودية الأولى؟",
+      "answers": ["1727", "1744", "1818", "1902"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 200,
+      "question": "ما عاصمة ليتوانيا؟",
+      "answers": ["ريغا", "تالين", "فيلنيوس", "كاوناس"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 201,
+      "question": "ما أطول نهر في إسبانيا؟",
+      "answers": ["الوادي الكبير", "إيبرو", "تاجة", "دويرو"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 202,
+      "question": "من آخر ملوك الدولة النبطية؟",
+      "answers": ["الحارث", "مالك", "رب إيل", "عبادة"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 203,
+      "question": "ما عاصمة أيسلندا؟",
+      "answers": ["أوسلو", "ريكيافيك", "هلسنكي", "كوبنهاغن"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 204,
+      "question": "في أي سنة بدأت الثورة الصناعية في بريطانيا تقريبًا؟",
+      "answers": ["1760", "1707", "1815", "1850"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 1000,
+      "category": "historyGeography"
+    },
+    {
+      "id": 205,
+      "question": "أي دولة يمر بها نهر الميكونغ ولا يملك منفذًا بحريًا؟",
+      "answers": ["تايلاند", "لاوس", "فيتنام", "كمبوديا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 206,
+      "question": "ما عاصمة سلوفينيا؟",
+      "answers": ["زغرب", "ليوبليانا", "براتيسلافا", "سراييفو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 207,
+      "question": "من أول إمبراطور للإمبراطورية البيزنطية؟",
+      "answers": ["جستنيان", "قسطنطين", "ثيودوسيوس", "هرقل"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 208,
+      "question": "أي نهر يمر بمدينة لندن؟",
+      "answers": ["السين", "التايمز", "الراين", "الدانوب"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 209,
+      "question": "ما أكبر جزيرة في بحر العرب؟",
+      "answers": ["سقطرى", "قشم", "مصيرة", "خرج"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 210,
+      "question": "أي دولة تقع فيها بحيرة تيتيكاكا؟",
+      "answers": ["تشيلي", "بيرو", "البرازيل", "الإكوادور"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 211,
+      "question": "في أي سنة انتهت الدولة الأندلسية؟",
+      "answers": ["1453", "1492", "1500", "1517"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 212,
+      "question": "ما عاصمة كرواتيا؟",
+      "answers": ["بلغراد", "زغرب", "سراييفو", "ليوبليانا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 213,
+      "question": "ما أكبر جزيرة في الفلبين؟",
+      "answers": ["مينداناو", "لوزون", "بالاوان", "سيبو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 214,
+      "question": "ما عاصمة جورجيا؟",
+      "answers": ["يريفان", "تبليسي", "باكو", "كييف"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 215,
+      "question": "في أي سنة فُتحت القدس على يد صلاح الدين؟",
+      "answers": ["1187", "1099", "1258", "1260"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 216,
+      "question": "ما أعلى جبل في اليابان؟",
+      "answers": ["فوجي", "آسو", "هاكو", "تاكاو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 217,
+      "question": "أي نهر يمر بمدينة روما؟",
+      "answers": ["البو", "التيبر", "الأرنو", "الأديجي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 218,
+      "question": "ما عاصمة البوسنة والهرسك؟",
+      "answers": ["بلغراد", "سراييفو", "زغرب", "سكوبيه"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 219,
+      "question": "أي نهر يمر بمدينة برلين؟",
+      "answers": ["الأودر", "شبريه", "الراين", "الإلبه"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 220,
+      "question": "من مؤسس الإمبراطورية الأخمينية؟",
+      "answers": ["داريوس الأول", "قورش الأكبر", "قمبيز الثاني", "خشاي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 221,
+      "question": "ما عاصمة الكاميرون؟",
+      "answers": ["ياوندي", "دوالا", "ليبرفيل", "مالابو"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 222,
+      "question": "ما أكبر جزيرة في بحر الكاريبي؟",
+      "answers": ["جامايكا", "كوبا", "هايتي", "بورتوريكو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 223,
+      "question": "ما عاصمة باراغواي؟",
+      "answers": ["لاباز", "أسونسيون", "مونتيفيديو", "سانتياغو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 224,
+      "question": "أي حضارة شيّدت مدينة نينوى؟",
+      "answers": ["البابلية", "الآشورية", "السومرية", "الحثية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "historyGeography"
+    },
+    {
+      "id": 225,
+      "question": "في أي دولة تقع مدينة بترا الأثرية؟",
+      "answers": ["مصر", "الأردن", "سوريا", "السعودية"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "historyGeography"
+    }
+  ]
+}

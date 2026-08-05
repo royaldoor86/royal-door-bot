@@ -1,0 +1,1039 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "كم عدد أركان الإسلام؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "religious"
+    },
+    {
+      "id": 2,
+      "question": "ما هو أول سورة في القرآن الكريم؟",
+      "answers": ["البقرة", "الفاتحة", "آل عمران", "النساء"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 200,
+      "category": "religious"
+    },
+    {
+      "id": 3,
+      "question": "كم عدد سور القرآن الكريم؟",
+      "answers": ["110", "112", "114", "116"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "religious"
+    },
+    {
+      "id": 4,
+      "question": "ما هي أطول سورة في القرآن الكريم؟",
+      "answers": ["البقرة", "آل عمران", "النساء", "المائدة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 5,
+      "question": "من هو النبي الذي أرسل إلى قوم عاد؟",
+      "answers": ["موسى", "عيسى", "هود", "صالح"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 6,
+      "question": "ما هي السورة التي تعدل ثلث القرآن؟",
+      "answers": ["الإخلاص", "الفلق", "الناس", "الكافرون"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 7,
+      "question": "كم عدد الصلوات المفروضة في اليوم؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "religious"
+    },
+    {
+      "id": 8,
+      "question": "ما هي السورة التي تسمى قلب القرآن؟",
+      "answers": ["الفاتحة", "يس", "الكهف", "الرحمن"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 9,
+      "question": "من هو أول نبي في الإسلام؟",
+      "answers": ["محمد", "إبراهيم", "آدم", "نوح"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 10,
+      "question": "ما هي أقصر سورة في القرآن الكريم؟",
+      "answers": ["الكوثر", "الناس", "الفلق", "الإخلاص"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 11,
+      "question": "كم عدد أجزاء القرآن الكريم؟",
+      "answers": ["28", "30", "32", "34"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 12,
+      "question": "ما هو اسم والد النبي محمد؟",
+      "answers": ["عبد الله", "عبد المطلب", "أبو طالب", "حمزة"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 13,
+      "question": "في أي سنة هاجر النبي محمد إلى المدينة؟",
+      "answers": ["610م", "622م", "630م", "632م"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 14,
+      "question": "ما هي السورة التي تسمى أم القرآن السبع المثاني؟",
+      "answers": ["البقرة", "الفاتحة", "آل عمران", "النساء"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 15,
+      "question": "كم عدد الصحابة الذين بايعوا النبي في بيعة العقبة الأولى؟",
+      "answers": ["12", "70", "313", "1500"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "religious"
+    },
+    {
+      "id": 16,
+      "question": "من هو النبي الذي ابتلعه الحوت؟",
+      "answers": ["موسى", "عيسى", "يونس", "إلياس"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 17,
+      "question": "ما هي السورة التي تعدل ربع القرآن؟",
+      "answers": ["الكهف", "الإسراء", "الزمر", "الملك"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "religious"
+    },
+    {
+      "id": 18,
+      "question": "من هو خاتم الأنبياء والمرسلين؟",
+      "answers": ["عيسى", "موسى", "محمد", "إبراهيم"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "religious"
+    },
+    {
+      "id": 19,
+      "question": "كم عدد أسماء الله الحسنى؟",
+      "answers": ["90", "99", "100", "101"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 20,
+      "question": "ما هي السورة التي لا تحتوي على بسم الله الرحمن الرحيم؟",
+      "answers": ["التوبة", "الفاتحة", "الإخلاص", "الناس"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 21,
+      "question": "من هو النبي الذي كلمه الله مباشرة؟",
+      "answers": ["محمد", "موسى", "إبراهيم", "عيسى"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 22,
+      "question": "ما هي السورة التي تعدل خمس القرآن؟",
+      "answers": ["البقرة", "الكهف", "الإسراء", "الزمر"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "religious"
+    },
+    {
+      "id": 23,
+      "question": "كم عدد السور المكية في القرآن الكريم؟",
+      "answers": ["86", "87", "88", "89"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "religious"
+    },
+    {
+      "id": 24,
+      "question": "من هو النبي الذي بنى الكعبة؟",
+      "answers": ["محمد", "إبراهيم", "إسماعيل", "موسى"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 25,
+      "question": "ما هي السورة التي تسمى سورة النساء الصغرى؟",
+      "answers": ["الطلاق", "المجادلة", "الممتحنة", "التحريم"],
+      "correctAnswer": 2,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "religious"
+    },
+    {
+      "id": 26,
+      "question": "كم عدد الغزوات التي قادها النبي محمد؟",
+      "answers": ["25", "27", "29", "31"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "religious"
+    },
+    {
+      "id": 27,
+      "question": "من هو النبي الذي أرسل إلى قوم ثمود؟",
+      "answers": ["هود", "صالح", "شعيب", "لوط"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 28,
+      "question": "ما هي السورة التي تعدل عشر القرآن؟",
+      "answers": ["البقرة", "الكهف", "الإسراء", "الزمر"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "religious"
+    },
+    {
+      "id": 29,
+      "question": "من هو النبي الذي أرسل إلى قوم لوط؟",
+      "answers": ["إبراهيم", "لوط", "شعيب", "صالح"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 30,
+      "question": "كم عدد السور المدنية في القرآن الكريم؟",
+      "answers": ["26", "27", "28", "29"],
+      "correctAnswer": 2,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "religious"
+    },
+    {
+      "id": 31,
+      "question": "في أي غزوة فُرض صيام رمضان؟",
+      "answers": ["بدر", "أحد", "الخندق", "خيبر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 32,
+      "question": "ما اسم أم المؤمنين الأولى زوجة النبي ﷺ؟",
+      "answers": ["عائشة", "خديجة", "حفصة", "سودة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "religious"
+    },
+    {
+      "id": 33,
+      "question": "في أي شهر كانت غزوة بدر؟",
+      "answers": ["شعبان", "رمضان", "شوال", "ذو القعدة"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 34,
+      "question": "ما اسم ناقة النبي صالح عليه السلام؟",
+      "answers": ["القصواء", "ليس لها اسم", "العضباء", "الجدعاء"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 35,
+      "question": "في أي مدينة وُلد النبي محمد ﷺ؟",
+      "answers": ["المدينة", "مكة", "الطائف", "القدس"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "religious"
+    },
+    {
+      "id": 36,
+      "question": "ما أول غزوة قادها النبي ﷺ بنفسه؟",
+      "answers": ["بدر", "الأبواء (ودان)", "أحد", "خيبر"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 37,
+      "question": "من هو أول شهيد في الإسلام؟",
+      "answers": ["سمية", "ياسر", "حمزة", "مصعب"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 38,
+      "question": "في أي سورة وردت آية الكرسي؟",
+      "answers": ["آل عمران", "البقرة", "النساء", "المائدة"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 39,
+      "question": "من هو الصحابي الذي اهتز لموته عرش الرحمن؟",
+      "answers": ["سعد", "حمزة", "جعفر", "الزبير"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 40,
+      "question": "كم مرة ذُكر اسم النبي محمد ﷺ في القرآن الكريم؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 41,
+      "question": "من هو أول نبي أرسله الله إلى البشر؟",
+      "answers": ["آدم", "نوح", "إدريس", "هود"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 42,
+      "question": "ما اسم سيف النبي ﷺ المشهور؟",
+      "answers": ["ذو الفقار", "المأثور", "الصمصامة", "الحسام"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 43,
+      "question": "في أي غزوة استشهد حمزة بن عبد المطلب؟",
+      "answers": ["بدر", "أحد", "الخندق", "حنين"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 44,
+      "question": "في أي غزوة فُتحت مكة؟",
+      "answers": ["خيبر", "فتح مكة", "تبوك", "حنين"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 45,
+      "question": "ما السورة التي ت'dعرف باسم 'عروس القرآن'؟",
+      "answers": ["الرحمن", "الملك", "الكهف", "مريم"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 46,
+      "question": "كم عدد الأنبياء الذين ذُكرت أسماؤهم في القرآن الكريم؟",
+      "answers": ["20", "25", "30", "40"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 47,
+      "question": "ما اسم السورة التي لا تحتوي على حرف الميم؟",
+      "answers": ["الكوثر", "العصر", "الإخلاص", "الفلق"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 48,
+      "question": "كم استمرت بعثة النبي ﷺ؟",
+      "answers": ["20 سنة", "23 سنة", "25 سنة", "30 سنة"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 49,
+      "question": "كم عدد زوجات النبي ﷺ اللاتي توفي عنهن؟",
+      "answers": ["7", "9", "11", "13"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 50,
+      "question": "ما أول سورة نزلت كاملة؟",
+      "answers": ["الفاتحة", "المدثر", "العلق", "اقرأ"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 51,
+      "question": "كم مرة ورد اسم موسى عليه السلام في القرآن؟",
+      "answers": ["126", "136", "146", "156"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "religious"
+    },
+    {
+      "id": 52,
+      "question": "ما اسم والد إبراهيم عليه السلام كما ورد في القرآن؟",
+      "answers": ["تارح", "آزر", "ناحور", "سام"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 53,
+      "question": "من آخر زوجات النبي ﷺ؟",
+      "answers": ["صفية", "ميمونة", "حفصة", "أم سلمة"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 54,
+      "question": "في أي غزوة انكسر رباعية النبي ﷺ؟",
+      "answers": ["بدر", "أحد", "حنين", "تبوك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 55,
+      "question": "من هو النبي الذي أُعطي الزبور؟",
+      "answers": ["سليمان", "داود", "موسى", "عيسى"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 56,
+      "question": "ما أول معركة فاصلة بين المسلمين وقريش؟",
+      "answers": ["أحد", "بدر", "الخندق", "خيبر"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 57,
+      "question": "كم عدد التكبيرات في الركعة الأولى من صلاة العيد؟",
+      "answers": ["خمس", "ست", "سبع", "ثمان"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 58,
+      "question": "ما السورة التي بدأت وانتهت بالتسبيح؟",
+      "answers": ["الحديد", "الحشر", "الصف", "الأعلى"],
+      "correctAnswer": 3,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 59,
+      "question": "كم عدد آيات سورة الانشقاق؟",
+      "answers": ["23", "24", "25", "26"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 60,
+      "question": "كم عدد آيات سورة المطففين؟",
+      "answers": ["34", "35", "36", "37"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 61,
+      "question": "كم عدد آيات سورة الانفطار؟",
+      "answers": ["17", "18", "19", "20"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 62,
+      "question": "من هو أول من أسلم من النساء؟",
+      "answers": ["عائشة", "خديجة", "فاطمة الزهراء", "أم سلمة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "religious"
+    },
+    {
+      "id": 63,
+      "question": "كم عدد آيات سورة التكوير؟",
+      "answers": ["27", "28", "29", "30"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 64,
+      "question": "كم عدد آيات سورة عبس؟",
+      "answers": ["40", "41", "42", "43"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 65,
+      "question": "في أي سنة هجرية فُتحت مكة؟",
+      "answers": ["6 هـ", "7 هـ", "8 هـ", "9 هـ"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 66,
+      "question": "من هو أول الأئمة الاثني عشر؟",
+      "answers": ["الحسن", "علي", "الحسين", "السجاد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 67,
+      "question": "ما لقب الإمام علي بن الحسين عليه السلام؟",
+      "answers": ["الباقر", "زين العابدين", "الكاظم", "الرضا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 68,
+      "question": "من هو والد الإمام علي الرضا عليه السلام؟",
+      "answers": ["الجواد", "الكاظم", "الصادق", "الهادي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 69,
+      "question": "ما لقب الإمام محمد بن علي التاسع؟",
+      "answers": ["الباقر", "الجواد", "الهادي", "العسكري"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 70,
+      "question": "من هو والد الإمام علي الهادي عليه السلام؟",
+      "answers": ["الرضا", "الجواد", "العسكري", "الكاظم"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 71,
+      "question": "ما لقب الإمام الحسن بن علي الحادي عشر؟",
+      "answers": ["العسكري", "المجتبى", "السجاد", "الرضا"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 72,
+      "question": "ما كنية الإمام المهدي عليه السلام؟",
+      "answers": ["أبو الحسن", "أبو جعفر", "أبو القاسم", "أبو عبد الله"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 73,
+      "question": "من هي والدة الإمام المهدي عليه السلام بحسب المشهور في المصادر الإمامية؟",
+      "answers": ["نرجس", "حميدة", "فاطمة", "أم البنين"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 74,
+      "question": "في أي مدينة وُلد الإمام علي بن أبي طالب عليه السلام؟",
+      "answers": ["المدينة", "مكة", "الكوفة", "الطائف"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 75,
+      "question": "في أي شهر استشهد الإمام الحسين عليه السلام؟",
+      "answers": ["صفر", "محرم", "رمضان", "رجب"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "religious"
+    },
+    {
+      "id": 76,
+      "question": "ما لقب الإمام الحسن بن علي عليه السلام؟",
+      "answers": ["المرتضى", "المجتبى", "الرضا", "الكاظم"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 77,
+      "question": "من هو الإمام الملقب بـ باقر العلوم؟",
+      "answers": ["الصادق", "محمد الباقر", "الرضا", "السجاد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 78,
+      "question": "أين استشهد الإمام علي بن أبي طالب عليه السلام؟",
+      "answers": ["مكة", "المدينة", "الكوفة", "كربلاء"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 79,
+      "question": "في أي مسجد ضُرب الإمام علي عليه السلام؟",
+      "answers": ["النجف", "الكوفة", "النبوي", "السهلة"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 80,
+      "question": "من قاتل الإمام الحسين عليه السلام في واقعة كربلاء؟",
+      "answers": ["معاوية", "يزيد", "الروم", "الفرس"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 81,
+      "question": "كم عدد أبناء السيدة فاطمة الزهراء عليها السلام؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 82,
+      "question": "ما اسم ابنة الإمام علي وفاطمة الكبرى؟",
+      "answers": ["رقية", "زينب", "سكينة", "فاطمة"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 83,
+      "question": "في أي مدينة استشهد الإمام الرضا عليه السلام؟",
+      "answers": ["قم", "ايران", "طوس", "سامراء"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 84,
+      "question": "ما اسم والدة الإمام علي بن أبي طالب عليه السلام؟",
+      "answers": ["فاطمة", "خديجة", "آمنة", "أم البنين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 85,
+      "question": "في أي ليلة ضُرب الإمام علي عليه السلام؟",
+      "answers": ["19 رمضان", "21 رمضان", "27 رمضان", "17 رمضان"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 86,
+      "question": "في أي يوم استشهد الإمام علي عليه السلام؟",
+      "answers": ["19 رمضان", "21 رمضان", "23 رمضان", "25 رمضان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 87,
+      "question": "كم كان عمر الإمام علي عليه السلام عند استشهاده؟",
+      "answers": ["61 سنة", "62 سنة", "63 سنة", "64 سنة"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 88,
+      "question": "من هو قاتل الإمام الحسين عليه السلام بحسب المشهور؟",
+      "answers": ["عمر", "شمر", "سنان", "حرملة"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 89,
+      "question": "في أي يوم استشهد الإمام الحسين عليه السلام؟",
+      "answers": ["9 محرم", "10 محرم", "11 محرم", "12 محرم"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "religious"
+    },
+    {
+      "id": 90,
+      "question": "ما اسم اليوم الذي استشهد فيه الإمام الحسين عليه السلام؟",
+      "answers": ["يوم الغدير", "يوم عاشوراء", "يوم عرفة", "يوم المباهلة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "religious"
+    },
+    {
+      "id": 91,
+      "question": "كم عدد أبناء الإمام علي وفاطمة عليهما السلام المشهورين؟",
+      "answers": ["3", "4", "5", "6"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 92,
+      "question": "من هي عقيلة بني هاشم؟",
+      "answers": ["أم كلثوم", "زينب", "سكينة", "رقية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 93,
+      "question": "ما اسم والدة الإمام علي بن الحسين عليه السلام المشهور في المصادر الإمامية؟",
+      "answers": ["شاه زنان", "نرجس", "حميدة", "تكتم"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 94,
+      "question": "ما اسم السيف المشهور للإمام علي عليه السلام؟",
+      "answers": ["الصمصام", "ذو الفقار", "البتار", "المهند"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 95,
+      "question": "من هو حامل لواء الإمام الحسين عليه السلام في كربلاء؟",
+      "answers": ["علي الأكبر", "العباس", "القاسم", "حبيب"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 96,
+      "question": "في أي شهر وُلد الإمام المهدي عليه السلام؟",
+      "answers": ["رجب", "شعبان", "رمضان", "شوال"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 97,
+      "question": "في أي يوم من شهر شعبان وُلد الإمام المهدي عليه السلام وفق المشهور؟",
+      "answers": ["10 شعبان", "12 شعبان", "15 شعبان", "17 شعبان"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 98,
+      "question": "من هو الإمام الذي عاصر الخليفة المأمون العباسي؟",
+      "answers": ["الكاظم", "الرضا", "الجواد", "الهادي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 99,
+      "question": "ما اسم والدة الإمام الرضا عليه السلام؟",
+      "answers": ["حميدة", "تكتم", "نرجس", "شاه زنان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 100,
+      "question": "ما اسم الكتاب المشهور الذي يضم خطب ورسائل الإمام علي عليه السلام؟",
+      "answers": ["الكافي", "نهج البلاغة", "مفاتيح الجنان", "البيان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 101,
+      "question": "من هو جامع كتاب نهج البلاغة؟",
+      "answers": ["الشيخ الكليني", "الشريف الرضي", "الشيخ الصدوق", "الشيخ الطوسي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 102,
+      "question": "في أي سنة هجرية استشهد الإمام علي عليه السلام؟",
+      "answers": ["38 هـ", "39 هـ", "40 هـ", "41 هـ"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 103,
+      "question": "كم كان عمر الإمام الحسن المجتبى عليه السلام عند استشهاده وفق المشهور؟",
+      "answers": ["45 سنة", "46 سنة", "47 سنة", "48 سنة"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 104,
+      "question": "في أي سنة هجرية وقعت معركة القادسية؟",
+      "answers": ["13 هـ", "14 هـ", "15 هـ", "16 هـ"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 105,
+      "question": "أي مدينة فُتحت أولًا في بلاد الشام؟",
+      "answers": ["القدس", "دمشق", "بصرى", "حمص"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 106,
+      "question": "في أي سنة ميلادية فُتحت الأندلس؟",
+      "answers": ["709 م", "711 م", "713 م", "715 م"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 107,
+      "question": "ما اسم العاصمة الأولى للدولة العباسية؟",
+      "answers": ["بغداد", "الكوفة", "الأنبار", "الهاشمية"],
+      "correctAnswer": 3,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 108,
+      "question": "في أي سنة هجرية بُنيت مدينة بغداد؟",
+      "answers": ["143 هـ", "145 هـ", "146 هـ", "148 هـ"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 109,
+      "question": "في أي سنة ميلادية وقعت معركة عين جالوت؟",
+      "answers": ["1258 م", "1260 م", "1262 م", "1265 م"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 110,
+      "question": "في أي سنة ميلادية استعاد صلاح الدين الأيوبي مدينة القدس؟",
+      "answers": ["1185 م", "1187 م", "1189 م", "1191 م"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 111,
+      "question": "في أي سنة ميلادية وقعت معركة حطين؟",
+      "answers": ["1185 م", "1187 م", "1189 م", "1191 م"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 112,
+      "question": "من هو الخليفة العباسي الذي بنى مدينة سامراء؟",
+      "answers": ["المأمون", "المعتصم بالله", "الواثق", "المتوكل"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 113,
+      "question": "في أي سنة ميلادية فُتحت القسطنطينية على يد العثمانيين؟",
+      "answers": ["1451 م", "1453 م", "1455 م", "1460 م"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "religious"
+    },
+    {
+      "id": 114,
+      "question": "من هو السلطان العثماني الذي فتح القسطنطينية؟",
+      "answers": ["سليم الأول", "محمد الفاتح", "بايزيد الثاني", "مراد الثاني"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    },
+    {
+      "id": 115,
+      "question": "في أي سنة هجرية توفي النبي محمد ﷺ؟",
+      "answers": ["9 هـ", "10 هـ", "11 هـ", "12 هـ"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "religious"
+    }
+  ]
+}

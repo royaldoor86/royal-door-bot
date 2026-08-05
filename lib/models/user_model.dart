@@ -8,6 +8,9 @@ class UserModel {
   final String profilePic;
   final int gems;
   final int stars;
+  final int coins;
+  final int rewardStars;
+  final int rewardGems;
   final int agencyGems;
   final int agencyStars;
   final int userLevel;
@@ -112,6 +115,9 @@ class UserModel {
     this.profilePic = '',
     this.gems = 0,
     this.stars = 0,
+    this.coins = 0,
+    this.rewardStars = 0,
+    this.rewardGems = 0,
     this.agencyGems = 0,
     this.agencyStars = 0,
     this.userLevel = 1,
@@ -196,6 +202,9 @@ class UserModel {
       profilePic: data['profilePic'] ?? '',
       gems: safeParseInt(data['gems']),
       stars: safeParseInt(data['stars'] ?? data['coins']),
+      coins: safeParseInt(data['coins']),
+      rewardStars: safeParseInt(data['rewardStars']),
+      rewardGems: safeParseInt(data['rewardGems']),
       agencyGems: safeParseInt(data['agencyGems']),
       agencyStars: safeParseInt(data['agencyStars'] ?? data['agencyCoins']),
       userLevel: safeParseInt(data['userLevel'] ?? 1),
@@ -276,7 +285,9 @@ class UserModel {
       'profilePic': profilePic,
       'gems': gems,
       'stars': stars,
-      'coins': stars,
+      'coins': coins,
+      'rewardStars': rewardStars,
+      'rewardGems': rewardGems,
       'agencyGems': agencyGems,
       'agencyStars': agencyStars,
       'agencyCoins': agencyStars,

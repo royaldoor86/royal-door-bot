@@ -1,0 +1,1732 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "ما هو أكبر كوكب في المجموعة الشمسية؟",
+      "answers": ["الأرض", "المريخ", "المشتري", "زحل"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 2,
+      "question": "كم عدد قارات العالم؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 200,
+      "category": "general"
+    },
+    {
+      "id": 3,
+      "question": "من هو مؤلف رواية هاري بوتر؟",
+      "answers": ["جي كي رولينغ", "ستيفن كينغ", "دان براون", "تولكين"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "general"
+    },
+    {
+      "id": 4,
+      "question": "ما هو العنصر الكيميائي الذي رمزه O؟",
+      "answers": ["الذهب", "الأكسجين", "الفضة", "الحديد"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 5,
+      "question": "كم عدد الكواكب في المجموعة الشمسية؟",
+      "answers": ["7", "8", "9", "10"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 6,
+      "question": "ما هي لغة البرمجة الأكثر استخداماً؟",
+      "answers": ["Python", "Java", "JavaScript", "C++"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "general"
+    },
+    {
+      "id": 7,
+      "question": "من هو مؤسس شركة مايكروسوفت؟",
+      "answers": ["ستيف جوبز", "بيل غيتس", "مارك زوكربيرغ", "إيلون ماسك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 8,
+      "question": "كم عدد أيام السنة الكبيسة؟",
+      "answers": ["365", "366", "364", "367"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 200,
+      "category": "general"
+    },
+    {
+      "id": 9,
+      "question": "من هو رسام لوحة الموناليزا؟",
+      "answers": ["بيكاسو", "فان جوخ", "ليوناردو دافنشي", "ميكلانجيلو"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 10,
+      "question": "كم عدد العضلات في جسم الإنسان؟",
+      "answers": ["400", "500", "600", "700"],
+      "correctAnswer": 2,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 11,
+      "question": "من هو مؤسس شركة أمازون؟",
+      "answers": ["جيف بيزوس", "لاري بايج", "سيرغي برين", "مارك زوكربيرغ"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 12,
+      "question": "كم عدد ألوان قوس قزح؟",
+      "answers": ["5", "6", "7", "8"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 13,
+      "question": "ما هي أكبر مدينة في العالم من حيث عدد السكان؟",
+      "answers": ["نيويورك", "طوكيو", "دلهي", "شنغهاي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 14,
+      "question": "من هو مؤسس شركة آبل؟",
+      "answers": ["بيل غيتس", "ستيف جوبز", "مايكل ديل", "مارك زوكربيرغ"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 500,
+      "category": "general"
+    },
+    {
+      "id": 15,
+      "question": "كم عدد لغات الأمم المتحدة الرسمية؟",
+      "answers": ["4", "5", "6", "7"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 16,
+      "question": "من هو مؤسس شركة فيسبوك؟",
+      "answers": ["جاك دورسي", "مارك زوكربيرغ", "إيفان سبيغل", " كيفن سيستروم"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 17,
+      "question": "من هو مؤلف سيمفونية التاسعة؟",
+      "answers": ["موتسارت", "بيتهوفن", "باخ", "شوبرت"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 18,
+      "question": "ما هي أصغر قارة في العالم؟",
+      "answers": ["أوروبا", "أستراليا", "أنتاركتيكا", "أمريكا الجنوبية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 19,
+      "question": "كم عدد العظام في جسم الإنسان البالغ؟",
+      "answers": ["186", "196", "206", "216"],
+      "correctAnswer": 2,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 20,
+      "question": "من هو مكتشف الجاذبية؟",
+      "answers": ["ألبرت أينشتاين", "إسحاق نيوتن", "غاليليو", "نيكولا تسلا"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 21,
+      "question": "ما هو العنصر الكيميائي الذي رمزه H؟",
+      "answers": ["الهيليوم", "الهيدروجين", "الهافنيوم", "الهولميوم"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 22,
+      "question": "ما هي أعلى قمة في العالم؟",
+      "answers": ["كلمنجارو", "إفرست", "مكينلي", "الألب"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 23,
+      "question": "من هو أول إنسان صعد إلى القمر؟",
+      "answers": ["يوري جاجارين", "نيل أرمسترونج", "باز ألدرين", "مايكل كولينز"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 24,
+      "question": "ما هي العملة المستخدمة في اليابان؟",
+      "answers": ["اليوان", "الوون", "الين", "الدولار"],
+      "correctAnswer": 2,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 25,
+      "question": "من هو مكتشف البنسلين؟",
+      "answers": ["لويس باستور", "ألكسندر فليمنغ", "ماريا كوري", "روبرت كوخ"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 26,
+      "question": "من هو مؤلف رواية الحرب والسلام؟",
+      "answers": ["فيودور دوستويفسكي", "ليو تولستوي", "أنطون تشيخوف", "إيفان تورغينيف"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 27,
+      "question": "ما هي أكبر جزيرة في العالم؟",
+      "answers": ["غرينلاند", "بورنيو", "مدغشقر", "غينيا الجديدة"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 28,
+      "question": "ما هو أسرع طائر في العالم؟",
+      "answers": ["النسر", "الصقر الجوال", "السنونو", "الطنان"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 29,
+      "question": "كم عدد الدول في الاتحاد الأوروبي؟",
+      "answers": ["25", "27", "28", "30"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 30,
+      "question": "ما هو أطول حيوان في العالم؟",
+      "answers": ["الحوت الأزرق", "الحوت العنبر", "القرش الأبيض", "التمساح"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 31,
+      "question": "كم عدد نجوم علم الولايات المتحدة؟",
+      "answers": ["48", "49", "50", "51"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 32,
+      "question": "ما هي أكبر بحيرة في العالم؟",
+      "answers": ["بحيرة سوبيريور", "بحيرة فيكتوريا", "بحيرة كاسبي", "بحيرة ميتي"],
+      "correctAnswer": 2,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 33,
+      "question": "من هو أول إنسان في الفضاء؟",
+      "answers": ["نيل أرمسترونج", "يوري جاجارين", "باز ألدرين", "مايكل كولينز"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 34,
+      "question": "ما هي أسرع حيوان بري؟",
+      "answers": ["الأسد", "الغزال", "الفهد", "الحصان"],
+      "correctAnswer": 2,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 35,
+      "question": "ما هو أعمق محيط في العالم؟",
+      "answers": ["الأطلسي", "الهندي", "الهادئ", "المتجمد"],
+      "correctAnswer": 2,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 36,
+      "question": "من هو مؤلف سيمفونية القدر؟",
+      "answers": ["موتسارت", "بيتهوفن", "باخ", "فيردي"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 37,
+      "question": "ما هي أكبر دولة في العالم من حيث المساحة؟",
+      "answers": ["الصين", "الولايات المتحدة", "روسيا", "كندا"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 38,
+      "question": "في أي عام هبط الإنسان على القمر لأول مرة؟",
+      "answers": ["1965", "1969", "1972", "1975"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 39,
+      "question": "ما هي أكبر صحراء في العالم؟",
+      "answers": ["الصحراء الكبرى", "صحراء غوبي", "صحراء أتاكاما", "صحراء كالاهاري"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 40,
+      "question": "ما هي العملة المستخدمة في المملكة المتحدة؟",
+      "answers": ["اليورو", "الدولار", "الجنيه الاسترليني", "الين"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 41,
+      "question": "من هو أول رئيس للولايات المتحدة؟",
+      "answers": ["توماس جيفرسون", "جورج واشنطن", "أبراهام لينكولن", "جون آدمز"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 42,
+      "question": "ما هي عاصمة أستراليا؟",
+      "answers": ["سيدني", "ملبورن", "كانبيرا", "بريزبين"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 43,
+      "question": "ما هي عاصمة البرازيل؟",
+      "answers": ["ريو دي جانيرو", "ساو باولو", "برازيليا", "بوينس آيرس"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 44,
+      "question": "ما هي عاصمة فرنسا؟",
+      "answers": ["برلين", "مدريد", "باريس", "روما"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 45,
+      "question": "ما هي عاصمة إيطاليا؟",
+      "answers": ["ميلان", "فيرونا", "روما", "فلورنسا"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 46,
+      "question": "ما هي عاصمة اليابان؟",
+      "answers": ["أوساكا", "كيوتو", "طوكيو", "هيروشيما"],
+      "correctAnswer": 2,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 47,
+      "question": "ما هي عاصمة المملكة العربية السعودية؟",
+      "answers": ["الرياض", "جدة", "مكة المكرمة", "المدينة المنورة"],
+      "correctAnswer": 0,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 48,
+      "question": "ما هو أطول نهر في العالم؟",
+      "answers": ["الأمازون", "النيل", "المسيسيبي", "اليانغتسي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 49,
+      "question": "في أي عام انتهت الحرب العالمية الثانية؟",
+      "answers": ["1943", "1944", "1945", "1946"],
+      "correctAnswer": 2,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 50,
+      "question": "ما هي أسرع حيوان بري؟",
+      "answers": ["الأسد", "الغزال", "الفهد", "الحصان"],
+      "correctAnswer": 2,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 51,
+      "question": "ما أكبر حيوان يعيش على سطح الأرض؟",
+      "answers": ["الفيل", "وحيد القرن", "الزرافة", "فرس النهر"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 52,
+      "question": "أي طائر لا يستطيع الطيران؟",
+      "answers": ["الصقر", "البطريق", "النسر", "اللقلق"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 53,
+      "question": "أي كوكب يُعرف بالكوكب الأحمر؟",
+      "answers": ["الزهرة", "المريخ", "عطارد", "المشتري"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 54,
+      "question": "ما العنصر الكيميائي الذي رمزه (Au)؟",
+      "answers": ["الفضة", "الذهب", "النحاس", "الزئبق"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 55,
+      "question": "ما الغاز الأكثر وفرة في الغلاف الجوي؟",
+      "answers": ["الأكسجين", "النيتروجين", "الهيدروجين", "ثاني أكسيد الكربون"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 56,
+      "question": "ما وحدة قياس شدة التيار الكهربائي؟",
+      "answers": ["الفولت", "الأمبير", "الواط", "الأوم"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 57,
+      "question": "ما أسرع شيء في الكون وفق الفيزياء؟",
+      "answers": ["الصوت", "الضوء", "الرياح الشمسية", "البرق"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 58,
+      "question": "ما أكبر محيط في العالم؟",
+      "answers": ["الأطلسي", "الهادئ", "الهندي", "المتجمد الشمالي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 59,
+      "question": "ما أعلى جبل في العالم؟",
+      "answers": ["كليمنجارو", "إيفرست", "كي2", "مون بلان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 60,
+      "question": "ما عاصمة كندا؟",
+      "answers": ["تورونتو", "أوتاوا", "فانكوفر", "مونتريال"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 61,
+      "question": "أي دولة تُعرف بأرض الشمس المشرقة؟",
+      "answers": ["الصين", "اليابان", "كوريا الجنوبية", "تايلاند"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 62,
+      "question": "ما أصغر دولة في العالم؟",
+      "answers": ["موناكو", "الفاتيكان", "سان مارينو", "ليختنشتاين"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 63,
+      "question": "ما أكبر قارة من حيث المساحة؟",
+      "answers": ["إفريقيا", "آسيا", "أوروبا", "أمريكا الشمالية"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 64,
+      "question": "ما أكبر صحراء حارة في العالم؟",
+      "answers": ["الربع الخالي", "الصحراء الكبرى", "صحراء جوبي", "صحراء كالاهاري"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 65,
+      "question": "أي معدن يُستخدم في صناعة أقلام الرصاص؟",
+      "answers": ["الرصاص", "الجرافيت", "الحديد", "النيكل"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 66,
+      "question": "ما العنصر الذي يحتاجه الإنسان للتنفس؟",
+      "answers": ["النيتروجين", "الأكسجين", "الهيليوم", "الهيدروجين"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 67,
+      "question": "ما أقرب كوكب إلى الشمس؟",
+      "answers": ["الزهرة", "عطارد", "الأرض", "المريخ"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 68,
+      "question": "أي كوكب يمتلك أكبر عدد من الحلقات؟",
+      "answers": ["المشتري", "زحل", "أورانوس", "نبتون"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 69,
+      "question": "ما الحيوان الوطني لأستراليا؟",
+      "answers": ["الكوالا", "الكنغر", "النعامة", "الدنغو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 70,
+      "question": "ما أكبر طائر في العالم؟",
+      "answers": ["النسر", "النعامة", "الكندور", "الإيمو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 71,
+      "question": "أي عضو مسؤول عن تنقية الدم؟",
+      "answers": ["الكبد", "الكلى", "الطحال", "البنكرياس"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 72,
+      "question": "ما أكبر عظمة في جسم الإنسان؟",
+      "answers": ["عظمة العضد", "عظمة الفخذ", "عظمة الساق", "عظمة الحوض"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 73,
+      "question": "ما أصغر عظمة في جسم الإنسان؟",
+      "answers": ["الركاب", "السندان", "المطرقة", "الترقوة"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 74,
+      "question": "ما الكوكب الذي يمتلك أكبر عدد من الأقمار المعروفة حاليًا؟",
+      "answers": ["المشتري", "زحل", "أورانوس", "نبتون"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 75,
+      "question": "ما النجم الأقرب إلى الأرض بعد الشمس؟",
+      "answers": ["الشعرى اليمانية", "بروكسيما", "فيغا", "سهيل"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 76,
+      "question": "ما الغاز الذي تحتاجه النباتات لعملية البناء الضوئي؟",
+      "answers": ["الأكسجين", "CO2", "النيتروجين", "الهيليوم"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 77,
+      "question": "أي عنصر كيميائي رمزه (K)؟",
+      "answers": ["الكالسيوم", "البوتاسيوم", "الكريبتون", "الكوبالت"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 78,
+      "question": "ما الكوكب الأكثر حرارة في المجموعة الشمسية؟",
+      "answers": ["عطارد", "الزهرة", "المريخ", "المشتري"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 79,
+      "question": "ما اسم الطبقة الخارجية للأرض؟",
+      "answers": ["الوشاح", "القشرة الأرضية", "اللب الخارجي", "اللب الداخلي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 80,
+      "question": "ما أقوى حاسة لدى الكلب؟",
+      "answers": ["البصر", "الشم", "السمع", "التذوق"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 81,
+      "question": "أي حيوان يُعرف بأنه أكبر أنواع القطط؟",
+      "answers": ["الأسد", "النمر السيبيري", "الفهد", "اليغور"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 82,
+      "question": "ما أسرع سمكة في العالم؟",
+      "answers": ["أبو شراع", "القرش الأبيض", "سمكة التونة", "سمكة السيف"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 83,
+      "question": "أي دولة تضم أكبر عدد من البراكين النشطة؟",
+      "answers": ["اليابان", "إندونيسيا", "تشيلي", "الفلبين"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 84,
+      "question": "ما أطول سلسلة جبال في العالم؟",
+      "answers": ["الألب", "الأنديز", "الهيمالايا", "الروكي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 85,
+      "question": "ما عاصمة نيوزيلندا؟",
+      "answers": ["أوكلاند", "ويلينغتون", "كرايستشيرش", "هاميلتون"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 86,
+      "question": "ما أكبر دولة في أمريكا الجنوبية؟",
+      "answers": ["الأرجنتين", "البرازيل", "بيرو", "تشيلي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 87,
+      "question": "أي عنصر يُعد أساس جميع المركبات العضوية؟",
+      "answers": ["الأكسجين", "الكربون", "النيتروجين", "الهيدروجين"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 88,
+      "question": "ما العنصر الذي رمزه (Ag)؟",
+      "answers": ["الألمنيوم", "الفضة", "الذهب", "الزئبق"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 89,
+      "question": "أي عضو يفرز هرمون الأنسولين؟",
+      "answers": ["الكبد", "البنكرياس", "الكلى", "المعدة"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 90,
+      "question": "ما أسرع كوكب في دورانه حول الشمس؟",
+      "answers": ["الزهرة", "عطارد", "الأرض", "المريخ"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 91,
+      "question": "ما أكبر محيط من حيث العمق؟",
+      "answers": ["الأطلسي", "الهادئ", "الهندي", "المتجمد الجنوبي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 92,
+      "question": "أين يقع أعمق خندق في العالم؟",
+      "answers": ["الأطلسي", "الهادئ", "الهندي", "البحر المتوسط"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 93,
+      "question": "ما اسم أعمق خندق في العالم؟",
+      "answers": ["بورتوريكو", "ماريانا", "تونغا", "اليابان"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 94,
+      "question": "ما الحيوان الذي يمتلك أكبر دماغ؟",
+      "answers": ["الفيل", "حوت العنبر", "الحوت الأزرق", "الزرافة"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 95,
+      "question": "ما الحيوان الذي ينام واقفًا غالبًا؟",
+      "answers": ["الحصان", "القرد", "الذئب", "الأرنب"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 96,
+      "question": "ما أكبر أنواع الدببة؟",
+      "answers": ["الدب البني", "الدب القطبي", "الباندا", "الدب الأسود"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 97,
+      "question": "ما عاصمة النرويج؟",
+      "answers": ["ستوكهولم", "أوسلو", "هلسنكي", "كوبنهاغن"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 98,
+      "question": "ما عاصمة فنلندا؟",
+      "answers": ["أوسلو", "هلسنكي", "ستوكهولم", "ريكيافيك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 99,
+      "question": "ما عاصمة الدنمارك؟",
+      "answers": ["كوبنهاغن", "أوسلو", "هلسنكي", "ستوكهولم"],
+      "correctAnswer": 0,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 100,
+      "question": "أي غاز يسبب اللون الأخضر في الشفق القطبي غالبًا؟",
+      "answers": ["الهيدروجين", "الأكسجين", "النيتروجين", "الهيليوم"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 101,
+      "question": "ما أسرع رياح سُجلت على كوكب في المجموعة الشمسية؟",
+      "answers": ["المشتري", "نبتون", "زحل", "أورانوس"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 102,
+      "question": "أي عنصر رمزه (Hg)؟",
+      "answers": ["الزئبق", "المغنيسيوم", "الهيدروجين", "الهولميوم"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 103,
+      "question": "أي عنصر رمزه (Pb)؟",
+      "answers": ["البلاتين", "الرصاص", "الفوسفور", "البلاديوم"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 104,
+      "question": "ما أكبر غدة في جسم الإنسان؟",
+      "answers": ["البنكرياس", "الكبد", "الغدة الدرقية", "الغدة النخامية"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 105,
+      "question": "ما أصغر قارة في العالم؟",
+      "answers": ["أوروبا", "أستراليا", "أمريكا الجنوبية", "القطبية الجنوبية"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 106,
+      "question": "ما أكبر بحيرة مياه عذبة من حيث المساحة؟",
+      "answers": ["فيكتوريا", "سوبيريور", "بايكال", "طنغانيقا"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 107,
+      "question": "ما أعمق بحيرة في العالم؟",
+      "answers": ["سوبيريور", "بايكال", "فيكتوريا", "قزوين"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 108,
+      "question": "أي دولة تُعرف ببلاد الألف بحيرة؟",
+      "answers": ["السويد", "فنلندا", "النرويج", "كندا"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 109,
+      "question": "ما الحيوان الذي يمتلك أقوى عضة بين الحيوانات البرية؟",
+      "answers": ["الأسد", "التمساح", "الضبع", "النمر"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 110,
+      "question": "أي عضو في النبات يمتص الماء من التربة؟",
+      "answers": ["الساق", "الجذر", "الورقة", "الزهرة"],
+      "correctAnswer": 1,
+      "difficulty": 1,
+      "prize": 100,
+      "category": "general"
+    },
+    {
+      "id": 111,
+      "question": "ما العملية التي يتحول فيها السائل إلى غاز؟",
+      "answers": ["التكاثف", "التبخر", "التجمد", "الانصهار"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 112,
+      "question": "ما وحدة قياس القوة؟",
+      "answers": ["جول", "نيوتن", "باسكال", "واط"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 113,
+      "question": "ما وحدة قياس القدرة الكهربائية؟",
+      "answers": ["أمبير", "واط", "فولت", "أوم"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 114,
+      "question": "أي كوكب يُعرف بالعملاق الأزرق؟",
+      "answers": ["أورانوس", "زحل", "المشتري", "المريخ"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 115,
+      "question": "ما أطول حيوان في العالم؟",
+      "answers": ["الحوت الأزرق", "قنديل البحر", "الزرافة", "الأناكوندا"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 116,
+      "question": "ما الدولة التي تضم أكبر عدد من الجزر في العالم؟",
+      "answers": ["إندونيسيا", "السويد", "الفلبين", "اليابان"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 117,
+      "question": "ما العنصر الأكثر وفرة في الكون؟",
+      "answers": ["الأكسجين", "الهيدروجين", "الهيليوم", "الكربون"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 118,
+      "question": "أي عضو يتحكم في توازن جسم الإنسان؟",
+      "answers": ["المخ", "المخيخ", "النخاع الشوكي", "جذع الدماغ"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 119,
+      "question": "ما الجهاز المسؤول عن نقل الإشارات العصبية في الجسم؟",
+      "answers": ["الجهاز الدوري", "الجهاز العصبي", "الجهاز اللمفاوي", "الجهاز العضلي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 120,
+      "question": "ما الكوكب الذي يستغرق أطول مدة لإكمال دورة حول الشمس؟",
+      "answers": ["أورانوس", "نبتون", "زحل", "المشتري"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 121,
+      "question": "أي قارة تضم أكبر عدد من الدول؟",
+      "answers": ["آسيا", "إفريقيا", "أوروبا", "أمريكا الجنوبية"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 122,
+      "question": "ما الحيوان الذي يُعد أكبر الزواحف في العالم؟",
+      "answers": ["الأناكوندا", "التمساح المالح", "تنين كومودو", "التمساح النيلي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 123,
+      "question": "ما أكبر غابة مطيرة في العالم؟",
+      "answers": ["الكونغو", "الأمازون", "تايغا", "بورنيو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 124,
+      "question": "ما الغاز الذي يشكل معظم الشمس؟",
+      "answers": ["الهيليوم", "الهيدروجين", "الأكسجين", "النيتروجين"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 125,
+      "question": "أي عضو في جسم الإنسان ينتج العصارة الصفراوية؟",
+      "answers": ["البنكرياس", "الكبد", "المعدة", "الأمعاء"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 126,
+      "question": "ما وحدة قياس الضغط؟",
+      "answers": ["نيوتن", "باسكال", "جول", "واط"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 127,
+      "question": "ما أكبر دولة في قارة إفريقيا؟",
+      "answers": ["السودان", "الجزائر", "ليبيا", "الكونغو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 128,
+      "question": "ما عاصمة سويسرا؟",
+      "answers": ["زيورخ", "برن", "جنيف", "لوزان"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 129,
+      "question": "ما عاصمة البرتغال؟",
+      "answers": ["بورتو", "لشبونة", "براغا", "فارو"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 130,
+      "question": "ما عاصمة النمسا؟",
+      "answers": ["سالزبورغ", "فيينا", "غراتس", "إنسبروك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 131,
+      "question": "ما أكبر أنواع القردة؟",
+      "answers": ["الغوريلا", "الشمبانزي", "الأورانغوتان", "الجيبون"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 132,
+      "question": "ما أسرع ثعبان في العالم؟",
+      "answers": ["الجرسية", "المامبا", "الكوبرا", "الأصلة"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 133,
+      "question": "ما أكبر محيط يحيط بقارة آسيا؟",
+      "answers": ["الأطلسي", "الهادئ", "الهندي", "المتجمد الشمالي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 134,
+      "question": "أي طبقة من الغلاف الجوي تحتوي على معظم الأوزون؟",
+      "answers": ["التروبوسفير", "الستراتوسفير", "الميزوسفير", "الثرموسفير"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 135,
+      "question": "ما الحيوان الذي يمتلك أطول فترة حمل؟",
+      "answers": ["الزرافة", "الفيل", "الحوت الأزرق", "وحيد القرن"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 136,
+      "question": "ما اسم أكبر محيط قمري على سطح القمر؟",
+      "answers": ["بحر السكون", "بحر الأمطار", "بحر الصفاء", "بحر الأزمات"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 137,
+      "question": "ما أكبر أنواع السلاحف؟",
+      "answers": ["الخضراء", "جلدية الظهر", "غالاباغوس", "ضخمة الرأس"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 138,
+      "question": "ما الحيوان الذي يمتلك أطول فترة عمر بين الثدييات؟",
+      "answers": ["الفيل", "الحوت", "الغوريلا", "الزرافة"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 139,
+      "question": "ما عدد قلوب الأخطبوط؟",
+      "answers": ["1", "2", "3", "4"],
+      "correctAnswer": 2,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 140,
+      "question": "ما الكوكب الذي يمتلك أطول يوم؟",
+      "answers": ["الزهرة", "عطارد", "المريخ", "زحل"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 141,
+      "question": "أي دولة تُعرف ببلاد السامبا؟",
+      "answers": ["الأرجنتين", "البرازيل", "كوبا", "المكسيك"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 142,
+      "question": "ما عاصمة آيسلندا؟",
+      "answers": ["ريكيافيك", "أوسلو", "هلسنكي", "كوبنهاغن"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 143,
+      "question": "ما العنصر الكيميائي الذي رمزه (Bh)؟",
+      "answers": ["البورون", "البوهريوم", "البزموت", "البروم"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 144,
+      "question": "ما أعلى جبل في أمريكا الشمالية؟",
+      "answers": ["جبل لوغان", "دينالي", "سانت إلياس", "جبل رينييه"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 145,
+      "question": "ما الحيوان الذي يمتلك أكبر دماغ بين الرئيسيات بعد الإنسان؟",
+      "answers": ["الشمبانزي", "الغوريلا", "الأورانغوتان", "البابون"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 146,
+      "question": "ما عاصمة تشاد؟",
+      "answers": ["أبشي", "نجامينا", "موندو", "سار"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 147,
+      "question": "أي عنصر رمزه (Hs)؟",
+      "answers": ["الهاسيوم", "الهولميوم", "الهافنيوم", "الهيليوم"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 148,
+      "question": "ما أطول نهر في أستراليا؟",
+      "answers": ["موراي", "دارلينغ", "مارومبيجي", "فيتزروي"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 149,
+      "question": "ما الحيوان الذي يمتلك أقوى عضة بين الثدييات؟",
+      "answers": ["الأسد", "فرس النهر", "النمر", "الضبع"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 150,
+      "question": "ما عاصمة غانا؟",
+      "answers": ["كوماسي", "أكرا", "تيما", "تامالي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 151,
+      "question": "أي عنصر رمزه (Mt)؟",
+      "answers": ["المايتنريوم", "الموليبدينوم", "المنغنيز", "المغنيسيوم"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 152,
+      "question": "ما أكبر بحيرة في أمريكا الشمالية؟",
+      "answers": ["ميشيغان", "سوبيريور", "هورون", "إيري"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 153,
+      "question": "ما الحيوان الذي يمتلك أكبر قرون متشعبة؟",
+      "answers": ["الموظ", "الأيل الأحمر", "الرنة", "الوعل"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 154,
+      "question": "ما عاصمة السنغال؟",
+      "answers": ["سانت لويس", "داكار", "تييس", "كاولاك"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 155,
+      "question": "أي عنصر رمزه (Ds)؟",
+      "answers": ["الدارمشتاتيوم", "الدوبنيوم", "الديسبروسيوم", "الديوتيريوم"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 156,
+      "question": "ما أكبر دلتا نهرية في إفريقيا؟",
+      "answers": ["دلتا النيجر", "دلتا النيل", "دلتا الكونغو", "دلتا الزمبيزي"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 157,
+      "question": "ما الحيوان الذي يمتلك أطول رقبة بين الطيور؟",
+      "answers": ["الإيمو", "النعامة", "الكاسواري", "البجع"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 158,
+      "question": "ما عاصمة ساحل العاج؟",
+      "answers": ["أبيدجان", "ياموسوكرو", "بواكيه", "سان بيدرو"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 159,
+      "question": "أي عنصر رمزه (Rg)؟",
+      "answers": ["الرونتجينيوم", "الراديوم", "الرادون", "الروبيديوم"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 160,
+      "question": "ما أعمق بحر في العالم؟",
+      "answers": ["بحر الفلبين", "بحر اليابان", "بحر المرجان", "بحر العرب"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 161,
+      "question": "ما الحيوان الذي يمتلك أقوى بصر بين الثدييات؟",
+      "answers": ["النمر", "الوشق", "الذئب", "الغزال"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 162,
+      "question": "ما عاصمة تنزانيا؟",
+      "answers": ["دار السلام", "دودوما", "أروشا", "موانزا"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 163,
+      "question": "أي عنصر رمزه (Cn)؟",
+      "answers": ["الكوبرنيسيوم", "الكوبالت", "الكالسيوم", "الكربون"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 164,
+      "question": "ما أكبر جزيرة في قارة آسيا؟",
+      "answers": ["هونشو", "بورنيو", "سومطرة", "جاوة"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 165,
+      "question": "ما الحيوان الذي يمتلك أطول زعانف بين الحيتان؟",
+      "answers": ["الأزرق", "الأحدب", "العنبر", "الرمادي"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 166,
+      "question": "ما عاصمة بوركينا فاسو؟",
+      "answers": ["بوبو ديولاسو", "واغادوغو", "كودوغو", "بانفورا"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 167,
+      "question": "أي عنصر رمزه (Fl)؟",
+      "answers": ["الفلور", "الفليروفيوم", "الفرانسيوم", "الفوسفور"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 168,
+      "question": "ما أطول نهر في الصين؟",
+      "answers": ["النهر الأصفر", "اليانغتسي", "نهر اللؤلؤ", "ميكونغ"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    },
+    {
+      "id": 169,
+      "question": "ما الحيوان الذي يمتلك أكبر زعانف ظهرية؟",
+      "answers": ["القرش الأبيض", "الأوركا", "قرش الحوت", "التونة"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 170,
+      "question": "ما عاصمة مالي؟",
+      "answers": ["تمبكتو", "باماكو", "غاو", "سيغو"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 171,
+      "question": "أي عنصر رمزه (Mc)؟",
+      "answers": ["الموسكوفيوم", "الموليبدينوم", "المغنيسيوم", "المنغنيز"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 172,
+      "question": "ما أكبر خليج في أوروبا؟",
+      "answers": ["بوثنيا", "فنلندا", "بسكاي", "ريغا"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 173,
+      "question": "ما الحيوان الذي يمتلك أطول أظافر في المملكة الحيوانية؟",
+      "answers": ["الكسلان", "الدب", "النمر", "الذئب"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 174,
+      "question": "ما عاصمة النيجر؟",
+      "answers": ["زندر", "نيامي", "مرادي", "أغاديز"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 175,
+      "question": "أي عنصر رمزه (Lv)؟",
+      "answers": ["الليفرموريوم", "الليثيوم", "اللورنسيوم", "اللوتيتيوم"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 176,
+      "question": "ما أكبر جزيرة في البحر الأبيض المتوسط؟",
+      "answers": ["قبرص", "صقلية", "سردينيا", "كريت"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 177,
+      "question": "ما الحيوان الذي يمتلك أكبر ريش جناح؟",
+      "answers": ["القطرس الجوال", "الكندور", "العقاب الذهبي", "البجع"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 178,
+      "question": "ما عاصمة غينيا؟",
+      "answers": ["كانكان", "كوناكري", "لابي", "نزيريكوري"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 179,
+      "question": "أي عنصر رمزه (Ts)؟",
+      "answers": ["التينيسين", "التيلوريوم", "التنتالوم", "الثوريوم"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 180,
+      "question": "ما أكبر غابة معتدلة مطيرة في العالم؟",
+      "answers": ["فالدفيان", "شيروود", "بلاك فورست", "بياوفيجا"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 181,
+      "question": "ما الحيوان الذي يمتلك أكبر معدة بين الطيور؟",
+      "answers": ["النعامة", "الإيمو", "البجع", "الكاسواري"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 182,
+      "question": "ما عاصمة بنين؟",
+      "answers": ["كوتونو", "بورتو نوفو", "باراكو", "أبومي"],
+      "correctAnswer": 1,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 183,
+      "question": "أي عنصر رمزه (Og)؟",
+      "answers": ["الأوغانيسون", "الأكسجين", "الذهب", "الأوزميوم"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 184,
+      "question": "ما أعلى جبل في أمريكا الجنوبية؟",
+      "answers": ["أكونكاغوا", "هواسكاران", "تشيمبورازو", "إلبروس"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 185,
+      "question": "ما الحيوان الذي يمتلك أكبر قرنية عين بين الثدييات؟",
+      "answers": ["الحصان", "الحوت الأزرق", "الفيل", "الزرافة"],
+      "correctAnswer": 1,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 186,
+      "question": "ما عاصمة توغو؟",
+      "answers": ["سوكودي", "لومي", "كارا", "أتاكبامي"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 187,
+      "question": "أي عنصر رمزه (Am)؟",
+      "answers": ["الأمريسيوم", "الأرجون", "الأنتيمون", "الألومنيوم"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 188,
+      "question": "ما أكبر نهر في غرب إفريقيا؟",
+      "answers": ["نهر النيجر", "نهر السنغال", "نهر فولتا", "نهر غامبيا"],
+      "correctAnswer": 0,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 189,
+      "question": "ما الحيوان الذي يمتلك أطول شوارب بين الثدييات البحرية؟",
+      "answers": ["الفظ", "الفقمة", "الدلفين", "الحوت الأبيض"],
+      "correctAnswer": 0,
+      "difficulty": 4,
+      "prize": 4000,
+      "category": "general"
+    },
+    {
+      "id": 190,
+      "question": "ما عاصمة الغابون؟",
+      "answers": ["بورت جنتيل", "ليبرفيل", "فرانسفيل", "أويم"],
+      "correctAnswer": 1,
+      "difficulty": 3,
+      "prize": 2000,
+      "category": "general"
+    },
+    {
+      "id": 191,
+      "question": "أي عنصر رمزه (Cm)؟",
+      "answers": ["الكوريوم", "الكالسيوم", "الكروم", "الكوبالت"],
+      "correctAnswer": 0,
+      "difficulty": 5,
+      "prize": 8000,
+      "category": "general"
+    },
+    {
+      "id": 192,
+      "question": "ما أكبر محيط على كوكب الأرض؟",
+      "answers": ["الأطلسي", "الهادئ", "الهندي", "المتجمد الجنوبي"],
+      "correctAnswer": 1,
+      "difficulty": 2,
+      "prize": 1000,
+      "category": "general"
+    }
+  ]
+}

@@ -27,6 +27,8 @@ class RoomMoreMenuSheet extends StatefulWidget {
   final VoidCallback? onFixAudio;
   final List<Widget>? extraWidgets;
   final VoidCallback? onShowLeaderboard; // إضافة الكولباك هنا
+  final VoidCallback? onShowGames;
+  final Map<String, dynamic>? moderatorPermissions;
 
   const RoomMoreMenuSheet({
     super.key,
@@ -45,6 +47,8 @@ class RoomMoreMenuSheet extends StatefulWidget {
     this.onFixAudio,
     this.extraWidgets,
     this.onShowLeaderboard, // إضافة الكولباك هنا
+    this.onShowGames,
+    this.moderatorPermissions,
   });
 
   @override

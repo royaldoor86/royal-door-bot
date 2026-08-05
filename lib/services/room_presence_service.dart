@@ -11,7 +11,8 @@ class RoomPresenceService {
   bool get isMinimized => _overlayEntry != null;
 
   void minimizeRoom(
-      BuildContext context, String roomId, String roomName, String? roomImage) {
+      BuildContext context, String roomId, String roomName, String? roomImage,
+      {VoidCallback? onRoomTap}) {
     if (_overlayEntry != null) return;
 
     _overlayEntry = OverlayEntry(
@@ -19,7 +20,7 @@ class RoomPresenceService {
         roomId: roomId,
         roomName: roomName,
         roomImage: roomImage,
-        onTap: () {
+        onTap: onRoomTap ?? () {
           closeMinimized();
           Navigator.push(
             context,
@@ -108,7 +109,7 @@ class _MinimizedRoomFloatingIconState extends State<_MinimizedRoomFloatingIcon>
                 image:
                     (widget.roomImage != null && widget.roomImage!.isNotEmpty)
                         ? NetworkImage(widget.roomImage!)
-                        : const AssetImage('assets/images/room_global.jpg')
+                        : const AssetImage('assets/images/room_love.jpg')
                             as ImageProvider,
                 fit: BoxFit.cover,
               ),
