@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'presence_service.dart';
 
 class TaskTrackingService with WidgetsBindingObserver {
   static final TaskTrackingService _instance = TaskTrackingService._internal();
@@ -12,9 +13,14 @@ class TaskTrackingService with WidgetsBindingObserver {
   Timer? _appUsageTimer;
   final _db = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+  final PresenceService _presenceService = PresenceService();
 
   void startTracking() {
     WidgetsBinding.instance.addObserver(this);
+    
+    // بدء تتبع التواجد الحقيقي
+    _presenceService.startTracking();
+    
     _auth.authStateChanges().listen((user) {
       if (user != null) {
         _updateOnlineStatus(true);
@@ -34,6 +40,8 @@ class TaskTrackingService with WidgetsBindingObserver {
   void _stopSession() {
     _appUsageTimer?.cancel();
     _updateOnlineStatus(false);
+    // إيقاف تتبع التواجد الحقيقي
+    _presenceService.stopTracking();
   }
 
   Future<void> _updateOnlineStatus(bool isOnline) async {
@@ -53,6 +61,7 @@ class TaskTrackingService with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _updateOnlineStatus(true);
+      _presenceService.startTracking(); // إعادة تشغيل التواجد الحقيقي
       _startSession();
       // إظهار إعلان فتح التطبيق عند العودة من الخلفية
       AdManager().showAppOpenAdIfAvailable();
@@ -99,7 +108,7 @@ class TaskTrackingService with WidgetsBindingObserver {
 
     // إذا أكمل 15 دقيقة، أعطه مكافأة تلقائية
     if (nextMinutes % 15 == 0) {
-      updates['gold_coins'] = FieldValue.increment(stayRewardAmount);
+      updates['gold_stars'] = FieldValue.increment(stayRewardAmount);
     }
 
     await _db.collection('users').doc(user.uid).update(updates);
@@ -122,31 +131,16 @@ class TaskTrackingService with WidgetsBindingObserver {
       updates[rewardType] = FieldValue.increment(rewardAmount);
     }
 
-    // بنك العملات (Savings Vault): كل 50 إعلان يحصل على 5 جواهر و 5 كوينز
+    // بنك العملات (Savings Vault): كل 50 إعلان يحصل على 5 نقاط و 5 نجوم
     if (vaultProgress >= 50) {
-      updates['gems'] = FieldValue.increment(5);
-      updates['coins'] = FieldValue.increment(5);
+      updates['points'] = FieldValue.increment(5);
+      updates['stars'] = FieldValue.increment(5);
       updates['vault_progress'] = 0; // تصفير العداد
     }
 
     // كل 5 نشاطات (إعلان أو مقال) يحصل على خبرة XP
     if (newCount % 5 == 0) {
       updates['royalXP'] = FieldValue.increment(500);
-
-      // رفع المستوى بمقدار 1 كل 48 ساعة كحد أقصى للتفاعل التلقائي
-      final lastLevelUp = data['last_auto_level_up_at'] as Timestamp?;
-      bool canLevelUp = true;
-      if (lastLevelUp != null) {
-        final diff = DateTime.now().difference(lastLevelUp.toDate());
-        if (diff.inHours < 48) {
-          canLevelUp = false;
-        }
-      }
-
-      if (canLevelUp) {
-        updates['userLevel'] = FieldValue.increment(1);
-        updates['last_auto_level_up_at'] = FieldValue.serverTimestamp();
-      }
 
       // إظهار إعلان ملء الشاشة عند تحقيق إنجاز نشاط
       AdManager().showInterstitialAd();
@@ -182,8 +176,8 @@ class TaskTrackingService with WidgetsBindingObserver {
     final int reward = settings.data()?['article_read_reward'] ??
         2; // المكافأة الافتراضية 2 كما في مركز المهام
 
-    // تسجيل النشاط وإضافة كوينز المكافأة
-    await recordActivity(user.uid, rewardType: 'coins', rewardAmount: reward);
+    // تسجيل النشاط وإضافة نجوم المكافأة
+    await recordActivity(user.uid, rewardType: 'stars', rewardAmount: reward);
 
     await _db.collection('users').doc(user.uid).update({
       'read_articles': FieldValue.increment(1),

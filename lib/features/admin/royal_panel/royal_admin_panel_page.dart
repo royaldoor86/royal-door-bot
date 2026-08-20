@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:royaldoor/services/presence_service.dart';
 
 import 'package:royaldoor/features/admin/admin_users_page.dart';
 import 'package:royaldoor/features/admin/admin_rooms_page.dart';
@@ -18,6 +20,7 @@ import 'package:royaldoor/features/admin/admin_uid_page.dart';
 import 'sub_pages/admin_families_page.dart';
 import 'sub_pages/admin_frames_page.dart';
 import 'sub_pages/admin_entry_effects_page.dart';
+import 'sub_pages/admin_challenges_page.dart';
 import 'sub_pages/admin_economy_grid.dart';
 import 'sub_pages/admin_diaries_page.dart';
 import 'sub_pages/admin_reports_page.dart';
@@ -28,14 +31,13 @@ import 'sub_pages/admin_verification_mgmt_page.dart';
 import 'sub_pages/admin_badges_mgmt_page.dart';
 import 'sub_pages/admin_vehicles_mgmt_page.dart';
 import 'sub_pages/admin_covers_bubbles_page.dart';
-import 'sub_pages/admin_rewards_settings_page.dart';
 // import 'sub_pages/admin_advanced_security_page.dart'; // File not found
 // import 'sub_pages/admin_notifications_page.dart'; // File not found
 // import 'sub_pages/admin_support_page.dart'; // File not found
 // import 'sub_pages/admin_backup_page.dart'; // File not found
 // import 'sub_pages/admin_automation_page.dart'; // File not found
 import 'sub_pages/admin_room_themes_page.dart';
-import 'sub_pages/admin_telegram_stats_page.dart';
+import 'sub_pages/admin_room_pinning_page.dart';
 
 class RoyalAdminPanelPage extends StatefulWidget {
   const RoyalAdminPanelPage({super.key});
@@ -48,6 +50,22 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
   final Color primaryEmerald = const Color(0xFF042F2C);
   final Color secondaryDark = const Color(0xFF021412);
   final Color royalGold = const Color(0xFFC5A059);
+  Timer? _statsRefreshTimer;
+  final PresenceService _presenceService = PresenceService();
+
+  @override
+  void initState() {
+    super.initState();
+    _statsRefreshTimer = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _statsRefreshTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +87,8 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                       Colors.blueAccent, const AdminUsersPage()),
                   _adminTile('UID', Icons.fingerprint_rounded,
                       Colors.purpleAccent, const AdminUidPage()),
-                  _adminTile('بيوت الدعم', Icons.castle_rounded,
+                  _adminTile('بيوت التفعيل', Icons.castle_rounded,
                       Colors.tealAccent, const ManageAgentsPage()),
-                  _adminTile('إحصائيات بوت التلغرام', Icons.telegram_rounded,
-                      Colors.lightBlueAccent, const AdminTelegramStatsPage()),
                   _adminTile('العائلات الملكية', Icons.shield_rounded,
                       Colors.amberAccent, const AdminFamiliesPage()),
                   _adminTile('الرتب والصلاحيات', Icons.gavel_rounded,
@@ -87,11 +103,6 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                       Colors.purpleAccent, const AdminLevelsMgmtPage()),
                   _adminTile('نظام الخبرة XP', Icons.auto_awesome_rounded,
                       Colors.yellowAccent, const PointsXPSystemPage()),
-                  _adminTile(
-                      'إعدادات المكافآت الملكية',
-                      Icons.settings_suggest_rounded,
-                      Colors.orange,
-                      const AdminHarvestSettingsPage()),
                 ]),
                 _buildCategory(
                     'المتجر والجماليات', Icons.shopping_bag_outlined),
@@ -126,6 +137,8 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                       Colors.redAccent, const AdminGiftsPage()),
                   _adminTile('موضوعات الغرف', Icons.brush_rounded,
                       Colors.brown, const AdminRoomThemesPage()),
+                  _adminTile('تثبيت الغرف', Icons.push_pin_rounded,
+                      Colors.purpleAccent, const AdminRoomPinningPage()),
                 ]),
                 _buildCategory('الأنشطة والرقابة', Icons.security_rounded),
                 _buildGridSection([
@@ -137,6 +150,8 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                       Colors.red, const AdminReportsPage()),
                   _adminTile('التحديات والمهام', Icons.emoji_events_rounded,
                       Colors.deepOrangeAccent, const AdminDailyTasksPage()),
+                  _adminTile('إدارة التحديات', Icons.emoji_events_outlined,
+                      Colors.amber, const AdminChallengesPage()),
                 ]),
                 _buildCategory(
                     'إعدادات السيادة', Icons.settings_suggest_outlined),
@@ -165,14 +180,6 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                 //   _adminTile('إدارة الإشعارات', Icons.send_rounded,
                 //       Colors.purpleAccent, AdminNotificationsPage()),
                 // ]),
-                // _buildCategory('الدعم الفني', Icons.support_agent_rounded),
-                // _buildGridSection([
-                //   _adminTile('إدارة الدعم الفني', Icons.headset_mic_rounded,
-                //       Colors.tealAccent, const AdminSupportPage()),
-                // ]),
-                // _buildCategory('النسخ الاحتياطي', Icons.backup_rounded),
-                // _buildGridSection([
-                //   _adminTile(
                 //       'إدارة النسخ الاحتياطي',
                 //       Icons.cloud_upload_rounded,
                 //       Colors.indigoAccent,
@@ -254,9 +261,12 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
   }
 
   Widget _buildSystemOverview() {
+    return _buildSystemOverviewSafe();
+    /*
     final now = DateTime.now();
-    final todayStr = DateFormat('yyyy-MM-dd').format(now);
     final startOfToday = DateTime(now.year, now.month, now.day);
+    final newUsersCutoff = now.subtract(const Duration(days: 7));
+    final giftCutoff = now.subtract(const Duration(hours: 24));
 
     return SliverToBoxAdapter(
       child: StreamBuilder<QuerySnapshot>(
@@ -270,21 +280,22 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
             builder: (context, roomSnap) {
               return StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
-                    .collection('payments')
-                    .where('status', isEqualTo: 'completed')
-                    .where('timestamp',
-                        isGreaterThanOrEqualTo:
-                            Timestamp.fromDate(startOfToday))
+                    .collectionGroup('online_users')
                     .snapshots(),
-                builder: (context, paySnap) {
+                builder: (context, onlineRoomUsersSnap) {
                   return StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
-                        .collection('gift_logs')
-                        .where('timestamp',
-                            isGreaterThanOrEqualTo:
-                                Timestamp.fromDate(startOfToday))
+                        .collectionGroup('mic_seats')
                         .snapshots(),
-                    builder: (context, giftSnap) {
+                    builder: (context, micSeatsSnap) {
+                      return StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                          .collection('gift_logs')
+                          .where('timestamp',
+                            isGreaterThanOrEqualTo:
+                              Timestamp.fromDate(giftCutoff))
+                          .snapshots(),
+                        builder: (context, giftSnap) {
                       int totalUsers = userSnap.data?.docs.length ?? 0;
                       int onlineUsers = 0;
                       if (userSnap.hasData) {
@@ -297,46 +308,46 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                       int dailyActive = 0;
                       if (userSnap.hasData) {
                         dailyActive = userSnap.data!.docs.where((d) {
-                          final data = d.data() as Map;
-                          return (data['lastLoginDate'] ?? "")
-                              .toString()
-                              .startsWith(todayStr);
+                          final data = d.data() as Map<String, dynamic>;
+                          return _isActiveToday(data, startOfToday);
                         }).length;
                       }
 
-                      int newUsersToday = 0;
+                      int newUsersThisWeek = 0;
                       if (userSnap.hasData) {
-                        newUsersToday = userSnap.data!.docs.where((d) {
-                          final data = d.data() as Map;
-                          var created = data['createdAt'];
-                          if (created is Timestamp) {
-                            return created.toDate().isAfter(startOfToday);
-                          }
-                          return false;
+                        newUsersThisWeek = userSnap.data!.docs.where((d) {
+                          final data = d.data() as Map<String, dynamic>;
+                          return _isNewUser(data, newUsersCutoff, now);
                         }).length;
                       }
 
-                      int activeRooms = roomSnap.data?.docs.length ?? 0;
-                      int usersInVoice = 0;
-                      if (roomSnap.hasData) {
-                        for (var doc in roomSnap.data!.docs) {
-                          final data = doc.data() as Map;
-                          final mics = data['activeMics'];
-                          if (mics is List) {
-                            usersInVoice += mics.length;
-                          } else if (mics is Map) {
-                            usersInVoice += mics.length;
+                      final activeRoomIds = <String>{};
+                      if (onlineRoomUsersSnap.hasData) {
+                        for (final doc in onlineRoomUsersSnap.data!.docs) {
+                          final roomId = _parentRoomId(doc);
+                          if (roomId != null) activeRoomIds.add(roomId);
+                        }
+                      }
+                      final activeRooms = roomSnap.data?.docs
+                              .where((doc) => activeRoomIds.contains(doc.id))
+                              .length ??
+                          0;
+
+                      final usersOnMic = <String>{};
+                      if (micSeatsSnap.hasData) {
+                        for (final doc in micSeatsSnap.data!.docs) {
+                          final roomId = _parentRoomId(doc);
+                          final userId = (doc.data()
+                              as Map<String, dynamic>)['userId']?.toString();
+                          if (roomId != null &&
+                              activeRoomIds.contains(roomId) &&
+                              userId != null &&
+                              userId.isNotEmpty) {
+                            usersOnMic.add('$roomId:$userId');
                           }
                         }
                       }
-
-                      double dailyRevenue = 0;
-                      if (paySnap.hasData) {
-                        for (var doc in paySnap.data!.docs) {
-                          final data = doc.data() as Map;
-                          dailyRevenue += _parseDouble(data['amount'] ?? 0);
-                        }
-                      }
+                      final usersInVoice = usersOnMic.length;
 
                       int giftsToday = giftSnap.data?.docs.length ?? 0;
 
@@ -350,9 +361,16 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                             debugPrint(
                                 'Firestore stream error: ${harvestSnap.error}');
                           }
-                          final harvestSubscribers = harvestSnap.hasError
-                              ? 0
-                              : (harvestSnap.data?.docs.length ?? 0);
+                          final harvestSubscriberIds = <String>{};
+                          if (!harvestSnap.hasError && harvestSnap.hasData) {
+                            for (final doc in harvestSnap.data!.docs) {
+                              final userId = _investmentUserId(doc);
+                              if (userId != null) {
+                                harvestSubscriberIds.add(userId);
+                              }
+                            }
+                          }
+                          final harvestSubscribers = harvestSubscriberIds.length;
 
                           return StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
@@ -385,7 +403,7 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                                         onTap: _showActiveTodayDialog),
                                     _overviewCard(
                                         'مستخدمون جدد',
-                                        '$newUsersToday',
+                                      '$newUsersThisWeek',
                                         Icons.person_add,
                                         Colors.cyanAccent,
                                         onTap: _showNewUsersDialog),
@@ -402,14 +420,7 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                                         Colors.orangeAccent,
                                         onTap: _showOnMicDialog),
                                     _overviewCard('هدايا اليوم', '$giftsToday',
-                                        Icons.card_giftcard, Colors.pinkAccent,
-                                        onTap: _showGiftsTodayDialog),
-                                    _overviewCard(
-                                        'عوائد اليوم',
-                                        '${dailyRevenue.toStringAsFixed(0)} نجمة',
-                                        Icons.stars,
-                                        Colors.lightGreenAccent,
-                                        onTap: _showDailyRevenueDialog),
+                                        Icons.card_giftcard, Colors.pinkAccent),
                                     _overviewCard(
                                         'المشتركون في باقات المكافآت',
                                         '$harvestSubscribers',
@@ -435,6 +446,55 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                     },
                   );
                 },
+              );
+            },
+          );
+        },
+      );
+    */
+  }
+
+  Widget _buildSystemOverviewSafe() {
+    final now = DateTime.now();
+    final startOfToday = DateTime(now.year, now.month, now.day);
+    final newUsersCutoff = now.subtract(const Duration(days: 7));
+
+    return SliverToBoxAdapter(
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (context, userSnap) {
+          final users = userSnap.data?.docs ?? [];
+          final dailyActive = users.where((doc) => _isActiveToday(
+              doc.data() as Map<String, dynamic>, startOfToday)).length;
+          final newUsers = users.where((doc) => _isNewUser(
+              doc.data() as Map<String, dynamic>, newUsersCutoff, now)).length;
+          
+          return StreamBuilder<int>(
+            stream: _presenceService.getOnlineUsersCount(),
+            builder: (context, onlineSnap) {
+              final onlineCount = onlineSnap.data ?? 0;
+              
+              return Container(
+                height: 130,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    _overviewCard('المتصلون الآن',
+                        '$onlineCount',
+                        Icons.bolt, Colors.greenAccent,
+                        onTap: _showOnlineUsersDialog),
+                    _overviewCard('نشط اليوم (DAU)', '$dailyActive',
+                        Icons.trending_up, Colors.blueAccent,
+                        onTap: _showActiveTodayDialog),
+                    _overviewCard('مستخدمون جدد', '$newUsers',
+                        Icons.person_add, Colors.cyanAccent,
+                        onTap: _showNewUsersDialog),
+                    _overviewCard('إجمالي المستخدمين', '${users.length}',
+                        Icons.group, Colors.white70,
+                        onTap: _showTotalUsersDialog),
+                  ],
+                ),
               );
             },
           );
@@ -513,6 +573,31 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
     return card;
   }
 
+  Future<Map<String, Map<String, dynamic>>> _fetchUsersData(List<String> userIds) async {
+    final Map<String, Map<String, dynamic>> usersData = {};
+    
+    if (userIds.isEmpty) return usersData;
+    
+    try {
+      // جلب بيانات المستخدمين على دفعات (10 في كل مرة)
+      for (int i = 0; i < userIds.length; i += 10) {
+        final batch = userIds.skip(i).take(10).toList();
+        final snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where(FieldPath.documentId, whereIn: batch)
+            .get();
+        
+        for (final doc in snapshot.docs) {
+          usersData[doc.id] = doc.data() as Map<String, dynamic>;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching users data: $e');
+    }
+    
+    return usersData;
+  }
+
   void _showOnlineUsersDialog() {
     showDialog(
       context: context,
@@ -522,11 +607,8 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
           title: Text('المتصلون الآن', style: TextStyle(color: royalGold)),
           content: SizedBox(
             width: double.maxFinite,
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('users')
-                  .where('isOnline', isEqualTo: true)
-                  .snapshots(),
+            child: StreamBuilder<List<Map<String, dynamic>>>(
+              stream: _presenceService.getOnlineUsers(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const SizedBox(
@@ -535,7 +617,7 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                   );
                 }
 
-                final onlineUsers = snapshot.data!.docs;
+                final onlineUsers = snapshot.data!;
                 if (onlineUsers.isEmpty) {
                   return const SizedBox(
                     height: 120,
@@ -546,50 +628,69 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
                   );
                 }
 
-                return SizedBox(
-                  height: 300,
-                  child: ListView.builder(
-                    itemCount: onlineUsers.length,
-                    itemBuilder: (context, index) {
-                      final data =
-                          onlineUsers[index].data() as Map<String, dynamic>;
-                      return ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 0),
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.white12,
-                          backgroundImage: data['profilePic'] != null &&
-                                  data['profilePic'].toString().isNotEmpty &&
-                                  Uri.tryParse(data['profilePic'].toString())
-                                          ?.hasAbsolutePath ==
-                                      true
-                              ? NetworkImage(data['profilePic'])
-                                  as ImageProvider
-                              : null,
-                          child: data['profilePic'] == null ||
-                                  data['profilePic'].toString().isEmpty ||
-                                  Uri.tryParse(data['profilePic'].toString())
-                                          ?.hasAbsolutePath !=
-                                      true
-                              ? const Icon(Icons.person, color: Colors.white54)
-                              : null,
-                        ),
-                        title: Text(
-                          data['name'] ?? 'مستخدم',
-                          style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          data['royalId'] != null && data['royalId'].toString().isNotEmpty
-                              ? 'الآيدي: ${data['royalId']}'
-                              : (data['shortId'] != null && data['shortId'].toString().isNotEmpty
-                                  ? 'الآيدي: ${data['shortId']}'
-                                  : 'آيدي غير متوفر'),
-                          style: const TextStyle(color: Colors.white70),
-                        ),
+                return FutureBuilder<Map<String, Map<String, dynamic>>>(
+                  future: _fetchUsersData(onlineUsers.map((u) => u['user_id'] as String).toList()),
+                  builder: (context, usersDataSnapshot) {
+                    if (!usersDataSnapshot.hasData) {
+                      return const SizedBox(
+                        height: 120,
+                        child: Center(child: CircularProgressIndicator()),
                       );
-                    },
-                  ),
+                    }
+
+                    final usersData = usersDataSnapshot.data!;
+
+                    return SizedBox(
+                      height: 300,
+                      child: ListView.builder(
+                        itemCount: onlineUsers.length,
+                        itemBuilder: (context, index) {
+                          final presenceData = onlineUsers[index];
+                          final userId = presenceData['user_id'] as String;
+                          final userData = usersData[userId];
+
+                          return ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 0),
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.white12,
+                              backgroundImage: userData?['profilePic'] != null &&
+                                      userData!['profilePic'].toString().isNotEmpty &&
+                                      Uri.tryParse(userData['profilePic'].toString())
+                                              ?.hasAbsolutePath ==
+                                          true
+                                  ? NetworkImage(userData['profilePic'])
+                                      as ImageProvider
+                                  : null,
+                              child: userData?['profilePic'] == null ||
+                                      userData!['profilePic'].toString().isEmpty ||
+                                      Uri.tryParse(userData['profilePic'].toString())
+                                              ?.hasAbsolutePath !=
+                                          true
+                                  ? const Icon(Icons.person, color: Colors.white54)
+                                  : null,
+                            ),
+                            title: Text(
+                              userData?['name'] ?? 'مستخدم',
+                              style: const TextStyle(
+                                  color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              userData?['royalId'] != null && userData!['royalId'].toString().isNotEmpty
+                                  ? 'الآيدي: ${userData['royalId']}'
+                                  : (userData?['shortId'] != null && userData!['shortId'].toString().isNotEmpty
+                                      ? 'الآيدي: ${userData['shortId']}'
+                                      : 'آيدي غير متوفر'),
+                              style: const TextStyle(color: Colors.white70),
+                            ),
+                            trailing: presenceData['online'] == true
+                                ? const Icon(Icons.circle, color: Colors.green, size: 12)
+                                : const Icon(Icons.circle, color: Colors.orange, size: 12),
+                          );
+                        },
+                      ),
+                    );
+                  },
                 );
               },
             ),
@@ -639,7 +740,7 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
 
   void _showActiveTodayDialog() {
     final now = DateTime.now();
-    final todayStr = DateFormat('yyyy-MM-dd').format(now);
+    final startOfToday = DateTime(now.year, now.month, now.day);
 
     _showStreamDialog(
       title: 'نشط اليوم',
@@ -654,7 +755,7 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
 
         final activeUsers = snapshot.data!.docs.where((doc) {
           final data = doc.data() as Map<String, dynamic>;
-          return (data['lastLoginDate'] ?? '').toString().startsWith(todayStr);
+          return _isActiveToday(data, startOfToday);
         }).toList();
 
         if (activeUsers.isEmpty) {
@@ -708,10 +809,10 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
 
   void _showNewUsersDialog() {
     final now = DateTime.now();
-    final startOfToday = DateTime(now.year, now.month, now.day);
+    final newUsersCutoff = now.subtract(const Duration(days: 7));
 
     _showStreamDialog(
-      title: 'مستخدمون جدد',
+      title: 'مستخدمون جدد (آخر 7 أيام)',
       stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -723,8 +824,7 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
 
         final newUsers = snapshot.data!.docs.where((doc) {
           final data = doc.data() as Map<String, dynamic>;
-          final created = data['createdAt'];
-          return created is Timestamp && created.toDate().isAfter(startOfToday);
+          return _isNewUser(data, newUsersCutoff, now);
         }).toList();
 
         if (newUsers.isEmpty) {
@@ -743,9 +843,9 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
             itemCount: newUsers.length,
             itemBuilder: (context, index) {
               final data = newUsers[index].data() as Map<String, dynamic>;
-              final createdAt = data['createdAt'];
-              final createdText = createdAt is Timestamp
-                  ? DateFormat('yyyy-MM-dd HH:mm').format(createdAt.toDate())
+                final createdAt = _userCreatedDate(data);
+                final createdText = createdAt != null
+                  ? DateFormat('yyyy-MM-dd HH:mm').format(createdAt)
                   : 'غير متوفر';
 
               return ListTile(
@@ -782,6 +882,164 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
   void _showActiveRoomsDialog() {
     _showStreamDialog(
       title: 'الغرف النشطة',
+      stream: FirebaseFirestore.instance
+          .collectionGroup('online_users')
+          .snapshots(),
+      builder: (context, onlineUsersSnapshot) {
+        if (!onlineUsersSnapshot.hasData) {
+          return const SizedBox(
+            height: 120,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        final onlineRoomIds = onlineUsersSnapshot.data!.docs
+            .map(_parentRoomId)
+            .whereType<String>()
+            .toSet();
+
+        return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('rooms')
+              .where('isClosed', isEqualTo: false)
+              .snapshots(),
+          builder: (context, roomsSnapshot) {
+            if (!roomsSnapshot.hasData) {
+              return const SizedBox(
+                height: 120,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            final rooms = roomsSnapshot.data!.docs
+                .where((doc) => onlineRoomIds.contains(doc.id))
+                .toList();
+            if (rooms.isEmpty) {
+              return const SizedBox(
+                height: 120,
+                child: Center(
+                  child: Text('لا توجد غرف بها مستخدمون حالياً',
+                      style: TextStyle(color: Colors.white70)),
+                ),
+              );
+            }
+
+            return SizedBox(
+              height: 300,
+              child: ListView.builder(
+                itemCount: rooms.length,
+                itemBuilder: (context, index) {
+                  final data = rooms[index].data() as Map<String, dynamic>;
+                  final title = data['title'] ?? data['name'] ?? 'غرفة صوتية';
+
+                  return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                    leading: const CircleAvatar(
+                      backgroundColor: Colors.white12,
+                      child: Icon(Icons.mic, color: Colors.white54),
+                    ),
+                    title: Text(
+                      title.toString(),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showOnMicDialog() {
+    _showStreamDialog(
+      title: 'المستخدمون على المايك',
+      stream: FirebaseFirestore.instance.collectionGroup('mic_seats').snapshots(),
+      builder: (context, micSeatsSnapshot) {
+        if (!micSeatsSnapshot.hasData) {
+          return const SizedBox(
+            height: 120,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        final micUsersByRoom = <String, Set<String>>{};
+        for (final doc in micSeatsSnapshot.data!.docs) {
+          final roomId = _parentRoomId(doc);
+          final userId = (doc.data() as Map<String, dynamic>)['userId']
+              ?.toString();
+          if (roomId != null && userId != null && userId.isNotEmpty) {
+            micUsersByRoom.putIfAbsent(roomId, () => <String>{}).add(userId);
+          }
+        }
+
+        return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('rooms')
+              .where('isClosed', isEqualTo: false)
+              .snapshots(),
+          builder: (context, roomsSnapshot) {
+            if (!roomsSnapshot.hasData) {
+              return const SizedBox(
+                height: 120,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            final activeRooms = roomsSnapshot.data!.docs
+                .where((doc) => micUsersByRoom.containsKey(doc.id))
+                .toList();
+            if (activeRooms.isEmpty) {
+              return const SizedBox(
+                height: 120,
+                child: Center(
+                  child: Text('لا يوجد مستخدمون على المايك حالياً',
+                      style: TextStyle(color: Colors.white70)),
+                ),
+              );
+            }
+
+            return SizedBox(
+              height: 300,
+              child: ListView.builder(
+                itemCount: activeRooms.length,
+                itemBuilder: (context, index) {
+                  final room = activeRooms[index];
+                  final data = room.data() as Map<String, dynamic>;
+                  final roomTitle = data['title'] ?? data['name'] ?? 'غرفة صوتية';
+                  final micCount = micUsersByRoom[room.id]?.length ?? 0;
+
+                  return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                    leading: const CircleAvatar(
+                      backgroundColor: Colors.white12,
+                      child: Icon(Icons.mic_none, color: Colors.white54),
+                    ),
+                    title: Text(
+                      roomTitle.toString(),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      'على المايك: $micCount',
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /*
+  void _showOnMicDialog() {
+    _showStreamDialog(
+      title: 'المستخدمون على المايك',
       stream: FirebaseFirestore.instance
           .collection('rooms')
           .where('isClosed', isEqualTo: false)
@@ -842,8 +1100,9 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
       },
     );
   }
+  */
 
-  void _showOnMicDialog() {
+  void _showOnMicDialogLegacy() {
     _showStreamDialog(
       title: 'المستخدمون على المايك',
       stream: FirebaseFirestore.instance
@@ -918,141 +1177,6 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
     );
   }
 
-  void _showGiftsTodayDialog() {
-    final now = DateTime.now();
-    final startOfToday = DateTime(now.year, now.month, now.day);
-
-    _showStreamDialog(
-      title: 'هدايا اليوم',
-      stream: FirebaseFirestore.instance
-          .collection('gift_logs')
-          .where('timestamp',
-              isGreaterThanOrEqualTo: Timestamp.fromDate(startOfToday))
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const SizedBox(
-            height: 120,
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        final gifts = snapshot.data!.docs;
-        if (gifts.isEmpty) {
-          return const SizedBox(
-            height: 120,
-            child: Center(
-              child: Text('لا توجد هدايا اليوم',
-                  style: TextStyle(color: Colors.white70)),
-            ),
-          );
-        }
-
-        return SizedBox(
-          height: 300,
-          child: ListView.builder(
-            itemCount: gifts.length,
-            itemBuilder: (context, index) {
-              final data = gifts[index].data() as Map<String, dynamic>;
-              final giftName = data['giftName'] ?? data['gift'] ?? 'هدية';
-              final sender =
-                  data['senderName'] ?? data['senderId'] ?? 'مرسل غير معروف';
-              final receiver = data['receiverName'] ??
-                  data['receiverId'] ??
-                  'مستقبل غير معروف';
-
-              return ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-                leading: const CircleAvatar(
-                  backgroundColor: Colors.white12,
-                  child: Icon(Icons.card_giftcard, color: Colors.white54),
-                ),
-                title: Text(
-                  giftName.toString(),
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  '$sender → $receiver',
-                  style: const TextStyle(color: Colors.white70),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  void _showDailyRevenueDialog() {
-    final now = DateTime.now();
-    final startOfToday = DateTime(now.year, now.month, now.day);
-
-    _showStreamDialog(
-      title: 'عوائد اليوم',
-      stream: FirebaseFirestore.instance
-          .collection('payments')
-          .where('status', isEqualTo: 'completed')
-          .where('timestamp',
-              isGreaterThanOrEqualTo: Timestamp.fromDate(startOfToday))
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const SizedBox(
-            height: 120,
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        final payments = snapshot.data!.docs;
-        if (payments.isEmpty) {
-          return const SizedBox(
-            height: 120,
-            child: Center(
-              child: Text('لا توجد عوائد اليوم',
-                  style: TextStyle(color: Colors.white70)),
-            ),
-          );
-        }
-
-        return SizedBox(
-          height: 300,
-          child: ListView.builder(
-            itemCount: payments.length,
-            itemBuilder: (context, index) {
-              final data = payments[index].data() as Map<String, dynamic>;
-              final amount = data['amount']?.toString() ?? '0';
-              final user = data['userName'] ?? data['userId'] ?? 'مستخدم';
-              final createdAt = data['timestamp'];
-              final timeText = createdAt is Timestamp
-                  ? DateFormat('HH:mm').format(createdAt.toDate())
-                  : 'غير معروف';
-
-              return ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-                leading: const CircleAvatar(
-                  backgroundColor: Colors.white12,
-                  child: Icon(Icons.stars, color: Colors.white54),
-                ),
-                title: Text(
-                  '$amount نجمة',
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  '$user • $timeText',
-                  style: const TextStyle(color: Colors.white70),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
   void _showHarvestSubscribersDialog() {
     _showStreamDialog(
       title: 'المشتركون في باقات المكافآت',
@@ -1078,8 +1202,11 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
           );
         }
 
-        final subscribers = snapshot.data!.docs;
-        if (subscribers.isEmpty) {
+        final subscriberIds = snapshot.data!.docs
+            .map(_investmentUserId)
+            .whereType<String>()
+            .toSet();
+        if (subscriberIds.isEmpty) {
           return const SizedBox(
             height: 120,
             child: Center(
@@ -1089,39 +1216,69 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
           );
         }
 
-        return SizedBox(
-          height: 300,
-          child: ListView.builder(
-            itemCount: subscribers.length,
-            itemBuilder: (context, index) {
-              final data = subscribers[index].data() as Map<String, dynamic>;
-              final userId = data['userId'] ?? data['uid'] ?? 'غير معروف';
-              final packageName =
-                  data['packageName'] ?? data['plan'] ?? 'باقة مكافآت';
-              final startAt = data['startAt'];
-              final startText = startAt is Timestamp
-                  ? DateFormat('yyyy-MM-dd').format(startAt.toDate())
-                  : 'غير معروف';
+        return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('users').snapshots(),
+          builder: (context, usersSnapshot) {
+            if (!usersSnapshot.hasData) {
+              return const SizedBox(
+                height: 120,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
 
-              return ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
-                leading: const CircleAvatar(
-                  backgroundColor: Colors.white12,
-                  child: Icon(Icons.redeem, color: Colors.white54),
-                ),
-                title: Text(
-                  packageName.toString(),
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  'المستخدم: $userId • بدأ: $startText',
-                  style: const TextStyle(color: Colors.white70),
+            final usersById = <String, Map<String, dynamic>>{
+              for (final doc in usersSnapshot.data!.docs)
+                doc.id: doc.data() as Map<String, dynamic>,
+            };
+            final users = subscriberIds
+                .map((id) => MapEntry(id, usersById[id]))
+                .where((entry) => entry.value != null)
+                .toList();
+
+            if (users.isEmpty) {
+              return const SizedBox(
+                height: 120,
+                child: Center(
+                  child: Text('لا توجد بيانات للمشتركين حالياً',
+                      style: TextStyle(color: Colors.white70)),
                 ),
               );
-            },
-          ),
+            }
+
+            return SizedBox(
+              height: 300,
+              child: ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  final userId = users[index].key;
+                  final data = users[index].value!;
+                  final profilePic = data['profilePic']?.toString() ?? '';
+
+                  return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.white12,
+                      backgroundImage: profilePic.isNotEmpty
+                          ? NetworkImage(profilePic)
+                          : null,
+                      child: profilePic.isEmpty
+                          ? const Icon(Icons.person, color: Colors.white54)
+                          : null,
+                    ),
+                    title: Text(
+                      data['name']?.toString() ?? 'مستخدم',
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      'الآيدي: ${data['royalId'] ?? data['shortId'] ?? userId}',
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
         );
       },
     );
@@ -1393,6 +1550,50 @@ class _RoyalAdminPanelPageState extends State<RoyalAdminPanelPage> {
         ),
       ),
     );
+  }
+
+  String? _parentRoomId(DocumentSnapshot doc) {
+    return doc.reference.parent.parent?.id;
+  }
+
+  String? _investmentUserId(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    final explicitId = data?['userId'] ?? data?['uid'];
+    if (explicitId != null && explicitId.toString().isNotEmpty) {
+      return explicitId.toString();
+    }
+    return doc.reference.parent.parent?.id;
+  }
+
+  DateTime? _asDateTime(dynamic value) {
+    if (value is Timestamp) return value.toDate();
+    if (value is DateTime) return value;
+    if (value is String && value.isNotEmpty) return DateTime.tryParse(value);
+    return null;
+  }
+
+  DateTime? _userActivityDate(Map<String, dynamic> data) {
+    return _asDateTime(data['lastSeen']) ??
+        _asDateTime(data['lastLoginAt']) ??
+        _asDateTime(data['lastActive']) ??
+        _asDateTime(data['lastLoginDate']);
+  }
+
+  DateTime? _userCreatedDate(Map<String, dynamic> data) {
+    return _asDateTime(data['createdAt']) ?? _asDateTime(data['joinDate']);
+  }
+
+  bool _isActiveToday(Map<String, dynamic> data, DateTime startOfToday) {
+    final activityDate = _userActivityDate(data);
+    return activityDate != null && !activityDate.isBefore(startOfToday);
+  }
+
+  bool _isNewUser(
+      Map<String, dynamic> data, DateTime cutoff, DateTime currentTime) {
+    final createdDate = _userCreatedDate(data);
+    return createdDate != null &&
+        !createdDate.isBefore(cutoff) &&
+        !createdDate.isAfter(currentTime);
   }
 
   double _parseDouble(dynamic value) {

@@ -202,7 +202,7 @@ class _ManageAgentsPageState extends State<ManageAgentsPage> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
             side: BorderSide(color: accentGold.withValues(alpha: 0.3))),
-        title: Text('شحن رصيد الوكالة (رصيد البيع)',
+        title: Text('تفعيل رصيد الوكالة (رصيد البيع)',
             style: TextStyle(
                 color: accentGold, fontSize: 16, fontWeight: FontWeight.bold)),
         content: Column(
@@ -220,7 +220,7 @@ class _ManageAgentsPageState extends State<ManageAgentsPage> {
                 hintText: 'أدخل الكمية...',
                 hintStyle: const TextStyle(color: Colors.white24),
                 prefixIcon: Icon(
-                    type == 'gems' ? Icons.diamond : Icons.stars_rounded,
+                    type == 'points' ? Icons.circle : Icons.stars_rounded,
                     color: accentGold),
                 filled: true,
                 fillColor: Colors.white10,
@@ -240,7 +240,7 @@ class _ManageAgentsPageState extends State<ManageAgentsPage> {
               int amount = int.tryParse(amountController.text) ?? 0;
               if (amount > 0) {
                 final Map<String, dynamic> updates = {};
-                if (type == 'gems') {
+                if (type == 'points') {
                   updates['agencyGems'] = FieldValue.increment(amount);
                 } else {
                   updates['agencyStars'] = FieldValue.increment(amount);
@@ -251,14 +251,14 @@ class _ManageAgentsPageState extends State<ManageAgentsPage> {
                 if (context.mounted) {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('تمت إضافة الرصيد لمحفظة الوكالة بنجاح ✅'),
+                      content: Text('تم تفعيل الرصيد لمحفظة الوكالة بنجاح ✅'),
                       backgroundColor: Colors.green));
                 }
               }
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: accentGold, foregroundColor: Colors.black),
-            child: const Text('شحن الوكالة'),
+            child: const Text('تفعيل الوكالة'),
           ),
         ],
       ),
@@ -377,7 +377,7 @@ class _ManageAgentsPageState extends State<ManageAgentsPage> {
                         const SizedBox(height: 5),
                         Row(
                           children: [
-                            _balanceChip('${agent.agencyGems}', Icons.diamond,
+                            _balanceChip('${agent.agencyGems}', Icons.circle,
                                 Colors.blue),
                             const SizedBox(width: 10),
                             _balanceChip('${agent.agencyStars}',
@@ -394,7 +394,7 @@ class _ManageAgentsPageState extends State<ManageAgentsPage> {
                               Icon(Icons.more_vert_rounded, color: accentGold),
                           color: primaryDark,
                           onSelected: (val) {
-                            if (val == 'gems') _showChargeDialog(agent, 'gems');
+                            if (val == 'points') _showChargeDialog(agent, 'points');
                             if (val == 'stars') {
                               _showChargeDialog(agent, 'stars');
                             }
@@ -405,9 +405,9 @@ class _ManageAgentsPageState extends State<ManageAgentsPage> {
                             }
                           },
                           itemBuilder: (ctx) => [
-                            _popItem('gems', 'شحن جواهر الوكالة', Icons.diamond,
+                            _popItem('points', 'تفعيل نقاط الوكالة', Icons.circle,
                                 Colors.blue),
-                            _popItem('stars', 'شحن نجوم ⭐ الوكالة',
+                            _popItem('stars', 'تفعيل نجوم الوكالة',
                                 Icons.stars_rounded, Colors.amber),
                             _popItem('edit', 'تعديل البيانات', Icons.edit,
                                 Colors.grey),
