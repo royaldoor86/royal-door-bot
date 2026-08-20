@@ -257,7 +257,7 @@ class FirestoreService {
     });
   }
 
-  /// كسب XP من هدايا الجواهر
+  /// كسب XP من هدايا النقاط
   static Future<void> earnGemGiftXP(String roomId, int giftCount) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -268,7 +268,7 @@ class FirestoreService {
     });
   }
 
-  /// كسب XP من هدايا الكوينز
+  /// كسب XP من هدايا النجوم
   static Future<void> earnCoinGiftXP(String roomId, int giftCount) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -444,14 +444,18 @@ class FirestoreService {
     await msgRef.set(message.toMap());
 
     // تحديث بيانات الغرفة (آخر رسالة، التوقيت)
-    await roomRef.update({
-      'lastMessage': message.type == MessageType.image
-          ? '📷 صورة'
-          : message.type == MessageType.audio
-              ? '🎤 رسالة صوتية'
-              : message.text,
-      'lastMessageTime': FieldValue.serverTimestamp(),
-    });
+    try {
+      await roomRef.update({
+        'lastMessage': message.type == MessageType.image
+            ? '📷 صورة'
+            : message.type == MessageType.audio
+                ? '🎤 رسالة صوتية'
+                : message.text,
+        'lastMessageTime': FieldValue.serverTimestamp(),
+      });
+    } on FirebaseException catch (e) {
+      _handleError('updateChatRoomPreview', e);
+    }
 
     // --- إرسال إشعار للطرف الآخر ---
     try {
@@ -557,7 +561,11 @@ class FirestoreService {
       batch.update(_db.collection('chatRooms').doc(roomId),
           {'unreadCounts.$readerId': 0});
     }
-    await batch.commit();
+    try {
+      await batch.commit();
+    } on FirebaseException catch (e) {
+      _handleError('markMessagesAsRead', e);
+    }
   }
 
   Future<void> deleteConversation(String roomId, String userId) async {
@@ -730,23 +738,57 @@ class FirestoreService {
 
   Future<void> acceptFriendRequest(
       String requestId, String senderId, String receiverId) async {
-    final batch = _db.batch();
-    batch.update(_db.collection('friendRequests').doc(requestId),
-        {'status': 'accepted'});
-    batch.update(_db.collection('users').doc(senderId), {
-      'friends': FieldValue.arrayUnion([receiverId])
-    });
-    batch.update(_db.collection('users').doc(receiverId), {
-      'friends': FieldValue.arrayUnion([senderId])
-    });
-    await batch.commit();
+    try {
+      // التحقق من صحة المعرفات
+      if (requestId.isEmpty || senderId.isEmpty || receiverId.isEmpty) {
+        throw Exception('Invalid IDs provided');
+      }
+
+      // التحقق من وجود طلب الصداقة
+      final requestDoc = await _db.collection('friendRequests').doc(requestId).get();
+      if (!requestDoc.exists) {
+        throw Exception('Friend request not found');
+      }
+
+      final requestData = requestDoc.data() as Map<String, dynamic>;
+      if (requestData['status'] != 'pending') {
+        throw Exception('Friend request is not pending');
+      }
+
+      final batch = _db.batch();
+      batch.update(_db.collection('friendRequests').doc(requestId),
+          {'status': 'accepted'});
+      batch.update(_db.collection('users').doc(senderId), {
+        'friends': FieldValue.arrayUnion([receiverId])
+      });
+      batch.update(_db.collection('users').doc(receiverId), {
+        'friends': FieldValue.arrayUnion([senderId])
+      });
+      await batch.commit();
+      
+      debugPrint('Friend request accepted successfully: $requestId');
+    } catch (e) {
+      debugPrint('Error accepting friend request: $e');
+      rethrow;
+    }
   }
 
-  Future<void> rejectFriendRequest(String requestId) {
-    return _db
-        .collection('friendRequests')
-        .doc(requestId)
-        .update({'status': 'rejected'});
+  Future<void> rejectFriendRequest(String requestId) async {
+    try {
+      if (requestId.isEmpty) {
+        throw Exception('Invalid request ID');
+      }
+
+      await _db
+          .collection('friendRequests')
+          .doc(requestId)
+          .update({'status': 'rejected'});
+      
+      debugPrint('Friend request rejected successfully: $requestId');
+    } catch (e) {
+      debugPrint('Error rejecting friend request: $e');
+      rethrow;
+    }
   }
 
   Future<void> cancelFriendRequest(String requestId) async {
@@ -808,7 +850,7 @@ class FirestoreService {
       case 'like':
         gemsReward = 5;
         socialPointsReward = 10;
-        message = "حصلت على 5 جواهر لتفاعلك الملكي! ❤️";
+        message = "حصلت على 5 نقاط لتفاعلك الملكي! ❤️";
         break;
       case 'friend_request':
         coinsReward = 5;
@@ -832,9 +874,9 @@ class FirestoreService {
 
         // تحديث الرصيد والنقاط الاجتماعية
         tx.update(userRef, {
-          if (gemsReward > 0) 'gems': FieldValue.increment(gemsReward),
+          if (gemsReward > 0) 'points': FieldValue.increment(gemsReward),
           if (coinsReward > 0) 'stars': FieldValue.increment(coinsReward),
-          if (coinsReward > 0) 'coins': FieldValue.increment(coinsReward),
+          if (coinsReward > 0) 'stars': FieldValue.increment(coinsReward),
           'agentData.friendlyCoins': FieldValue.increment(socialPointsReward),
         });
 
@@ -843,7 +885,7 @@ class FirestoreService {
         tx.set(logRef, {
           'action': actionType,
           'targetId': targetId,
-          'gems': gemsReward,
+          'points': gemsReward,
           'stars': coinsReward,
           'points': socialPointsReward,
           'timestamp': FieldValue.serverTimestamp(),
@@ -896,16 +938,22 @@ class FirestoreService {
     }
   }
 
-  Future<void> blockUser(String currentUid, String targetUid) {
-    return _db.collection('users').doc(currentUid).update({
+  Future<void> blockUser(String currentUid, String targetUid) async {
+    final userRef = _db.collection('users').doc(currentUid);
+    await userRef.update({
       'blockedUsers': FieldValue.arrayUnion([targetUid])
+    });
+    await userRef.collection('blockedUsers').doc(targetUid).set({
+      'blockedAt': FieldValue.serverTimestamp(),
     });
   }
 
-  Future<void> unblockUser(String currentUid, String targetUid) {
-    return _db.collection('users').doc(currentUid).update({
+  Future<void> unblockUser(String currentUid, String targetUid) async {
+    final userRef = _db.collection('users').doc(currentUid);
+    await userRef.update({
       'blockedUsers': FieldValue.arrayRemove([targetUid])
     });
+    await userRef.collection('blockedUsers').doc(targetUid).delete();
   }
 
   // --- نظام البلاغات (UGC Compliance) ---
@@ -922,8 +970,8 @@ class FirestoreService {
       'type': type,
       'reason': reason,
       'content': content,
-      'timestamp': FieldValue.serverTimestamp(),
-      'status': 'pending',
+      'createdAt': FieldValue.serverTimestamp(),
+      'status': 'new',
     });
   }
 
@@ -932,6 +980,7 @@ class FirestoreService {
       {required String ownerId,
       required String roomName,
       String? roomImage,
+      String? roomBackground,
       int? maxSeats}) async {
     final ref = _db.collection('rooms').doc();
 
@@ -946,7 +995,8 @@ class FirestoreService {
     await ref.set({
       'ownerId': ownerId,
       'name': roomName,
-      'image': roomImage ?? '',
+      'image': roomImage ?? 'assets/images/room_party.jpg',
+      'backgroundImage': roomBackground ?? 'assets/images/room_love.jpg',
       'createdAt': FieldValue.serverTimestamp(),
       'maxSeats': finalMaxSeats,
       'level': 1,
@@ -986,6 +1036,7 @@ class FirestoreService {
       return _db
           .collection('posts')
           .where('authorId', whereIn: batches.first)
+          .where('privacy', isEqualTo: 'public')
           .orderBy('createdAt', descending: true)
           .snapshots()
           .handleError((error) {
@@ -1009,6 +1060,7 @@ class FirestoreService {
       final sub = _db
           .collection('posts')
           .where('authorId', whereIn: batch)
+          .where('privacy', isEqualTo: 'public')
           .orderBy('createdAt', descending: true)
           .snapshots()
           .handleError((error) {
@@ -1170,6 +1222,7 @@ class FirestoreService {
         .collection('stories')
         .where('createdAt',
             isGreaterThan: DateTime.now().subtract(const Duration(hours: 24)))
+        .where('privacy', isEqualTo: 'public')
         .snapshots()
         .handleError((error) {
       _handleError("streamStories", error);
@@ -1198,42 +1251,62 @@ class FirestoreService {
     String? storyBackgroundColor,
     String? storyFilter,
   }) async {
-    final storyData = {
-      'userId': userId,
-      'userName': userName,
-      'userPic': userPic,
-      'imageUrl': imageUrl,
-      'videoUrl': videoUrl,
-      'imageStoragePath': imageStoragePath,
-      'videoStoragePath': videoStoragePath,
-      'createdAt': FieldValue.serverTimestamp(),
-    };
+    try {
+      debugPrint('📝 Adding story for user: $userId');
+      
+      final storyData = {
+        'userId': userId,
+        'userName': userName,
+        'userPic': userPic,
+        'imageUrl': imageUrl,
+        'videoUrl': videoUrl,
+        'imageStoragePath': imageStoragePath,
+        'videoStoragePath': videoStoragePath,
+        'createdAt': FieldValue.serverTimestamp(),
+        'expiresAt': Timestamp.fromDate(
+            DateTime.now().add(const Duration(hours: 24))),
+        'privacy': 'public',
+        'viewers': <String>[],
+        'likes': <String>[],
+        'archivedBy': <String>[],
+        'replyCount': 0,
+      };
 
-    // إضافة حقول مرجع المنشور إذا وجدت
-    if (postReference != null) {
-      storyData['postReference'] = postReference;
-    }
-    if (postContent != null) {
-      storyData['postContent'] = postContent;
-    }
-    if (postAuthorName != null) {
-      storyData['postAuthorName'] = postAuthorName;
-    }
+      // إضافة حقول مرجع المنشور إذا وجدت
+      if (postReference != null) {
+        storyData['postReference'] = postReference;
+      }
+      if (postContent != null) {
+        storyData['postContent'] = postContent;
+      }
+      if (postAuthorName != null) {
+        storyData['postAuthorName'] = postAuthorName;
+      }
 
-    // إضافة حقول القصة النصية إذا وجدت
-    if (storyText != null) {
-      storyData['storyText'] = storyText;
-    }
-    if (storyBackgroundColor != null) {
-      storyData['storyBackgroundColor'] = storyBackgroundColor;
-    }
-    if (storyFilter != null) {
-      storyData['storyFilter'] = storyFilter;
-    }
+      // إضافة حقول القصة النصية إذا وجدت
+      if (storyText != null) {
+        storyData['storyText'] = storyText;
+      }
+      if (storyBackgroundColor != null) {
+        storyData['storyBackgroundColor'] = storyBackgroundColor;
+      }
+      if (storyFilter != null) {
+        storyData['storyFilter'] = storyFilter;
+      }
 
-    await _db.collection('stories').add(storyData);
+      // التحقق من وجود محتوى على الأقل
+      if (imageUrl == null && videoUrl == null && storyText == null) {
+        throw Exception('Story must have at least image, video, or text');
+      }
 
-    // إشعار نشر القصة سيتم عبر Cloud Function بعد حفظ المستند
+      final docRef = await _db.collection('stories').add(storyData);
+      debugPrint('✅ Story added successfully with ID: ${docRef.id}');
+
+      // إشعار نشر القصة سيتم عبر Cloud Function بعد حفظ المستند
+    } catch (e) {
+      debugPrint('❌ Error adding story: $e');
+      rethrow;
+    }
   }
 
   Future<void> markStoryViewed(String storyId, String userId) =>

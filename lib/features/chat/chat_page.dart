@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../services/firestore_service.dart';
 import '../../services/localization_service.dart';
-import '../../services/telegram_web_app_service.dart';
 import '../../models/chat_model.dart';
 import '../../models/user_model.dart';
 import '../../app_theme.dart';
@@ -26,8 +25,9 @@ class ChatsPage extends StatefulWidget {
 }
 
 class _ChatsPageState extends State<ChatsPage>
-    with SingleTickerProviderStateMixin {
+  with TickerProviderStateMixin {
   late TabController _tabController;
+  late AnimationController _searchPulseController;
   final FirestoreService _firestoreService = FirestoreService();
   final TextEditingController _searchController = TextEditingController();
   String _filter = 'all';
@@ -36,11 +36,16 @@ class _ChatsPageState extends State<ChatsPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _searchPulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat(reverse: true);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _searchPulseController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -231,26 +236,87 @@ class _ChatsPageState extends State<ChatsPage>
   Widget _buildSearchBar(Translations trans) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: AppTheme.glassContainer(
-        opacity: 0.05,
-        child: Row(
-          children: [
-            const SizedBox(width: 15),
-            const Icon(Icons.search, color: Colors.white24),
-            const SizedBox(width: 10),
-            Expanded(
-              child: TextField(
-                controller: _searchController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                    hintText: 'Search by Royal ID...',
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.white24, fontSize: 14)),
-                onSubmitted: (_) => _searchAndShowProfile(),
+      child: AnimatedBuilder(
+        animation: _searchPulseController,
+        builder: (context, child) {
+          final pulse = _searchPulseController.value;
+          final firstColor = Color.lerp(
+              const Color(0xFFD4AF37), const Color(0xFF00D9FF), pulse)!;
+          final secondColor = Color.lerp(
+              const Color(0xFF7C3AED), const Color(0xFFFF4F9A), pulse)!;
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  firstColor.withValues(alpha: 0.28),
+                  secondColor.withValues(alpha: 0.20),
+                  const Color(0xFF0D1728),
+                ],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+              ),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: firstColor.withValues(alpha: 0.72),
+                width: 1.3,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: firstColor.withValues(alpha: 0.24 + pulse * 0.16),
+                  blurRadius: 22 + pulse * 8,
+                  spreadRadius: 1 + pulse,
+                ),
+                BoxShadow(
+                  color: secondColor.withValues(alpha: 0.13),
+                  blurRadius: 30,
+                  offset: const Offset(-4, 6),
+                ),
+              ],
+            ),
+            child: AppTheme.glassContainer(
+              opacity: 0.06,
+              borderRadius: BorderRadius.circular(21),
+              child: Row(
+                children: [
+                  const SizedBox(width: 15),
+                  Transform.translate(
+                    offset: Offset(0, -pulse * 1.5),
+                    child: Icon(Icons.search_rounded,
+                        color: firstColor, size: 25),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w600),
+                      decoration: InputDecoration(
+                        hintText: 'Search by Royal ID...',
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.55),
+                            fontSize: 14),
+                      ),
+                      onSubmitted: (_) => _searchAndShowProfile(),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsetsDirectional.only(end: 8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: firstColor.withValues(alpha: 0.14),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: firstColor.withValues(alpha: 0.4)),
+                    ),
+                    child: Icon(Icons.auto_awesome,
+                        size: 15, color: firstColor),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -345,11 +411,31 @@ class _ChatTile extends StatelessWidget {
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-          child: AppTheme.glassContainer(
-            opacity: 0.03,
-            child: Material(
-              color: Colors.transparent,
-              child: ListTile(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF102A43), Color(0xFF211A3A)],
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppTheme.royalGold.withValues(alpha: 0.18)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.royalGold.withValues(alpha: 0.10),
+                  blurRadius: 18,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: AppTheme.glassContainer(
+              opacity: 0.04,
+              borderGlow: true,
+              child: Material(
+                color: Colors.transparent,
+                child: ListTile(
+                contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 13, vertical: 5),
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -360,7 +446,7 @@ class _ChatTile extends StatelessWidget {
                   alignment: Alignment.bottomRight,
                   children: [
                     CircleAvatar(
-                        radius: 28,
+                      radius: 26,
                         backgroundImage: (user.profilePic.isNotEmpty &&
                                 Uri.tryParse(user.profilePic)
                                         ?.host
@@ -383,14 +469,15 @@ class _ChatTile extends StatelessWidget {
                     style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 15)),
+                        fontSize: 14)),
                 subtitle: Text(room.lastMessage,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: unread > 0 ? Colors.white70 : Colors.white38,
-                        fontSize: 13)),
+                        fontSize: 12)),
                 trailing: _buildTrailing(room),
+                ),
               ),
             ),
           ),
@@ -402,16 +489,36 @@ class _ChatTile extends StatelessWidget {
   Widget _buildGroupTile(BuildContext context, FirestoreService fs) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-      child: AppTheme.glassContainer(
-        opacity: 0.03,
-        child: Material(
-          color: Colors.transparent,
-          child: ListTile(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF33251A), Color(0xFF102A43)],
+            begin: Alignment.centerRight,
+            end: Alignment.centerLeft,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.royalGold.withValues(alpha: 0.22)),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.royalGold.withValues(alpha: 0.12),
+              blurRadius: 18,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: AppTheme.glassContainer(
+          opacity: 0.04,
+          borderGlow: true,
+          child: Material(
+            color: Colors.transparent,
+            child: ListTile(
+            contentPadding:
+              const EdgeInsets.symmetric(horizontal: 13, vertical: 5),
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (_) => GroupChatPage(room: room))),
             onLongPress: () => _showDeleteConfirmation(context, fs),
             leading: CircleAvatar(
-              radius: 28,
+              radius: 26,
               backgroundColor: Colors.white10,
               backgroundImage: (room.groupImage != null &&
                       room.groupImage!.isNotEmpty &&
@@ -426,12 +533,13 @@ class _ChatTile extends StatelessWidget {
                 style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 15)),
+                    fontSize: 14)),
             subtitle: Text(room.lastMessage,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Colors.white38, fontSize: 13)),
+                style: const TextStyle(color: Colors.white38, fontSize: 12)),
             trailing: _buildTrailing(room),
+            ),
           ),
         ),
       ),
@@ -508,8 +616,30 @@ class _FriendRequestsList extends StatelessWidget {
                               iconSize: 18,
                               visualDensity: VisualDensity.compact,
                               splashRadius: 18,
-                              onPressed: () => fs.acceptFriendRequest(
-                                  r['id'], sender.uid, uid)),
+                              onPressed: () async {
+                                try {
+                                  await fs.acceptFriendRequest(
+                                      r['id'], sender.uid, uid);
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(
+                                      const SnackBar(
+                                          content: Text('تم قبول طلب الصداقة ✅'),
+                                          backgroundColor: Colors.green),
+                                    );
+                                  }
+                                } catch (e) {
+                                  debugPrint('Error accepting friend request: $e');
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(
+                                      const SnackBar(
+                                          content: Text('حدث خطأ أثناء قبول طلب الصداقة'),
+                                          backgroundColor: Colors.red),
+                                    );
+                                  }
+                                }
+                              }),
                           IconButton(
                               icon: const Icon(Icons.cancel,
                                   color: Colors.redAccent),
@@ -519,7 +649,29 @@ class _FriendRequestsList extends StatelessWidget {
                               iconSize: 18,
                               visualDensity: VisualDensity.compact,
                               splashRadius: 18,
-                              onPressed: () => fs.rejectFriendRequest(r['id'])),
+                              onPressed: () async {
+                                try {
+                                  await fs.rejectFriendRequest(r['id']);
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(
+                                      const SnackBar(
+                                          content: Text('تم رفض طلب الصداقة'),
+                                          backgroundColor: Colors.orange),
+                                    );
+                                  }
+                                } catch (e) {
+                                  debugPrint('Error rejecting friend request: $e');
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(
+                                      const SnackBar(
+                                          content: Text('حدث خطأ أثناء رفض طلب الصداقة'),
+                                          backgroundColor: Colors.red),
+                                    );
+                                  }
+                                }
+                              }),
                         ],
                       ),
                     ),
@@ -634,15 +786,18 @@ class _FacebookFriendsTabState extends State<_FacebookFriendsTab> {
 
         return Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
               if (!facebookLinked)
-                Card(
-                  color: Colors.white.withValues(alpha: 0.08),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
+                SingleChildScrollView(
+                  child: Card(
+                    color: Colors.white.withValues(alpha: 0.08),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
                         const Icon(Icons.facebook,
                             color: AppTheme.royalGold, size: 36),
                         const SizedBox(height: 12),
@@ -661,7 +816,8 @@ class _FacebookFriendsTabState extends State<_FacebookFriendsTab> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor: AppTheme.royalGold),
                         ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 )
@@ -735,7 +891,8 @@ class _FacebookFriendsTabState extends State<_FacebookFriendsTab> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                Expanded(
+                SizedBox(
+                  height: 360,
                   child: friendIds.isEmpty && facebookFriends.isEmpty
                       ? const Center(
                           child: Text('لا يوجد أصدقاء متاحون حاليًا من فيسبوك',
@@ -936,21 +1093,45 @@ class _FacebookFriendsTabState extends State<_FacebookFriendsTab> {
                                                 const SizedBox(width: 6),
                                                 TextButton.icon(
                                                   onPressed: () async {
-                                                    if (requestId == null ||
-                                                        requestId.isEmpty) {
-                                                      return;
-                                                    }
-                                                    await FirestoreService()
-                                                        .cancelFriendRequest(
-                                                            requestId);
-                                                    if (context.mounted) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBar(
-                                                            content: Text(
-                                                                'تم إلغاء طلب الصداقة إلى ${friend.name}')),
-                                                      );
+                                                    try {
+                                                      if (requestId == null ||
+                                                          requestId.isEmpty) {
+                                                        if (context.mounted) {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            const SnackBar(
+                                                                content: Text('معرف الطلب غير صالح'),
+                                                                backgroundColor: Colors.red),
+                                                          );
+                                                        }
+                                                        return;
+                                                      }
+
+                                                      await FirestoreService()
+                                                          .cancelFriendRequest(
+                                                              requestId);
+                                                      if (context.mounted) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          SnackBar(
+                                                              content: Text(
+                                                                  'تم إلغاء طلب الصداقة إلى ${friend.name}'),
+                                                              backgroundColor: Colors.orange),
+                                                        );
+                                                      }
+                                                    } catch (e) {
+                                                      debugPrint('Error canceling friend request: $e');
+                                                      if (context.mounted) {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          const SnackBar(
+                                                              content: Text('حدث خطأ أثناء إلغاء طلب الصداقة'),
+                                                              backgroundColor: Colors.red),
+                                                        );
+                                                      }
                                                     }
                                                   },
                                                   icon: const Icon(Icons.undo,
@@ -965,19 +1146,45 @@ class _FacebookFriendsTabState extends State<_FacebookFriendsTab> {
                                           else if (state == 'incoming')
                                             TextButton.icon(
                                               onPressed: () async {
-                                                await FirestoreService()
-                                                    .acceptFriendRequest(
-                                                  requestId ?? '',
-                                                  friend.uid,
-                                                  user.uid,
-                                                );
-                                                if (context.mounted) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                        content: Text(
-                                                            'تمت إضافة ${friend.name} إلى قائمة الأصدقاء')),
+                                                try {
+                                                  if (requestId == null || requestId.isEmpty) {
+                                                    if (context.mounted) {
+                                                      ScaffoldMessenger.of(context)
+                                                          .showSnackBar(
+                                                        const SnackBar(
+                                                            content: Text('معرف الطلب غير صالح'),
+                                                            backgroundColor: Colors.red),
+                                                      );
+                                                    }
+                                                    return;
+                                                  }
+
+                                                  await FirestoreService()
+                                                      .acceptFriendRequest(
+                                                    requestId,
+                                                    friend.uid,
+                                                    user.uid,
                                                   );
+                                                  
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                          content: Text(
+                                                              'تمت إضافة ${friend.name} إلى قائمة الأصدقاء ✅'),
+                                                          backgroundColor: Colors.green),
+                                                    );
+                                                  }
+                                                } catch (e) {
+                                                  debugPrint('Error accepting friend request: $e');
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                          content: Text('حدث خطأ أثناء قبول طلب الصداقة'),
+                                                          backgroundColor: Colors.red),
+                                                    );
+                                                  }
                                                 }
                                               },
                                               icon: const Icon(
@@ -991,19 +1198,32 @@ class _FacebookFriendsTabState extends State<_FacebookFriendsTab> {
                                           else
                                             TextButton.icon(
                                               onPressed: () async {
-                                                if (user.uid == friend.uid) {
-                                                  return;
-                                                }
-                                                await FirestoreService()
-                                                    .sendFriendRequest(
-                                                        user.uid, friend.uid);
-                                                if (context.mounted) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                        content: Text(
-                                                            'تم إرسال طلب صداقة إلى ${friend.name}')),
-                                                  );
+                                                try {
+                                                  if (user.uid == friend.uid) {
+                                                    return;
+                                                  }
+                                                  await FirestoreService()
+                                                      .sendFriendRequest(
+                                                          user.uid, friend.uid);
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                          content: Text(
+                                                              'تم إرسال طلب صداقة إلى ${friend.name} ✅'),
+                                                          backgroundColor: Colors.green),
+                                                    );
+                                                  }
+                                                } catch (e) {
+                                                  debugPrint('Error sending friend request: $e');
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                          content: Text('حدث خطأ أثناء إرسال طلب الصداقة'),
+                                                          backgroundColor: Colors.red),
+                                                    );
+                                                  }
                                                 }
                                               },
                                               icon: const Icon(
@@ -1025,7 +1245,8 @@ class _FacebookFriendsTabState extends State<_FacebookFriendsTab> {
                         ),
                 ),
               ],
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -1039,11 +1260,7 @@ Future<void> _shareAppInvite(BuildContext context, String friendName) async {
   final message =
       'أدعوك للانضمام إلى تطبيق رويال دور $inviterName\nhttps://royaldoor.app';
 
-  if (kIsWeb && TelegramWebAppService.isTelegramWebApp()) {
-    TelegramWebAppService.shareText(message);
-  } else {
-    await Share.share(message, subject: 'دعوة إلى رويال دور');
-  }
+  await Share.share(message, subject: 'دعوة إلى رويال دور');
 
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
