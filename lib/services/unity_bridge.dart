@@ -128,8 +128,9 @@ class UnityBridge {
         'points': points,
       });
 
+      await _sendUnityMessage('MenuManager', 'SetPlayerInfoFromFlutter', message);
       await _sendUnityMessage('PlayerInfoManager', 'SetPlayerInfoFromFlutter', message);
-      debugPrint('Sent player info to Unity: $message');
+      debugPrint('Sent player info to Unity MenuManager & PlayerInfoManager: $message');
     } catch (e) {
       debugPrint('Failed to send player info to Unity: $e');
     }

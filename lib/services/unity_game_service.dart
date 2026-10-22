@@ -188,15 +188,30 @@ class UnityGameService {
   }
 
   /// إرسال حمولة البيانات إلى Unity عبر UnityBridge
-  Future<bool> sendUserDataToUnity(Map<String, dynamic> payload) async {
+  Future<bool> sendUserDataToUnity(
+    Map<String, dynamic> payload, {
+    String target = 'MenuManager',
+  }) async {
     try {
       final jsonMessage = jsonEncode(payload);
+
+      // إرسال إلى MenuManager (الهدف الأساسي المحدد في Unity)
       await UnityBridge.instance.sendMessageToUnity(
-        target: 'PlayerInfoManager',
+        target: target,
         method: 'SetUserDataFromFlutter',
         message: jsonMessage,
       );
-      debugPrint('Sent Unity userData payload: $jsonMessage');
+
+      // إرسال إضافي إلى PlayerInfoManager كخيار احتياطي للضمان
+      if (target != 'PlayerInfoManager') {
+        await UnityBridge.instance.sendMessageToUnity(
+          target: 'PlayerInfoManager',
+          method: 'SetUserDataFromFlutter',
+          message: jsonMessage,
+        );
+      }
+
+      debugPrint('Sent Unity userData payload to target [$target]: $jsonMessage');
       return true;
     } catch (e) {
       debugPrint('Failed to send userData payload to Unity: $e');
