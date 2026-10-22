@@ -36,14 +36,90 @@ class _RoyaleMatchPageState extends State<RoyaleMatchPage> {
     super.initState();
     unawaited(UnityBridge.instance.initialize());
     _pageController = PageController(viewportFraction: 0.82);
+
+    // تجهيز قائمة الألعاب الـ 10 المعرفة في UnityGameRegistry
     _gameList = [
       {
-        'id': 'royal_card',
-        'name': 'Royal Card',
+        'id': 'lara_card',
+        'name': 'Lara Card',
         'image': 'assets/images/royalcard1.png',
         'color': const Color(0xFFD4AF37),
         'icon': Icons.style,
-        'description': 'جرب البطاقة الملكية الجديدة 👑'
+        'description': 'جرب لعبة البطاقات الفريدة Lara Card 👑 (الدخول: 100 | الفوز: 200)'
+      },
+      {
+        'id': 'ludo_royal',
+        'name': 'Ludo Royal',
+        'image': 'assets/images/Royal_ludo.png',
+        'color': const Color(0xFF1B5E20),
+        'icon': Icons.grid_view_rounded,
+        'description': 'لعبة اللودو الكلاسيكية بتصميم ملكي 🎲 (الدخول: 100 | الفوز: 200)'
+      },
+      {
+        'id': 'royal_snake',
+        'name': 'Royal Snake',
+        'image': 'assets/images/snake.png',
+        'color': const Color(0xFF7B3F00),
+        'icon': Icons.pets,
+        'description': 'استعد لمغامرة الثعبان الملكية 🐍 (الدخول: 100 | الفوز: 200)'
+      },
+      {
+        'id': 'xo_royal',
+        'name': 'XO Royal',
+        'image': 'assets/images/tic_tac_toe.png',
+        'bgImage': 'assets/images/xo1.png',
+        'color': const Color(0xFF0D47A1),
+        'icon': Icons.grid_3x3,
+        'description': 'اللعبة الكلاسيكية السريعة بلمسة ملكية ⚔️ (الدخول: 50 | الفوز: 100)'
+      },
+      {
+        'id': 'royal_backgammon',
+        'name': 'Royal Backgammon',
+        'image': 'assets/images/Backgammon_royal_icon.png',
+        'bgImage': 'assets/images/Backgammon_royal_bg.jpg',
+        'color': const Color(0xFF4A148C),
+        'icon': Icons.casino,
+        'description': 'لعبة الطاولي الملكية الشهيرة 🎲 (الدخول: 150 | الفوز: 300)'
+      },
+      {
+        'id': 'domino_royal',
+        'name': 'Domino Royal',
+        'image': 'assets/images/Dominoroyal.jpeg',
+        'color': const Color(0xFF37474F),
+        'icon': Icons.view_comfortable_rounded,
+        'description': 'تحدى أصدقائك في لعبة الدومينو الملكية 🀄 (الدخول: 100 | الفوز: 200)'
+      },
+      {
+        'id': 'royal_war',
+        'name': 'Royal War',
+        'image': 'assets/images/War.png',
+        'color': const Color(0xFFB71C1C),
+        'icon': Icons.shield_rounded,
+        'description': 'استعد للمعركة الكبرى في الحرب الملكية ⚔️ (الدخول: 200 | الفوز: 400)'
+      },
+      {
+        'id': 'royal_mahjong',
+        'name': 'Royal Mahjong',
+        'image': 'assets/images/MAHJONG.png',
+        'color': const Color(0xFFE65100),
+        'icon': Icons.auto_awesome,
+        'description': 'اكتشف أسرار رويال موهينجو المذهلة ✨ (الدخول: 150 | الفوز: 300)'
+      },
+      {
+        'id': 'royal_pool',
+        'name': 'Royal Pool',
+        'image': 'assets/images/bool.png',
+        'color': const Color(0xFF004D40),
+        'icon': Icons.sports_handball_sharp,
+        'description': 'أظهر مهاراتك في تصويب كرات البلياردو 🎱 (الدخول: 100 | الفوز: 200)'
+      },
+      {
+        'id': 'royal_fruit',
+        'name': 'Royal Fruit',
+        'image': 'assets/images/Fruit.png',
+        'color': const Color(0xFFC2185B),
+        'icon': Icons.apple,
+        'description': 'تحدى أصدقائك في حرب الفواكه الممتعة 🍎 (الدخول: 50 | الفوز: 100)'
       },
       {
         'id': 'royal_quest',
@@ -53,80 +129,6 @@ class _RoyaleMatchPageState extends State<RoyaleMatchPage> {
         'color': const Color(0xFF1A237E),
         'icon': Icons.castle,
         'description': 'اختبر معلوماتك واحصل على هدية الفوز 🏆'
-      },
-      {
-        'id': 'royal_snake',
-        'name': 'Royal Snake',
-        'image': 'assets/images/snake.png',
-        'color': const Color(0xFF7B3F00),
-        'icon': Icons.pets,
-        'description': 'استعد لمغامرة الثعبان الملكية 🐍'
-      },
-      {
-        'id': 'royal_xo',
-        'name': 'Royal XO',
-        'image': 'assets/images/tic_tac_toe.png',
-        'bgImage': 'assets/images/xo1.png',
-        'color': const Color(0xFF0D47A1),
-        'icon': Icons.grid_3x3,
-        'description': 'اللعبة الكلاسيكية بلمسة ملكية ⚔️'
-      },
-      {
-        'id': 'backgammon',
-        'name': 'الطاولي',
-        'image': 'assets/images/Backgammon_royal_icon.png',
-        'bgImage': 'assets/images/Backgammon_royal_bg.jpg',
-        'color': const Color(0xFF4A148C),
-        'icon': Icons.casino,
-        'description': 'الطاولي الملكي'
-      },
-      {
-        'id': 'ludo',
-        'name': 'Royal Ludo',
-        'image': 'assets/images/Royal_ludo.png',
-        'color': const Color(0xFF1B5E20),
-        'icon': Icons.grid_view_rounded,
-        'description': 'لعبة اللودو الكلاسيكية بتصميم ملكي 🎲'
-      },
-      {
-        'id': 'domino',
-        'name': 'Royal Domino',
-        'image': 'assets/images/Dominoroyal.jpeg',
-        'color': const Color(0xFF37474F),
-        'icon': Icons.view_comfortable_rounded,
-        'description': 'تحدى أصدقائك في لعبة الدومينو الشهيرة 🀄'
-      },
-      {
-        'id': 'royal_war',
-        'name': 'الحرب الملكية',
-        'image': 'assets/images/War.png',
-        'color': const Color(0xFFB71C1C),
-        'icon': Icons.shield_rounded,
-        'description': 'استعد للمعركة الكبرى في الحرب الملكية ⚔️'
-      },
-      {
-        'id': 'mohenjo',
-        'name': 'رويال موهينجو',
-        'image': 'assets/images/MAHJONG.png',
-        'color': const Color(0xFFE65100),
-        'icon': Icons.auto_awesome,
-        'description': 'اكتشف أسرار رويال موهينجو المذهلة ✨'
-      },
-      {
-        'id': 'billiards',
-        'name': 'بلياردو',
-        'image': 'assets/images/bool.png',
-        'color': const Color(0xFF004D40),
-        'icon': Icons.sports_handball_sharp,
-        'description': 'أظهر مهاراتك في تصويب الكرات على الطاولة 🎱'
-      },
-      {
-        'id': 'fruit_war',
-        'name': 'حرب الفواكه',
-        'image': 'assets/images/Fruit.png',
-        'color': const Color(0xFFB71C1C),
-        'icon': Icons.apple,
-        'description': 'تحدى أصدقائك في حرب الفواكه الممتعة 🍎'
       },
     ];
   }
@@ -157,94 +159,9 @@ class _RoyaleMatchPageState extends State<RoyaleMatchPage> {
               ),
             ),
           );
-        } else if (game['id'] == 'royal_xo') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider(
-                create: (_) => GameProvider(),
-                child: const RoyalXoModeSelection(),
-              ),
-            ),
-          );
         } else {
-          // خريطة إعدادات ألعاب Unity المتعددة
-          final unityGameConfigs = <String, UnityGameConfig>{
-            'royal_snake': const UnityGameConfig(
-              gameId: 'royal_snake',
-              gameName: 'Royal Snake',
-              bundlePath: 'bundles/royal_snake',
-              sceneName: 'SnakeScene',
-              entryCost: 100,
-              winReward: 200,
-            ),
-            'backgammon': const UnityGameConfig(
-              gameId: 'backgammon',
-              gameName: 'الطاولي',
-              bundlePath: 'bundles/backgammon',
-              sceneName: 'BackgammonScene',
-              entryCost: 100,
-              winReward: 200,
-            ),
-            'ludo': const UnityGameConfig(
-              gameId: 'ludo',
-              gameName: 'Royal Ludo',
-              bundlePath: 'bundles/ludo',
-              sceneName: 'LudoScene',
-              entryCost: 100,
-              winReward: 200,
-            ),
-            'domino': const UnityGameConfig(
-              gameId: 'domino',
-              gameName: 'Royal Domino',
-              bundlePath: 'bundles/domino',
-              sceneName: 'DominoScene',
-              entryCost: 100,
-              winReward: 200,
-            ),
-            'royal_war': const UnityGameConfig(
-              gameId: 'royal_war',
-              gameName: 'الحرب الملكية',
-              bundlePath: 'bundles/royal_war',
-              sceneName: 'WarScene',
-              entryCost: 150,
-              winReward: 300,
-            ),
-            'mohenjo': const UnityGameConfig(
-              gameId: 'mohenjo',
-              gameName: 'رويال موهينجو',
-              bundlePath: 'bundles/mohenjo',
-              sceneName: 'MahjongScene',
-              entryCost: 100,
-              winReward: 200,
-            ),
-            'billiards': const UnityGameConfig(
-              gameId: 'billiards',
-              gameName: 'بلياردو',
-              bundlePath: 'bundles/billiards',
-              sceneName: 'BilliardsScene',
-              entryCost: 100,
-              winReward: 200,
-            ),
-            'fruit_war': const UnityGameConfig(
-              gameId: 'fruit_war',
-              gameName: 'حرب الفواكه',
-              bundlePath: 'bundles/fruit_war',
-              sceneName: 'FruitWarScene',
-              entryCost: 100,
-              winReward: 200,
-            ),
-          };
-
           final gameId = (game['id'] ?? '').toString();
-          final config = unityGameConfigs[gameId] ??
-              UnityGameConfig(
-                gameId: gameId,
-                gameName: (game['name'] ?? 'لعبة Unity').toString(),
-                bundlePath: 'bundles/$gameId',
-                entryCost: 100,
-                winReward: 200,
-              );
+          final config = UnityGameRegistry.getGame(gameId);
 
           // تشغيل لعبة Unity من خلال الخدمة الموحدة
           await UnityGameService.instance.launchUnityGame(context, config);
